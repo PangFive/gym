@@ -15,10 +15,9 @@
 # api scope, so a leak could push commits but not read variables, tokens or the registry.
 name: Mirror to GitLab
 
+# Manual only on the PangFive/gym fork: there is no GITLAB_MIRROR_TOKEN here, so a push
+# trigger would fail on every commit.
 on:
-  push:
-    branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 
 permissions:
