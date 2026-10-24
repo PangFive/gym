@@ -144,10 +144,12 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .search{display:flex;align-items:center;gap:10px;padding:0 16px;height:52px;border-radius:18px;color:var(--faint);margin-bottom:14px}
 .search input{border:0;background:transparent;font:inherit;font-size:16px;flex:1;outline:none;color:var(--ink);height:100%;min-width:0}
 .panel .search{background:#fff;border:1px solid rgba(24,32,47,.07)}
-.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 16px;padding:2px 16px 8px;scrollbar-width:none}
+/* A sideways-scrolling row fades out at both ends instead of cutting chips off at the edge. */
+.chips{display:flex;gap:8px;overflow-x:auto;margin:-6px -16px 10px;padding:8px 16px 14px;scrollbar-width:none;scroll-padding:0 16px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 28px),transparent 100%)}
+.chips::after{content:'';flex:0 0 12px}
 .chip{flex:none;min-height:42px;border:1px solid var(--edge);background:var(--glass-2);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;color:var(--ink)}
 .chip small{color:var(--faint);font-weight:700;margin-left:3px}
-.chip.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 18px -8px rgba(37,99,235,.8)}
+.chip.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 12px -6px rgba(37,99,235,.75)}
 .chip.on small{color:rgba(255,255,255,.78)}
 .wcard{display:flex;gap:12px;width:100%;min-height:150px;padding:10px;margin-bottom:12px;text-align:left;color:var(--ink);border-radius:26px}
 .wtxt{flex:1;padding:8px 4px 6px 8px;display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -174,7 +176,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .dmap-k i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .explore{padding:16px 18px 10px}
 .explore .ct{margin-bottom:6px;align-items:center}
-.explore .chips{margin:4px -18px 0;padding:2px 18px 8px}
+.explore .chips{margin:-2px -18px -6px;padding:8px 18px 14px;scroll-padding:0 18px}
 .gseg{display:flex;padding:3px;border-radius:999px;background:rgba(24,32,47,.06)}
 .gseg button{border:0;background:transparent;border-radius:999px;padding:8px 14px;min-height:34px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .gseg button{position:relative}
