@@ -9,7 +9,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="WHY">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='32' y='41' font-family='Arial' font-weight='800' font-size='22' fill='white' text-anchor='middle'%3EWHY%3C/text%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="WHY">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icons/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -369,7 +374,18 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 .btn.amber{background:linear-gradient(145deg,#fbbf24,#f59e0b);color:#3b2600;box-shadow:0 12px 24px -10px rgba(245,158,11,.75)}
 /* splash, sign-in */
 .splash{min-height:78vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--muted);font-weight:600;text-align:center}
-.logo{width:76px;height:76px;border-radius:24px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;font-size:21px;letter-spacing:.02em;box-shadow:0 18px 34px -14px rgba(37,99,235,.8)}
+.logo{width:80px;height:80px;border-radius:24px;display:block;box-shadow:0 18px 34px -14px rgba(37,99,235,.8)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.brand img{width:40px;height:40px;border-radius:12px;box-shadow:0 8px 18px -8px rgba(37,99,235,.8)}
+.install{display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;margin-bottom:14px;border-radius:20px}
+.install img{width:44px;height:44px;border-radius:13px;flex:none}
+.install div{flex:1;min-width:0}
+.install b{display:block;font-size:14.5px}
+.install small{color:var(--muted);font-size:12.5px;line-height:1.4}
+.install .x{width:34px;height:34px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;padding:0;position:relative}
+.install .x::after{content:'';position:absolute;inset:-5px}
+.howto{margin:0;padding-left:20px;line-height:1.7;font-size:14.5px;color:#3d4658}
+.howto svg.i{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 .spin{display:inline-block;width:22px;height:22px;border-radius:50%;border:3px solid rgba(47,124,246,.2);border-top-color:var(--acc);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .btn .spin{width:18px;height:18px;border-width:2.5px;border-color:rgba(255,255,255,.35);border-top-color:#fff}
@@ -617,7 +633,7 @@ const thumb = (y, q = 'mq') => `https://i.ytimg.com/vi/${y}/${q}default.jpg`;
 // its middle and blurred, stretched copies of it at the sides, so .vt shows only that middle frame.
 // A video that is private or gone comes back as YouTube's 120 px grey placeholder: .none hides it.
 const NOIMG = `onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')" onerror="this.parentNode.classList.add('none')"`;
-const pic = (y, cls = '', attrs = '') => `<span class="vt ${cls}" ${attrs}><img src="${thumb(y, 'hq')}" alt="" loading="lazy" ${NOIMG}></span>`;
+const pic = (y, cls = '', attrs = '') => `<span class="vt ${cls}" ${attrs}><img src="${thumb(y, 'hq')}" alt="" loading="lazy" crossorigin="anonymous" ${NOIMG}></span>`;
 const mTag = k => MI[k] ? `<span class="tag" style="--c:${MI[k].c}">${MI[k].n}</span>` : '';
 const rName = r => esc(r.name || 'Tanpa nama');
 const pad = n => String(n).padStart(2, '0');
@@ -818,11 +834,12 @@ function buildNav() {
 
 // ---------- views ----------
 const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
-const logoText = () => esc((APP.appName || 'WHY').slice(0, 4).toUpperCase());
+const LOGO = 'icons/icon-192.png';
 function vLogin() {
   const up = ui.authMode === 'up';
   const pics = [38, 53, 32].map(i => T[i]).filter(Boolean);
   return `<section class="onb glass compact">
+      <div class="brand"><img src="${LOGO}" alt="" width="40" height="40">${esc(APP.appName)}</div>
       <div class="collage">${pics.map((t, i) => pic(t.y, 'tall c' + i)).join('')}
         <span class="badge glass">${I('playf')} ${TUTORIALS.length} video tutorial</span></div>
       <h1 class="hero">Perjalanan <em>Fitness</em> Kamu Dimulai di Sini</h1>
@@ -843,13 +860,13 @@ function vLogin() {
     </section>
     <p class="foot">${esc(APP.appName)} · datamu tersimpan di akunmu dan tersinkron di semua perangkat.</p>`;
 }
-const vSplash = msg => `<div class="splash"><div class="logo">${logoText()}</div><span class="spin" aria-hidden="true"></span><span role="status">${msg}</span></div>`;
+const vSplash = msg => `<div class="splash"><img class="logo" src="${LOGO}" alt="${esc(APP.appName)}" width="80" height="80"><span class="spin" aria-hidden="true"></span><span role="status">${msg}</span></div>`;
 function vError() {
   const denied = /permission/i.test(fb.err?.message || fb.err?.code || '');
   const msg = fb.failed ? 'Periksa koneksi internet, lalu coba lagi.'
     : denied ? 'Database menolak akses. Pasang aturan dari database.rules.json di Firebase Console (Realtime Database → Rules).'
     : esc(fb.err?.message || 'Terjadi kesalahan.');
-  return `<div class="splash"><div class="logo">${logoText()}</div>
+  return `<div class="splash"><img class="logo" src="${LOGO}" alt="${esc(APP.appName)}" width="80" height="80">
     <b style="color:var(--ink);font-size:18px">${fb.failed ? 'Tidak bisa terhubung' : 'Data tidak bisa dimuat'}</b>
     <p style="max-width:300px;margin:0;line-height:1.55">${msg}</p>
     <button class="btn pri" data-a="reload">${I('refresh')} Coba lagi</button>
@@ -935,6 +952,7 @@ function vHome() {
       <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button>
     </header>
     ${APP.announcement ? `<div class="banner glass" role="note"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p>${esc(APP.announcement)}</p></div>` : ''}
+    ${installCard()}
     ${todayCard()}
     <section class="glass card">
       <h2 class="ct">Progres Minggu Ini <span class="muted sm">target ${S.settings.goal}× / minggu</span></h2>
@@ -1310,7 +1328,7 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
 function openDetail(id) {
   const t = T[id]; if (!t) return;
   const similar = TUTORIALS.filter(x => x.id !== t.id && x.p[0] === t.p[0]).slice(0, 4);
-  sheet(`<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
+  sheet(`<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
     <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
@@ -1403,6 +1421,9 @@ function openSettings() {
     <h3 class="sh2">Pengaturan aplikasi${fb.admin ? '<span class="adm">ADMIN</span>' : ''}</h3>
     <p class="scope">Berlaku untuk semua pengguna. ${fb.admin ? 'Kamu admin, jadi bisa mengubahnya.' : 'Hanya admin yang bisa mengubahnya.'}</p>
     ${fb.admin ? appEdit : appRead}
+
+    ${standalone() ? '' : `<h3 class="sh2">Perangkat ini</h3>
+    <div class="list"><button data-a="install">${I('download')}<span>Pasang ${esc(APP.appName)} di layar utama<small class="fsub">Buka seperti aplikasi, tanpa bilah browser, dan tetap jalan offline</small></span></button></div>`}
 
     <h3 class="sh2">Data</h3>
     <div class="list">
@@ -1676,6 +1697,36 @@ function busy(btn, on) {
   else if (btn.dataset.html != null) { btn.innerHTML = btn.dataset.html; delete btn.dataset.html; btn.disabled = false; btn.removeAttribute('aria-busy') }
 }
 
+// ---------- PWA ----------
+// The worker keeps the app usable offline and replaces the one openGym left at this address.
+if ('serviceWorker' in navigator && location.protocol !== 'file:') addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('WHY sw', e)));
+let installEvt = null;
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const INSTALL_HIDE = 'why_install_hidden';
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (phase === 'app' && route().page === 'home') softRender() });
+addEventListener('appinstalled', () => { installEvt = null; toast(`${APP.appName} terpasang di perangkatmu`); if (phase === 'app') softRender() });
+function installCard() {
+  let hidden = false; try { hidden = !!localStorage.getItem(INSTALL_HIDE) } catch {}
+  if (standalone() || hidden || !(installEvt || isIOS())) return '';
+  return `<div class="install glass"><img src="${LOGO}" alt="" width="44" height="44"><div><b>Pasang ${esc(APP.appName)} di HP</b><small>Buka dari layar utama, bisa offline.</small></div>
+    <button class="btn pri sm" data-a="install">Pasang</button><button class="x" data-a="installHide" aria-label="Tutup">${I('x')}</button></div>`;
+}
+async function install() {
+  if (installEvt) {
+    const e = installEvt; installEvt = null;
+    e.prompt();
+    const { outcome } = await e.userChoice.catch(() => ({}));
+    if (outcome !== 'accepted') installEvt = e;
+    return render();
+  }
+  sheet(`<h2 class="sh">Pasang di layar utama</h2>
+    ${isIOS()
+      ? `<ol class="howto"><li>Buka halaman ini di <b>Safari</b>.</li><li>Ketuk tombol <b>Bagikan</b> ${I('upload')} di bilah bawah.</li><li>Pilih <b>Tambahkan ke Layar Utama</b>, lalu <b>Tambah</b>.</li></ol>`
+      : `<ol class="howto"><li>Buka menu browser (<b>⋮</b> di pojok kanan atas).</li><li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.</li><li>Ketuk <b>Instal</b>.</li></ol>`}
+    <button class="btn pri block mt" data-a="close">Mengerti</button>`);
+}
+
 // ---------- toast ----------
 let toastT;
 const TOAST = { ok: ['#16a34a', 'check'], err: ['#e5392d', 'alert'], rest: ['#2f7cf6', 'clock'], info: ['#2f7cf6', 'spark'] };
@@ -1774,6 +1825,8 @@ const A = {
   doImport: () => importText($('#impTxt').value),
   exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history } }, null, 1)),
   copyClaude,
+  install,
+  installHide: () => { try { localStorage.setItem(INSTALL_HIDE, '1') } catch {} render() },
   reset: async () => {
     if (!(await ask({ title: 'Hapus semua data latihan?', msg: 'Semua program, plan mingguan, dan riwayat di akunmu akan dihapus dari semua perangkat. Pengaturan akun tetap. Tindakan ini tidak bisa dibatalkan.', ok: 'Hapus semua', icon: 'alert' }))) return;
     const keep = S.settings; S = defaults(); S.settings = keep; save(); stopRest(); closeSheet(); go('home'); toast('Data latihan dihapus');

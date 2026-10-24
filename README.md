@@ -11,6 +11,7 @@ Live: https://pangfive.github.io/gym/
 | File | Isi |
 |---|---|
 | `public/index.html` | Seluruh aplikasi (HTML, CSS, JavaScript), tanpa proses build |
+| `public/sw.js`, `public/manifest.json`, `public/icons/` | PWA: service worker (offline), manifest, dan ikon aplikasi |
 | `database.rules.json` | Aturan keamanan Firebase Realtime Database |
 | `.github/workflows/pages.yml` | Deploy otomatis ke GitHub Pages setiap push ke `main` |
 
@@ -41,6 +42,13 @@ Pengaturan aplikasi dan pengaturan user disimpan terpisah.
 
 Data juga di-cache di perangkat: aplikasi langsung terbuka, tetap bisa dipakai offline, dan
 perubahannya dikirim ke Firebase begitu online lagi.
+
+## Pasang di HP (PWA)
+
+WHY bisa dipasang seperti aplikasi: di Android/Chrome lewat tombol **Pasang** di Beranda atau
+**Pengaturan → Perangkat ini**, di iPhone lewat Safari → **Bagikan → Tambahkan ke Layar Utama**.
+Service worker menyimpan aplikasi, SDK Firebase, font, dan thumbnail video supaya tetap terbuka
+saat offline. Halaman selalu diambil baru dari jaringan bila online, jadi update langsung terlihat.
 
 ## Program dari Claude
 
