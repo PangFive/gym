@@ -367,7 +367,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .wx-f{display:flex;gap:4px;margin-top:6px}
 #rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:10px;padding:9px 9px 9px 18px;border-radius:999px;background:rgba(24,32,47,.9);color:#fff;backdrop-filter:blur(12px);box-shadow:0 18px 34px -14px rgba(24,32,47,.7);overflow:hidden}
 /* before sign-in there is no tab bar to keep clear of */
-body.pre #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+body.pre #app,body.padless #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 #rest .rl{font-size:12px;opacity:.7;font-weight:700}
 #rest b{font-size:20px;font-variant-numeric:tabular-nums;min-width:52px}
@@ -665,6 +665,9 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .pcta{display:flex;align-items:center;gap:12px;width:100%;padding:14px;margin-bottom:14px;border-radius:20px;text-align:left;color:var(--ink);font:inherit}
 .pcta .ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e}
 .pcta>span:nth-child(2){flex:1;min-width:0}
+.pcta.warn{background:linear-gradient(160deg,rgba(255,243,214,.95),rgba(255,250,238,.8));border-color:rgba(217,119,6,.25)}
+.pcta.warn .ic{background:rgba(217,119,6,.14);color:#b45309}
+.pcta.warn small{color:#8a5a14}
 .pcta b{display:block;font-size:15px;font-weight:800}
 .pcta small{display:block;font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
 .wtcard{margin-top:16px}
@@ -1126,6 +1129,8 @@ function render() {
   const full = page === 'workout' || page === 'edit' || page === 'makan';
   nav.hidden = full;
   document.body.classList.toggle('navless', full);
+  // no bottom nav and no rest-timer bar here, so no room kept for them
+  document.body.classList.toggle('padless', page === 'makan');
   nav.querySelectorAll('[data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === page));
   const key = location.hash;
   if (key !== lastRoute) { window.scrollTo(0, 0); lastRoute = key }
@@ -1264,6 +1269,7 @@ function vHome() {
     ${APP.announcement ? `<div class="banner glass" role="note"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p>${esc(APP.announcement)}</p></div>` : ''}
     ${installCard()}
     ${todayCard()}
+    ${energy() ? '' : profileCta(true)}
     ${calCard()}
     <section class="glass card">
       <h2 class="ct">Progres Minggu Ini <span class="muted sm">target ${S.settings.goal}× / minggu</span></h2>
@@ -2164,8 +2170,9 @@ function weightCard() {
     <p class="wc-note">${!goal ? 'Atur target berat di profil tubuh.' : e && !e.dir ? 'Kamu sudah di berat target. Pertahankan!' : `Sisa ${fmt1(Math.abs(goal - kg))} kg${eta ? ` · perkiraan tercapai ${eta}` : ''}`}</p>
   </section>`;
 }
-function profileCta() {
-  return `<button class="glass pcta" data-a="profile"><span class="ic">${I('user')}</span><span><b>Lengkapi profil tubuh</b><small>Berat, tinggi, dan target, agar kalori harian dan defisit/surplus dihitung otomatis</small></span>${I('chev')}</button>`;
+// On Home it is a warning (amber, alert icon); on the calorie page a plain prompt.
+function profileCta(warn) {
+  return `<button class="glass pcta${warn ? ' warn' : ''}" data-a="profile"><span class="ic">${I(warn ? 'alert' : 'user')}</span><span><b>${warn ? 'Profil tubuh belum diisi' : 'Lengkapi profil tubuh'}</b><small>${warn ? 'Target kalori masih angka bawaan. Isi berat, tinggi, dan target agar dihitung sesuai tubuhmu.' : 'Berat, tinggi, dan target, agar kalori harian dan defisit/surplus dihitung otomatis'}</small></span>${I('chev')}</button>`;
 }
 function openProfile() {
   const st = S.settings;
