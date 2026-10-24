@@ -45,7 +45,8 @@ tersinkron di semua perangkat.
 
 ### Kalori (AI Gemini)
 - Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
-  **Foto**, **Galeri**, **Tulis**; halaman detail per hari dengan grafik 7 hari.
+  **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
+  rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan.
 - Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** dengan API key milik
   pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → Gemini). Hasil: nama hidangan,
   rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi

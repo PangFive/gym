@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --acc:#2f7cf6; --acc-2:#2563eb; --acc-soft:rgba(47,124,246,.12);
@@ -25,7 +25,7 @@
   --coral:#f2785c; --ink:#18202f; --muted:#646d80; --faint:#7d8699;
   --glass:rgba(255,255,255,.58); --glass-2:rgba(255,255,255,.82); --edge:rgba(255,255,255,.8);
   --shadow:0 14px 34px -16px rgba(52,72,120,.32); --r:24px;
-  font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-family:Roboto,system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -628,26 +628,49 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .kc .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
 .kc .row3 .btn{padding:12px 6px;font-size:13.5px;flex-direction:column;gap:4px}
 .kc .row3 .btn svg.i{width:20px;height:20px}
-.datenav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 14px;padding:6px;border-radius:18px}
-.datenav b{font-size:15px}
-.datenav .icon-btn:disabled{opacity:.3}
+.bar-top .tt{display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.bar-top .tt b{font-size:16px}
+.bar-top .tt small{font-size:12.5px;font-weight:600;color:var(--muted)}
+.wkn{padding:10px 8px 12px;margin-bottom:14px;border-radius:22px}
+.wkn-h{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px}
+.wkn-h b{font-size:14px;font-weight:700}
+.wkn-h .icon-btn:disabled{opacity:.3}
+.wkn-d{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:68px;padding:8px 0 9px;border:0;border-radius:16px;background:transparent;color:var(--ink);font:inherit;transition:background .15s}
+.wd small{font-size:11.5px;font-weight:600;color:var(--muted)}
+.wd b{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.wd i{width:20px;height:4px;border-radius:4px;background:rgba(24,32,47,.08);overflow:hidden;margin-top:2px}
+.wd i::before{content:'';display:block;height:100%;width:var(--p);background:#12a372;border-radius:4px}
+.wd i.over::before{background:#e5392d}
+.wd.now:not(.on) b{color:#0b8a5e}
+.wd.on{background:linear-gradient(160deg,#13a271,#06704b);box-shadow:0 10px 18px -10px rgba(6,112,75,.9)}
+.wd.on small,.wd.on b{color:#fff}
+.wd.on i{background:rgba(255,255,255,.3)}
+.wd.on i::before,.wd.on i.over::before{background:#fff}
+.wd:disabled{opacity:.35}
+.wkn-f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding:0 4px}
+.wkn-f div{background:rgba(255,255,255,.6);border-radius:14px;padding:9px 12px;display:flex;flex-direction:column}
+.wkn-f small{font-size:12px;font-weight:600;color:var(--muted)}
+.wkn-f b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.wkn-f b span{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px}
+.kc-sum{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.kc-sum h2{margin:0;font-size:16px;font-weight:800}
+.kc-sum small{font-size:13px;font-weight:600;color:var(--muted)}
+.meal-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 22px;border-radius:22px;margin:4px 0 12px}
+.meal-empty .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e;margin-bottom:6px}
+.meal-empty .ic svg.i{width:28px;height:28px}
+.meal-empty b{font-size:16px;font-weight:800}
+.meal-empty p{margin:0;font-size:14px;color:var(--muted);line-height:1.5;max-width:270px}
 .slot-h{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 10px}
 .slot-h h2{margin:0;font-size:16px;font-weight:800}
 .slot-h small{color:var(--muted);font-weight:700;font-size:13px}
 .meal{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-bottom:8px;border-radius:18px;text-align:left;color:var(--ink)}
-.meal .mi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:rgba(242,120,92,.14);color:var(--coral)}
+.meal .mi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:rgba(18,163,114,.12);color:#0b8a5e}
 .meal .mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .meal .mt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .meal .mt small{color:var(--muted);font-size:12.5px}
 .meal .kk{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;flex:none}
 .meal .kk small{font-size:11px;color:var(--muted);font-weight:700;margin-left:2px}
-.wk7{display:flex;align-items:flex-end;gap:8px;height:140px;position:relative;margin-top:6px}
-.wk7 .goal{position:absolute;left:0;right:0;border-top:2px dashed rgba(242,120,92,.55)}
-.wk7 .d{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
-.wk7 .d span{width:100%;max-width:26px;border-radius:9px;background:linear-gradient(180deg,#8dbbff,#2f7cf6)}
-.wk7 .d.over span{background:linear-gradient(180deg,#f8a48f,#f2785c)}
-.wk7 .d em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted)}
-.wk7 .d.today em{color:var(--acc)}
 .mprev{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:20px;margin-bottom:12px}
 .analyzing{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 18px;text-align:center;color:var(--muted);font-weight:600}
 .conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.12);color:#15803d}
@@ -2025,10 +2048,28 @@ function calCard() {
     <div class="today-h"><h2 class="ct">Kalori Hari Ini <small>target ${r0(goal)} kkal</small></h2>
       <button data-a="go" data-to="makan">Detail ${I('chev')}</button></div>
     <div class="kc-row">${kcalRing(t.kcal, goal)}${macroBars(t, goal)}</div>
-    <div class="kc-act">
+    ${kcActions()}
+  </section>`;
+}
+const kcActions = () => `<div class="kc-act">
       <button class="kc-snap" data-a="mealCam"><span class="ic">${I('camera')}</span><span><b>Foto makanan</b><small>AI menghitung kalorinya</small></span>${I('chev')}</button>
       <div class="kc-alt"><button data-a="mealGal">${I('image')} Dari galeri</button><button data-a="mealText">${I('pen')} Tulis manual</button></div>
-    </div>
+    </div>`;
+// Monday-to-Sunday strip for the calorie page: picks the day and shows how full each day was.
+function mealWeek(key, today, goal) {
+  const d = new Date(key + 'T12:00:00'), mon = new Date(d); mon.setDate(d.getDate() - (d.getDay() + 6) % 7);
+  const days = Array.from({ length: 7 }, (_, i) => { const x = new Date(mon); x.setDate(mon.getDate() + i); return { x, k: dayKey(x) } });
+  const vals = days.map(o => dayTotals(o.k).kcal), logged = vals.filter(v => v > 0);
+  const avg = logged.length ? logged.reduce((a, v) => a + v, 0) / logged.length : 0;
+  const onGoal = logged.filter(v => v >= goal * .9 && v <= goal * 1.1).length;
+  const sun = days[6].x, range = mon.getMonth() === sun.getMonth()
+    ? `${mon.getDate()}–${sun.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}`
+    : `${mon.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} – ${sun.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}`;
+  return `<section class="glass wkn" aria-label="Pilih hari">
+    <div class="wkn-h"><button class="icon-btn sm" data-a="mealDay" data-d="-7" aria-label="Minggu sebelumnya">${I('back')}</button><b>${days[6].k >= today && days[0].k <= today ? 'Minggu ini' : range}</b><button class="icon-btn sm" data-a="mealDay" data-d="7" aria-label="Minggu berikutnya" ${days[6].k >= today ? 'disabled' : ''}>${I('chev')}</button></div>
+    <div class="wkn-d">${days.map((o, i) => `<button class="wd${o.k === key ? ' on' : ''}${o.k === today ? ' now' : ''}" data-a="mealDayAt" data-k="${o.k}" aria-pressed="${o.k === key}" aria-label="${o.x.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}: ${r0(vals[i])} kkal" ${o.k > today ? 'disabled' : ''}>
+      <small>${DAYS[i]}</small><b>${o.x.getDate()}</b><i class="${vals[i] > goal ? 'over' : ''}" style="--p:${Math.min(100, vals[i] / goal * 100)}%"></i></button>`).join('')}</div>
+    <div class="wkn-f"><div><small>Rata-rata / hari</small><b>${logged.length ? r0(avg) : '–'}<span>kkal</span></b></div><div><small>Sesuai target</small><b>${onGoal}<span>dari ${logged.length} hari</span></b></div></div>
   </section>`;
 }
 function vMeals() {
@@ -2042,16 +2083,13 @@ function vMeals() {
     return `<div class="slot-h"><h2>${n}</h2><small>${r0(sum)} kkal</small></div>` + ms.map(m => { const x = mealTotals(m);
       return `<button class="meal glass" data-a="mealOpen" data-id="${m.id}"><span class="mi">${I('apple')}</span><span class="mt"><b>${esc(m.name)}</b><small>P ${r0(x.p)} · K ${r0(x.c)} · L ${r0(x.f)} g · ${new Date(m.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small></span><span class="kk">${r0(x.kcal)}<small>kkal</small></span></button>` }).join('');
   }).join('');
-  // the last 7 days up to the day shown
-  const days = Array.from({ length: 7 }, (_, i) => { const x = new Date(d); x.setDate(x.getDate() - 6 + i); return x });
-  const vals = days.map(x => dayTotals(dayKey(x)).kcal), mx = Math.max(goal * 1.25, ...vals, 1);
-  const chart = `<div class="wk7"><div class="goal" style="bottom:calc(${goal / mx * 100}% * (140 - 24) / 140 + 24px)"></div>${days.map((x, i) => `<div class="d${vals[i] > goal ? ' over' : ''}${dayKey(x) === key ? ' today' : ''}" title="${r0(vals[i])} kkal"><span style="height:${Math.max(4, vals[i] / mx * 116)}px"></span><em>${DAYS[(x.getDay() + 6) % 7]}</em></div>`).join('')}</div>`;
-  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><b>Kalori</b><button class="icon-btn" data-a="aiSetup" aria-label="Pengaturan Gemini">${I('sliders')}</button></header>
-    <div class="datenav glass"><button class="icon-btn sm" data-a="mealDay" data-d="-1" aria-label="Hari sebelumnya">${I('back')}</button><b>${label}</b><button class="icon-btn sm" data-a="mealDay" data-d="1" aria-label="Hari berikutnya" ${key >= today ? 'disabled' : ''}>${I('chev')}</button></div>
-    <section class="glass card kc"><div class="kc-row">${kcalRing(t.kcal, goal, 128)}${macroBars(t, goal)}</div>
-      <div class="row3"><button class="btn pri" data-a="mealCam">${I('camera')} Foto</button><button class="btn soft" data-a="mealGal">${I('image')} Galeri</button><button class="btn soft" data-a="mealText">${I('pen')} Tulis</button></div></section>
-    ${slots || `<div class="empty glass">Belum ada makanan tercatat${key === today ? ' hari ini' : ''}.<br>Foto makananmu, AI yang menghitung kalorinya.</div>`}
-    <section class="glass card" style="margin-top:16px"><h2 class="ct">7 hari <small class="muted sm">garis = target ${r0(goal)} kkal</small></h2>${chart}</section>`;
+  const full = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="aiSetup" aria-label="Pengaturan Gemini">${I('sliders')}</button></header>
+    ${mealWeek(key, today, goal)}
+    <section class="glass card kc"><div class="kc-sum"><h2>${label}</h2><small>target ${r0(goal)} kkal</small></div>
+      <div class="kc-row">${kcalRing(t.kcal, goal, 128)}${macroBars(t, goal)}</div>
+      ${key === today ? kcActions() : ''}</section>
+    ${slots || `<div class="meal-empty glass"><span class="ic">${I('apple')}</span><b>${key === today ? 'Belum ada makanan hari ini' : 'Tidak ada catatan'}</b><p>${key === today ? 'Foto piringmu sebelum makan, AI menghitung kalori dan makronya.' : 'Tidak ada makanan yang dicatat di hari ini.'}</p></div>`}`;
 }
 // ---- Gemini
 function openAiSetup(then) {
@@ -2798,7 +2836,8 @@ const A = {
   },
   mealTextGo: () => { const t = $('#mealTxt').value.trim(); if (!t) return toast('Tulis dulu makanannya', 'err'); analyzeMeal({ text: t.slice(0, 500) }) },
   mealOpen: el => { const m = S.meals.find(x => x.id === el.dataset.id); if (!m) return; ui.meal = JSON.parse(JSON.stringify(m)); ui.meal.img = ''; openMealReview() },
-  mealDay: el => { const d = new Date((ui.mealDay || dayKey(new Date())) + 'T12:00:00'); d.setDate(d.getDate() + +el.dataset.d); const k = dayKey(d); if (k > dayKey(new Date())) return; ui.mealDay = k; render() },
+  mealDayAt: el => { ui.mealDay = el.dataset.k; render() },
+  mealDay: el => { const d = new Date((ui.mealDay || dayKey(new Date())) + 'T12:00:00'); d.setDate(d.getDate() + +el.dataset.d); const t = dayKey(new Date()), k = dayKey(d); ui.mealDay = k > t ? t : k; render() },
   mPortion: el => { const m = ui.meal; m.portion = clamp(Math.round((m.portion + +el.dataset.d) * 4) / 4, .25, 4); $('#mPortV').textContent = fmtW(m.portion) + '×'; refreshMealTot() },
   mSlot: el => { ui.meal.slot = el.dataset.k; document.querySelectorAll('#mSlots .chip').forEach(c => { const on = c.dataset.k === ui.meal.slot; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) }) },
   miDel: el => { ui.meal.items.splice(+el.dataset.ix, 1); $('#mItems').innerHTML = mealItemsHtml(); refreshMealTot() },
