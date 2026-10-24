@@ -1960,7 +1960,10 @@ function onUser(user) {
 // it, and the meal is saved to users/<uid>/meals. Photos are never stored.
 const MEAL_SLOTS = [['breakfast', 'Sarapan'], ['lunch', 'Makan siang'], ['dinner', 'Makan malam'], ['snack', 'Camilan']];
 const AI_KEY = 'why_ai';
-const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: c.model || 'gemini-flash-latest' } } catch { return { key: '', model: 'gemini-flash-latest' } } };
+// gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
+// thinking answers in a couple of seconds.
+const AI_MODEL = 'gemini-3.5-flash';
+const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model } } catch { return { key: '', model: AI_MODEL } } };
 const slotNow = () => { const h = new Date().getHours(); return h < 10 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snack' };
 const mealTotals = m => { const k = m.portion || 1, t = { kcal: 0, p: 0, c: 0, f: 0 }; m.items.forEach(i => { t.kcal += i.kcal * k; t.p += i.p * k; t.c += i.c * k; t.f += i.f * k }); return t };
 const dayMeals = key => S.meals.filter(m => dayKey(m.date) === key);
@@ -2033,7 +2036,7 @@ function geminiError(status, j) {
   const m = j?.error?.message || '', st = j?.error?.status || '';
   if (status === 400 && /API key/i.test(m)) return 'API key tidak valid. Periksa lagi key-nya.';
   if (status === 403) return 'API key ini tidak punya akses ke Gemini.';
-  if (status === 404) return 'Model tidak ditemukan. Coba model gemini-flash-latest.';
+  if (status === 404) return `Model tidak ditemukan. Coba model ${AI_MODEL}.`;
   if (status === 429 || st === 'RESOURCE_EXHAUSTED') return 'Kuota Gemini habis untuk sementara. Coba lagi nanti.';
   return 'Gemini gagal (' + (m || status) + ').';
 }
@@ -2041,15 +2044,22 @@ function geminiError(status, j) {
 async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs = 90000) {
   if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
+  const call = async thinking => {
+    const generationConfig = json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0, maxOutputTokens: 512 };
+    if (thinking) generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, signal: ctl.signal,
+      body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig })
+    });
+    return [r, await r.json().catch(() => ({}))];
+  };
   let res, j;
   try {
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, signal: ctl.signal,
-      body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0, maxOutputTokens: 512 } })
-    });
-    j = await res.json().catch(() => ({}));
+    [res, j] = await call(true);
+    // models without a minimal thinking level refuse the setting; ask again without it
+    if (res.status === 400 && /thinking/i.test(j?.error?.message || '')) [res, j] = await call(false);
   } catch (e) {
-    throw new Error(e && e.name === 'AbortError' ? `Gemini tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau ganti model ke gemini-flash-lite-latest.` : `Tidak bisa menghubungi Gemini. Periksa koneksi internet. (${e && e.message || e})`);
+    throw new Error(e && e.name === 'AbortError' ? `Gemini tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau ganti model ke ${AI_MODEL}.` : `Tidak bisa menghubungi Gemini. Periksa koneksi internet. (${e && e.message || e})`);
   } finally { clearTimeout(timer) }
   if (!res.ok) throw new Error(geminiError(res.status, j));
   return (j.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('');
@@ -2694,7 +2704,7 @@ const A = {
   aiSave: async el => {
     // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
     // so Gemini itself decides whether it is valid.
-    const key = $('#aiKey').value.replace(/[^\w-]+/g, ''), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
+    const key = $('#aiKey').value.replace(/[^\w.-]+/g, ''), model = $('#aiModel').value.trim() || AI_MODEL, err = $('#aiErr');
     if (key.length < 20) { err.textContent = 'Key terlalu pendek. Salin ulang seluruh key dari AI Studio.'; return }
     busy(el, true); err.textContent = '';
     try {
