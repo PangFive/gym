@@ -1,0 +1,28 @@
+{
+  "rules": {
+    "app": {
+      "settings": {
+        ".read": true,
+        ".write": "auth != null && root.child('app/admins/' + auth.uid).val() === true",
+        "appName": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "announcement": { ".validate": "newData.isString() && newData.val().length <= 300" },
+        "defaultRest": { ".validate": "newData.isNumber() && newData.val() >= 15 && newData.val() <= 300" },
+        "defaultGoal": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 7" },
+        "suggestion": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "$other": { ".validate": false }
+      },
+      "admins": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": false
+        }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}
