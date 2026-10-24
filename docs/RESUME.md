@@ -32,7 +32,9 @@ tersinkron di semua perangkat.
 ### Program & plan mingguan
 - Tab **Jadwal**: tiap hari Senin–Minggu berisi satu/lebih program atau hari istirahat, dengan status
   Selesai / Terlewat.
-- Tab **Program**: buat, edit (set, reps, urutan), hapus program.
+- Tab **Program**: buat, edit (set, reps, urutan), hapus program. Program baru berupa draf sampai disimpan.
+- **Pilih latihan**: peta otot (bisa pilih beberapa otot), preview video, dan **Rekomendasi Gemini**
+  (latihan dari daftar alat gym beserta set × reps, sesuai program, otot pilihan, dan tujuan).
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude.

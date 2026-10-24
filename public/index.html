@@ -287,6 +287,17 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkmap-t{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:40px;margin-top:4px;border:0;background:transparent;color:var(--acc);font:inherit;font-size:13px;font-weight:700}
 .pkmap-t svg.i{width:16px;height:16px}
 .pkhead{margin:2px 2px 6px}
+.pkai-ask{width:100%;justify-content:center;margin:0 0 12px;min-height:44px}
+.pkai{margin:0 0 12px}
+.pkai p{margin:6px 0 8px}
+.pkai-row{display:flex;align-items:center;gap:10px;width:100%;padding:6px;margin:0 0 4px;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--ink);font:inherit}
+.pkai-row .vt{width:36px;height:48px;border-radius:10px;flex:none}
+.pkai-row>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pkai-row b{font-size:14px}
+.aiadv.ok .pkai-row small{margin:0;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.35}
+.pkai-row.on{background:var(--acc-soft)}
+.pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
+.aibtn[disabled]{opacity:.6}
 .pkrow b{font-size:14px}
 .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(24,32,47,.16);display:grid;place-items:center;color:transparent;flex:none}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
@@ -1798,6 +1809,46 @@ function pickList() {
 const pickPrev = t => `<div class="pk-prev" id="pkPrev"><div class="pk-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div>
     ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
     <div class="row2"><button class="btn soft" data-a="pkPrev" data-id="${t.id}">${I('x')} Tutup</button><button class="btn pri" data-a="pkAdd" data-id="${t.id}">${ui.pick.sel.has(t.id) ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih latihan ini`}</button></div></div>`;
+// ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
+// on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
+function pickAiHtml() {
+  const a = ui.pick?.ai;
+  if (!a) return `<button class="aibtn ask pkai-ask" data-a="pkAi">${I('sparkles')} Rekomendasi Gemini${ui.pick?.ms.size ? ` untuk ${[...ui.pick.ms].map(k => MI[k].n).join(', ')}` : ''}</button>`;
+  if (a.busy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang memilih latihan…</span></div>`;
+  if (a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pkAi">${I('refresh')} Coba lagi</button></div>`;
+  const all = a.items.every(it => ui.pick.sel.has(it.id));
+  return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
+    ${a.summary ? `<p>${esc(a.summary)}</p>` : ''}
+    ${a.items.map(it => { const t = T[it.id], on = ui.pick.sel.has(it.id); return `<button class="pkai-row${on ? ' on' : ''}" data-a="pickToggle" data-id="${it.id}" aria-pressed="${on}">
+      ${pic(t.y)}<span><b>${esc(t.t)}</b><small>${it.sets} × ${esc(it.reps)} · ${esc(it.reason)}</small></span><i class="ck">${I('check')}</i></button>` }).join('')}
+    <div class="aa-b"><button class="aibtn" data-a="pkAi">${I('refresh')} Lainnya</button><button class="aibtn pri" data-a="pkAiAll"${all ? ' disabled' : ''}>${all ? `${I('check')} Semua dipilih` : `Pilih semua (${a.items.length})`}</button></div></div>`;
+}
+async function askExercises() {
+  const p = ui.pick;
+  if (!aiConf().key) { p.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return $('#pkAi').innerHTML = pickAiHtml() }
+  const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
+  const st = S.settings, e = energy(), age = st.birth ? new Date().getFullYear() - st.birth : 0;
+  const goal = !e ? 'tidak diketahui' : !e.dir ? 'mempertahankan berat' : e.dir < 0 ? 'turun berat badan' : 'naik berat badan / tambah massa otot';
+  const list = TUTORIALS.map(t => `${t.id}|${t.t}|utama: ${t.p.map(k => MI[k].n).join(', ')}|pendukung: ${t.s.map(k => MI[k].n).join(', ') || '-'}`).join('\n');
+  const prompt = `Kamu pelatih gym. Pilih 4 sampai 6 latihan dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
+${r ? `Program: "${r.name}"` : 'Workout yang sedang berjalan'}. Sudah berisi: ${have.length ? have.map(id => T[id]?.t).filter(Boolean).join(', ') : 'belum ada'}.
+${p.ms.size ? `Otot yang ingin dilatih: ${[...p.ms].map(k => MI[k].n).join(', ')}.` : 'Lengkapi program agar otot yang dilatih seimbang.'}
+Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.
+Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
+DAFTAR ALAT (id|nama|otot):
+${list}
+Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
+  p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
+  try {
+    const t = await gemini([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
+    const seen = new Set(have), items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
+      .filter(x => T[x.id] && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
+    if (!items.length) throw new Error('Gemini tidak menemukan latihan yang cocok. Coba pilih otot lain.');
+    p.ai = { items, summary: String(j.summary || '').slice(0, 200) };
+    items.forEach(x => p.rec.set(x.id, x));
+  } catch (x) { p.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
+  if ($('#pkAi')) $('#pkAi').innerHTML = pickAiHtml();
+}
 function pickChips() {
   const ms = ui.pick.ms;
   return `<button class="chip ${ms.size ? '' : 'on'}" data-a="pmuscle" data-k="all" aria-pressed="${!ms.size}">Semua <small>${TUTORIALS.length}</small></button>` +
@@ -1813,14 +1864,16 @@ function refreshPick(keepScroll) {
   $('#pkMap').innerHTML = p.map ? bodyMap({ tap: true, sel: p.ms, act: 'pmuscle', level: () => p.ms.size ? 0 : 1 }) : '';
   $('#pkMapBtn').innerHTML = p.map ? `${I('up')} Sembunyikan peta otot` : `${I('body')} Tampilkan peta otot`;
   $('#pkHead').innerHTML = pickHead();
+  if (!p.ai) $('#pkAi').innerHTML = pickAiHtml();
   $('#pkChips').innerHTML = pickChips();
   if (!keepScroll) $('#pkList').innerHTML = pickList();
 }
 const pickLabel = () => ui.pick.sel.size ? `Tambah ${ui.pick.sel.size} latihan` : 'Pilih latihan';
 function openPicker(mode, rid) {
-  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, prev: 0 };
+  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, prev: 0, ai: null, rec: new Map() };
   sheet(`<h2 class="sh">Pilih latihan</h2>
     <label class="search">${I('search')}<input data-i="pq" type="search" placeholder="Cari…" autocomplete="off"></label>
+    <div id="pkAi">${pickAiHtml()}</div>
     <section class="pkexp"><div class="pkexp-h"><b>Jelajahi otot</b>${genderSeg()}</div>
       <div id="pkMap"></div><button class="pkmap-t" id="pkMapBtn" data-a="pkMap"></button>
       <div class="lhead pkhead" id="pkHead"></div></section>
@@ -3077,13 +3130,22 @@ const A = {
   },
   pickToggle: el => {
     const id = +el.dataset.id, s = ui.pick.sel; s.has(id) ? s.delete(id) : s.add(id);
-    el.closest('.pkrow').classList.toggle('on', s.has(id)); el.setAttribute('aria-pressed', s.has(id)); $('#pkBtn').textContent = pickLabel();
+    // the same exercise can sit in the list and in Gemini's suggestions
+    document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', s.has(id)); (b.closest('.pkrow') || b).classList.toggle('on', s.has(id)) });
+    if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
+    $('#pkBtn').textContent = pickLabel();
+  },
+  pkAi: askExercises,
+  pkAiAll: () => {
+    ui.pick.ai.items.forEach(it => ui.pick.sel.add(it.id));
+    $('#pkAi').innerHTML = pickAiHtml(); $('#pkList').innerHTML = pickList(); $('#pkBtn').textContent = pickLabel();
   },
   pickDone: () => {
     const p = ui.pick; if (!p.sel.size) return toast('Pilih minimal satu latihan', 'err');
     const ids = [...p.sel];
-    if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push({ id, sets: 3, reps: '10' })) }
-    else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem({ id, sets: 3, reps: '10' })));
+    const it = id => ({ id, sets: p.rec.get(id)?.sets || 3, reps: p.rec.get(id)?.reps || '10' });
+    if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push(it(id))) }
+    else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id))));
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
   },
   setDone: el => {
