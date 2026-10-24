@@ -287,8 +287,13 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkmap-t{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:40px;margin-top:4px;border:0;background:transparent;color:var(--acc);font:inherit;font-size:13px;font-weight:700}
 .pkmap-t svg.i{width:16px;height:16px}
 .pkhead{margin:2px 2px 6px}
-.pkai-ask{width:100%;justify-content:center;margin:0 0 12px;min-height:44px}
-.pkai{margin:0 0 12px}
+#pkAi{margin:0 0 12px}
+#pkAi>.aiadv{margin:0}
+.aiadv.ok .pkai-for{display:block;margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600}
+.pkai-q{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.pkai-q textarea{width:100%;min-height:60px;resize:vertical;border:1px solid rgba(24,32,47,.1);border-radius:14px;background:#fff;padding:10px 12px;font:inherit;font-size:14px;line-height:1.45;color:var(--ink);outline:none}
+.pkai-q textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.pkai-q .aibtn{align-self:flex-end}
 .pkai p{margin:6px 0 8px}
 .pkai-row{display:flex;align-items:center;gap:10px;width:100%;padding:6px;margin:0 0 4px;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--ink);font:inherit}
 .pkai-row .vt{width:36px;height:48px;border-radius:10px;flex:none}
@@ -1815,9 +1820,13 @@ const pickPrev = t => `<div class="pk-prev" id="pkPrev"><div class="pk-vid"><ifr
     <div class="row2"><button class="btn soft" data-a="pkPrev" data-id="${t.id}">${I('x')} Tutup</button><button class="btn pri" data-a="pkAdd" data-id="${t.id}">${ui.pick.sel.has(t.id) ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih latihan ini`}</button></div></div>`;
 // ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
+// The user's own request for Gemini ("fokus dada atas, tanpa barbel"), kept while the sheet is open.
+const pkAiAsk = (label, icon = 'sparkles') => `<div class="pkai-q"><textarea id="pkAiQ" data-i="pkAiQ" rows="2" maxlength="200" placeholder="Tambah permintaan (opsional), mis. fokus dada atas, maksimal 45 menit, tanpa barbel">${esc(ui.pick.aiQ || '')}</textarea>
+    <button class="aibtn pri" data-a="pkAi">${I(icon)} ${label}</button></div>`;
 function pickAiHtml() {
-  const a = ui.pick?.ai;
-  if (!a) return `<button class="aibtn ask pkai-ask" data-a="pkAi">${I('sparkles')} Rekomendasi Gemini${ui.pick?.ms.size ? ` untuk ${[...ui.pick.ms].map(k => MI[k].n).join(', ')}` : ''}</button>`;
+  const a = ui.pick?.ai, ms = ui.pick?.ms.size ? [...ui.pick.ms].map(k => MI[k].n).join(', ') : '';
+  if (!a) return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
+    <small class="pkai-for">${ms ? `Untuk otot: ${esc(ms)}` : 'Pilih otot di peta, atau biarkan Gemini melengkapi programmu.'}</small>${pkAiAsk('Minta rekomendasi')}</div>`;
   if (a.busy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang memilih latihan…</span></div>`;
   if (a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pkAi">${I('refresh')} Coba lagi</button></div>`;
   const all = a.items.every(it => ui.pick.sel.has(it.id));
@@ -1825,7 +1834,8 @@ function pickAiHtml() {
     ${a.summary ? `<p>${esc(a.summary)}</p>` : ''}
     ${a.items.map(it => { const t = T[it.id], on = ui.pick.sel.has(it.id); return `<button class="pkai-row${on ? ' on' : ''}" data-a="pickToggle" data-id="${it.id}" aria-pressed="${on}">
       ${pic(t.y)}<span><b>${esc(t.t)}</b><small>${it.sets} × ${esc(it.reps)} · ${esc(it.reason)}</small></span><i class="ck">${I('check')}</i></button>` }).join('')}
-    <div class="aa-b"><button class="aibtn" data-a="pkAi">${I('refresh')} Lainnya</button><button class="aibtn pri" data-a="pkAiAll"${all ? ' disabled' : ''}>${all ? `${I('check')} Semua dipilih` : `Pilih semua (${a.items.length})`}</button></div></div>`;
+    <div class="aa-b"><button class="aibtn pri" data-a="pkAiAll"${all ? ' disabled' : ''}>${all ? `${I('check')} Semua dipilih` : `Pilih semua (${a.items.length})`}</button></div>
+    ${pkAiAsk('Minta lagi', 'refresh')}</div>`;
 }
 async function askExercises() {
   const p = ui.pick;
@@ -1838,7 +1848,8 @@ async function askExercises() {
 ${r ? `Program: "${r.name}"` : 'Workout yang sedang berjalan'}. Sudah berisi: ${have.length ? have.map(id => T[id]?.t).filter(Boolean).join(', ') : 'belum ada'}.
 ${p.ms.size ? `Otot yang ingin dilatih: ${[...p.ms].map(k => MI[k].n).join(', ')}.` : 'Lengkapi program agar otot yang dilatih seimbang.'}
 Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.
-Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
+${p.aiQ && p.aiQ.trim() ? `Permintaan pengguna (utamakan ini selama masih aman dan alatnya ada di daftar): ${p.aiQ.trim()}
+` : ''}Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
 DAFTAR ALAT (id|nama|otot):
 ${list}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
@@ -3366,6 +3377,7 @@ document.addEventListener('input', e => {
   const el = e.target, k = el.dataset.i; if (!k) return;
   if (k === 'q') { ui.q = el.value; $('#libHead').innerHTML = libHead(); $('#libList').innerHTML = libList() }
   else if (k === 'pq') { ui.pick.q = el.value; $('#pkList').innerHTML = pickList() }
+  else if (k === 'pkAiQ') ui.pick.aiQ = el.value.slice(0, 200);
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
