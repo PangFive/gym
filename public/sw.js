@@ -9,6 +9,7 @@
 //   icons, manifest         cache, refreshed in the background
 //   Firebase SDK            cache first: the URLs carry a version and never change
 //   Google Fonts            cache, refreshed in the background
+//   jsQR (QR reader)        cache first: a pinned version
 //   YouTube thumbnails      cache first, the newest 200 kept
 // Firebase Auth and the Realtime Database go straight to the network.
 
@@ -42,6 +43,7 @@ self.addEventListener('fetch', e => {
   if (url.origin === location.origin) return e.respondWith(refreshing(req, SHELL));
   if (url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/')) return e.respondWith(cacheFirst(req, RUNTIME));
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') return e.respondWith(refreshing(req, RUNTIME));
+  if (url.hostname === 'cdn.jsdelivr.net' && url.pathname.startsWith('/npm/jsqr@')) return e.respondWith(cacheFirst(req, RUNTIME));
   if (url.hostname === 'i.ytimg.com') return e.respondWith(cacheFirst(req, THUMBS, 200));
 });
 

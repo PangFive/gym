@@ -567,6 +567,16 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .savebar .btn.soft{background:rgba(255,255,255,.14);border:0;color:#fff}
 .claim{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:10px;border-radius:20px;background:linear-gradient(135deg,#eef4ff,#fff);border:1px solid rgba(47,124,246,.25)}
 .claim .stx b{font-size:15px}
+/* QR scanner */
+#scan{position:fixed;inset:0;z-index:75;background:#05070c;overflow:hidden}
+#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scan-frame{position:absolute;left:50%;top:44%;width:min(68vw,260px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:28px;box-shadow:0 0 0 100vmax rgba(5,7,12,.55);outline:3px solid rgba(255,255,255,.92);outline-offset:-3px;overflow:hidden}
+.scan-frame::after{content:'';position:absolute;left:10%;right:10%;height:2px;border-radius:2px;background:#7db1ff;box-shadow:0 0 12px #7db1ff;animation:scanline 2s ease-in-out infinite alternate}
+@keyframes scanline{from{top:12%}to{top:88%}}
+.scan-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:2;background:rgba(255,255,255,.92);border:0}
+.scan-tip{position:absolute;left:24px;right:24px;top:calc(44% + min(34vw,130px) + 24px);text-align:center;color:#fff;font-weight:700;font-size:15px;line-height:1.5;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.scan-tip small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:4px}
+.scan-tip.err{color:#ffd7cf}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -577,6 +587,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <div id="rest" hidden><div class="rp"></div><span class="rl">Istirahat</span><b id="restT">0:00</b><button data-a="restAdd">+15</button><button data-a="restSkip">Lewati</button></div>
 <div id="sheet"></div>
 <div id="offline" hidden role="status"><i></i>Offline · perubahan disimpan di perangkat</div>
+<div id="scan" hidden role="dialog" aria-modal="true" aria-label="Scan QR alat"></div>
 <div id="dialog" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -713,6 +724,7 @@ const ICONS = {
   bolt: '<path d="M13 3 5.5 13.5H12L11 21l7.5-10.5H12z"/>',
   heart: '<path d="M12 19.5s-7.5-4.4-7.5-10A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7.5 2.5c0 5.6-7.5 10-7.5 10z"/>',
   trophy: '<path d="M8 4.5h8v4a4 4 0 0 1-8 0zM8 6.5H5v1a3 3 0 0 0 3 3M16 6.5h3v1a3 3 0 0 1-3 3M12 12.5v4M8.5 20h7M10 16.5h4"/>',
+  qr: '<rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><path d="M14 14h2.5v2.5H14zM19.5 14v2.5M14 19.5h2.5M19.5 19.5v.5"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -1162,7 +1174,8 @@ function refreshLib() {
   }
 }
 function vLibrary() {
-  return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div></header>
+  return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div>
+      <button class="icon-btn pri" data-a="scan" aria-label="Scan QR alat">${I('qr')}</button></header>
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="libMap">${libMap()}</div>
@@ -1316,7 +1329,7 @@ function vWorkout() {
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
     <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div><small>Latihan</small><b>${a.items.length}</b></div></div>
     ${a.items.map(card).join('') || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
-    <button class="btn soft block" data-a="pick" data-mode="workout">${I('plus')} Tambah latihan</button>
+    <div class="row2"><button class="btn soft" data-a="pick" data-mode="workout">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan">${I('qr')} Scan alat</button></div>
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
 }
 
@@ -1490,7 +1503,7 @@ function openStartPick() {
   sheet(`<h2 class="sh">Mulai workout</h2>
     ${rs.length ? `<button class="spick plan" data-a="startDay">${rIcon(rs[0])}<div><small class="k">Plan hari ini</small><b>${esc(dayName(rs))}</b><small>${rs.reduce((n, r) => n + r.items.length, 0)} latihan · ±${estMin(rs.flatMap(r => r.items))} menit</small></div><span class="go">${I('playf')}</span></button>` : ''}
     ${S.routines.map(r => `<button class="spick" data-a="start" data-id="${r.id}">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
-    <div class="list mt"><button data-a="empty">${I('plus')}<span>Workout bebas (kosong)</span></button><button data-a="go" data-to="library">${I('video')}<span>Pilih dari tutorial</span></button></div>`);
+    <div class="list mt"><button data-a="scan">${I('qr')}<span>Scan QR di alat</span></button><button data-a="empty">${I('plus')}<span>Workout bebas (kosong)</span></button><button data-a="go" data-to="library">${I('video')}<span>Pilih dari tutorial</span></button></div>`);
 }
 function pickList() {
   const p = ui.pick, q = p.q.trim().toLowerCase();
@@ -1845,6 +1858,95 @@ function onUser(user) {
     if (phase !== 'app') { phase = 'error'; render() } else toast('Data tidak bisa disinkron: ' + (e.code || e.message), 'err');
   });
 }
+// ---------- QR on the machines ----------
+// The gym's stickers hold JSON: {"type":"tutorial","id":63,"title":…,"youtube_url":…,"youtube_id":…}
+// (the URL sometimes with a line break inside, which plain JSON.parse refuses). The tutorial id and
+// the video id both match the machine list, so a scan opens that machine here, or during a workout
+// adds it to the workout. Phones that have BarcodeDetector use it; others load jsQR (~10 KB) once.
+function parseMachineQr(raw) {
+  const s = String(raw || '');
+  let o = null;
+  try { o = JSON.parse(s) } catch { try { o = JSON.parse(s.replace(/[\u0000-\u001f]+/g, '')) } catch {} }
+  const id = +(o && (o.id ?? o.tutorial_id) || (s.match(/"(?:tutorial_)?id"\s*:\s*(\d+)/) || [])[1] || (s.match(/#\/alat\/(\d+)/) || [])[1]) || 0;
+  const yid = ytId(o && (o.youtube_id || o.youtube_url || o.qr_code_url) || s);
+  return { id, yid };
+}
+const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
+const scan = { stream: null, timer: null, busy: false, miss: '' };
+let jsQRp = null;
+const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
+  const sc = document.createElement('script');
+  sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'; sc.crossOrigin = 'anonymous';
+  sc.onload = () => window.jsQR ? res(window.jsQR) : rej(new Error('jsQR')); sc.onerror = () => { jsQRp = null; rej(new Error('jsQR')) };
+  document.head.appendChild(sc);
+}));
+function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg; t.classList.toggle('err', !!err) } }
+async function openScan() {
+  closeSheet();
+  const el = $('#scan');
+  el.innerHTML = `<video id="scanV" playsinline muted></video><div class="scan-frame"></div>
+    <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>`;
+  el.hidden = false; document.body.classList.add('noscroll'); scan.miss = '';
+  if (!navigator.mediaDevices?.getUserMedia) return scanTip('Browser ini tidak bisa membuka kamera.', true);
+  try { scan.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }) }
+  catch (e) { return scanTip(e && e.name === 'NotAllowedError' ? 'Izin kamera ditolak.<small>Izinkan kamera untuk situs ini di pengaturan browser, lalu coba lagi.</small>' : 'Kamera tidak bisa dibuka.', true) }
+  if (el.hidden) return stopScan();
+  const v = $('#scanV'); v.srcObject = scan.stream; await v.play().catch(() => {});
+  let detect = null;
+  try {
+    if ('BarcodeDetector' in window && (await BarcodeDetector.getSupportedFormats()).includes('qr_code')) {
+      const bd = new BarcodeDetector({ formats: ['qr_code'] });
+      detect = async () => (await bd.detect(v))[0]?.rawValue;
+    }
+  } catch {}
+  if (!detect) {
+    let jsQR; try { jsQR = await loadJsQR() } catch { return scanTip('Pembaca QR tidak bisa dimuat.<small>Periksa koneksi internet, lalu coba lagi.</small>', true) }
+    const c = document.createElement('canvas'), ctx = c.getContext('2d', { willReadFrequently: true });
+    detect = async () => {
+      const w = v.videoWidth, h = v.videoHeight; if (!w) return null;
+      const k = Math.min(1, 720 / Math.max(w, h)); c.width = w * k | 0; c.height = h * k | 0;
+      ctx.drawImage(v, 0, 0, c.width, c.height);
+      return jsQR(ctx.getImageData(0, 0, c.width, c.height).data, c.width, c.height, { inversionAttempts: 'dontInvert' })?.data;
+    };
+  }
+  if (!scan.stream) return;
+  scan.timer = setInterval(async () => {
+    if (scan.busy || !scan.stream) return;
+    scan.busy = true;
+    try { const raw = await detect(); if (raw) await onScan(raw) } catch {} finally { scan.busy = false }
+  }, 250);
+}
+function stopScan() {
+  clearInterval(scan.timer); scan.timer = null;
+  if (scan.stream) scan.stream.getTracks().forEach(t => t.stop());
+  scan.stream = null;
+  const el = $('#scan'); el.hidden = true; el.innerHTML = '';
+  if (!$('#sheet').classList.contains('open')) document.body.classList.remove('noscroll');
+}
+async function onScan(raw) {
+  const q = parseMachineQr(raw), t = machineFor(q);
+  if (!t) {
+    if (raw === scan.miss) return;
+    scan.miss = raw;
+    if (q.yid) {
+      stopScan();
+      if (await ask({ title: 'Alat belum ada di daftar', msg: 'Video di QR ini belum terdaftar di data alat. Buka videonya di YouTube?', ok: 'Buka YouTube', tone: 'info', icon: 'video' }))
+        window.open('https://www.youtube.com/watch?v=' + q.yid, '_blank', 'noopener');
+      return;
+    }
+    return scanTip('QR ini bukan QR alat.<small>Coba arahkan ke QR yang tertempel di mesin.</small>', true);
+  }
+  stopScan();
+  try { navigator.vibrate?.(60) } catch {}
+  if (S.active) {
+    if (!S.active.items.some(it => it.id === t.id)) { S.active.items.push(newActiveItem({ id: t.id, sets: 3, reps: '10' })); save(); toast(`${t.t} ditambahkan ke workout`) }
+    else toast(`${t.t} sudah ada di workout`, 'info');
+    go('workout');
+    setTimeout(() => { const i = S.active.items.findIndex(it => it.id === t.id); document.querySelectorAll('.wx')[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 120);
+  } else openDetail(t.id);
+}
+
 // ---------- sharing programs ----------
 // A shared program is the import format (why_plan) with only the routines, and the weekly days
 // they are on when the sender asks for it. It travels as a link (#/import/<base64url JSON>) or as
@@ -2298,6 +2400,8 @@ const A = {
     $(rest ? '#apRestV' : '#apGoalV').textContent = d[k] + (rest ? ' dtk' : '×'); syncAppBar();
   },
   share: el => openShare(el.dataset.id || null),
+  scan: openScan,
+  scanClose: stopScan,
   iconPick: el => openIconPick(el.dataset.id),
   setIcon: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
   setColor: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.color; else r.color = el.dataset.v; refreshIconPick() },
@@ -2376,7 +2480,7 @@ document.addEventListener('change', e => {
   e.target.files[0].text().then(importText);
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (dlgDone) dlgDone(false); else if ($('#sheet').classList.contains('open')) closeSheet() }
+  if (e.key === 'Escape') { if (dlgDone) dlgDone(false); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet() }
   // The muscles on the body map are SVG paths, which do not click on Enter/Space by themselves.
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A.muscle(e.target) }
 });
@@ -2402,7 +2506,7 @@ document.addEventListener('touchend', () => {
   p.style.transition = 'transform .22s cubic-bezier(.2,.85,.25,1)';
   if (dy > 110) closeSheet(); else p.style.transform = '';
 });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); drawRest() } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); drawRest() } else if (scan.stream) stopScan() });
 
 boot();
 </script>
