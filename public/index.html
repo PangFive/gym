@@ -615,6 +615,7 @@ const ICONS = {
   calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
   logout: '<path d="M14 4.5h3.5A1.5 1.5 0 0 1 19 6v12a1.5 1.5 0 0 1-1.5 1.5H14M10 16l-4-4 4-4M6 12h9"/>',
   mega: '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1zM16 9a4 4 0 0 1 0 6"/>',
+  shield: '<path d="M12 3.5 5 6.5v5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9v-5z"/><path d="m9 12 2 2 4-4"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -684,7 +685,8 @@ function normalize(v) {
 
 let S = defaults();
 let phase = 'boot';   // boot → login | loading → app (or error)
-const fb = { mod: null, auth: null, db: null, user: null, admin: false, online: true, failed: false, err: null, touched: false };
+const fb = { mod: null, auth: null, db: null, user: null, admin: false, adminKnown: false, hasAdmin: undefined, offered: false,
+  online: true, failed: false, err: null, touched: false };
 const CACHE = id => 'why_cache_' + id, LAST = 'why_last_uid', LEGACY = 'why_state_v1';
 
 // ---------- sync ----------
@@ -749,7 +751,7 @@ function applyRemote(val) {
       if (!S.settings.name || S.settings.name === 'WHY') S.settings.name = pendingName || fb.user.displayName || (fb.user.email || '').split('@')[0] || 'WHY';
       synced = { settings: '', routines: '', week: '', active: '', history: {} };
     } else { S = remote; synced = rs }
-    phase = 'app'; save(); render(); return;
+    phase = 'app'; save(); render(); offerAdmin(); return;
   }
   const local = snap(S); let changed = false;
   SECTIONS.forEach(k => {
@@ -768,7 +770,7 @@ function applyRemote(val) {
   });
   if (changed) S.history.sort((x, y) => y.date.localeCompare(x.date));
   cacheSave();
-  if (phase !== 'app') { phase = 'app'; render() } else if (changed) softRender();
+  if (phase !== 'app') { phase = 'app'; render(); offerAdmin() } else if (changed) softRender();
   push();
 }
 // A change that arrives while someone is typing waits until they leave the field.
@@ -1420,6 +1422,7 @@ function openSettings() {
 
     <h3 class="sh2">Pengaturan aplikasi${fb.admin ? '<span class="adm">ADMIN</span>' : ''}</h3>
     <p class="scope">Berlaku untuk semua pengguna. ${fb.admin ? 'Kamu admin, jadi bisa mengubahnya.' : 'Hanya admin yang bisa mengubahnya.'}</p>
+    ${!fb.admin && fb.hasAdmin === false && fb.adminKnown ? `<button class="btn pri block" data-a="claimAdmin" style="margin-bottom:10px">${I('shield')} Jadikan saya admin</button>` : ''}
     ${fb.admin ? appEdit : appRead}
 
     ${standalone() ? '' : `<h3 class="sh2">Perangkat ini</h3>
@@ -1624,6 +1627,7 @@ async function boot() {
       if (phase === 'app') softRender();
     }, () => {});
     d.onValue(d.ref(fb.db, '.info/connected'), s => setOnline(s.val() === true));
+    d.onValue(d.ref(fb.db, 'app/meta/hasAdmin'), s => { fb.hasAdmin = s.val() === true; offerAdmin() }, () => {});
     au.getRedirectResult(fb.auth).catch(authFail);
     au.onAuthStateChanged(fb.auth, onUser);
   } catch (e) {
@@ -1643,16 +1647,47 @@ function onUser(user) {
     const c = cacheLoad(user.uid);
     S = c ? c.S : defaults(); synced = c ? c.synced : null; fromCache = !!c; phase = c && c.synced ? 'app' : 'loading';
   } else if (!synced) phase = 'loading';
-  fb.user = user; fb.touched = false; fb.admin = false;
+  fb.user = user; fb.touched = false; fb.admin = false; fb.adminKnown = false; fb.offered = false;
   try { localStorage.setItem(LAST, user.uid) } catch {}
   render();
   const { ref, get, onValue } = fb.mod;
-  get(ref(fb.db, `app/admins/${user.uid}`)).then(s => { fb.admin = s.val() === true }).catch(() => {});
+  get(ref(fb.db, `app/admins/${user.uid}`)).then(s => {
+    fb.admin = s.val() === true; fb.adminKnown = true;
+    // An admin added by hand in the console, before the flag existed: raise the flag for them.
+    if (fb.admin && fb.hasAdmin === false) fb.mod.set(ref(fb.db, 'app/meta/hasAdmin'), true).catch(() => {});
+    offerAdmin();
+  }).catch(() => {});
   unsub = onValue(userRef(), s => applyRemote(s.val()), e => {
     fb.err = e; setSync('err');
     if (phase !== 'app') { phase = 'error'; render() } else toast('Data tidak bisa disinkron: ' + (e.code || e.message), 'err');
   });
 }
+// ---------- first admin ----------
+// While the app has no admin at all, whoever is signed in is offered the role. The database rules
+// let exactly one account take it (app/admins/<uid> plus the public app/meta/hasAdmin flag, in one
+// update, only while neither exists); once it is taken nobody is asked again.
+async function offerAdmin() {
+  if (phase !== 'app' || !fb.mod || !fb.user || fb.user.cached || !fb.adminKnown || fb.admin || fb.hasAdmin !== false || fb.offered || dlgDone) return;
+  fb.offered = true;
+  const yes = await ask({ title: 'Jadikan kamu admin?', icon: 'shield', tone: 'info', ok: 'Jadikan saya admin', cancel: 'Nanti',
+    msg: `${APP.appName} belum punya admin. Admin bisa mengubah pengaturan aplikasi untuk semua pengguna: nama aplikasi, pengumuman, dan nilai default. Hanya akun pertama yang mengklaim yang menjadi admin.` });
+  if (yes) claimAdmin();
+}
+async function claimAdmin(btn) {
+  if (!fb.mod || !fb.user || fb.user.cached) return toast('Butuh koneksi internet', 'err');
+  if (btn && btn.nodeType) busy(btn, true);
+  try {
+    await fb.mod.update(fb.mod.ref(fb.db), { [`app/admins/${fb.user.uid}`]: true, 'app/meta/hasAdmin': true });
+    fb.admin = true; fb.hasAdmin = true;
+    toast('Kamu sekarang admin');
+    if ($('#sheet.open .prof')) openSettings();   // the Settings sheet: show the admin form now
+  } catch (e) {
+    fb.hasAdmin = true;
+    toast(/permission/i.test(e.code || e.message || '') ? 'Tidak bisa jadi admin: admin sudah ada, atau aturan database belum diperbarui.' : 'Gagal: ' + (e.code || e.message), 'err');
+    if ($('#sheet.open .prof')) openSettings();
+  } finally { if (btn && btn.nodeType && btn.isConnected) busy(btn, false) }
+}
+
 async function signInGoogle() {
   if (!fb.mod) return fieldErr(null, 'Masih menyiapkan koneksi. Coba lagi sebentar.');
   const { GoogleAuthProvider, signInWithPopup, signInWithRedirect } = fb.mod;
@@ -1868,6 +1903,7 @@ const A = {
   reload: () => location.reload(),
   toggle: el => { const k = el.dataset.k; S.settings[k] = !S.settings[k]; el.setAttribute('aria-checked', String(S.settings[k])); save() },
   copyUid: async () => { try { await navigator.clipboard.writeText(fb.user.uid); toast('ID akun disalin') } catch { toast(fb.user.uid, 'info') } },
+  claimAdmin: el => claimAdmin(el),
   appSave: async el => {
     const v = { appName: $('#apName').value.trim().slice(0, 40) || 'WHY', announcement: $('#apAnn').value.trim().slice(0, 300),
       defaultRest: clamp(parseInt($('#apRest').value) || 90, 15, 300), defaultGoal: clamp(parseInt($('#apGoal').value) || 4, 1, 7),

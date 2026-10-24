@@ -14,7 +14,13 @@
       "admins": {
         "$uid": {
           ".read": "auth != null && auth.uid === $uid",
-          ".write": false
+          ".write": "auth != null && auth.uid === $uid && newData.val() === true && !root.child('app/admins').exists() && !root.child('app/meta/hasAdmin').exists()"
+        }
+      },
+      "meta": {
+        "hasAdmin": {
+          ".read": true,
+          ".write": "auth != null && newData.val() === true && (root.child('app/admins/' + auth.uid).val() === true || newData.parent().parent().child('admins/' + auth.uid).val() === true)"
         }
       }
     },

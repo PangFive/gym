@@ -21,9 +21,11 @@ Live: https://pangfive.github.io/gym/
 2. **Authentication → Settings → Authorized domains**: tambahkan `pangfive.github.io`.
    (`localhost` sudah diizinkan dari awal.)
 3. **Realtime Database → Rules**: ganti isinya dengan `database.rules.json`, lalu **Publish**.
-4. **Jadikan akunmu admin** (supaya bisa mengubah pengaturan aplikasi):
-   masuk ke aplikasi, buka **Pengaturan → Akun → Salin ID akun**, lalu di
-   **Realtime Database → Data** tambahkan `app/admins/<ID akun>` dengan nilai `true`.
+4. **Admin pertama**: selama aplikasi belum punya admin, akun yang masuk ditawari popup
+   **"Jadikan saya admin"** (juga ada tombolnya di **Pengaturan → Pengaturan aplikasi**). Hanya
+   akun pertama yang mengklaim yang berhasil; setelah itu popup tidak muncul lagi. Admin tambahan
+   bisa ditambahkan lewat **Realtime Database → Data**: `app/admins/<ID akun>` = `true`
+   (ID akun ada di **Pengaturan → Akun → Salin ID akun**).
 
 ## Struktur data
 
@@ -32,7 +34,8 @@ Pengaturan aplikasi dan pengaturan user disimpan terpisah.
 | Path | Isi | Akses |
 |---|---|---|
 | `app/settings` | **Pengaturan aplikasi**: `appName`, `announcement`, `defaultRest`, `defaultGoal`, `suggestion` | dibaca semua orang, diubah admin |
-| `app/admins/<uid>` | `true` untuk akun admin | diisi lewat Firebase Console |
+| `app/admins/<uid>` | `true` untuk akun admin | akun pertama mengklaim sendiri; selanjutnya lewat Firebase Console |
+| `app/meta/hasAdmin` | `true` begitu ada admin; popup admin hanya muncul selama ini kosong | dibaca semua orang |
 | `users/<uid>/settings` | **Pengaturan user**: `name`, `goal`, `rest`, `body`, `sound`, `vibrate` | pemilik akun |
 | `users/<uid>/routines` | Program latihan | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → daftar id program | pemilik akun |
