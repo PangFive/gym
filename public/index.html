@@ -267,7 +267,26 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .pklist{margin:0 -6px}
 .pkrow{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;background:transparent;border-radius:16px;text-align:left;color:var(--ink)}
 .pkrow .vt{width:42px;height:56px;border-radius:12px}
-.pkrow>span{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.pkrow>span,.pk-b>span{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+div.pkrow{padding:6px 8px 6px 6px;gap:6px}
+.pk-v{position:relative;flex:none;border:0;padding:2px;background:transparent;border-radius:14px}
+.pk-v .vt{width:46px;height:62px;display:block}
+.pk-v .pm{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 3px 8px -3px rgba(24,32,47,.45)}
+.pk-v .pm svg.i{width:11px;height:11px;fill:currentColor;stroke:none;margin-left:1px}
+.pk-v[aria-expanded="true"] .vt{outline:2px solid var(--acc);outline-offset:1px}
+.pk-b{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:6px 4px 6px 6px;border:0;background:transparent;text-align:left;color:var(--ink);font:inherit;border-radius:12px}
+.pk-prev{margin:2px 6px 12px;padding:12px;border-radius:18px;background:#fff;border:1px solid rgba(24,32,47,.08)}
+.pk-vid{position:relative;width:min(100%,230px);aspect-ratio:9/16;margin:0 auto 10px;border-radius:14px;overflow:hidden;background:#0b0f19}
+.pk-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pk-prev p{margin:0 2px 6px;font-size:13.5px;line-height:1.5;color:var(--ink)}
+.pk-prev .also{display:block;margin:0 2px 10px}
+.pkexp{margin:0 0 12px;padding:12px 12px 6px;border-radius:20px;background:rgba(255,255,255,.7);border:1px solid rgba(24,32,47,.06)}
+.pkexp-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pkexp-h b{font-size:15px;font-weight:800}
+.pkexp .bm-v{max-height:min(30vh,220px)}
+.pkmap-t{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:40px;margin-top:4px;border:0;background:transparent;color:var(--acc);font:inherit;font-size:13px;font-weight:700}
+.pkmap-t svg.i{width:16px;height:16px}
+.pkhead{margin:2px 2px 6px}
 .pkrow b{font-size:14px}
 .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(24,32,47,.16);display:grid;place-items:center;color:transparent;flex:none}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
@@ -1351,9 +1370,10 @@ function libList() {
       <div class="wtxt"><h3>${esc(t.t)}</h3>${pTags(t)}${alsoLine(t)}<span class="go">${I('arrow')}</span></div>
       <span class="wv">${pic(t.y)}<span class="pm">${I('playf')}</span></span></button>`).join('');
 }
-// Front + back figure. `level(group)` gives 0–4 shading per muscle group; `sel` outlines one
-// group in the accent; `tap` makes every muscle a button that filters by its group.
-function bodyMap({ level = () => 0, sel = null, tap = false } = {}) {
+// Front + back figure. `level(group)` gives 0–4 shading per muscle group; `sel` (one key or a Set)
+// fills groups in the accent; `tap` makes every muscle a button that runs action `act` with its group.
+function bodyMap({ level = () => 0, sel = null, tap = false, act: tapAct = 'muscle' } = {}) {
+  const isSel = k => sel instanceof Set ? sel.has(k) : sel === k;
   const g = BODY[S.settings.body] || BODY.male;
   const view = v => {
     let out = '';
@@ -1363,8 +1383,8 @@ function bodyMap({ level = () => 0, sel = null, tap = false } = {}) {
       // A muscle none of the tutorials trains (serratus, hip flexors, shins) stays in the drawing, dimmed.
       if (!MI[p]) { v.p[p].forEach(d => { out += `<path class="bm-m off" d="${d}"/>` }); return }
       const k = p;
-      const cls = 'bm-m' + (sel === k ? ' sel' : ' l' + level(k));
-      const act = tap ? ` data-a="muscle" data-k="${k}" role="button" tabindex="0" aria-label="${MI[k].n}"` : '';
+      const cls = 'bm-m' + (isSel(k) ? ' sel' : ' l' + level(k));
+      const act = tap ? ` data-a="${tapAct}" data-k="${k}" role="button" tabindex="0" aria-label="${MI[k].n}"${sel instanceof Set ? ` aria-pressed="${isSel(k)}"` : ''}` : '';
       v.p[p].forEach(d => { out += `<path class="${cls}" d="${d}"${act}><title>${MI[k].n}</title></path>` });
     });
     return `<svg class="bm-v" viewBox="${v.vb}" aria-hidden="${tap ? 'false' : 'true'}">${out}</svg>`;
@@ -1763,18 +1783,51 @@ function openStartPick() {
     ${S.routines.map(r => `<button class="spick" data-a="start" data-id="${r.id}">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
     <div class="list mt"><button data-a="scan">${I('qr')}<span>Scan QR di alat</span></button><button data-a="empty">${I('plus')}<span>Workout bebas (kosong)</span></button><button data-a="go" data-to="library">${I('video')}<span>Pilih dari tutorial</span></button></div>`);
 }
+// The picker filters by any number of muscles: an exercise shows when it trains one of them, and
+// the ones that hit more of the chosen muscles (as a main muscle first) come first.
+const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : trains(t, k) ? 1 : 0), 0);
 function pickList() {
   const p = ui.pick, q = p.q.trim().toLowerCase();
-  return TUTORIALS.filter(t => matches(t, p.m, q)).map(t => `<button class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" data-a="pickToggle" data-id="${t.id}">${pic(t.y)}<span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
+  const xs = TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q));
+  if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
+  return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
+      <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}" aria-expanded="${p.prev === t.id}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+      <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>
+    </div>${p.prev === t.id ? pickPrev(t) : ''}`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
+}
+const pickPrev = t => `<div class="pk-prev" id="pkPrev"><div class="pk-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div>
+    ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
+    <div class="row2"><button class="btn soft" data-a="pkPrev" data-id="${t.id}">${I('x')} Tutup</button><button class="btn pri" data-a="pkAdd" data-id="${t.id}">${ui.pick.sel.has(t.id) ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih latihan ini`}</button></div></div>`;
+function pickChips() {
+  const ms = ui.pick.ms;
+  return `<button class="chip ${ms.size ? '' : 'on'}" data-a="pmuscle" data-k="all" aria-pressed="${!ms.size}">Semua <small>${TUTORIALS.length}</small></button>` +
+    MUSCLES.map(m => `<button class="chip ${ms.has(m.k) ? 'on' : ''}" data-a="pmuscle" data-k="${m.k}" aria-pressed="${ms.has(m.k)}">${m.n} <small>${count(m.k)}</small></button>`).join('');
+}
+function pickHead() {
+  const ms = ui.pick.ms;
+  return ms.size ? `<span><b>${[...ms].map(k => MI[k].n).join(', ')}</b></span><button data-a="pmuscle" data-k="all">Hapus pilihan</button>`
+    : `<span>Ketuk otot untuk menyaring. Bisa lebih dari satu.</span>`;
+}
+function refreshPick(keepScroll) {
+  const p = ui.pick;
+  $('#pkMap').innerHTML = p.map ? bodyMap({ tap: true, sel: p.ms, act: 'pmuscle', level: () => p.ms.size ? 0 : 1 }) : '';
+  $('#pkMapBtn').innerHTML = p.map ? `${I('up')} Sembunyikan peta otot` : `${I('body')} Tampilkan peta otot`;
+  $('#pkHead').innerHTML = pickHead();
+  $('#pkChips').innerHTML = pickChips();
+  if (!keepScroll) $('#pkList').innerHTML = pickList();
 }
 const pickLabel = () => ui.pick.sel.size ? `Tambah ${ui.pick.sel.size} latihan` : 'Pilih latihan';
 function openPicker(mode, rid) {
-  ui.pick = { mode, rid, sel: new Set(), m: 'all', q: '' };
+  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, prev: 0 };
   sheet(`<h2 class="sh">Pilih latihan</h2>
     <label class="search">${I('search')}<input data-i="pq" type="search" placeholder="Cari…" autocomplete="off"></label>
-    <div class="chips" id="pkChips">${chips('all', 'pmuscle')}</div>
-    <div id="pkList" class="pklist">${pickList()}</div>
+    <section class="pkexp"><div class="pkexp-h"><b>Jelajahi otot</b>${genderSeg()}</div>
+      <div id="pkMap"></div><button class="pkmap-t" id="pkMapBtn" data-a="pkMap"></button>
+      <div class="lhead pkhead" id="pkHead"></div></section>
+    <div class="chips" id="pkChips"></div>
+    <div id="pkList" class="pklist"></div>
     <div class="sheet-foot"><button class="btn pri block" data-a="pickDone" id="pkBtn">${pickLabel()}</button></div>`);
+  refreshPick();
 }
 function openHist(id) {
   const h = S.history.find(x => x.id === id); if (!h) return;
@@ -2971,6 +3024,7 @@ const A = {
   body: el => {
     S.settings.body = el.dataset.k; save(); render();
     document.querySelectorAll('#sheet .gseg button').forEach(b => b.classList.toggle('on', b.dataset.k === S.settings.body));
+    if ($('#pkMap')) refreshPick(true);
   },
   open: el => openDetail(+el.dataset.id),
   play: el => { $('#vid').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
@@ -3009,8 +3063,22 @@ const A = {
   edMove: el => { const r = curR(), i = +el.dataset.ix, j = i + +el.dataset.d; if (j < 0 || j >= r.items.length) return; [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render() },
   edDel: el => { curR().items.splice(+el.dataset.ix, 1); save(); render() },
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
-  pmuscle: el => { ui.pick.m = el.dataset.k; $('#pkChips').innerHTML = chips(ui.pick.m, 'pmuscle'); $('#pkList').innerHTML = pickList() },
-  pickToggle: el => { const id = +el.dataset.id, s = ui.pick.sel; s.has(id) ? s.delete(id) : s.add(id); el.classList.toggle('on', s.has(id)); $('#pkBtn').textContent = pickLabel() },
+  pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); ui.pick.prev = 0; refreshPick() },
+  pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
+  pkPrev: el => {
+    const id = +el.dataset.id; ui.pick.prev = ui.pick.prev === id ? 0 : id;
+    $('#pkList').innerHTML = pickList();
+    if (ui.pick.prev) setTimeout(() => $('#pk' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  },
+  pkAdd: el => {
+    const id = +el.dataset.id; ui.pick.sel.add(id); ui.pick.prev = 0;
+    $('#pkList').innerHTML = pickList(); $('#pkBtn').textContent = pickLabel();
+    setTimeout(() => $('#pk' + id)?.scrollIntoView({ block: 'center' }), 30);
+  },
+  pickToggle: el => {
+    const id = +el.dataset.id, s = ui.pick.sel; s.has(id) ? s.delete(id) : s.add(id);
+    el.closest('.pkrow').classList.toggle('on', s.has(id)); el.setAttribute('aria-pressed', s.has(id)); $('#pkBtn').textContent = pickLabel();
+  },
   pickDone: () => {
     const p = ui.pick; if (!p.sel.size) return toast('Pilih minimal satu latihan', 'err');
     const ids = [...p.sel];
