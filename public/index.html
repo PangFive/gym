@@ -443,10 +443,25 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 .fld>span{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:0 4px 6px}
 .fld input{width:100%;min-height:50px;border:1px solid rgba(24,32,47,.1);background:#fff;border-radius:16px;padding:12px 16px;font:inherit;font-size:16px;color:var(--ink);outline:none}
 .fld input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
-.fld select{width:100%;min-height:50px;border:1px solid rgba(24,32,47,.1);border-radius:16px;padding:12px 44px 12px 16px;font:inherit;font-size:16px;color:var(--ink);outline:none;appearance:none;-webkit-appearance:none;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2364708a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 8 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center}
-.fld select:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
-.fld select:disabled{color:var(--muted)}
-.fld .fhint{display:block;font-size:13px;color:var(--muted);margin:6px 4px 0}
+.fld .fhint{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 4px 0}
+.fhint .spin{width:14px;height:14px;border-width:2px;flex:none}
+.mlist{display:grid;gap:8px}
+.mopt{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;padding:10px 14px;border:1px solid rgba(24,32,47,.1);border-radius:16px;background:#fff;text-align:left;color:var(--ink);font:inherit;transition:border-color .15s,box-shadow .15s,background .15s}
+.mopt:active{transform:scale(.99)}
+.mopt.on{border-color:var(--acc);background:#f4f8ff;box-shadow:0 0 0 3px var(--acc-soft)}
+.mopt[disabled]{opacity:.55}
+.mo-dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #c5cbd6;display:grid;place-items:center;transition:border-color .15s}
+.mopt.on .mo-dot{border-color:var(--acc)}
+.mopt.on .mo-dot::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--acc)}
+.mo-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mo-t b{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mo-t small{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.mo-sp{display:inline-flex;align-items:flex-end;gap:2px;height:11px}
+.mo-sp i{width:3px;border-radius:2px;background:#d5dae3}
+.mo-sp i:nth-child(1){height:5px}.mo-sp i:nth-child(2){height:8px}.mo-sp i:nth-child(3){height:11px}
+.mo-sp.l3 i{background:#1f9d6b}.mo-sp.l2 i:nth-child(-n+2){background:#e0a21a}.mo-sp.l1 i:nth-child(1){background:#e5683d}
+.mo-rec{flex:none;font-size:11.5px;font-weight:800;color:var(--acc-2);background:var(--acc-soft);padding:5px 9px;border-radius:999px}
+.mo-tag{font-size:11px;font-weight:700;color:var(--faint);border:1px solid rgba(24,32,47,.12);padding:1px 6px;border-radius:6px}
 .fld input[aria-invalid="true"]{border-color:#e5392d;box-shadow:0 0 0 3px rgba(229,57,45,.12)}
 .fld .ta{margin:0;min-height:88px;font-family:inherit}
 .ferr{margin:0 4px 12px;color:#c2410c;font-size:13.5px;font-weight:600;line-height:1.45}
@@ -1967,7 +1982,7 @@ const AI_KEY = 'why_ai';
 // gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
 // thinking answers in a couple of seconds.
 const AI_MODEL = 'gemini-3.5-flash';
-const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model, models: asList(c.models) } } catch { return { key: '', model: AI_MODEL, models: [] } } };
+const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || AI_MODEL } } catch { return { key: '', model: AI_MODEL, models: [], ms: {}, rec: AI_MODEL } } };
 // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
 // so Gemini itself decides whether it is valid.
 const cleanKey = v => String(v || '').replace(/[^\w.-]+/g, '');
@@ -2034,18 +2049,27 @@ function openAiSetup(then) {
       <li>Ketuk ikon salin di samping key, lalu tempel di bawah</li>
     </ol>
     <label class="fld"><span>API key Gemini</span><input id="aiKey" data-i="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
-    <label class="fld"><span>Model</span><select id="aiModel"${c.models.length ? '' : ' disabled'}>${modelOpts(c.models.length ? c.models : [c.model], c.model)}</select>
-      <small class="fhint" id="aiMs" role="status">${c.models.length ? `${c.models.length} model tersedia untuk key ini.` : 'Pilihan model muncul setelah key ditempel.'}</small></label>
+    <div class="fld"><span id="aiMl">Model</span><input type="hidden" id="aiModel" value="${esc(c.model)}">
+      <div class="mlist" id="aiModels" role="radiogroup" aria-labelledby="aiMl">${modelOpts(c.models.length ? c.models : [c.model], c.model, c.rec, c.ms, !c.models.length)}</div>
+      <small class="fhint" id="aiMs" role="status">${c.models.length ? `${c.models.length} model bisa dipakai dengan key ini.` : 'Pilihan model muncul setelah key ditempel.'}</small></div>
     <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke Google Gemini untuk dianalisis dan tidak disimpan di mana pun.</p>
     <p class="ferr" id="aiErr" role="alert"></p>
     <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`);
-  aiMsFor = ''; ui.aiModels = c.models;
+  aiMsFor = ''; ui.aiModels = c.models; ui.aiMs = c.ms; ui.aiRec = c.rec;
   if (c.key) loadAiModels();
 }
 // The models a key can use, best for meal photos first: the recommended one, then Flash (newest
 // first), Flash Lite, Pro. Speech, image, live, embedding and robotics models are left out.
 const AI_SKIP = /tts|image|live|embed|robotics|computer|transcribe|audio|banana|customtools|omni|argon|nano/;
-const modelOpts = (list, cur, rec = AI_MODEL, ms = {}) => list.map(n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)}${ms[n] ? ` · ${(ms[n] / 1000).toFixed(1).replace('.', ',')} dtk` : ''}${n === rec ? ' (disarankan)' : ''}</option>`).join('');
+// gemini-3.5-flash-lite → "Gemini 3.5 Flash Lite"; preview / latest become a small tag
+const modelName = n => n.replace(/-(preview|latest)$/, '').replace(/^gemini-/, 'Gemini ').split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+const modelOpts = (list, cur, rec = AI_MODEL, ms = {}, off) => list.map(n => {
+  const t = ms[n], lv = !t ? 0 : t < 2500 ? 3 : t < 5000 ? 2 : 1, on = n === cur;
+  const tag = /preview/.test(n) ? 'Preview' : /latest/.test(n) ? 'Latest' : '';
+  const sub = [t ? `<span class="mo-sp l${lv}" aria-hidden="true"><i></i><i></i><i></i></span>${(t / 1000).toFixed(1).replace('.', ',')} dtk · ${['', 'Lambat', 'Sedang', 'Cepat'][lv]}` : '', tag ? `<span class="mo-tag">${tag}</span>` : ''].filter(Boolean).join(' ');
+  return `<button type="button" class="mopt${on ? ' on' : ''}" role="radio" aria-checked="${on}" data-a="aiPick" data-m="${esc(n)}"${off ? ' disabled' : ''}>
+    <span class="mo-dot" aria-hidden="true"></span><span class="mo-t"><b>${esc(modelName(n))}</b>${sub ? `<small>${sub}</small>` : ''}</span>${n === rec ? '<span class="mo-rec">Disarankan</span>' : ''}</button>`;
+}).join('');
 async function geminiModels(key) {
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
   let res, j;
@@ -2070,28 +2094,30 @@ async function probeModel(key, model) {
 }
 let aiMsFor = '', aiMsT = 0;
 async function loadAiModels(force) {
-  const key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), msg = $('#aiMs');
+  const key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), box = $('#aiModels'), msg = $('#aiMs');
   if (!sel || key.length < 20 || (!force && key === aiMsFor)) return;
-  aiMsFor = key; msg.textContent = 'Memuat daftar model…';
+  const say = (t, spin) => { msg.innerHTML = (spin ? '<span class="spin" aria-hidden="true"></span>' : '') + esc(t) };
+  aiMsFor = key; say('Memuat daftar model…', 1);
   const stale = () => cleanKey($('#aiKey')?.value) !== key || !sel.isConnected;
   try {
     const all = await geminiModels(key);
     if (stale()) return;
     if (!all.length) throw new Error('Key ini tidak punya model Gemini yang cocok.');
     let done = 0;
-    msg.textContent = `Mengetes ${all.length} model…`;
+    say(`Mengetes ${all.length} model…`, 1);
     const ms = Object.fromEntries(await Promise.all(all.map(async n => {
       const t = await probeModel(key, n);
-      if (!stale()) msg.textContent = `Mengetes model… ${++done}/${all.length}`;
+      if (!stale()) say(`Mengetes model… ${++done}/${all.length}`, 1);
       return [n, t];
     })));
     if (stale()) return;
     const list = all.filter(n => ms[n]);
     if (!list.length) throw new Error('Belum ada model yang menjawab. Server Gemini mungkin sibuk; coba lagi sebentar lagi.');
     const rec = ms[AI_MODEL] ? AI_MODEL : list[0], cur = list.includes(sel.value) ? sel.value : rec;
-    sel.innerHTML = modelOpts(list, cur, rec, ms); sel.disabled = false; ui.aiModels = list;
-    msg.textContent = `${list.length} dari ${all.length} model menjawab dan bisa dipakai.`;
-  } catch (e) { if (aiMsFor === key) { aiMsFor = ''; msg.textContent = e.message } }
+    sel.value = cur; box.innerHTML = modelOpts(list, cur, rec, ms);
+    Object.assign(ui, { aiModels: list, aiMs: Object.fromEntries(list.map(n => [n, Math.round(ms[n])])), aiRec: rec });
+    say(`${list.length} dari ${all.length} model menjawab dan bisa dipakai.`);
+  } catch (e) { if (aiMsFor === key) { aiMsFor = ''; say(e.message) } }
 }
 function geminiError(status, j) {
   const m = j?.error?.message || '', st = j?.error?.status || '';
@@ -2779,12 +2805,16 @@ const A = {
       if (key !== aiMsFor) await loadAiModels(true);
       const model = $('#aiModel').value || AI_MODEL;
       await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false, 30000);
-      localStorage.setItem(AI_KEY, JSON.stringify({ key, model, models: key === aiMsFor ? ui.aiModels : [] }));
+      localStorage.setItem(AI_KEY, JSON.stringify(key === aiMsFor ? { key, model, models: ui.aiModels, ms: ui.aiMs, rec: ui.aiRec } : { key, model }));
       const then = ui.aiThen; closeSheet(); toast('Gemini terhubung'); render();
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
       else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
       else if (then === 'text') setTimeout(() => A.mealText(), 300);
     } catch (e) { err.textContent = e.message } finally { if (el.isConnected) busy(el, false) }
+  },
+  aiPick: el => {
+    $('#aiModel').value = el.dataset.m;
+    document.querySelectorAll('#aiModels .mopt').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
   },
   aiForget: async () => { if (!(await ask({ title: 'Hapus API key?', msg: 'Fitur foto kalori berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return; localStorage.removeItem(AI_KEY); closeSheet(); toast('API key dihapus'); render() },
   kcalD: el => { S.settings.kcal = clamp((S.settings.kcal || 2000) + +el.dataset.d, 1000, 5000); save(); $('#kcalV').textContent = r0(S.settings.kcal); render() },
