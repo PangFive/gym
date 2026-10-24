@@ -327,7 +327,21 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 /* editor + workout */
 .bar-top{position:sticky;top:calc(8px + env(safe-area-inset-top));z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:8px;border-radius:24px}
 .bar-top>b{font-size:16px}
-.title-inp{width:100%;font:inherit;font-size:22px;font-weight:800;padding:14px 16px;margin-bottom:14px;border-radius:20px;color:var(--ink);outline:none}
+.edhead{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:14px}
+.eh-ic{position:relative;flex:none;border:0;background:transparent;padding:0;border-radius:22px}
+.eh-badge{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 4px 10px -4px rgba(24,32,47,.35)}
+.eh-badge svg.i{width:14px;height:14px}
+.eh-main{flex:1;min-width:0}
+.eh-lbl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 2px 2px}
+.eh-field{display:flex;align-items:center;gap:8px;border-bottom:2px solid rgba(24,32,47,.1);transition:border-color .15s}
+.eh-field:focus-within{border-color:var(--acc)}
+.eh-field input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:21px;font-weight:800;color:var(--ink);padding:4px 2px 6px;outline:none}
+.eh-field input::placeholder{color:var(--faint);font-weight:700}
+.eh-field svg.i{width:18px;height:18px;color:var(--faint)}
+.eh-field:focus-within svg.i{color:var(--acc)}
+.eh-meta{margin:8px 0 0 2px;font-size:13px;font-weight:600;color:var(--muted)}
+.eh-link{margin:4px 0 0;padding:6px 2px;border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);text-align:left}
+.eh-link b{color:var(--acc);font-weight:700}
 .edrow{padding:12px;margin-bottom:10px;border-radius:22px}
 .ed-top{display:flex;gap:12px;align-items:center}
 .edrow .vt{width:44px;height:58px;border-radius:13px;cursor:pointer}
@@ -1513,8 +1527,15 @@ function vEdit(id) {
     </div>`;
   };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
-    <input class="title-inp glass" data-i="rname" value="${esc(r.name)}" placeholder="Nama program" maxlength="40">
-    <div class="sgroup" style="margin-bottom:14px"><button class="srow" data-a="iconPick" data-id="${r.id}">${rIcon(r)}<span class="stx"><b>Ikon & warna</b><small>${r.icon && r.icon !== 'auto' || r.color ? 'Dipilih sendiri' : 'Otomatis dari otot utama latihannya'}</small></span>${I('chev')}</button></div>
+    <section class="glass edhead">
+      <button class="eh-ic" data-a="iconPick" data-id="${r.id}" aria-label="Ubah ikon dan warna">${rIcon(r, 'xl')}<span class="eh-badge" aria-hidden="true">${I('edit')}</span></button>
+      <div class="eh-main">
+        <label class="eh-lbl" for="rname">Nama program</label>
+        <div class="eh-field"><input id="rname" data-i="rname" value="${esc(r.name)}" placeholder="mis. Push Day" maxlength="40" autocomplete="off" enterkeyhint="done">${I('edit')}</div>
+        <p class="eh-meta">${r.items.length} latihan · ${r.items.reduce((a, it) => a + (+it.sets || 0), 0)} set · ±${estMin(r.items)} menit</p>
+        <button class="eh-link" data-a="iconPick" data-id="${r.id}">Ikon ${r.icon && r.icon !== 'auto' || r.color ? 'dipilih sendiri' : 'otomatis dari otot utama'} · <b>Ubah</b></button>
+      </div>
+    </section>
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
