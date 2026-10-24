@@ -583,6 +583,59 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .scan-tip{position:absolute;left:24px;right:24px;top:calc(44% + min(34vw,130px) + 24px);text-align:center;color:#fff;font-weight:700;font-size:15px;line-height:1.5;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .scan-tip small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:4px}
 .scan-tip.err{color:#ffd7cf}
+/* calories */
+.kc{padding:18px}
+.kc-row{display:flex;align-items:center;gap:16px}
+.kc-ring text.big{font-size:22px;font-weight:800;fill:var(--ink)}
+.kc-ring text.small{font-size:10.5px;font-weight:700;fill:var(--muted)}
+.mac{flex:1;display:grid;gap:10px;min-width:0}
+.mac div{display:grid;grid-template-columns:1fr auto;gap:4px 8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.mac div b{color:var(--ink);font-variant-numeric:tabular-nums}
+.mac i{grid-column:1/-1;display:block;height:7px;border-radius:9px;background:rgba(24,32,47,.07);overflow:hidden}
+.mac i::before{content:'';display:block;height:100%;width:var(--w);border-radius:9px;background:var(--c)}
+.kc .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.kc .row3 .btn{padding:12px 6px;font-size:13.5px;flex-direction:column;gap:4px}
+.kc .row3 .btn svg.i{width:20px;height:20px}
+.datenav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 14px;padding:6px;border-radius:18px}
+.datenav b{font-size:15px}
+.datenav .icon-btn:disabled{opacity:.3}
+.slot-h{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 10px}
+.slot-h h2{margin:0;font-size:16px;font-weight:800}
+.slot-h small{color:var(--muted);font-weight:700;font-size:13px}
+.meal{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-bottom:8px;border-radius:18px;text-align:left;color:var(--ink)}
+.meal .mi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:rgba(242,120,92,.14);color:var(--coral)}
+.meal .mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.meal .mt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meal .mt small{color:var(--muted);font-size:12.5px}
+.meal .kk{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;flex:none}
+.meal .kk small{font-size:11px;color:var(--muted);font-weight:700;margin-left:2px}
+.wk7{display:flex;align-items:flex-end;gap:8px;height:140px;position:relative;margin-top:6px}
+.wk7 .goal{position:absolute;left:0;right:0;border-top:2px dashed rgba(242,120,92,.55)}
+.wk7 .d{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.wk7 .d span{width:100%;max-width:26px;border-radius:9px;background:linear-gradient(180deg,#8dbbff,#2f7cf6)}
+.wk7 .d.over span{background:linear-gradient(180deg,#f8a48f,#f2785c)}
+.wk7 .d em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted)}
+.wk7 .d.today em{color:var(--acc)}
+.mprev{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:20px;margin-bottom:12px}
+.analyzing{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 18px;text-align:center;color:var(--muted);font-weight:600}
+.conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.12);color:#15803d}
+.conf.mid{background:rgba(245,158,11,.14);color:#b45309}
+.conf.low{background:rgba(229,57,45,.1);color:#c2410c}
+.mnote{font-size:13.5px;color:var(--muted);line-height:1.5;margin:8px 2px 0}
+.mitem{display:grid;grid-template-columns:1fr 70px 76px 34px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(24,32,47,.06)}
+.mitem .inp{min-height:40px;font-size:16px;padding:6px 8px}
+.mitem input.nm{text-align:left;font-weight:600}
+.mitem .x{width:34px;height:34px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;padding:0}
+.mitem-h{display:grid;grid-template-columns:1fr 70px 76px 34px;gap:8px;font-size:11px;font-weight:800;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;padding-top:4px}
+.mtot{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.mtot div{background:#fff;border:1px solid rgba(24,32,47,.06);border-radius:16px;padding:10px;text-align:center}
+.mtot small{display:block;font-size:11.5px;color:var(--muted);font-weight:700}
+.mtot b{font-size:16px;font-variant-numeric:tabular-nums}
+.mtot div:first-child b{color:var(--coral)}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.slots .chip{min-height:40px;padding:8px 14px;font-size:13.5px}
+.steps-ai{margin:6px 0 14px;padding-left:22px;line-height:1.75;font-size:14.5px;color:#3d4658}
+.steps-ai a{color:var(--acc);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -593,6 +646,8 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <div id="rest" hidden><div class="rp"></div><span class="rl">Istirahat</span><b id="restT">0:00</b><button data-a="restAdd">+15</button><button data-a="restSkip">Lewati</button></div>
 <div id="sheet"></div>
 <div id="offline" hidden role="status"><i></i>Offline · perubahan disimpan di perangkat</div>
+<input type="file" id="mealCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="mealGal" accept="image/*" hidden>
 <div id="scan" hidden role="dialog" aria-modal="true" aria-label="Scan QR alat"></div>
 <div id="dialog" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -731,6 +786,11 @@ const ICONS = {
   heart: '<path d="M12 19.5s-7.5-4.4-7.5-10A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7.5 2.5c0 5.6-7.5 10-7.5 10z"/>',
   trophy: '<path d="M8 4.5h8v4a4 4 0 0 1-8 0zM8 6.5H5v1a3 3 0 0 0 3 3M16 6.5h3v1a3 3 0 0 1-3 3M12 12.5v4M8.5 20h7M10 16.5h4"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><path d="M14 14h2.5v2.5H14zM19.5 14v2.5M14 19.5h2.5M19.5 19.5v.5"/>',
+  camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.5" r="3.5"/>',
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4 3.5"/>',
+  pen: '<path d="M4 20h4L18.5 9.5l-4-4L4 16zM13 7l4 4"/>',
+  apple: '<path d="M12 7.5c-1.3-1.6-4.6-1.8-6 .6-1.6 2.7-.6 7.2 1.6 9.8 1.2 1.5 2.4 1.6 3.4 1 .6-.3 1.4-.3 2 0 1 .6 2.2.5 3.4-1 2.2-2.6 3.2-7.1 1.6-9.8-1.4-2.4-4.7-2.2-6-.6z"/><path d="M12 7.5c0-2 1-3.5 2.5-4"/>',
+  sparkles: '<path d="M12 3.5l1.6 4.4 4.4 1.6-4.4 1.6L12 15.5l-1.6-4.4L6 9.5l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -768,13 +828,13 @@ function weekStart(d = new Date()) { const x = new Date(d); x.setHours(0, 0, 0, 
 // (week: d0 = Sunday … d6 = Saturday, each a list of routine ids), history and the running workout.
 const APP_DEFAULTS = { appName: 'WHY', announcement: '', defaultRest: 90, defaultGoal: 4, suggestion: '3 × 10–12' };
 let APP = { ...APP_DEFAULTS };
-const userDefaults = () => ({ name: '', goal: APP.defaultGoal, rest: APP.defaultRest, body: 'male', sound: true, vibrate: true });
+const userDefaults = () => ({ name: '', goal: APP.defaultGoal, rest: APP.defaultRest, body: 'male', sound: true, vibrate: true, kcal: 2000 });
 const clean = o => Object.fromEntries(Object.entries(o && typeof o === 'object' ? o : {}).filter(([, v]) => v != null));
 
 function defaults() {
   const routines = SEED.map(r => ({ id: uid(), name: r.name, items: r.items.map(([id, sets, reps]) => ({ id, sets, reps })) }));
   // A starter week so the plan is not empty on day one: push, pull and legs on Mon, Wed, Fri.
-  return { settings: userDefaults(), routines, week: { d1: [routines[0].id], d3: [routines[1].id], d5: [routines[2].id] }, history: [], active: null };
+  return { settings: userDefaults(), routines, week: { d1: [routines[0].id], d3: [routines[1].id], d5: [routines[2].id] }, history: [], meals: [], active: null };
 }
 // Firebase keeps arrays as numbered objects and drops empty ones; this reads that (or the device
 // cache, or an old backup) back into the shape the app works with.
@@ -793,6 +853,11 @@ function normalize(v) {
       id: h.id, date: h.date, name: h.name || 'Workout', rids: asList(h.rids).length ? asList(h.rids) : h.rid ? [h.rid] : [],
       dur: +h.dur || 0, sets: +h.sets || 0, vol: +h.vol || 0,
       items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0 })) }))
+    })).sort((x, y) => y.date.localeCompare(x.date)),
+    meals: asList(d.meals).filter(m => m.id && m.date).map(m => ({
+      id: String(m.id), date: m.date, slot: MEAL_SLOTS.some(x => x[0] === m.slot) ? m.slot : 'snack', name: String(m.name || 'Makanan'),
+      portion: +m.portion || 1, conf: +m.conf || 0, note: String(m.note || ''),
+      items: asList(m.items).map(i => ({ n: String(i.n || ''), g: +i.g || 0, kcal: +i.kcal || 0, p: +i.p || 0, c: +i.c || 0, f: +i.f || 0 }))
     })).sort((x, y) => y.date.localeCompare(x.date)),
     active: a && a.start ? { name: a.name || 'Workout', rids: asList(a.rids).length ? asList(a.rids) : a.rid ? [a.rid] : [], start: +a.start,
       items: asList(a.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', done: !!x.done })) })) } : null
@@ -813,10 +878,12 @@ const CACHE = id => 'why_cache_' + id, LAST = 'why_last_uid', LEGACY = 'why_stat
 // this device has an unsent edit to that same section, which then wins.
 const SECTIONS = ['settings', 'routines', 'week', 'active'];
 let synced = null, pushT = null, unsub = null, syncState = 'ok';
+// History and meals grow without end, so they sync entry by entry (users/<uid>/<map>/<id>).
+const MAPS = ['history', 'meals'];
 function snap(st) {
-  const o = { history: {} };
+  const o = {};
   SECTIONS.forEach(k => { o[k] = JSON.stringify(st[k] ?? null) });
-  st.history.forEach(h => { o.history[h.id] = JSON.stringify(h) });
+  MAPS.forEach(m => { o[m] = {}; (st[m] || []).forEach(x => { o[m][x.id] = JSON.stringify(x) }) });
   return o;
 }
 function cacheSave() { if (fb.user) try { localStorage.setItem(CACHE(fb.user.uid), JSON.stringify({ S, synced })) } catch {} }
@@ -826,21 +893,25 @@ const userRef = (path = '') => fb.mod.ref(fb.db, `users/${fb.user.uid}${path ? '
 function pending() {
   if (!synced) return false;
   const now = snap(S);
-  return SECTIONS.some(k => now[k] !== synced[k]) || Object.keys(now.history).some(id => now.history[id] !== synced.history[id]) || Object.keys(synced.history).some(id => !(id in now.history));
+  return SECTIONS.some(k => now[k] !== synced[k]) || MAPS.some(m => { const a = now[m], b = synced[m] || {}; return Object.keys(a).some(id => a[id] !== b[id]) || Object.keys(b).some(id => !(id in a)) });
 }
 async function push() {
   if (!fb.mod || !fb.user || fb.user.cached || !synced) return;
   const now = snap(S), up = {};
   SECTIONS.forEach(k => { if (now[k] !== synced[k]) up[k] = JSON.parse(now[k]) });
-  Object.keys(now.history).forEach(id => { if (now.history[id] !== synced.history[id]) up['history/' + id] = JSON.parse(now.history[id]) });
-  Object.keys(synced.history).forEach(id => { if (!(id in now.history)) up['history/' + id] = null });
+  MAPS.forEach(m => {
+    const a = now[m], b = synced[m] = synced[m] || {};
+    Object.keys(a).forEach(id => { if (a[id] !== b[id]) up[m + '/' + id] = JSON.parse(a[id]) });
+    Object.keys(b).forEach(id => { if (!(id in a)) up[m + '/' + id] = null });
+  });
   if (!Object.keys(up).length) return setSync('ok');
   setSync('busy');
   try {
     await fb.mod.update(userRef(), up);
     Object.keys(up).forEach(k => {
-      if (!k.startsWith('history/')) synced[k] = now[k];
-      else { const id = k.slice(8); if (up[k] === null) delete synced.history[id]; else synced.history[id] = now.history[id] }
+      const [m, id] = k.split('/');
+      if (!id) synced[k] = now[k];
+      else if (up[k] === null) delete synced[m][id]; else synced[m][id] = now[m][id];
     });
     cacheSave(); setSync(pending() ? 'busy' : 'ok');
   } catch (e) { setSync('err'); console.warn('WHY sync', e) }
@@ -859,13 +930,13 @@ let pendingName = '', fromCache = false;
 function applyRemote(val) {
   if (!fb.touched) { fb.touched = true; fb.mod.update(userRef('profile'), { email: fb.user.email || '', displayName: fb.user.displayName || pendingName || '', lastLogin: fb.mod.serverTimestamp() }).catch(() => {}) }
   const remote = normalize(val), rs = snap(remote);
-  const fresh = !val || !(val.settings || val.routines || val.history || val.week);
+  const fresh = !val || !(val.settings || val.routines || val.history || val.week || val.meals);
   if (!synced) {
     if (fresh) {
       // A new account starts from what this device had, or from the starter plan.
       if (!fromCache) S = legacyState() || defaults();
       if (!S.settings.name || S.settings.name === 'WHY') S.settings.name = pendingName || fb.user.displayName || (fb.user.email || '').split('@')[0] || 'WHY';
-      synced = { settings: '', routines: '', week: '', active: '', history: {} };
+      synced = { settings: '', routines: '', week: '', active: '', history: {}, meals: {} };
     } else { S = remote; synced = rs }
     phase = 'app'; save(); render(); offerAdmin(); return;
   }
@@ -875,16 +946,19 @@ function applyRemote(val) {
     if (local[k] === synced[k]) { S[k] = remote[k]; changed = true }
     synced[k] = rs[k];
   });
-  new Set([...Object.keys(rs.history), ...Object.keys(synced.history)]).forEach(id => {
-    if (rs.history[id] === synced.history[id]) return;
-    if (local.history[id] === synced.history[id]) {
-      S.history = S.history.filter(h => h.id !== id);
-      if (rs.history[id]) S.history.push(JSON.parse(rs.history[id]));
-      changed = true;
-    }
-    if (rs.history[id]) synced.history[id] = rs.history[id]; else delete synced.history[id];
+  MAPS.forEach(m => {
+    const sm = synced[m] = synced[m] || {};
+    new Set([...Object.keys(rs[m]), ...Object.keys(sm)]).forEach(id => {
+      if (rs[m][id] === sm[id]) return;
+      if (local[m][id] === sm[id]) {
+        S[m] = S[m].filter(x => x.id !== id);
+        if (rs[m][id]) S[m].push(JSON.parse(rs[m][id]));
+        changed = true;
+      }
+      if (rs[m][id]) sm[id] = rs[m][id]; else delete sm[id];
+    });
+    if (changed) S[m].sort((x, y) => y.date.localeCompare(x.date));
   });
-  if (changed) S.history.sort((x, y) => y.date.localeCompare(x.date));
   cacheSave();
   if (phase !== 'app') { phase = 'app'; render(); offerAdmin() } else if (changed) softRender();
   push();
@@ -937,10 +1011,11 @@ function render() {
   else if (page === 'stats') html = vStats();
   else if (page === 'workout' && S.active) html = vWorkout();
   else if (page === 'edit') html = vEdit(arg);
+  else if (page === 'makan') html = vMeals();
   else html = vHome();
   $('#app').innerHTML = html;
   document.body.classList.remove('pre');
-  const full = page === 'workout' || page === 'edit';
+  const full = page === 'workout' || page === 'edit' || page === 'makan';
   nav.hidden = full;
   document.body.classList.toggle('navless', full);
   nav.querySelectorAll('[data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === page));
@@ -1081,6 +1156,7 @@ function vHome() {
     ${APP.announcement ? `<div class="banner glass" role="note"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p>${esc(APP.announcement)}</p></div>` : ''}
     ${installCard()}
     ${todayCard()}
+    ${calCard()}
     <section class="glass card">
       <h2 class="ct">Progres Minggu Ini <span class="muted sm">target ${S.settings.goal}× / minggu</span></h2>
       <div class="prog">${ring(pct)}
@@ -1621,6 +1697,7 @@ function openSettings() {
     <div class="sgroup">
       ${sRow({ icon: 'user', c: '#2f7cf6', title: 'Nama', sub: 'Sapaan di Beranda', right: `<input class="sin r" data-i="setName" value="${esc(st.name)}" maxlength="20" autocomplete="nickname" aria-label="Nama tampilan">` })}
       ${sRow({ icon: 'target', c: '#f2785c', title: 'Target', sub: 'Workout per minggu', right: stepper('goalD', 1, 'goalV', st.goal + '×') })}
+      ${sRow({ icon: 'apple', c: '#ec4899', title: 'Kalori', sub: 'Target per hari', right: stepper('kcalD', 50, 'kcalV', r0(st.kcal || 2000)) })}
       ${sRow({ icon: 'clock', c: '#14b8a6', title: 'Istirahat', sub: 'Antar set', right: stepper('restD', 15, 'restV', st.rest + ' dtk') })}
       ${sRow({ icon: 'body', c: '#8b5cf6', title: 'Figur otot', sub: 'Gambar peta otot', right: genderSeg() })}
     </div>
@@ -1634,8 +1711,11 @@ function openSettings() {
     ${claim}
     ${fb.admin ? `<div class="adminwrap" id="adminSec">${adminSection()}</div>` : appRead}
 
-    ${standalone() ? '' : `<h3 class="sh2">Perangkat ini</h3>
-    <div class="sgroup">${link('download', '#2f7cf6', `Pasang ${esc(APP.appName)} di layar utama`, 'install', 'Buka seperti aplikasi dan tetap jalan offline')}</div>`}
+    <h3 class="sh2">Perangkat ini</h3>
+    <div class="sgroup">
+      ${link('sparkles', '#2f7cf6', 'Gemini (AI kalori)', 'aiSetup', aiConf().key ? 'Terhubung · key tersimpan di perangkat ini' : 'Belum terhubung · ketuk untuk memasang API key')}
+      ${standalone() ? '' : link('download', '#14b8a6', `Pasang ${esc(APP.appName)} di layar utama`, 'install', 'Buka seperti aplikasi dan tetap jalan offline')}
+    </div>
 
     <h3 class="sh2">Data</h3>
     <div class="sgroup">
@@ -1874,6 +1954,167 @@ function onUser(user) {
     if (phase !== 'app') { phase = 'error'; render() } else toast('Data tidak bisa disinkron: ' + (e.code || e.message), 'err');
   });
 }
+// ---------- calories ----------
+// A photo (or a typed description) goes straight from the phone to Google Gemini with the user's own
+// API key, kept on this device only (why_ai). Gemini answers with JSON; the user checks and edits
+// it, and the meal is saved to users/<uid>/meals. Photos are never stored.
+const MEAL_SLOTS = [['breakfast', 'Sarapan'], ['lunch', 'Makan siang'], ['dinner', 'Makan malam'], ['snack', 'Camilan']];
+const AI_KEY = 'why_ai';
+const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: c.model || 'gemini-flash-latest' } } catch { return { key: '', model: 'gemini-flash-latest' } } };
+const slotNow = () => { const h = new Date().getHours(); return h < 10 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snack' };
+const mealTotals = m => { const k = m.portion || 1, t = { kcal: 0, p: 0, c: 0, f: 0 }; m.items.forEach(i => { t.kcal += i.kcal * k; t.p += i.p * k; t.c += i.c * k; t.f += i.f * k }); return t };
+const dayMeals = key => S.meals.filter(m => dayKey(m.date) === key);
+const dayTotals = key => dayMeals(key).reduce((t, m) => { const x = mealTotals(m); t.kcal += x.kcal; t.p += x.p; t.c += x.c; t.f += x.f; return t }, { kcal: 0, p: 0, c: 0, f: 0 });
+// Macro targets from the calorie target: 25% protein, 50% carbohydrate, 25% fat.
+const macroGoals = kcal => ({ p: kcal * .25 / 4, c: kcal * .5 / 4, f: kcal * .25 / 9 });
+const r0 = n => Math.round(n).toLocaleString('id-ID');
+function kcalRing(eaten, goal, size = 118) {
+  const sw = 12, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2, pct = Math.min(1, eaten / goal), over = eaten > goal;
+  const left = goal - eaten;
+  return `<svg class="ring kc-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${r0(eaten)} dari ${r0(goal)} kkal">
+    <circle cx="${h}" cy="${h}" r="${r}" stroke="rgba(242,120,92,.15)" stroke-width="${sw}" fill="none"/>
+    ${eaten > 0 ? `<circle cx="${h}" cy="${h}" r="${r}" stroke="${over ? '#e5392d' : '#f2785c'}" stroke-width="${sw}" fill="none" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - pct)}" transform="rotate(-90 ${h} ${h})"/>` : ''}
+    <text x="50%" y="45%" text-anchor="middle" dominant-baseline="central" class="big">${r0(eaten)}</text>
+    <text x="50%" y="64%" text-anchor="middle" dominant-baseline="central" class="small">${left >= 0 ? `sisa ${r0(left)}` : `lebih ${r0(-left)}`}</text></svg>`;
+}
+function macroBars(t, goal) {
+  const g = macroGoals(goal), row = (label, v, gv, c) => `<div style="--c:${c};--w:${Math.min(100, gv ? v / gv * 100 : 0)}%">${label}<b>${r0(v)} / ${r0(gv)} g</b><i></i></div>`;
+  return `<div class="mac">${row('Protein', t.p, g.p, '#2f7cf6')}${row('Karbo', t.c, g.c, '#f59e0b')}${row('Lemak', t.f, g.f, '#8b5cf6')}</div>`;
+}
+function calCard() {
+  const goal = S.settings.kcal || 2000, t = dayTotals(dayKey(new Date()));
+  return `<section class="glass card kc">
+    <div class="today-h"><h2 class="ct">Kalori Hari Ini <small>target ${r0(goal)} kkal</small></h2>
+      <button data-a="go" data-to="makan">Detail ${I('chev')}</button></div>
+    <div class="kc-row">${kcalRing(t.kcal, goal)}${macroBars(t, goal)}</div>
+    <div class="row3"><button class="btn pri" data-a="mealCam">${I('camera')} Foto</button><button class="btn soft" data-a="mealGal">${I('image')} Galeri</button><button class="btn soft" data-a="mealText">${I('pen')} Tulis</button></div>
+  </section>`;
+}
+function vMeals() {
+  const key = ui.mealDay || dayKey(new Date()), today = dayKey(new Date()), goal = S.settings.kcal || 2000, t = dayTotals(key);
+  const d = new Date(key + 'T12:00:00');
+  const label = key === today ? 'Hari ini' : d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+  const meals = dayMeals(key);
+  const slots = MEAL_SLOTS.map(([k, n]) => {
+    const ms = meals.filter(m => m.slot === k); if (!ms.length) return '';
+    const sum = ms.reduce((a, m) => a + mealTotals(m).kcal, 0);
+    return `<div class="slot-h"><h2>${n}</h2><small>${r0(sum)} kkal</small></div>` + ms.map(m => { const x = mealTotals(m);
+      return `<button class="meal glass" data-a="mealOpen" data-id="${m.id}"><span class="mi">${I('apple')}</span><span class="mt"><b>${esc(m.name)}</b><small>P ${r0(x.p)} · K ${r0(x.c)} · L ${r0(x.f)} g · ${new Date(m.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small></span><span class="kk">${r0(x.kcal)}<small>kkal</small></span></button>` }).join('');
+  }).join('');
+  // the last 7 days up to the day shown
+  const days = Array.from({ length: 7 }, (_, i) => { const x = new Date(d); x.setDate(x.getDate() - 6 + i); return x });
+  const vals = days.map(x => dayTotals(dayKey(x)).kcal), mx = Math.max(goal * 1.25, ...vals, 1);
+  const chart = `<div class="wk7"><div class="goal" style="bottom:calc(${goal / mx * 100}% * (140 - 24) / 140 + 24px)"></div>${days.map((x, i) => `<div class="d${vals[i] > goal ? ' over' : ''}${dayKey(x) === key ? ' today' : ''}" title="${r0(vals[i])} kkal"><span style="height:${Math.max(4, vals[i] / mx * 116)}px"></span><em>${DAYS[(x.getDay() + 6) % 7]}</em></div>`).join('')}</div>`;
+  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><b>Kalori</b><button class="icon-btn" data-a="aiSetup" aria-label="Pengaturan Gemini">${I('sliders')}</button></header>
+    <div class="datenav glass"><button class="icon-btn sm" data-a="mealDay" data-d="-1" aria-label="Hari sebelumnya">${I('back')}</button><b>${label}</b><button class="icon-btn sm" data-a="mealDay" data-d="1" aria-label="Hari berikutnya" ${key >= today ? 'disabled' : ''}>${I('chev')}</button></div>
+    <section class="glass card kc"><div class="kc-row">${kcalRing(t.kcal, goal, 128)}${macroBars(t, goal)}</div>
+      <div class="row3"><button class="btn pri" data-a="mealCam">${I('camera')} Foto</button><button class="btn soft" data-a="mealGal">${I('image')} Galeri</button><button class="btn soft" data-a="mealText">${I('pen')} Tulis</button></div></section>
+    ${slots || `<div class="empty glass">Belum ada makanan tercatat${key === today ? ' hari ini' : ''}.<br>Foto makananmu, AI yang menghitung kalorinya.</div>`}
+    <section class="glass card" style="margin-top:16px"><h2 class="ct">7 hari <small class="muted sm">garis = target ${r0(goal)} kkal</small></h2>${chart}</section>`;
+}
+// ---- Gemini
+function openAiSetup(then) {
+  ui.aiThen = then || null;
+  const c = aiConf();
+  sheet(`<h2 class="sh">Hubungkan Gemini</h2>
+    <p class="scope" style="margin-top:-8px">AI yang menghitung kalori dari foto. Butuh API key Gemini milikmu sendiri (gratis).</p>
+    <ol class="steps-ai">
+      <li>Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+      <li>Masuk dengan akun Google, lalu ketuk <b>Create API key</b></li>
+      <li>Salin key-nya (diawali <b>AIza</b>) dan tempel di bawah</li>
+    </ol>
+    <label class="fld"><span>API key Gemini</span><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…" value="${esc(c.key)}"></label>
+    <label class="fld"><span>Model</span><input id="aiModel" autocomplete="off" spellcheck="false" value="${esc(c.model)}"></label>
+    <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke Google Gemini untuk dianalisis dan tidak disimpan di mana pun.</p>
+    <p class="ferr" id="aiErr" role="alert"></p>
+    <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`);
+}
+function geminiError(status, j) {
+  const m = j?.error?.message || '', st = j?.error?.status || '';
+  if (status === 400 && /API key/i.test(m)) return 'API key tidak valid. Periksa lagi key-nya.';
+  if (status === 403) return 'API key ini tidak punya akses ke Gemini.';
+  if (status === 404) return 'Model tidak ditemukan. Coba model gemini-flash-latest.';
+  if (status === 429 || st === 'RESOURCE_EXHAUSTED') return 'Kuota Gemini habis untuk sementara. Coba lagi nanti.';
+  return 'Gemini gagal (' + (m || status) + ').';
+}
+async function gemini(parts, { key, model } = aiConf(), json = true) {
+  if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0 } })
+  }).catch(() => { throw new Error('Tidak bisa menghubungi Gemini. Periksa koneksi internet.') });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(geminiError(res.status, j));
+  return (j.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('');
+}
+const MEAL_PROMPT = `Kamu ahli gizi. Perkirakan makanan dan minuman pada foto atau deskripsi untuk porsi yang terlihat/disebut.
+Balas HANYA dengan JSON berbentuk:
+{"name": "nama hidangan singkat dalam bahasa Indonesia",
+ "items": [{"name": "nama item", "grams": angka, "kcal": angka, "protein": gram, "carbs": gram, "fat": gram}],
+ "confidence": angka 0 sampai 1,
+ "note": "catatan singkat dalam bahasa Indonesia, misalnya asumsi porsi"}
+Pakai nilai gizi umum makanan Indonesia bila relevan. Pisahkan tiap komponen (nasi, lauk, sayur, sambal, minuman) sebagai item.
+Jika bukan makanan, kembalikan items kosong dan jelaskan di note.`;
+function parseMeal(text) {
+  const a = text.indexOf('{'), b = text.lastIndexOf('}');
+  let o; try { o = JSON.parse(text.slice(a, b + 1)) } catch { throw new Error('Jawaban AI tidak bisa dibaca. Coba lagi.') }
+  const items = asList(o.items).map(i => ({ n: String(i.name || i.n || 'Item').slice(0, 60), g: Math.max(0, +i.grams || +i.g || 0), kcal: Math.max(0, +i.kcal || +i.calories || 0), p: Math.max(0, +i.protein || +i.p || 0), c: Math.max(0, +i.carbs || +i.c || 0), f: Math.max(0, +i.fat || +i.f || 0) }));
+  return { name: String(o.name || items[0]?.n || 'Makanan').slice(0, 60), items, conf: Math.min(1, Math.max(0, +o.confidence || 0)), note: String(o.note || '').slice(0, 300) };
+}
+async function shrinkImage(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url });
+    const k = Math.min(1, 1024 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', .82);
+  } finally { URL.revokeObjectURL(url) }
+}
+const needKey = then => { if (aiConf().key) return false; openAiSetup(then); return true };
+async function analyzeMeal({ dataUrl, text }) {
+  sheet(`<h2 class="sh">Menganalisis…</h2>${dataUrl ? `<img class="mprev" src="${dataUrl}" alt="Foto makanan">` : `<p class="scope">${esc(text)}</p>`}
+    <div class="analyzing"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menghitung kalori</span></div>`);
+  try {
+    const parts = [{ text: MEAL_PROMPT + (text ? `\nDeskripsi: ${text}` : '') }];
+    if (dataUrl) parts.push({ inline_data: { mime_type: 'image/jpeg', data: dataUrl.split(',')[1] } });
+    const r = parseMeal(await gemini(parts));
+    if (!r.items.length) throw new Error(r.note || 'AI tidak mengenali makanan di foto ini.');
+    const day = ui.mealDay && ui.mealDay !== dayKey(new Date()) ? new Date(ui.mealDay + 'T12:00:00') : new Date();
+    ui.meal = { id: null, date: day.toISOString(), slot: slotNow(), portion: 1, ...r, img: dataUrl || '' };
+    openMealReview();
+  } catch (e) {
+    sheet(`<h2 class="sh">Gagal menganalisis</h2><p class="scope" style="margin-top:-8px">${esc(e.message)}</p>
+      <div class="row2"><button class="btn soft" data-a="aiSetup">${I('sliders')} Pengaturan</button><button class="btn pri" data-a="close">Tutup</button></div>`);
+  }
+}
+const confPill = c => c >= .75 ? '<span class="conf">Keyakinan AI tinggi</span>' : c >= .45 ? '<span class="conf mid">Keyakinan AI sedang</span>' : '<span class="conf low">Keyakinan AI rendah, periksa lagi</span>';
+function mealItemsHtml() {
+  const m = ui.meal;
+  return `<div class="mitem-h"><span>Item</span><span>Gram</span><span>Kkal</span><span></span></div>` + m.items.map((it, i) => `<div class="mitem">
+    <input class="inp nm" data-i="mi" data-ix="${i}" data-f="n" value="${esc(it.n)}" aria-label="Nama item">
+    <input class="inp" data-i="mi" data-ix="${i}" data-f="g" value="${r0(it.g)}" inputmode="numeric" aria-label="Gram">
+    <input class="inp" data-i="mi" data-ix="${i}" data-f="kcal" value="${r0(it.kcal)}" inputmode="numeric" aria-label="Kalori">
+    <button class="x" data-a="miDel" data-ix="${i}" aria-label="Hapus item">${I('x')}</button></div>`).join('');
+}
+function mealTotHtml() { const t = mealTotals(ui.meal); return `<div><small>Kalori</small><b>${r0(t.kcal)}</b></div><div><small>Protein</small><b>${r0(t.p)} g</b></div><div><small>Karbo</small><b>${r0(t.c)} g</b></div><div><small>Lemak</small><b>${r0(t.f)} g</b></div>` }
+function openMealReview() {
+  const m = ui.meal;
+  sheet(`<h2 class="sh">${m.id ? 'Edit makanan' : 'Hasil analisis'}</h2>
+    ${m.img ? `<img class="mprev" src="${m.img}" alt="Foto makanan">` : ''}
+    <label class="fld"><span>Nama</span><input id="mName" data-i="mName" value="${esc(m.name)}" maxlength="60"></label>
+    ${m.conf ? confPill(m.conf) : ''}${m.note ? `<p class="mnote">${esc(m.note)}</p>` : ''}
+    <div class="mtot" id="mTot">${mealTotHtml()}</div>
+    <div class="sgroup" style="padding:4px 14px 8px">
+      <div id="mItems">${mealItemsHtml()}</div>
+    </div>
+    <div class="sgroup">${sRow({ icon: 'apple', c: '#f2785c', title: 'Porsi', sub: 'Semua angka ikut menyesuaikan', right: stepper('mPortion', .25, 'mPortV', fmtW(m.portion) + '×') })}</div>
+    <h3 class="sh2">Waktu makan</h3>
+    <div class="slots" id="mSlots">${MEAL_SLOTS.map(([k, n]) => `<button class="chip ${m.slot === k ? 'on' : ''}" data-a="mSlot" data-k="${k}" aria-pressed="${m.slot === k}">${n}</button>`).join('')}</div>
+    <div class="row2">${m.id ? `<button class="btn danger" data-a="mealDel">${I('trash')} Hapus</button>` : `<button class="btn soft" data-a="close">Batal</button>`}<button class="btn pri" data-a="mealSave">Simpan</button></div>`);
+}
+const refreshMealTot = () => { const t = $('#mTot'); if (t) t.innerHTML = mealTotHtml() };
+
 // ---------- QR on the machines ----------
 // The gym's stickers hold JSON: {"type":"tutorial","id":63,"title":…,"youtube_url":…,"youtube_id":…}
 // (the URL sometimes with a line break inside, which plain JSON.parse refuses). The tutorial id and
@@ -2356,13 +2597,13 @@ const A = {
   },
   import: openImport,
   doImport: () => importText($('#impTxt').value),
-  exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history } }, null, 1)),
+  exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history, meals: S.meals } }, null, 1)),
   copyClaude,
   install,
   installHide: () => { try { localStorage.setItem(INSTALL_HIDE, '1') } catch {} render() },
   reset: async () => {
     if (!(await ask({ title: 'Hapus semua data latihan?', msg: 'Semua program, plan mingguan, dan riwayat di akunmu akan dihapus dari semua perangkat. Pengaturan akun tetap. Tindakan ini tidak bisa dibatalkan.', ok: 'Hapus semua', icon: 'alert' }))) return;
-    const keep = S.settings; S = defaults(); S.settings = keep; save(); stopRest(); closeSheet(); go('home'); toast('Data latihan dihapus');
+    const keep = S.settings, meals = S.meals; S = defaults(); S.settings = keep; S.meals = meals; save(); stopRest(); closeSheet(); go('home'); toast('Data latihan dihapus');
   },
   // plan
   day: el => openDay(+el.dataset.d),
@@ -2416,6 +2657,48 @@ const A = {
     $(rest ? '#apRestV' : '#apGoalV').textContent = d[k] + (rest ? ' dtk' : '×'); syncAppBar();
   },
   share: el => openShare(el.dataset.id || null),
+  // calories
+  mealCam: () => { if (!needKey('cam')) $('#mealCam').click() },
+  mealGal: () => { if (!needKey('gal')) $('#mealGal').click() },
+  mealText: () => {
+    if (needKey('text')) return;
+    sheet(`<h2 class="sh">Tulis makanan</h2><p class="scope" style="margin-top:-8px">Sebutkan makanan dan porsinya, AI yang menghitung.</p>
+      <textarea id="mealTxt" class="ta" style="min-height:110px;font-family:inherit" placeholder="Contoh: nasi padang rendang + sayur nangka, es teh manis"></textarea>
+      <button class="btn pri block" data-a="mealTextGo">${I('sparkles')} Hitung kalori</button>`);
+    setTimeout(() => $('#mealTxt')?.focus(), 350);
+  },
+  mealTextGo: () => { const t = $('#mealTxt').value.trim(); if (!t) return toast('Tulis dulu makanannya', 'err'); analyzeMeal({ text: t.slice(0, 500) }) },
+  mealOpen: el => { const m = S.meals.find(x => x.id === el.dataset.id); if (!m) return; ui.meal = JSON.parse(JSON.stringify(m)); ui.meal.img = ''; openMealReview() },
+  mealDay: el => { const d = new Date((ui.mealDay || dayKey(new Date())) + 'T12:00:00'); d.setDate(d.getDate() + +el.dataset.d); const k = dayKey(d); if (k > dayKey(new Date())) return; ui.mealDay = k; render() },
+  mPortion: el => { const m = ui.meal; m.portion = clamp(Math.round((m.portion + +el.dataset.d) * 4) / 4, .25, 4); $('#mPortV').textContent = fmtW(m.portion) + '×'; refreshMealTot() },
+  mSlot: el => { ui.meal.slot = el.dataset.k; document.querySelectorAll('#mSlots .chip').forEach(c => { const on = c.dataset.k === ui.meal.slot; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) }) },
+  miDel: el => { ui.meal.items.splice(+el.dataset.ix, 1); $('#mItems').innerHTML = mealItemsHtml(); refreshMealTot() },
+  mealSave: () => {
+    const m = ui.meal; if (!m.items.length) return toast('Tambahkan minimal satu item', 'err');
+    const rec = { id: m.id || uid(), date: m.date, slot: m.slot, name: (m.name || '').trim() || 'Makanan', portion: m.portion, conf: m.conf || 0, note: m.note || '', items: m.items };
+    S.meals = S.meals.filter(x => x.id !== rec.id); S.meals.push(rec); S.meals.sort((x, y) => y.date.localeCompare(x.date));
+    save(); closeSheet(); render(); toast(`${rec.name} · ${r0(mealTotals(rec).kcal)} kkal tersimpan`);
+  },
+  mealDel: async () => {
+    const m = ui.meal; if (!(await ask({ title: 'Hapus makanan ini?', msg: `${m.name} akan dihapus dari catatan.`, ok: 'Hapus' }))) return;
+    S.meals = S.meals.filter(x => x.id !== m.id); save(); closeSheet(); render(); toast('Makanan dihapus');
+  },
+  aiSetup: () => openAiSetup(),
+  aiSave: async el => {
+    const key = $('#aiKey').value.trim(), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
+    if (!/^AIza[\w-]{20,}$/.test(key)) { err.textContent = 'Key Gemini diawali "AIza". Salin ulang dari AI Studio.'; return }
+    busy(el, true); err.textContent = '';
+    try {
+      await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false);
+      localStorage.setItem(AI_KEY, JSON.stringify({ key, model }));
+      const then = ui.aiThen; closeSheet(); toast('Gemini terhubung'); render();
+      if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
+      else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
+      else if (then === 'text') setTimeout(() => A.mealText(), 300);
+    } catch (e) { err.textContent = e.message } finally { if (el.isConnected) busy(el, false) }
+  },
+  aiForget: async () => { if (!(await ask({ title: 'Hapus API key?', msg: 'Fitur foto kalori berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return; localStorage.removeItem(AI_KEY); closeSheet(); toast('API key dihapus'); render() },
+  kcalD: el => { S.settings.kcal = clamp((S.settings.kcal || 2000) + +el.dataset.d, 1000, 5000); save(); $('#kcalV').textContent = r0(S.settings.kcal); render() },
   scan: openScan,
   scanClose: stopScan,
   iconPick: el => openIconPick(el.dataset.id),
@@ -2469,6 +2752,14 @@ document.addEventListener('input', e => {
     if (f === 'suggestion') document.querySelectorAll('#apChips .chip').forEach(c => { const on = c.dataset.v === el.value.trim(); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) });
     syncAppBar();
   }
+  else if (k === 'mName') { if (ui.meal) ui.meal.name = el.value }
+  else if (k === 'mi') {
+    const it = ui.meal?.items[+el.dataset.ix], f = el.dataset.f; if (!it) return;
+    if (f === 'n') it.n = el.value;
+    else if (f === 'g') { const g = Math.max(0, parseFloat(el.value.replace(',', '.')) || 0); if (it.g > 0 && g > 0) { const k = g / it.g; it.kcal *= k; it.p *= k; it.c *= k; it.f *= k; const kc = el.parentNode.querySelector('[data-f=kcal]'); if (kc) kc.value = r0(it.kcal) } it.g = g }
+    else if (f === 'kcal') { const v = Math.max(0, parseFloat(el.value.replace(',', '.')) || 0); if (it.kcal > 0) { const k = v / it.kcal; it.p *= k; it.c *= k; it.f *= k } it.kcal = v }
+    refreshMealTot();
+  }
   else if (k === 'setName') { S.settings.name = el.value.trim().slice(0, 20) || 'WHY'; save() }
 });
 document.addEventListener('submit', async e => {
@@ -2489,6 +2780,10 @@ document.addEventListener('submit', async e => {
   } catch (err) { authFail(err) } finally { busy(btn, false) }
 });
 document.addEventListener('change', e => {
+  if ((e.target.id === 'mealCam' || e.target.id === 'mealGal') && e.target.files[0]) {
+    const f = e.target.files[0]; e.target.value = '';
+    return shrinkImage(f).then(dataUrl => analyzeMeal({ dataUrl })).catch(() => toast('Foto tidak bisa dibaca', 'err'));
+  }
   if (e.target.id === 'tutFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
   }

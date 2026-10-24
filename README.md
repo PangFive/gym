@@ -43,6 +43,7 @@ Pengaturan aplikasi dan pengaturan user disimpan terpisah.
 | `users/<uid>/routines` | Program latihan | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → daftar id program | pemilik akun |
 | `users/<uid>/history/<id>` | Riwayat workout | pemilik akun |
+| `users/<uid>/meals/<id>` | Catatan makan (kalori & makro) | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
 | `users/<uid>/profile` | Email, nama, waktu login terakhir | pemilik akun |
 

@@ -43,6 +43,15 @@ tersinkron di semua perangkat.
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
 
+### Kalori (AI Gemini)
+- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
+  **Foto**, **Galeri**, **Tulis**; halaman detail per hari dengan grafik 7 hari.
+- Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** dengan API key milik
+  pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → Gemini). Hasil: nama hidangan,
+  rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi
+  ¼×–4×, waktu makan) sebelum disimpan. Foto tidak disimpan.
+- Target kalori harian di Pengaturan saya; target makro otomatis 25% protein, 50% karbo, 25% lemak.
+
 ### Statistik
 - Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
   (peta panas + set efektif; otot pendukung dihitung ½ set), riwayat.
@@ -90,6 +99,7 @@ tersinkron di semua perangkat.
 | `users/<uid>/routines` | Program: `{ id, name, items: [{ id, sets, reps }], icon?, color? }` | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → id program | pemilik akun |
 | `users/<uid>/history/<id>` | Riwayat workout | pemilik akun |
+| `users/<uid>/meals/<id>` | Catatan makan: `{ date, slot, name, portion, conf, note, items: [{ n, g, kcal, p, c, f }] }` | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
 | `users/<uid>/profile` | Email, nama, waktu login terakhir | pemilik akun |
 
@@ -162,6 +172,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 5. Repo GitHub diganti total ke WHY; PWA + ikon baru; admin pertama lewat popup.
 6. Pengaturan didesain ulang; data alat pindah ke Firebase (Import/Export JSON).
 7. Bagikan program, ikon program otomatis, scan QR mesin, header Beranda baru.
+8. Pelacak kalori dengan foto + Gemini (API key milik pengguna).
 
 ## 8. Ide berikutnya
 
