@@ -491,6 +491,46 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 .sw::after{content:'';position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(24,32,47,.25);transition:transform .2s}
 .sw[aria-checked="true"]{background:var(--acc)}
 .sw[aria-checked="true"]::after{transform:translateX(20px)}
+/* settings: grouped rows */
+.sgroup{background:#fff;border-radius:20px;border:1px solid rgba(24,32,47,.06);box-shadow:0 6px 18px -14px rgba(24,32,47,.35);overflow:hidden;margin-bottom:10px}
+.srow{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:10px 14px;border:0;border-bottom:1px solid rgba(24,32,47,.06);background:transparent;text-align:left;color:var(--ink)}
+.srow:last-child{border-bottom:0}
+button.srow:active{background:rgba(24,32,47,.04)}
+.sico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 14%,white);color:var(--c)}
+.sico svg.i{width:19px;height:19px}
+.stx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.stx b{font-size:15px;font-weight:700;line-height:1.3}
+.stx small{color:var(--muted);font-size:12.5px;line-height:1.4;word-break:break-word}
+.srow>svg.i{color:var(--faint);width:18px;height:18px}
+.srow.red .stx b{color:#dc2626}
+.sval{font-size:14.5px;font-weight:700;color:var(--ink);text-align:right;flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .step button{width:38px;height:38px}
+.srow .step b{min-width:54px}
+.sin{border:1px solid transparent;background:rgba(24,32,47,.05);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;font-weight:700;color:var(--ink);outline:none;min-height:44px;transition:border-color .2s,background .2s,box-shadow .2s}
+.sin:focus{background:#fff;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.srow .sin.r{width:132px;text-align:right}
+.srow.col{flex-direction:column;align-items:stretch;gap:10px;padding:14px}
+.srow.col>label,.srow.col>.lbl{display:flex;align-items:center;gap:12px}
+.srow.col .sin{width:100%;font-weight:600}
+textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
+.cnt{margin-left:auto;font-size:12px;font-weight:700;color:var(--faint);font-variant-numeric:tabular-nums}
+.cnt.max{color:#c2410c}
+.qchips{display:flex;flex-wrap:wrap;gap:8px}
+.qchips .chip{min-height:40px;padding:8px 14px;font-size:13.5px;background:rgba(24,32,47,.04);border-color:transparent}
+.qchips .chip.on{background:var(--grad);color:#fff}
+.apv{padding:14px;background:linear-gradient(155deg,#cfe3fb 0%,#e4ebfb 50%,#fbe6da 100%);border-bottom:1px solid rgba(24,32,47,.06)}
+.apv-k{display:block;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.apv .brand{font-size:16px;margin-bottom:10px}
+.apv .brand img{width:32px;height:32px;border-radius:10px}
+.apv .banner{margin:0}
+.apv .banner.empty{background:rgba(255,255,255,.45);border-style:dashed;box-shadow:none}
+.apv .banner.empty p{color:var(--muted);font-weight:500}
+.adminwrap{position:relative}
+.savebar{position:sticky;bottom:10px;z-index:3;display:flex;align-items:center;gap:8px;margin:12px 0 4px;padding:8px 8px 8px 16px;border-radius:18px;background:rgba(24,32,47,.92);color:#fff;box-shadow:0 16px 30px -14px rgba(24,32,47,.7);animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
+.savebar span{flex:1;font-size:13px;font-weight:700;line-height:1.35}
+.savebar .btn.soft{background:rgba(255,255,255,.14);border:0;color:#fff}
+.claim{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:10px;border-radius:20px;background:linear-gradient(135deg,#eef4ff,#fff);border:1px solid rgba(47,124,246,.25)}
+.claim .stx b{font-size:15px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -616,6 +656,11 @@ const ICONS = {
   logout: '<path d="M14 4.5h3.5A1.5 1.5 0 0 1 19 6v12a1.5 1.5 0 0 1-1.5 1.5H14M10 16l-4-4 4-4M6 12h9"/>',
   mega: '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1zM16 9a4 4 0 0 1 0 6"/>',
   shield: '<path d="M12 3.5 5 6.5v5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9v-5z"/><path d="m9 12 2 2 4-4"/>',
+  target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6" fill="currentColor"/>',
+  bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/>',
+  vibrate: '<rect x="8" y="3.5" width="8" height="17" rx="2"/><path d="M4.5 8.5v7M19.5 8.5v7"/>',
+  tag: '<path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="8" cy="9" r="1.3"/>',
+  body: '<circle cx="12" cy="4.5" r="2"/><path d="M8 8.5h8l-1.2 6H9.2zM10 14.5 9 21M14 14.5l1 6.5M8 8.5 5.5 13M16 8.5l2.5 4.5"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -794,7 +839,7 @@ function setOnline(on) {
   else offT = setTimeout(() => { if (!fb.online) $('#offline').hidden = phase !== 'app' }, 3000);
 }
 
-const ui = { muscle: 'all', q: '', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '' };
+const ui = { muscle: 'all', q: '', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
 let lastRoute = '';
 
 // ---------- router ----------
@@ -859,8 +904,7 @@ function vLogin() {
       ${up ? '' : '<button class="linkbtn" data-a="forgot">Lupa password?</button>'}
       <div class="or">atau</div>
       <button class="btn soft block gbtn" data-a="google">${GOOGLE_G} Lanjut dengan Google</button>
-    </section>
-    <p class="foot">${esc(APP.appName)} · datamu tersimpan di akunmu dan tersinkron di semua perangkat.</p>`;
+    </section>`;
 }
 const vSplash = msg => `<div class="splash"><img class="logo" src="${LOGO}" alt="${esc(APP.appName)}" width="80" height="80"><span class="spin" aria-hidden="true"></span><span role="status">${msg}</span></div>`;
 function vError() {
@@ -1393,55 +1437,95 @@ function openDay(dow) {
     <button class="btn soft block mt" data-a="dayRest">${I('moon')} Jadikan hari istirahat</button>
     <div class="sheet-foot"><button class="btn pri block" data-a="daySave">Simpan</button></div>`);
 }
+// ---------- settings ----------
+const sRow = ({ icon, c, title, sub = '', right = '', tag = 'div', attrs = '', cls = '' }) =>
+  `<${tag} class="srow ${cls}" ${attrs}><span class="sico" style="--c:${c}">${I(icon)}</span><span class="stx"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${right}</${tag}>`;
+const stepper = (a, d, id, val, extra = '') => `<div class="step"><button data-a="${a}" data-d="-${d}" ${extra} aria-label="Kurangi">−</button><b id="${id}">${val}</b><button data-a="${a}" data-d="${d}" ${extra} aria-label="Tambah">+</button></div>`;
+const SUGGESTIONS = ['3 × 8–10', '3 × 10–12', '4 × 6–8', '3 × 12–15'];
+const appFields = o => ({ appName: String(o.appName || '').trim().slice(0, 40) || 'WHY', announcement: String(o.announcement || '').trim().slice(0, 300),
+  defaultRest: clamp(parseInt(o.defaultRest) || 90, 15, 300), defaultGoal: clamp(parseInt(o.defaultGoal) || 4, 1, 7),
+  suggestion: String(o.suggestion || '').trim().slice(0, 40) || '3 × 10–12' });
+const appDirty = () => JSON.stringify(appFields(ui.appDraft)) !== JSON.stringify(appFields(APP));
+function syncAppBar() { const b = $('#apBar'); if (b) b.hidden = !appDirty() }
+function appPreview(d) {
+  const ann = String(d.announcement || '').trim();
+  return `<div class="apv"><span class="apv-k">Pratinjau di Beranda</span>
+    <div class="brand"><img src="${LOGO}" alt="" width="32" height="32"><span id="pvName">${esc(String(d.appName || '').trim() || 'WHY')}</span></div>
+    <div class="banner glass${ann ? '' : ' empty'}" id="pvBan"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p id="pvAnn">${esc(ann || 'Belum ada pengumuman. Tulis di bawah untuk menampilkannya di Beranda.')}</p></div></div>`;
+}
+// The admin form edits a draft; nothing reaches Firebase until Simpan.
+function adminSection() {
+  const d = ui.appDraft;
+  return `<div class="sgroup">
+      ${appPreview(d)}
+      <div class="srow col"><label for="apName"><span class="sico" style="--c:#2f7cf6">${I('tag')}</span><span class="stx"><b>Nama aplikasi</b><small>Di judul tab, halaman login, dan saat dipasang</small></span></label>
+        <input id="apName" class="sin" data-i="ap" data-k="appName" value="${esc(d.appName)}" maxlength="40" autocomplete="off"></div>
+      <div class="srow col"><label for="apAnn"><span class="sico" style="--c:var(--coral)">${I('mega')}</span><span class="stx"><b>Pengumuman</b><small>Tampil di atas Beranda semua pengguna</small></span><span class="cnt" id="apCnt">${String(d.announcement || '').length}/300</span></label>
+        <textarea id="apAnn" class="sin" data-i="ap" data-k="announcement" rows="3" maxlength="300" placeholder="Contoh: Gym tutup tanggal 17 Agustus.">${esc(d.announcement)}</textarea></div>
+    </div>
+    <div class="sgroup">
+      ${sRow({ icon: 'clock', c: '#14b8a6', title: 'Istirahat', sub: 'Default untuk akun baru', right: stepper('apStep', 15, 'apRestV', d.defaultRest + ' dtk', 'data-k="defaultRest"') })}
+      ${sRow({ icon: 'target', c: '#f2785c', title: 'Target', sub: 'Workout per minggu, akun baru', right: stepper('apStep', 1, 'apGoalV', d.defaultGoal + '×', 'data-k="defaultGoal"') })}
+    </div>
+    <div class="sgroup"><div class="srow col">
+      <div class="lbl"><span class="sico" style="--c:#8b5cf6">${I('dumbbell')}</span><span class="stx"><b>Saran set × reps</b><small>Tampil di halaman detail tutorial</small></span></div>
+      <div class="qchips" id="apChips">${SUGGESTIONS.map(v => `<button class="chip ${d.suggestion === v ? 'on' : ''}" data-a="apSug" data-v="${v}" aria-pressed="${d.suggestion === v}">${v}</button>`).join('')}</div>
+      <input id="apSug" class="sin" data-i="ap" data-k="suggestion" value="${esc(d.suggestion)}" maxlength="40" placeholder="Atau tulis sendiri, mis. 5 × 5" aria-label="Saran set × reps">
+    </div></div>
+    <div class="savebar" id="apBar" role="status" ${appDirty() ? '' : 'hidden'}><span>Ada perubahan yang belum disimpan</span>
+      <button class="btn soft sm" data-a="apReset">Batal</button><button class="btn pri sm" data-a="appSave">Simpan</button></div>`;
+}
 function openSettings() {
   const st = S.settings, u = fb.user || {};
+  ui.appDraft = { ...APP };
   const initial = esc((st.name || u.email || '?').trim().charAt(0).toUpperCase());
-  const stepper = (a, d, id, val) => `<div class="step"><button data-a="${a}" data-d="-${d}" aria-label="Kurangi">−</button><b id="${id}">${val}</b><button data-a="${a}" data-d="${d}" aria-label="Tambah">+</button></div>`;
-  const tog = (k, label) => `<div class="field"><span>${label}</span><button class="sw" role="switch" aria-checked="${!!st[k]}" data-a="toggle" data-k="${k}" aria-label="${label}"></button></div>`;
-  const appRead = `<div class="field"><span>Nama aplikasi</span><b>${esc(APP.appName)}</b></div>
-    <div class="field"><span>Istirahat default</span><b>${APP.defaultRest} dtk</b></div>
-    <div class="field"><span>Target default</span><b>${APP.defaultGoal}× / minggu</b></div>
-    <div class="field"><span>Saran set × reps</span><b>${esc(APP.suggestion)}</b></div>`;
-  const appEdit = `<label class="fld"><span>Nama aplikasi</span><input id="apName" value="${esc(APP.appName)}" maxlength="40"></label>
-    <label class="fld"><span>Pengumuman di Beranda</span><textarea id="apAnn" class="ta" maxlength="300" placeholder="Kosongkan bila tidak ada">${esc(APP.announcement)}</textarea></label>
-    <div class="row2"><label class="fld"><span>Istirahat default (dtk)</span><input id="apRest" type="number" inputmode="numeric" min="15" max="300" value="${APP.defaultRest}"></label>
-      <label class="fld"><span>Target default / minggu</span><input id="apGoal" type="number" inputmode="numeric" min="1" max="7" value="${APP.defaultGoal}"></label></div>
-    <label class="fld"><span>Saran set × reps</span><input id="apSug" value="${esc(APP.suggestion)}" maxlength="40"></label>
-    <button class="btn pri block" data-a="appSave">Simpan pengaturan aplikasi</button>`;
+  const sw = k => `<button class="sw" role="switch" aria-checked="${!!st[k]}" data-a="toggle" data-k="${k}" aria-label="${k === 'sound' ? 'Bunyi' : 'Getar'}"></button>`;
+  const link = (icon, c, title, a, sub = '', cls = '') => sRow({ icon, c, title, sub, cls, tag: 'button', attrs: `data-a="${a}"`, right: I('chev') });
+  const appRead = `<div class="sgroup">
+      ${sRow({ icon: 'tag', c: '#2f7cf6', title: 'Nama aplikasi', right: `<b class="sval">${esc(APP.appName)}</b>` })}
+      ${sRow({ icon: 'clock', c: '#14b8a6', title: 'Istirahat default', right: `<b class="sval">${APP.defaultRest} dtk</b>` })}
+      ${sRow({ icon: 'target', c: '#f2785c', title: 'Target default', right: `<b class="sval">${APP.defaultGoal}× / minggu</b>` })}
+      ${sRow({ icon: 'dumbbell', c: '#8b5cf6', title: 'Saran set × reps', right: `<b class="sval">${esc(APP.suggestion)}</b>` })}
+    </div>`;
+  const claim = !fb.admin && fb.hasAdmin === false && fb.adminKnown
+    ? `<div class="claim"><span class="sico" style="--c:var(--acc)">${I('shield')}</span><span class="stx"><b>Belum ada admin</b><small>Akun pertama yang mengklaim menjadi admin.</small></span><button class="btn pri sm" data-a="claimAdmin">Jadikan saya</button></div>` : '';
   sheet(`<h2 class="sh">Pengaturan</h2>
     <div class="prof"><span class="avatar">${initial}</span><div><b>${esc(st.name || 'Tanpa nama')}</b><small>${esc(u.email || '')}</small>${syncPill()}</div></div>
 
     <h3 class="sh2">Pengaturan saya</h3>
     <p class="scope">Khusus akunmu. Tersimpan di Firebase dan ikut ke semua perangkat.</p>
-    <div class="field"><span>Nama tampilan</span><input data-i="setName" value="${esc(st.name)}" maxlength="20" autocomplete="nickname"></div>
-    <div class="field"><span>Target workout / minggu</span>${stepper('goalD', 1, 'goalV', st.goal + '×')}</div>
-    <div class="field"><span>Istirahat antar set</span>${stepper('restD', 15, 'restV', st.rest + ' dtk')}</div>
-    <div class="field"><span>Figur peta otot</span>${genderSeg()}</div>
-    ${tog('sound', 'Bunyi saat istirahat selesai')}
-    ${tog('vibrate', 'Getar saat istirahat selesai')}
+    <div class="sgroup">
+      ${sRow({ icon: 'user', c: '#2f7cf6', title: 'Nama', sub: 'Sapaan di Beranda', right: `<input class="sin r" data-i="setName" value="${esc(st.name)}" maxlength="20" autocomplete="nickname" aria-label="Nama tampilan">` })}
+      ${sRow({ icon: 'target', c: '#f2785c', title: 'Target', sub: 'Workout per minggu', right: stepper('goalD', 1, 'goalV', st.goal + '×') })}
+      ${sRow({ icon: 'clock', c: '#14b8a6', title: 'Istirahat', sub: 'Antar set', right: stepper('restD', 15, 'restV', st.rest + ' dtk') })}
+      ${sRow({ icon: 'body', c: '#8b5cf6', title: 'Figur otot', sub: 'Gambar peta otot', right: genderSeg() })}
+    </div>
+    <div class="sgroup">
+      ${sRow({ icon: 'bell', c: '#f59e0b', title: 'Bunyi', sub: 'Saat waktu istirahat habis', right: sw('sound') })}
+      ${sRow({ icon: 'vibrate', c: '#ec4899', title: 'Getar', sub: 'Saat waktu istirahat habis', right: sw('vibrate') })}
+    </div>
 
     <h3 class="sh2">Pengaturan aplikasi${fb.admin ? '<span class="adm">ADMIN</span>' : ''}</h3>
     <p class="scope">Berlaku untuk semua pengguna. ${fb.admin ? 'Kamu admin, jadi bisa mengubahnya.' : 'Hanya admin yang bisa mengubahnya.'}</p>
-    ${!fb.admin && fb.hasAdmin === false && fb.adminKnown ? `<button class="btn pri block" data-a="claimAdmin" style="margin-bottom:10px">${I('shield')} Jadikan saya admin</button>` : ''}
-    ${fb.admin ? appEdit : appRead}
+    ${claim}
+    ${fb.admin ? `<div class="adminwrap" id="adminSec">${adminSection()}</div>` : appRead}
 
     ${standalone() ? '' : `<h3 class="sh2">Perangkat ini</h3>
-    <div class="list"><button data-a="install">${I('download')}<span>Pasang ${esc(APP.appName)} di layar utama<small class="fsub">Buka seperti aplikasi, tanpa bilah browser, dan tetap jalan offline</small></span></button></div>`}
+    <div class="sgroup">${link('download', '#2f7cf6', `Pasang ${esc(APP.appName)} di layar utama`, 'install', 'Buka seperti aplikasi dan tetap jalan offline')}</div>`}
 
     <h3 class="sh2">Data</h3>
-    <div class="list">
-      <button data-a="copyClaude">${I('copy')}<span>Salin data untuk Claude</span></button>
-      <button data-a="import">${I('upload')}<span>Import program / backup</span></button>
-      <button data-a="exportBk">${I('download')}<span>Download backup (.json)</span></button>
-      <button class="red" data-a="reset">${I('trash')}<span>Hapus semua data latihan</span></button>
+    <div class="sgroup">
+      ${link('copy', 'var(--coral)', 'Salin data untuk Claude', 'copyClaude', 'Untuk minta dibuatkan program')}
+      ${link('upload', '#14b8a6', 'Import program / backup', 'import')}
+      ${link('download', '#2f7cf6', 'Download backup', 'exportBk', 'File .json berisi semua datamu')}
+      ${link('trash', '#dc2626', 'Hapus semua data latihan', 'reset', '', 'red')}
     </div>
 
     <h3 class="sh2">Akun</h3>
-    <div class="list">
-      <button data-a="copyUid">${I('user')}<span>Salin ID akun<small class="fsub">${esc(u.uid || '')}</small></span></button>
-      <button class="red" data-a="logout">${I('logout')}<span>Keluar</span></button>
-    </div>
-    <p class="foot">${esc(APP.appName)} · tersinkron dengan Firebase</p>`);
+    <div class="sgroup">
+      ${link('user', '#64748b', 'Salin ID akun', 'copyUid', esc(u.uid || ''))}
+      ${link('logout', '#dc2626', 'Keluar', 'logout', '', 'red')}
+    </div>`);
 }
 function openImport() {
   sheet(`<h2 class="sh">Import</h2>
@@ -1905,13 +1989,22 @@ const A = {
   copyUid: async () => { try { await navigator.clipboard.writeText(fb.user.uid); toast('ID akun disalin') } catch { toast(fb.user.uid, 'info') } },
   claimAdmin: el => claimAdmin(el),
   appSave: async el => {
-    const v = { appName: $('#apName').value.trim().slice(0, 40) || 'WHY', announcement: $('#apAnn').value.trim().slice(0, 300),
-      defaultRest: clamp(parseInt($('#apRest').value) || 90, 15, 300), defaultGoal: clamp(parseInt($('#apGoal').value) || 4, 1, 7),
-      suggestion: $('#apSug').value.trim().slice(0, 40) || '3 × 10–12' };
+    const v = appFields(ui.appDraft);
     busy(el, true);
-    try { await fb.mod.set(fb.mod.ref(fb.db, 'app/settings'), v); toast('Pengaturan aplikasi disimpan') }
+    try { await fb.mod.set(fb.mod.ref(fb.db, 'app/settings'), v); APP = { ...APP_DEFAULTS, ...v }; ui.appDraft = { ...v }; document.title = APP.appName; syncAppBar(); toast('Pengaturan aplikasi disimpan') }
     catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
-    finally { busy(el, false) }
+    finally { if (el.isConnected) busy(el, false) }
+  },
+  apReset: () => { ui.appDraft = { ...APP }; $('#adminSec').innerHTML = adminSection() },
+  apStep: el => {
+    const k = el.dataset.k, rest = k === 'defaultRest', d = ui.appDraft;
+    d[k] = clamp((parseInt(d[k]) || 0) + +el.dataset.d, rest ? 15 : 1, rest ? 300 : 7);
+    $(rest ? '#apRestV' : '#apGoalV').textContent = d[k] + (rest ? ' dtk' : '×'); syncAppBar();
+  },
+  apSug: el => {
+    ui.appDraft.suggestion = el.dataset.v; $('#apSug').value = el.dataset.v;
+    document.querySelectorAll('#apChips .chip').forEach(c => { const on = c.dataset.v === el.dataset.v; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) });
+    syncAppBar();
   },
   goalD: el => { S.settings.goal = clamp(S.settings.goal + +el.dataset.d, 1, 7); save(); $('#goalV').textContent = S.settings.goal + '×'; if (route().page !== 'workout') render() },
   restD: el => { S.settings.rest = clamp(S.settings.rest + +el.dataset.d, 15, 300); save(); $('#restV').textContent = S.settings.rest + ' dtk' }
@@ -1932,6 +2025,18 @@ document.addEventListener('input', e => {
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
+  else if (k === 'ap') {
+    const f = el.dataset.k; ui.appDraft[f] = el.value;
+    if (f === 'appName') $('#pvName').textContent = el.value.trim() || 'WHY';
+    if (f === 'announcement') {
+      const t = el.value.trim(), c = $('#apCnt');
+      $('#pvAnn').textContent = t || 'Belum ada pengumuman. Tulis di bawah untuk menampilkannya di Beranda.';
+      $('#pvBan').classList.toggle('empty', !t);
+      c.textContent = el.value.length + '/300'; c.classList.toggle('max', el.value.length >= 300);
+    }
+    if (f === 'suggestion') document.querySelectorAll('#apChips .chip').forEach(c => { const on = c.dataset.v === el.value.trim(); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) });
+    syncAppBar();
+  }
   else if (k === 'setName') { S.settings.name = el.value.trim().slice(0, 20) || 'WHY'; save() }
 });
 document.addEventListener('submit', async e => {
