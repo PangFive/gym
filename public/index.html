@@ -1154,6 +1154,13 @@ function fitThumbs() {
     svg.removeAttribute('data-fit');
   });
 }
+// Any muscle icon that lands on the page, from a full render or a partial redraw, gets zoomed in.
+let fitQueued = false;
+new MutationObserver(() => {
+  if (fitQueued || !document.querySelector('svg[data-fit]')) return;
+  fitQueued = true;
+  queueMicrotask(() => { fitQueued = false; fitThumbs() });
+}).observe(document.body, { childList: true, subtree: true });
 const genderSeg = () => `<div class="gseg">${[['male', 'Pria'], ['female', 'Wanita']].map(([k, n]) => `<button class="${S.settings.body === k ? 'on' : ''}" data-a="body" data-k="${k}">${n}</button>`).join('')}</div>`;
 const libMap = () => bodyMap({ tap: true, sel: ui.muscle === 'all' ? null : ui.muscle, level: () => ui.muscle === 'all' ? 1 : 0 });
 function libHead() {
