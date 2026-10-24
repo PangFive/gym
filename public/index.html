@@ -192,6 +192,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .lhead button{border:0;background:transparent;color:var(--acc);font-weight:700;font-size:14px;padding:4px 0}
 .bm-legend{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;color:var(--faint);font-weight:700;margin:8px 0 6px}
 .bm-legend i{width:16px;height:10px;border-radius:4px}
+.empty .linkbtn{margin-top:4px}
 .empty{padding:28px 18px;text-align:center;color:var(--muted);border-radius:20px;margin-bottom:12px;line-height:1.5}
 
 /* sheet */
@@ -792,7 +793,7 @@ function render() {
   }
   let html;
   if (page === 'library') html = vLibrary();
-  else if (page === 'plan') html = vPlan();
+  else if (page === 'plan') html = vPlan(arg);
   else if (page === 'stats') html = vStats();
   else if (page === 'workout' && S.active) html = vWorkout();
   else if (page === 'edit') html = vEdit(arg);
@@ -1062,22 +1063,32 @@ function rcard(r) {
       <button class="btn pri sm" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>
   </article>`;
 }
-function vPlan() {
+// Plan has two tabs, each with its own address so the back button moves between them:
+// #/plan is the weekly schedule, #/plan/program the routines it is made of.
+function vPlan(tab) {
+  const prog = tab === 'program';
   const days = weekDays(), train = days.filter(x => x.rs.length).length;
-  const rows = days.map(x => {
-    const status = x.st === 'done' ? '<span class="dst done">Selesai</span>' : x.st === 'missed' ? '<span class="dst missed">Terlewat</span>' : '';
-    const items = x.rs.flatMap(r => r.items);
-    return `<button class="drow${x.rs.length ? '' : ' rest'}${x.today ? ' today' : ''}" data-a="day" data-d="${x.dow}" aria-label="${DAYN[x.dow]}: ${x.rs.length ? esc(dayName(x.rs)) : 'hari istirahat'}">
-      <span class="dpill">${x.label}</span><span class="dico">${I(x.rs.length ? 'dumbbell' : 'moon')}</span>
-      <span class="dtx"><b>${x.rs.length ? esc(dayName(x.rs)) : 'Hari istirahat'}</b><small>${x.rs.length ? `${items.length} latihan · ±${estMin(items)} menit` : 'Ketuk untuk merencanakan'}</small></span>
-      ${status}${I('chev')}</button>`;
-  }).join('');
-  return `<header class="top"><div><h1>Plan</h1><div class="sub">${train} hari latihan · ${7 - train} hari istirahat</div></div>
+  const head = `<header class="top"><div><h1>Plan</h1><div class="sub">${prog ? `${S.routines.length} program latihan` : `${train} hari latihan · ${7 - train} hari istirahat`}</div></div>
       <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button></header>
-    <h2 class="st" style="margin-top:0">Plan Mingguan</h2>
-    <p class="scope">Jadwal yang sama setiap minggu. Ketuk hari untuk memilih programnya.</p>
-    <section class="glass card week">${rows}</section>
-    <div class="st-row"><h2 class="st">Program</h2><button class="btn soft sm" data-a="newRoutine">${I('plus')} Program baru</button></div>
+    <div class="seg glass" role="tablist" aria-label="Plan">${[['plan', 'Jadwal', !prog], ['plan/program', 'Program', prog]].map(([to, n, on]) =>
+      `<button role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" data-a="go" data-to="${to}">${n}</button>`).join('')}</div>`;
+  if (!prog) {
+    const rows = days.map(x => {
+      const status = x.st === 'done' ? '<span class="dst done">Selesai</span>' : x.st === 'missed' ? '<span class="dst missed">Terlewat</span>' : '';
+      const items = x.rs.flatMap(r => r.items);
+      return `<button class="drow${x.rs.length ? '' : ' rest'}${x.today ? ' today' : ''}" data-a="day" data-d="${x.dow}" aria-label="${DAYN[x.dow]}: ${x.rs.length ? esc(dayName(x.rs)) : 'hari istirahat'}">
+        <span class="dpill">${x.label}</span><span class="dico">${I(x.rs.length ? 'dumbbell' : 'moon')}</span>
+        <span class="dtx"><b>${x.rs.length ? esc(dayName(x.rs)) : 'Hari istirahat'}</b><small>${x.rs.length ? `${items.length} latihan · ±${estMin(items)} menit` : 'Ketuk untuk merencanakan'}</small></span>
+        ${status}${I('chev')}</button>`;
+    }).join('');
+    return `${head}
+      <p class="scope" style="margin-top:0">Program yang sama di hari yang sama, setiap minggu. Ketuk hari untuk mengaturnya.</p>
+      <h2 class="st" style="margin-top:18px">Minggu ini</h2>
+      <section class="glass card week">${rows}</section>
+      ${S.routines.length ? '' : `<div class="empty glass">Belum ada program untuk dijadwalkan.<button class="linkbtn" data-a="go" data-to="plan/program">Buat program</button></div>`}`;
+  }
+  return `${head}
+    <div class="st-row" style="margin-top:6px"><h2 class="st">Program kamu</h2><button class="btn soft sm" data-a="newRoutine">${I('plus')} Program baru</button></div>
     ${S.routines.map(rcard).join('') || '<div class="empty glass">Belum ada program. Buat baru atau minta Claude membuatkannya.</div>'}
     <section class="glass card claude">
       <div class="cl-h"><span class="qi" style="--c:var(--coral)">${I('spark')}</span><div><b>Dibuatkan Claude</b><small>Minta program dan plan mingguan di chat, lalu import di sini.</small></div></div>
@@ -1089,7 +1100,7 @@ function vPlan() {
 const curR = () => S.routines.find(x => x.id === route().arg);
 function vEdit(id) {
   const r = S.routines.find(x => x.id === id);
-  if (!r) { setTimeout(() => go('plan')); return '' }
+  if (!r) { setTimeout(() => go('plan/program')); return '' }
   const row = (it, i) => {
     const t = T[it.id];
     return `<div class="edrow glass">
@@ -1101,7 +1112,7 @@ function vEdit(id) {
         <div class="ed-o"><button data-a="edMove" data-d="-1" data-ix="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Pindah ke atas">${I('up')}</button><button data-a="edMove" data-d="1" data-ix="${i}" ${i === r.items.length - 1 ? 'disabled' : ''} aria-label="Pindah ke bawah">${I('down')}</button></div></div>
     </div>`;
   };
-  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan">Selesai</button></header>
+  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
     <input class="title-inp glass" data-i="rname" value="${esc(r.name)}" placeholder="Nama program" maxlength="40">
     ${r.items.filter(it => T[it.id]).map(row).join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
@@ -1508,6 +1519,7 @@ async function importText(txt) {
     if (items.length) { const nr = { id: uid(), name: String(r.name || 'Program').slice(0, 40), items }; S.routines.push(nr); fresh.push(nr); added++ }
   });
   if (!added) return toast('Tidak ada latihan yang dikenali', 'err');
+  let weekSet = false;
   // An optional weekly plan: day names (senin … minggu, or English) to program names from the import.
   if (o && !Array.isArray(o) && o.week && typeof o.week === 'object') {
     const week = {};
@@ -1518,9 +1530,9 @@ async function importText(txt) {
       if (ids.length) week['d' + dow] = ids;
     });
     const n = Object.keys(week).length;
-    if (n && await ask({ title: 'Pakai plan mingguan ini?', msg: `Import ini berisi jadwal untuk ${n} hari. Plan mingguanmu yang sekarang akan diganti.`, ok: 'Ganti plan', cancel: 'Program saja', tone: 'warn', icon: 'calendar' })) S.week = week;
+    if (n && await ask({ title: 'Pakai plan mingguan ini?', msg: `Import ini berisi jadwal untuk ${n} hari. Plan mingguanmu yang sekarang akan diganti.`, ok: 'Ganti plan', cancel: 'Program saja', tone: 'warn', icon: 'calendar' })) { S.week = week; weekSet = true }
   }
-  save(); closeSheet(); go('plan');
+  save(); closeSheet(); go(weekSet ? 'plan' : 'plan/program');
   toast(`${added} program ditambahkan${dropped ? ` · ${dropped} latihan tak dikenal dilewati` : ''}`);
 }
 function download(name, text) {
@@ -1711,7 +1723,7 @@ const A = {
     if (!(await ask({ title: 'Hapus program?', msg: `${r.name || 'Program ini'} akan dihapus. Riwayat workout-nya tetap tersimpan.`, ok: 'Hapus' }))) return;
     S.routines = S.routines.filter(x => x !== r);
     Object.keys(S.week).forEach(k => { S.week[k] = S.week[k].filter(id => id !== r.id); if (!S.week[k].length) delete S.week[k] });
-    save(); go('plan'); toast('Program dihapus');
+    save(); go('plan/program'); toast('Program dihapus');
   },
   edSets: el => { const it = curR().items[+el.dataset.ix]; it.sets = clamp(it.sets + +el.dataset.d, 1, 10); save(); render() },
   edMove: el => { const r = curR(), i = +el.dataset.ix, j = i + +el.dataset.d; if (j < 0 || j >= r.items.length) return; [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render() },
