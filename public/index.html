@@ -1076,7 +1076,7 @@ function vHome() {
   return `<header class="top">
       <button class="hi" data-a="settings" aria-label="Profil dan pengaturan"><span class="avatar">${esc((S.settings.name || 'W').trim().charAt(0).toUpperCase())}</span>
         <span class="hi-t"><small>${greet}</small><b>${esc(S.settings.name || 'kamu')}</b></span></button>
-      <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button>
+      ${headActs()}
     </header>
     ${APP.announcement ? `<div class="banner glass" role="note"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p>${esc(APP.announcement)}</p></div>` : ''}
     ${installCard()}
@@ -1168,6 +1168,8 @@ new MutationObserver(() => {
   fitQueued = true;
   queueMicrotask(() => { fitQueued = false; fitThumbs() });
 }).observe(document.body, { childList: true, subtree: true });
+// The actions every main page carries top-right: scan a machine's QR, and settings.
+const headActs = () => `<div class="row-btns"><button class="icon-btn pri" data-a="scan" aria-label="Scan QR alat">${I('qr')}</button><button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button></div>`;
 const genderSeg = () => `<div class="gseg">${[['male', 'Pria'], ['female', 'Wanita']].map(([k, n]) => `<button class="${S.settings.body === k ? 'on' : ''}" data-a="body" data-k="${k}">${n}</button>`).join('')}</div>`;
 const libMap = () => bodyMap({ tap: true, sel: ui.muscle === 'all' ? null : ui.muscle, level: () => ui.muscle === 'all' ? 1 : 0 });
 function libHead() {
@@ -1189,7 +1191,7 @@ function refreshLib() {
 }
 function vLibrary() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div>
-      <button class="icon-btn pri" data-a="scan" aria-label="Scan QR alat">${I('qr')}</button></header>
+      ${headActs()}</header>
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="libMap">${libMap()}</div>
@@ -1252,7 +1254,7 @@ function vPlan(tab) {
   const prog = tab === 'program';
   const days = weekDays(), train = days.filter(x => x.rs.length).length;
   const head = `<header class="top"><div><h1>Plan</h1><div class="sub">${prog ? `${S.routines.length} program latihan` : `${train} hari latihan · ${7 - train} hari istirahat`}</div></div>
-      <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button></header>
+      ${headActs()}</header>
     <div class="seg glass" role="tablist" aria-label="Plan">${[['plan', 'Jadwal', !prog], ['plan/program', 'Program', prog]].map(([to, n, on]) =>
       `<button role="tab" aria-selected="${on}" class="${on ? 'on' : ''}" data-a="go" data-to="${to}">${n}</button>`).join('')}</div>`;
   if (!prog) {
@@ -1439,7 +1441,7 @@ function vStats() {
              { v: w.sets, max: S.settings.goal * 18, c: '#f2785c', n: 'Set', t: `${w.sets}/${S.settings.goal * 18}` },
              { v: w.min, max: S.settings.goal * 50, c: '#14b8a6', n: 'Menit', t: `${w.min}/${S.settings.goal * 50}` }];
   return `<header class="top"><div><h1>Aktivitas</h1><div class="sub">${S.history.length} workout tercatat</div></div>
-      <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button></header>
+      ${headActs()}</header>
     <div class="seg glass">${[['week', 'Minggu'], ['month', 'Bulan'], ['year', 'Tahun']].map(([k, n]) => `<button class="${ui.range === k ? 'on' : ''}" data-a="range" data-k="${k}">${n}</button>`).join('')}</div>
     <section class="glass card"><small class="muted sm">Total volume · ${ser.title}</small>
       <div class="big">${fmt(tot)} <span>kg</span></div>
