@@ -272,6 +272,33 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 /* plan */
 .rcard{padding:16px;margin-bottom:12px}
 .rc-act{display:flex;gap:8px;flex:none}
+.rc-id{display:flex;gap:12px;align-items:center;min-width:0}
+.rc-id>div{min-width:0}
+/* routine icons: a zoomed piece of the muscle map, or a glyph, on the routine's colour */
+.ricon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;overflow:hidden;background:color-mix(in srgb,var(--c) 14%,white);color:var(--c)}
+.ricon svg.i{width:22px;height:22px}
+.ricon.lg{width:54px;height:54px;border-radius:17px}
+.ricon.lg svg.i{width:26px;height:26px}
+.ricon.xl{width:72px;height:72px;border-radius:22px}
+.ricon.xl svg.i{width:34px;height:34px}
+.ricon .mthumb{width:100%;height:100%}
+.ricon .mthumb path{stroke-width:4}
+.ricon .mthumb .bm-sil{fill:color-mix(in srgb,var(--c) 10%,#d3dae6)}
+.ricon .mthumb .bm-m{fill:color-mix(in srgb,var(--c) 6%,#e6ebf3)}
+.ricon .mthumb .bm-m.sel{fill:var(--c)}
+.ipv{display:flex;align-items:center;gap:14px;padding:14px;background:#fff;border-radius:20px;border:1px solid rgba(24,32,47,.06)}
+.ipv b{display:block;font-size:17px}
+.ipv small{color:var(--muted);font-size:13px}
+.swatches{display:flex;flex-wrap:wrap;gap:12px;padding:2px}
+.sw8{position:relative;width:40px;height:40px;border-radius:50%;border:0;padding:0;background:var(--c)}
+.sw8::after{content:'';position:absolute;inset:-3px}
+.sw8.auto{background:conic-gradient(#2f7cf6,#14b8a6,#f59e0b,#f2785c,#ec4899,#8b5cf6,#2f7cf6)}
+.sw8.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ink)}
+.igrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.iopt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 2px;border:0;background:transparent;border-radius:16px;font-size:11.5px;font-weight:700;color:var(--muted);line-height:1.2;text-align:center}
+.iopt .ricon{width:54px;height:54px;border-radius:17px}
+.iopt.on{color:var(--ink);background:rgba(24,32,47,.04)}
+.iopt.on .ricon{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--c)}
 .row-btns{display:flex;gap:8px;align-items:center}
 .rc-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .rcard h3{margin:0 0 4px;font-size:18px;font-weight:800;letter-spacing:-.01em}
@@ -476,7 +503,7 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 .days svg.i{width:15px;height:15px}
 .st-row{display:flex;justify-content:space-between;align-items:center;margin:26px 4px 12px}
 .st-row .st{margin:0}
-.pkrow>.dico,.pkrow>.vt{flex:none;display:grid;place-items:center}
+.pkrow>.dico,.pkrow>.vt,.pkrow>.ricon{flex:none;display:grid;place-items:center}
 .pkrow .dico{width:42px;height:42px}
 .pkrow small{font-size:12.5px}
 .ck b{font-size:12.5px}
@@ -678,6 +705,12 @@ const ICONS = {
   tag: '<path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="8" cy="9" r="1.3"/>',
   body: '<circle cx="12" cy="4.5" r="2"/><path d="M8 8.5h8l-1.2 6H9.2zM10 14.5 9 21M14 14.5l1 6.5M8 8.5 5.5 13M16 8.5l2.5 4.5"/>',
   share: '<path d="M12 14.5V3.5M8 7.5l4-4 4 4"/><path d="M8.5 10.5H7A1.5 1.5 0 0 0 5.5 12v7A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5h-1.5"/>',
+  barbell: '<path d="M2.5 12h19M5.5 8.5v7M8.5 6.5v11M15.5 6.5v11M18.5 8.5v7"/>',
+  kettlebell: '<path d="M9 8.5a3 3 0 1 1 6 0"/><path d="M7.5 10.5h9l1.2 7.5a2 2 0 0 1-2 2.3H8.3a2 2 0 0 1-2-2.3z"/>',
+  flame: '<path d="M12 3.5c.8 3.6 4.5 5.2 4.5 9.5a4.5 4.5 0 0 1-9 0c0-2.2 1.2-3.3 1.8-4.8.9 1.3 1.9 1.8 1.9 1.8-.2-2.7.8-4.6.8-6.5z"/>',
+  bolt: '<path d="M13 3 5.5 13.5H12L11 21l7.5-10.5H12z"/>',
+  heart: '<path d="M12 19.5s-7.5-4.4-7.5-10A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7.5 2.5c0 5.6-7.5 10-7.5 10z"/>',
+  trophy: '<path d="M8 4.5h8v4a4 4 0 0 1-8 0zM8 6.5H5v1a3 3 0 0 0 3 3M16 6.5h3v1a3 3 0 0 1-3 3M12 12.5v4M8.5 20h7M10 16.5h4"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -733,7 +766,8 @@ function normalize(v) {
   const a = d.active;
   return {
     settings: { ...userDefaults(), ...clean(d.settings) },
-    routines: asList(d.routines).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10') })) })),
+    routines: asList(d.routines).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10') })),
+      ...(r.icon && r.icon !== 'auto' ? { icon: String(r.icon) } : {}), ...(/^#[0-9a-f]{6}$/i.test(String(r.color || '')) ? { color: String(r.color) } : {}) })),
     week,
     history: asList(d.history).filter(h => h.id && h.date).map(h => ({
       id: h.id, date: h.date, name: h.name || 'Workout', rids: asList(h.rids).length ? asList(h.rids) : h.rid ? [h.rid] : [],
@@ -991,14 +1025,14 @@ function weekStrip() {
 function todayCard() {
   const now = new Date(), rs = dayRoutines(now.getDay()), nxt = nextPlanned();
   const logged = S.history.filter(h => dayKey(h.date) === dayKey(now));
-  const main = (icon, title, sub, extra = '', tone = '') => `<div class="tmain ${tone}"><span class="ti2">${I(icon)}</span><div><h3>${title}</h3><p>${sub}</p></div></div>${extra}`;
+  const main = (icon, title, sub, extra = '', tone = '') => `<div class="tmain ${tone}">${icon.startsWith('<') ? icon : `<span class="ti2">${I(icon)}</span>`}<div><h3>${title}</h3><p>${sub}</p></div></div>${extra}`;
   let body;
   if (S.active) body = main('playf', esc(S.active.name), '<span id="resumeT">Sedang berjalan</span>', `<button class="btn pri block" data-a="go" data-to="workout">${I('playf')} Lanjutkan workout</button>`);
   else if (logged.length) body = main('check', 'Selesai untuk hari ini', `${esc(logged[0].name)} · ${logged[0].dur} mnt · ${logged[0].sets} set`,
     nxt ? `<p class="tnext">Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}</p>` : '', 'ok');
   else if (rs.length) {
     const items = rs.flatMap(r => r.items);
-    body = main('dumbbell', esc(dayName(rs)), `${items.length} latihan · ±${estMin(items)} menit`,
+    body = main(rIcon(rs[0], 'lg'), esc(dayName(rs)), `${items.length} latihan · ±${estMin(items)} menit`,
       `<div class="tags">${[...new Set(rs.flatMap(routineMuscles))].slice(0, 5).map(mTag).join('')}</div>
        <button class="btn pri block" data-a="startDay">${I('playf')} Mulai ${esc(dayName(rs))}</button>`);
   } else if (Object.keys(S.week).length) body = main('moon', 'Hari istirahat', nxt ? `Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}` : 'Pulihkan otot dan cukupkan tidur.',
@@ -1088,11 +1122,12 @@ function bodyMap({ level = () => 0, sel = null, tap = false } = {}) {
 }
 // One muscle group on the side of the body it shows best on; fitThumbs() then zooms the
 // viewBox in on the highlighted parts once they are in the DOM and can be measured.
-function muscleThumb(k) {
-  const v = (BODY[S.settings.body] || BODY.male)[MI[k].side || 'front'];
+function muscleThumb(k, side) {
+  const keys = [].concat(k);
+  const v = (BODY[S.settings.body] || BODY.male)[side || MI[keys[0]]?.side || 'front'];
   let out = '';
   INERT.forEach(p => (v.p[p] || []).forEach(d => { out += `<path class="bm-sil" d="${d}"/>` }));
-  Object.keys(v.p).forEach(p => { if (!INERT.includes(p)) v.p[p].forEach(d => { out += `<path class="bm-m${p === k ? ' sel' : ''}" d="${d}"/>` }) });
+  Object.keys(v.p).forEach(p => { if (!INERT.includes(p)) v.p[p].forEach(d => { out += `<path class="bm-m${keys.includes(p) ? ' sel' : ''}" d="${d}"/>` }) });
   return `<svg class="mthumb" viewBox="${v.vb}" data-fit preserveAspectRatio="xMidYMid meet" aria-hidden="true">${out}</svg>`;
 }
 function fitThumbs() {
@@ -1142,10 +1177,36 @@ function ago(date) {
   return d <= 0 ? 'hari ini' : d === 1 ? 'kemarin' : d < 7 ? d + ' hari lalu' : new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 const lastDone = r => { const h = S.history.find(x => x.rids.includes(r.id)); return h ? ` · terakhir ${ago(h.date)}` : '' };
+// ---------- routine icons ----------
+// r.icon: absent/'auto', 'm:<muscle>' (a piece of the muscle map) or 'g:<glyph>'; r.color: '#rrggbb'.
+// Automatic: the muscles the routine trains most, in the colour of the top one.
+const GLYPHS = [['dumbbell', 'Dumbel'], ['barbell', 'Barbel'], ['kettlebell', 'Kettlebell'], ['flame', 'Api'], ['bolt', 'Petir'], ['heart', 'Hati'], ['target', 'Target'], ['trophy', 'Piala']];
+const COLORS = ['#2f7cf6', '#6366f1', '#14b8a6', '#16a34a', '#f59e0b', '#f2785c', '#ec4899', '#8b5cf6', '#64748b'];
+const validIcon = v => /^(auto|m:[a-z-]+|g:[a-z]+)$/.test(String(v || '')) && (!String(v).startsWith('m:') || !!MI[String(v).slice(2)]) && (!String(v).startsWith('g:') || GLYPHS.some(g => g[0] === String(v).slice(2)));
+const validColor = v => /^#[0-9a-f]{6}$/i.test(String(v || ''));
+function autoLook(r) {
+  const c = {};
+  r.items.forEach(i => (T[i.id]?.p || []).forEach(k => { c[k] = (c[k] || 0) + 1 }));
+  const ks = Object.keys(c).sort((a, b) => c[b] - c[a]);
+  if (!ks.length) return { icon: 'g:dumbbell', muscles: [], color: '#2f7cf6' };
+  const top = ks[0], side = MI[top].side || 'front';
+  const muscles = ks.filter(k => c[k] >= c[top] * .6 && (MI[k].side || 'front') === side).slice(0, 3);
+  return { icon: 'm:' + top, muscles, side, color: MI[top].c };
+}
+function routineLook(r) {
+  const a = autoLook(r), icon = r.icon && r.icon !== 'auto' && validIcon(r.icon) ? r.icon : null;
+  return { icon: icon || a.icon, muscles: icon ? (icon.startsWith('m:') ? [icon.slice(2)] : []) : a.muscles, side: icon ? null : a.side, color: validColor(r.color) ? r.color : a.color };
+}
+function iconTile({ icon, muscles, side, color }, size = '') {
+  const inner = icon.startsWith('m:') ? muscleThumb(muscles.length ? muscles : [icon.slice(2)], side) : I(icon.slice(2));
+  return `<span class="ricon ${size}" style="--c:${color}" aria-hidden="true">${inner}</span>`;
+}
+const rIcon = (r, size) => iconTile(routineLook(r), size);
+
 function rcard(r) {
   const ts = r.items.slice(0, 4).map(i => T[i.id]).filter(Boolean);
   return `<article class="rcard glass">
-    <div class="rc-top"><div><h3>${rName(r)}</h3><p class="muted">${r.items.length} latihan · ±${estMin(r.items)} menit${lastDone(r)}</p></div>
+    <div class="rc-top"><div class="rc-id">${rIcon(r, 'lg')}<div><h3>${rName(r)}</h3><p class="muted">${r.items.length} latihan · ±${estMin(r.items)} menit${lastDone(r)}</p></div></div>
       <div class="rc-act"><button class="icon-btn sm" data-a="share" data-id="${r.id}" aria-label="Bagikan ${rName(r)}">${I('share')}</button><button class="icon-btn sm" data-a="edit" data-id="${r.id}" aria-label="Edit program">${I('edit')}</button></div></div>
     ${routineDays(r).length ? `<p class="days">${I('calendar')} ${routineDays(r).join(' · ')}</p>` : ''}
     <div class="tags">${routineMuscles(r).map(mTag).join('')}</div>
@@ -1167,7 +1228,7 @@ function vPlan(tab) {
       const status = x.st === 'done' ? '<span class="dst done">Selesai</span>' : x.st === 'missed' ? '<span class="dst missed">Terlewat</span>' : '';
       const items = x.rs.flatMap(r => r.items);
       return `<button class="drow${x.rs.length ? '' : ' rest'}${x.today ? ' today' : ''}" data-a="day" data-d="${x.dow}" aria-label="${DAYN[x.dow]}: ${x.rs.length ? esc(dayName(x.rs)) : 'hari istirahat'}">
-        <span class="dpill">${x.label}</span><span class="dico">${I(x.rs.length ? 'dumbbell' : 'moon')}</span>
+        <span class="dpill">${x.label}</span>${x.rs.length ? rIcon(x.rs[0]) : `<span class="dico">${I('moon')}</span>`}
         <span class="dtx"><b>${x.rs.length ? esc(dayName(x.rs)) : 'Hari istirahat'}</b><small>${x.rs.length ? `${items.length} latihan · ±${estMin(items)} menit` : 'Ketuk untuk merencanakan'}</small></span>
         ${status}${I('chev')}</button>`;
     }).join('');
@@ -1204,6 +1265,7 @@ function vEdit(id) {
   };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
     <input class="title-inp glass" data-i="rname" value="${esc(r.name)}" placeholder="Nama program" maxlength="40">
+    <div class="sgroup" style="margin-bottom:14px"><button class="srow" data-a="iconPick" data-id="${r.id}">${rIcon(r)}<span class="stx"><b>Ikon & warna</b><small>${r.icon && r.icon !== 'auto' || r.color ? 'Dipilih sendiri' : 'Otomatis dari otot yang paling banyak dilatih'}</small></span>${I('chev')}</button></div>
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
@@ -1365,6 +1427,7 @@ function sheet(html) {
   clearTimeout(sheetT); s.classList.remove('closing');
   s.innerHTML = `<div class="scrim" data-a="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="sheet-head"><div class="grab"></div><button class="icon-btn sm sx" data-a="close" aria-label="Tutup">${I('x')}</button></div><div class="sheet-body">${html}</div></div>`;
   s.classList.add('open'); document.body.classList.add('noscroll');
+  fitThumbs();
 }
 function closeSheet() {
   const s = $('#sheet');
@@ -1420,8 +1483,8 @@ function openStartPick() {
   if (S.active) return go('workout');
   const rs = dayRoutines(new Date().getDay());
   sheet(`<h2 class="sh">Mulai workout</h2>
-    ${rs.length ? `<button class="spick plan" data-a="startDay"><div><small class="k">Plan hari ini</small><b>${esc(dayName(rs))}</b><small>${rs.reduce((n, r) => n + r.items.length, 0)} latihan · ±${estMin(rs.flatMap(r => r.items))} menit</small></div><span class="go">${I('playf')}</span></button>` : ''}
-    ${S.routines.map(r => `<button class="spick" data-a="start" data-id="${r.id}"><div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
+    ${rs.length ? `<button class="spick plan" data-a="startDay">${rIcon(rs[0])}<div><small class="k">Plan hari ini</small><b>${esc(dayName(rs))}</b><small>${rs.reduce((n, r) => n + r.items.length, 0)} latihan · ±${estMin(rs.flatMap(r => r.items))} menit</small></div><span class="go">${I('playf')}</span></button>` : ''}
+    ${S.routines.map(r => `<button class="spick" data-a="start" data-id="${r.id}">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
     <div class="list mt"><button data-a="empty">${I('plus')}<span>Workout bebas (kosong)</span></button><button data-a="go" data-to="library">${I('video')}<span>Pilih dari tutorial</span></button></div>`);
 }
 function pickList() {
@@ -1450,7 +1513,7 @@ function dayList() {
   const sel = ui.day.sel;
   return S.routines.map(r => {
     const n = sel.indexOf(r.id);
-    return `<button class="pkrow ${n >= 0 ? 'on' : ''}" data-a="dayToggle" data-id="${r.id}" aria-pressed="${n >= 0}"><span class="dico">${I('dumbbell')}</span>
+    return `<button class="pkrow ${n >= 0 ? 'on' : ''}" data-a="dayToggle" data-id="${r.id}" aria-pressed="${n >= 0}">${rIcon(r)}
       <span><b>${rName(r)}</b><small class="muted">${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>
       <i class="ck">${n >= 0 && sel.length > 1 ? `<b>${n + 1}</b>` : I('check')}</i></button>`;
   }).join('') || '<div class="empty">Belum ada program. Buat program dulu di halaman Plan.</div>';
@@ -1651,7 +1714,7 @@ async function importText(txt) {
       if (!t) { dropped++; return null }
       return { id: t.id, sets: clamp(parseInt(it.sets) || 3, 1, 10), reps: String(it.reps ?? '10').slice(0, 7) };
     }).filter(Boolean);
-    if (items.length) { const nr = { id: uid(), name: String(r.name || 'Program').slice(0, 40), items }; S.routines.push(nr); fresh.push(nr); added++ }
+    if (items.length) { const nr = { id: uid(), name: String(r.name || 'Program').slice(0, 40), items, ...(validIcon(r.icon) && r.icon !== 'auto' ? { icon: r.icon } : {}), ...(validColor(r.color) ? { color: r.color } : {}) }; S.routines.push(nr); fresh.push(nr); added++ }
   });
   if (!added) return toast('Tidak ada latihan yang dikenali', 'err');
   let weekSet = false;
@@ -1786,7 +1849,7 @@ const DAYKEY = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
 const linkRow = (icon, c, title, a, sub = '', attrs = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}" ${attrs}`, right: I('chev') });
 function planBundle(rids, withWeek) {
   const rs = S.routines.filter(r => rids.includes(r.id));
-  const b = { why_plan: 1, from: S.settings.name || '', routines: rs.map(r => ({ name: r.name || 'Program', items: r.items.filter(i => T[i.id]).map(i => [i.id, i.sets, i.reps]) })) };
+  const b = { why_plan: 1, from: S.settings.name || '', routines: rs.map(r => ({ name: r.name || 'Program', items: r.items.filter(i => T[i.id]).map(i => [i.id, i.sets, i.reps]), ...(r.icon ? { icon: r.icon } : {}), ...(r.color ? { color: r.color } : {}) })) };
   if (withWeek) {
     const week = {};
     DOW.forEach(d => { const names = (S.week['d' + d] || []).map(id => rs.find(r => r.id === id)).filter(Boolean).map(r => r.name || 'Program'); if (names.length) week[DAYKEY[d]] = names });
@@ -1798,8 +1861,40 @@ const b64url = str => { let bin = ''; new TextEncoder().encode(str).forEach(c =>
 const unb64url = str => new TextDecoder().decode(Uint8Array.from(atob(str.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)));
 const shareUrl = b => `${location.origin}${location.pathname}#/import/${b64url(JSON.stringify(b))}`;
 // The file spells the exercises out so it reads well when opened.
-const bundleFile = b => JSON.stringify({ ...b, routines: b.routines.map(r => ({ name: r.name, items: r.items.map(([id, sets, reps]) => ({ id, title: T[id]?.t, sets, reps })) })) }, null, 2);
+const bundleFile = b => JSON.stringify({ ...b, routines: b.routines.map(r => ({ ...r, items: r.items.map(([id, sets, reps]) => ({ id, title: T[id]?.t, sets, reps })) })) }, null, 2);
 const bundleTitle = b => b.routines.length === 1 ? b.routines[0].name : `${b.routines.length} program latihan`;
+function iconPreview(r) {
+  return `${rIcon(r, 'xl')}<div><b>${rName(r)}</b><small>${r.icon && r.icon !== 'auto' ? 'Ikon dipilih sendiri' : 'Ikon otomatis'} · ${validColor(r.color) ? 'warna dipilih sendiri' : 'warna otomatis'}</small></div>`;
+}
+function iconOptions(r) {
+  const look = routineLook(r), color = look.color, cur = r.icon && r.icon !== 'auto' && validIcon(r.icon) ? r.icon : 'auto';
+  const opt = (v, label, tile) => `<button class="iopt ${cur === v ? 'on' : ''}" style="--c:${color}" data-a="setIcon" data-v="${v}" aria-pressed="${cur === v}">${tile}<span>${label}</span></button>`;
+  const a = autoLook(r);
+  return opt('auto', 'Otomatis', iconTile({ ...a, color }))
+    + MUSCLES.map(m => opt('m:' + m.k, m.n, iconTile({ icon: 'm:' + m.k, muscles: [m.k], color }))).join('')
+    + GLYPHS.map(([g, n]) => opt('g:' + g, n, iconTile({ icon: 'g:' + g, muscles: [], color }))).join('');
+}
+function colorOptions(r) {
+  const cur = validColor(r.color) ? r.color.toLowerCase() : 'auto';
+  return `<button class="sw8 auto ${cur === 'auto' ? 'on' : ''}" data-a="setColor" data-v="auto" aria-label="Warna otomatis" aria-pressed="${cur === 'auto'}"></button>`
+    + COLORS.map(c => `<button class="sw8 ${cur === c ? 'on' : ''}" style="--c:${c}" data-a="setColor" data-v="${c}" aria-label="Warna ${c}" aria-pressed="${cur === c}"></button>`).join('');
+}
+function openIconPick(rid) {
+  const r = S.routines.find(x => x.id === rid); if (!r) return;
+  ui.iconFor = rid;
+  sheet(`<h2 class="sh">Ikon & warna</h2>
+    <div class="ipv" id="ipv">${iconPreview(r)}</div>
+    <h3 class="sh2">Warna</h3>
+    <div class="swatches" id="ipc">${colorOptions(r)}</div>
+    <h3 class="sh2">Ikon</h3>
+    <div class="igrid" id="ipi">${iconOptions(r)}</div>`);
+}
+function refreshIconPick() {
+  const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return;
+  $('#ipv').innerHTML = iconPreview(r); $('#ipc').innerHTML = colorOptions(r); $('#ipi').innerHTML = iconOptions(r);
+  fitThumbs(); save(); render();
+}
+
 function openShare(rid) {
   ui.share = { rids: rid ? [rid] : S.routines.map(r => r.id), week: true, one: !!rid };
   const rs = S.routines.filter(r => ui.share.rids.includes(r.id));
@@ -2198,6 +2293,9 @@ const A = {
     $(rest ? '#apRestV' : '#apGoalV').textContent = d[k] + (rest ? ' dtk' : '×'); syncAppBar();
   },
   share: el => openShare(el.dataset.id || null),
+  iconPick: el => openIconPick(el.dataset.id),
+  setIcon: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
+  setColor: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.color; else r.color = el.dataset.v; refreshIconPick() },
   shareWeek: el => { ui.share.week = !ui.share.week; el.setAttribute('aria-checked', String(ui.share.week)) },
   shareNative, shareLink, shareFile,
   tutOpen: openTutImport,
