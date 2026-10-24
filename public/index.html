@@ -2037,13 +2037,20 @@ function geminiError(status, j) {
   if (status === 429 || st === 'RESOURCE_EXHAUSTED') return 'Kuota Gemini habis untuk sementara. Coba lagi nanti.';
   return 'Gemini gagal (' + (m || status) + ').';
 }
-async function gemini(parts, { key, model } = aiConf(), json = true) {
+// Gemini sometimes takes long or never answers; nothing waits forever.
+async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs = 90000) {
   if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0 } })
-  }).catch(() => { throw new Error('Tidak bisa menghubungi Gemini. Periksa koneksi internet.') });
-  const j = await res.json().catch(() => ({}));
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
+  let res, j;
+  try {
+    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, signal: ctl.signal,
+      body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0, maxOutputTokens: 512 } })
+    });
+    j = await res.json().catch(() => ({}));
+  } catch (e) {
+    throw new Error(e && e.name === 'AbortError' ? `Gemini tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau ganti model ke gemini-flash-lite-latest.` : `Tidak bisa menghubungi Gemini. Periksa koneksi internet. (${e && e.message || e})`);
+  } finally { clearTimeout(timer) }
   if (!res.ok) throw new Error(geminiError(res.status, j));
   return (j.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('');
 }
@@ -2687,11 +2694,11 @@ const A = {
   aiSave: async el => {
     // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
     // so Gemini itself decides whether it is valid.
-    const key = $('#aiKey').value.replace(/[\s"']+/g, ''), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
+    const key = $('#aiKey').value.replace(/[^\w-]+/g, ''), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
     if (key.length < 20) { err.textContent = 'Key terlalu pendek. Salin ulang seluruh key dari AI Studio.'; return }
     busy(el, true); err.textContent = '';
     try {
-      await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false);
+      await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false, 30000);
       localStorage.setItem(AI_KEY, JSON.stringify({ key, model }));
       const then = ui.aiThen; closeSheet(); toast('Gemini terhubung'); render();
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
