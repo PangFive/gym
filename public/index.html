@@ -1189,8 +1189,11 @@ function autoLook(r) {
   r.items.forEach(i => (T[i.id]?.p || []).forEach(k => { c[k] = (c[k] || 0) + 1 }));
   const ks = Object.keys(c).sort((a, b) => c[b] - c[a]);
   if (!ks.length) return { icon: 'g:dumbbell', muscles: [], color: '#2f7cf6' };
-  const top = ks[0], side = MI[top].side || 'front';
-  const muscles = ks.filter(k => c[k] >= c[top] * .6 && (MI[k].side || 'front') === side).slice(0, 3);
+  // Every primary muscle of its exercises, on the side of the body that shows most of them.
+  const g = BODY[S.settings.body] || BODY.male, weight = v => ks.reduce((n, k) => n + (g[v].p[k] ? c[k] : 0), 0);
+  const side = weight('back') > weight('front') ? 'back' : 'front';
+  const muscles = ks.filter(k => g[side].p[k]);
+  const top = muscles[0] || ks[0];
   return { icon: 'm:' + top, muscles, side, color: MI[top].c };
 }
 function routineLook(r) {
@@ -1265,7 +1268,7 @@ function vEdit(id) {
   };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
     <input class="title-inp glass" data-i="rname" value="${esc(r.name)}" placeholder="Nama program" maxlength="40">
-    <div class="sgroup" style="margin-bottom:14px"><button class="srow" data-a="iconPick" data-id="${r.id}">${rIcon(r)}<span class="stx"><b>Ikon & warna</b><small>${r.icon && r.icon !== 'auto' || r.color ? 'Dipilih sendiri' : 'Otomatis dari otot yang paling banyak dilatih'}</small></span>${I('chev')}</button></div>
+    <div class="sgroup" style="margin-bottom:14px"><button class="srow" data-a="iconPick" data-id="${r.id}">${rIcon(r)}<span class="stx"><b>Ikon & warna</b><small>${r.icon && r.icon !== 'auto' || r.color ? 'Dipilih sendiri' : 'Otomatis dari otot utama latihannya'}</small></span>${I('chev')}</button></div>
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
