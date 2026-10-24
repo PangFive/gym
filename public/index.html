@@ -656,6 +656,53 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .kc-sum{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
 .kc-sum h2{margin:0;font-size:16px;font-weight:800}
 .kc-sum small{font-size:13px;font-weight:600;color:var(--muted)}
+.bal{display:flex;align-items:center;gap:6px;margin-top:14px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.65)}
+.bal div{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.bal small{font-size:11.5px;font-weight:600;color:var(--muted)}
+.bal b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.bal .op{color:var(--faint);font-weight:700}
+.bal .ok b{color:#0b8a5e}.bal .warn b{color:#c2410c}
+.pcta{display:flex;align-items:center;gap:12px;width:100%;padding:14px;margin-bottom:14px;border-radius:20px;text-align:left;color:var(--ink);font:inherit}
+.pcta .ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e}
+.pcta>span:nth-child(2){flex:1;min-width:0}
+.pcta b{display:block;font-size:15px;font-weight:800}
+.pcta small{display:block;font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.wtcard{margin-top:16px}
+.wc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.wc-h h2{margin:0;font-size:16px;font-weight:800}
+.wc-h .btn.sm{min-height:38px;padding:6px 12px;font-size:13.5px}
+.wc-now{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.wc-now b{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.wc-now b span{font-size:14px;color:var(--muted);margin-left:4px;font-weight:700}
+.wc-now em{font-style:normal;font-size:13px;font-weight:700;color:var(--muted)}
+.wc-now em.ok{color:#0b8a5e}
+.wc-bar{height:8px;border-radius:8px;background:rgba(24,32,47,.07);margin-top:12px;overflow:hidden}
+.wc-bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#34c995,#0b8a5e)}
+.wc-ends{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--muted);margin-top:6px}
+.wspark{display:block;width:100%;height:56px;margin-top:12px}
+.wspark .a{fill:rgba(18,163,114,.1)}.wspark .l{fill:none;stroke:#12a372;stroke-width:2;vector-effect:non-scaling-stroke}.wspark circle{fill:#0b8a5e}
+.wc-note{margin:10px 0 0;font-size:13px;color:var(--muted);font-weight:600}
+.pseg{margin:0;background:rgba(24,32,47,.05)}
+.pf .unit{position:relative}
+.pf .unit em{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-size:14px;font-weight:700;color:var(--muted);pointer-events:none}
+.pf .unit input{padding-right:40px}
+.mo-x{flex:none;font-size:12.5px;font-weight:700;color:var(--faint)}
+.pprev{background:linear-gradient(160deg,rgba(212,246,229,.9),rgba(240,252,246,.8));border:1px solid rgba(11,148,102,.14);border-radius:18px;padding:14px 16px;margin:4px 0 12px}
+.pprev.muted{background:rgba(24,32,47,.04);border-color:transparent;font-size:14px}
+.pp-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);font-weight:600;padding:3px 0}
+.pp-row b{color:var(--ink)}
+.pp-big{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid rgba(11,148,102,.15);font-weight:700}
+.pp-big>b{font-size:20px;font-weight:800;color:#0b8a5e}
+.pp-big .step b{min-width:84px}
+.pp-note{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--ink)}
+.pp-warn{display:flex;gap:8px;align-items:flex-start;margin:8px 0 0;font-size:13px;color:#b45309;font-weight:600}
+.pp-warn svg.i{flex:none;width:18px;height:18px}
+.wlog{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 6px}
+.wlog .icon-btn{width:52px;height:52px;font-size:24px;font-weight:700;color:#0b8a5e}
+.wlog label{display:flex;align-items:baseline;gap:6px}
+.wlog input{width:130px;border:0;border-bottom:2px solid rgba(11,148,102,.3);background:transparent;text-align:center;font:inherit;font-size:40px;font-weight:800;color:var(--ink);outline:none;padding:4px 0}
+.wlog input:focus{border-color:#0b8a5e}
+.wlog em{font-style:normal;font-size:16px;font-weight:700;color:var(--muted)}
 .meal-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 22px;border-radius:22px;margin:4px 0 12px}
 .meal-empty .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e;margin-bottom:6px}
 .meal-empty .ic svg.i{width:28px;height:28px}
@@ -846,6 +893,7 @@ const ICONS = {
   pen: '<path d="M4 20h4L18.5 9.5l-4-4L4 16zM13 7l4 4"/>',
   apple: '<path d="M12 7.5c-1.3-1.6-4.6-1.8-6 .6-1.6 2.7-.6 7.2 1.6 9.8 1.2 1.5 2.4 1.6 3.4 1 .6-.3 1.4-.3 2 0 1 .6 2.2.5 3.4-1 2.2-2.6 3.2-7.1 1.6-9.8-1.4-2.4-4.7-2.2-6-.6z"/><path d="M12 7.5c0-2 1-3.5 2.5-4"/>',
   sparkles: '<path d="M12 3.5l1.6 4.4 4.4 1.6-4.4 1.6L12 15.5l-1.6-4.4L6 9.5l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  scale: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M8.2 10a5.4 5.4 0 0 1 7.6 0M12 11.6l1.6-2"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
@@ -883,13 +931,16 @@ function weekStart(d = new Date()) { const x = new Date(d); x.setHours(0, 0, 0, 
 // (week: d0 = Sunday … d6 = Saturday, each a list of routine ids), history and the running workout.
 const APP_DEFAULTS = { appName: 'WHY', announcement: '', defaultRest: 90, defaultGoal: 4, suggestion: '3 × 10–12' };
 let APP = { ...APP_DEFAULTS };
-const userDefaults = () => ({ name: '', goal: APP.defaultGoal, rest: APP.defaultRest, body: 'male', sound: true, vibrate: true, kcal: 2000 });
+// sex / birth (year) / height (cm) / goalW (kg) / act / pace (kg a week) make the body profile; with
+// kcalAuto the daily calorie target follows from it (energy()), otherwise kcal is set by hand.
+const userDefaults = () => ({ name: '', goal: APP.defaultGoal, rest: APP.defaultRest, body: 'male', sound: true, vibrate: true, kcal: 2000,
+  sex: '', birth: 0, height: 0, goalW: 0, act: 'light', pace: .5, kcalAuto: false, startW: 0, startD: '' });
 const clean = o => Object.fromEntries(Object.entries(o && typeof o === 'object' ? o : {}).filter(([, v]) => v != null));
 
 function defaults() {
   const routines = SEED.map(r => ({ id: uid(), name: r.name, items: r.items.map(([id, sets, reps]) => ({ id, sets, reps })) }));
   // A starter week so the plan is not empty on day one: push, pull and legs on Mon, Wed, Fri.
-  return { settings: userDefaults(), routines, week: { d1: [routines[0].id], d3: [routines[1].id], d5: [routines[2].id] }, history: [], meals: [], active: null };
+  return { settings: userDefaults(), routines, week: { d1: [routines[0].id], d3: [routines[1].id], d5: [routines[2].id] }, history: [], meals: [], weights: [], active: null };
 }
 // Firebase keeps arrays as numbered objects and drops empty ones; this reads that (or the device
 // cache, or an old backup) back into the shape the app works with.
@@ -914,6 +965,8 @@ function normalize(v) {
       portion: +m.portion || 1, conf: +m.conf || 0, note: String(m.note || ''),
       items: asList(m.items).map(i => ({ n: String(i.n || ''), g: +i.g || 0, kcal: +i.kcal || 0, p: +i.p || 0, c: +i.c || 0, f: +i.f || 0 }))
     })).sort((x, y) => y.date.localeCompare(x.date)),
+    weights: asList(d.weights).filter(w => w.id && w.date && +w.kg > 0).map(w => ({ id: String(w.id), date: w.date, kg: +w.kg }))
+      .sort((x, y) => y.date.localeCompare(x.date)),
     active: a && a.start ? { name: a.name || 'Workout', rids: asList(a.rids).length ? asList(a.rids) : a.rid ? [a.rid] : [], start: +a.start,
       items: asList(a.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', done: !!x.done })) })) } : null
   };
@@ -933,8 +986,8 @@ const CACHE = id => 'why_cache_' + id, LAST = 'why_last_uid', LEGACY = 'why_stat
 // this device has an unsent edit to that same section, which then wins.
 const SECTIONS = ['settings', 'routines', 'week', 'active'];
 let synced = null, pushT = null, unsub = null, syncState = 'ok';
-// History and meals grow without end, so they sync entry by entry (users/<uid>/<map>/<id>).
-const MAPS = ['history', 'meals'];
+// History, meals and weights grow without end, so they sync entry by entry (users/<uid>/<map>/<id>).
+const MAPS = ['history', 'meals', 'weights'];
 function snap(st) {
   const o = {};
   SECTIONS.forEach(k => { o[k] = JSON.stringify(st[k] ?? null) });
@@ -985,13 +1038,13 @@ let pendingName = '', fromCache = false;
 function applyRemote(val) {
   if (!fb.touched) { fb.touched = true; fb.mod.update(userRef('profile'), { email: fb.user.email || '', displayName: fb.user.displayName || pendingName || '', lastLogin: fb.mod.serverTimestamp() }).catch(() => {}) }
   const remote = normalize(val), rs = snap(remote);
-  const fresh = !val || !(val.settings || val.routines || val.history || val.week || val.meals);
+  const fresh = !val || !(val.settings || val.routines || val.history || val.week || val.meals || val.weights);
   if (!synced) {
     if (fresh) {
       // A new account starts from what this device had, or from the starter plan.
       if (!fromCache) S = legacyState() || defaults();
       if (!S.settings.name || S.settings.name === 'WHY') S.settings.name = pendingName || fb.user.displayName || (fb.user.email || '').split('@')[0] || 'WHY';
-      synced = { settings: '', routines: '', week: '', active: '', history: {}, meals: {} };
+      synced = { settings: '', routines: '', week: '', active: '', history: {}, meals: {}, weights: {} };
     } else { S = remote; synced = rs }
     phase = 'app'; save(); render(); offerAdmin(); return;
   }
@@ -1752,7 +1805,7 @@ function openSettings() {
     <div class="sgroup">
       ${sRow({ icon: 'user', c: '#2f7cf6', title: 'Nama', sub: 'Sapaan di Beranda', right: `<input class="sin r" data-i="setName" value="${esc(st.name)}" maxlength="20" autocomplete="nickname" aria-label="Nama tampilan">` })}
       ${sRow({ icon: 'target', c: '#f2785c', title: 'Target', sub: 'Workout per minggu', right: stepper('goalD', 1, 'goalV', st.goal + '×') })}
-      ${sRow({ icon: 'apple', c: '#ec4899', title: 'Kalori', sub: 'Target per hari', right: stepper('kcalD', 50, 'kcalV', r0(st.kcal || 2000)) })}
+      ${link('scale', '#12a372', 'Profil tubuh & kalori', 'profile', energy() ? `${fmt1(nowWeight())} kg${st.goalW ? ` → ${fmt1(st.goalW)} kg` : ''} · ${r0(kcalGoal())} kkal/hari${st.kcalAuto ? ' (otomatis)' : ''}` : `Belum diisi · target ${r0(kcalGoal())} kkal/hari`)}
       ${sRow({ icon: 'clock', c: '#14b8a6', title: 'Istirahat', sub: 'Antar set', right: stepper('restD', 15, 'restV', st.rest + ' dtk') })}
       ${sRow({ icon: 'body', c: '#8b5cf6', title: 'Figur otot', sub: 'Gambar peta otot', right: genderSeg() })}
     </div>
@@ -2027,7 +2080,41 @@ const mealTotals = m => { const k = m.portion || 1, t = { kcal: 0, p: 0, c: 0, f
 const dayMeals = key => S.meals.filter(m => dayKey(m.date) === key);
 const dayTotals = key => dayMeals(key).reduce((t, m) => { const x = mealTotals(m); t.kcal += x.kcal; t.p += x.p; t.c += x.c; t.f += x.f; return t }, { kcal: 0, p: 0, c: 0, f: 0 });
 // Macro targets from the calorie target: 25% protein, 50% carbohydrate, 25% fat.
-const macroGoals = kcal => ({ p: kcal * .25 / 4, c: kcal * .5 / 4, f: kcal * .25 / 9 });
+// ---------- body profile & energy ----------
+// Resting burn by Mifflin–St Jeor (1990): 10·kg + 6.25·cm − 5·age + 5 (men) or − 161 (women),
+// times an activity factor = the day's total burn (TDEE). A kilo of body fat is about 7,700 kcal,
+// so a weekly pace becomes pace·7700/7 kcal a day below (or above) TDEE. Like MyFitnessPal and
+// Lose It, the target never goes under 1,500 kcal for men or 1,200 for women. Losing or gaining
+// follows from the goal weight; within half a kilo of it the target is maintenance.
+const ACTS = [['sed', 1.2, 'Jarang bergerak', 'Kerja duduk, hampir tanpa olahraga'], ['light', 1.375, 'Sedikit aktif', 'Olahraga ringan 1–3× seminggu'],
+  ['mod', 1.55, 'Aktif', 'Olahraga 3–5× seminggu'], ['high', 1.725, 'Sangat aktif', 'Latihan berat 6–7× seminggu'], ['very', 1.9, 'Atlet', 'Latihan 2× sehari atau kerja fisik berat']];
+const PACES = [.25, .5, .75, 1];
+const nowWeight = () => S.weights[0]?.kg || 0;
+function energy(st = S.settings, kg = nowWeight()) {
+  const age = st.birth ? new Date().getFullYear() - st.birth : 0;
+  if (!st.sex || !age || !st.height || !kg) return null;
+  const bmr = 10 * kg + 6.25 * st.height - 5 * age + (st.sex === 'male' ? 5 : -161);
+  const tdee = bmr * (ACTS.find(a => a[0] === st.act) || ACTS[1])[1];
+  const diff = st.goalW ? st.goalW - kg : 0, dir = Math.abs(diff) < .5 ? 0 : Math.sign(diff);
+  const floor = st.sex === 'male' ? 1500 : 1200, raw = tdee + dir * st.pace * 7700 / 7;
+  return { age, kg, bmr, tdee, diff, dir, floor, floored: raw < floor, target: Math.max(floor, Math.round(raw / 10) * 10), weeks: dir ? Math.abs(diff) / st.pace : 0 };
+}
+const kcalGoal = () => (S.settings.kcalAuto && energy()?.target) || S.settings.kcal || 2000;
+// Protein from body weight (1.8 g/kg, as for people who lift; at most 35% of the calories), fat 25%,
+// carbohydrate the rest. Without a weight: 25 / 50 / 25.
+const macroGoals = kcal => {
+  const kg = nowWeight(), f = kcal * .25 / 9, p = kg ? Math.min(kg * 1.8, kcal * .35 / 4) : kcal * .25 / 4;
+  return { p, c: Math.max(0, (kcal - p * 4 - f * 9) / 4), f };
+};
+const fmt1 = n => (Math.round(n * 10) / 10).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+// Today's intake against the day's burn. Green when it points the way the goal wants.
+function balanceHtml(eaten) {
+  const e = energy(); if (!e) return '';
+  const d = eaten - e.tdee, def = d < 0, good = e.dir ? (e.dir < 0) === def : Math.abs(d) < 250;
+  return `<div class="bal"><div><small>Masuk</small><b>${r0(eaten)}</b></div><span class="op">−</span><div><small>Pembakaran</small><b>${r0(e.tdee)}</b></div><span class="op">=</span>
+    <div class="${good ? 'ok' : 'warn'}"><small>${def ? 'Defisit' : 'Surplus'}</small><b>${r0(Math.abs(d))}</b></div></div>`;
+}
+const balanceWord = eaten => { const e = energy(); if (!e) return ''; const d = eaten - e.tdee; return `${d < 0 ? 'defisit' : 'surplus'} ${r0(Math.abs(d))} kkal` };
 const r0 = n => Math.round(n).toLocaleString('id-ID');
 function kcalRing(eaten, goal, size = 118) {
   const sw = 12, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2, pct = Math.min(1, eaten / goal), over = eaten > goal;
@@ -2043,9 +2130,9 @@ function macroBars(t, goal) {
   return `<div class="mac">${row('Protein', t.p, g.p, '#2f7cf6')}${row('Karbo', t.c, g.c, '#f59e0b')}${row('Lemak', t.f, g.f, '#8b5cf6')}</div>`;
 }
 function calCard() {
-  const goal = S.settings.kcal || 2000, t = dayTotals(dayKey(new Date()));
+  const goal = kcalGoal(), t = dayTotals(dayKey(new Date())), bw = balanceWord(t.kcal);
   return `<section class="glass card kc">
-    <div class="today-h"><h2 class="ct">Kalori Hari Ini <small>target ${r0(goal)} kkal</small></h2>
+    <div class="today-h"><h2 class="ct">Kalori Hari Ini <small>target ${r0(goal)} kkal${bw ? ` · ${bw}` : ''}</small></h2>
       <button data-a="go" data-to="makan">Detail ${I('chev')}</button></div>
     <div class="kc-row">${kcalRing(t.kcal, goal)}${macroBars(t, goal)}</div>
     ${kcActions()}
@@ -2055,6 +2142,91 @@ const kcActions = () => `<div class="kc-act">
       <button class="kc-snap" data-a="mealCam"><span class="ic">${I('camera')}</span><span><b>Foto makanan</b><small>AI menghitung kalorinya</small></span>${I('chev')}</button>
       <div class="kc-alt"><button data-a="mealGal">${I('image')} Dari galeri</button><button data-a="mealText">${I('pen')} Tulis manual</button></div>
     </div>`;
+function sparkline(ws) {
+  const pts = ws.slice(0, 30).reverse(); if (pts.length < 2) return '';
+  const kgs = pts.map(w => w.kg), lo = Math.min(...kgs) - .3, hi = Math.max(...kgs) + .3, W = 300, H = 56;
+  const xy = pts.map((w, i) => [i / (pts.length - 1) * W, H - 4 - (w.kg - lo) / (hi - lo) * (H - 8)]);
+  const line = xy.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
+  return `<svg class="wspark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${W} ${H}L0 ${H}Z" class="a"/><path d="${line}" class="l"/><circle cx="${xy.at(-1)[0]}" cy="${xy.at(-1)[1]}" r="3.5"/></svg>`;
+}
+function weightCard() {
+  const st = S.settings, kg = nowWeight(), e = energy();
+  if (!kg) return `<section class="glass card wtcard"><div class="wc-h"><h2>Berat badan</h2></div>
+    <p class="muted">Catat berat badanmu untuk melihat progres menuju target.</p><button class="btn soft block" data-a="wLog">${I('scale')} Catat berat hari ini</button></section>`;
+  const start = st.startW || S.weights.at(-1).kg, moved = kg - start, goal = st.goalW;
+  const pct = goal && start !== goal ? clamp((start - kg) / (start - goal) * 100, 0, 100) : 0;
+  const eta = e && e.weeks ? new Date(Date.now() + e.weeks * 7 * 864e5).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }) : '';
+  return `<section class="glass card wtcard">
+    <div class="wc-h"><h2>Berat badan</h2><button class="btn soft sm" data-a="wLog">${I('plus')} Catat</button></div>
+    <div class="wc-now"><b>${fmt1(kg)}<span>kg</span></b>${Math.abs(moved) >= .1 ? `<em class="${goal && Math.sign(moved) === Math.sign(goal - start) ? 'ok' : ''}">${moved < 0 ? '↓' : '↑'} ${fmt1(Math.abs(moved))} kg sejak mulai</em>` : ''}</div>
+    ${goal ? `<div class="wc-bar"><i style="width:${pct}%"></i></div><div class="wc-ends"><span>Mulai ${fmt1(start)} kg</span><span>Target ${fmt1(goal)} kg</span></div>` : ''}
+    ${sparkline(S.weights)}
+    <p class="wc-note">${!goal ? 'Atur target berat di profil tubuh.' : e && !e.dir ? 'Kamu sudah di berat target. Pertahankan!' : `Sisa ${fmt1(Math.abs(goal - kg))} kg${eta ? ` · perkiraan tercapai ${eta}` : ''}`}</p>
+  </section>`;
+}
+function profileCta() {
+  return `<button class="glass pcta" data-a="profile"><span class="ic">${I('user')}</span><span><b>Lengkapi profil tubuh</b><small>Berat, tinggi, dan target, agar kalori harian dan defisit/surplus dihitung otomatis</small></span>${I('chev')}</button>`;
+}
+function openProfile() {
+  const st = S.settings;
+  ui.prof = { sex: st.sex, birth: st.birth || '', height: st.height || '', kg: nowWeight() || '', goalW: st.goalW || '', act: st.act, pace: st.pace, auto: st.kcalAuto || !st.sex, kcal: st.kcal || 2000 };
+  const f = (k, label, unit, ph, mode = 'decimal') => `<label class="fld pf"><span>${label}</span><div class="unit"><input data-i="prof" data-k="${k}" inputmode="${mode}" value="${esc(ui.prof[k])}" placeholder="${ph}" autocomplete="off"><em>${unit}</em></div></label>`;
+  sheet(`<h2 class="sh">Profil tubuh</h2>
+    <p class="scope" style="margin-top:-8px">Dipakai untuk menghitung pembakaran kalori harian dan target kalorimu. Tersimpan di akunmu.</p>
+    <div class="fld"><span>Jenis kelamin</span><div class="seg pseg" role="radiogroup">${[['male', 'Pria'], ['female', 'Wanita']].map(([k, n]) => `<button role="radio" aria-checked="${ui.prof.sex === k}" class="${ui.prof.sex === k ? 'on' : ''}" data-a="pSet" data-k="sex" data-v="${k}">${n}</button>`).join('')}</div></div>
+    <div class="row2">${f('birth', 'Tahun lahir', '', 'mis. 1996', 'numeric')}${f('height', 'Tinggi', 'cm', '170')}</div>
+    <div class="row2">${f('kg', 'Berat sekarang', 'kg', '70')}${f('goalW', 'Target berat', 'kg', '65')}</div>
+    <div class="fld"><span>Aktivitas harian</span><div class="mlist" role="radiogroup">${ACTS.map(([k, x, n, d]) => `<button type="button" class="mopt${ui.prof.act === k ? ' on' : ''}" role="radio" aria-checked="${ui.prof.act === k}" data-a="pSet" data-k="act" data-v="${k}"><span class="mo-dot" aria-hidden="true"></span><span class="mo-t"><b>${n}</b><small>${d}</small></span><span class="mo-x">×${fmtW(x)}</span></button>`).join('')}</div></div>
+    <div class="fld" id="pfPace"></div>
+    <div class="fld"><span>Target kalori harian</span><div class="seg pseg" role="radiogroup">${[[1, 'Otomatis'], [0, 'Atur sendiri']].map(([k, n]) => `<button role="radio" aria-checked="${!!ui.prof.auto === !!k}" class="${!!ui.prof.auto === !!k ? 'on' : ''}" data-a="pSet" data-k="auto" data-v="${k}">${n}</button>`).join('')}</div></div>
+    <div id="pfPrev" role="status"></div>
+    <p class="ferr" id="pfErr" role="alert"></p>
+    <button class="btn pri block" data-a="pSave">Simpan profil</button>`);
+  profRefresh();
+}
+// The draft as numbers, or the reason it cannot be used yet.
+function profDraft() {
+  const d = ui.prof, n = v => parseFloat(String(v).replace(',', '.')) || 0, y = new Date().getFullYear();
+  const o = { sex: d.sex, birth: n(d.birth) | 0, height: n(d.height), kg: n(d.kg), goalW: n(d.goalW), act: d.act, pace: d.pace };
+  const err = !o.sex ? 'Pilih jenis kelamin.' : !(o.birth >= y - 100 && o.birth <= y - 13) ? 'Tahun lahir belum benar.' : !(o.height >= 120 && o.height <= 230) ? 'Tinggi antara 120–230 cm.'
+    : !(o.kg >= 30 && o.kg <= 300) ? 'Berat antara 30–300 kg.' : o.goalW && !(o.goalW >= 30 && o.goalW <= 300) ? 'Target berat antara 30–300 kg.' : '';
+  return { o, err };
+}
+function profRefresh() {
+  const { o, err } = profDraft(), e = err ? null : energy({ ...o, goalW: o.goalW }, o.kg);
+  const dir = o.goalW && o.kg ? (Math.abs(o.goalW - o.kg) < .5 ? 0 : Math.sign(o.goalW - o.kg)) : 0;
+  $('#pfPace').innerHTML = dir ? `<span>Kecepatan ${dir < 0 ? 'turun' : 'naik'} per minggu</span><div class="qchips">${PACES.map(v => `<button class="chip${ui.prof.pace === v ? ' on' : ''}" aria-pressed="${ui.prof.pace === v}" data-a="pSet" data-k="pace" data-v="${v}">${fmtW(v)} kg${v === .5 ? ' · disarankan' : v === 1 ? ' · agresif' : ''}</button>`).join('')}</div>` : '';
+  const pv = $('#pfPrev');
+  if (!e) { pv.innerHTML = `<div class="pprev muted">Lengkapi data di atas untuk melihat hitungannya.</div>`; return }
+  const goal = ui.prof.auto ? e.target : ui.prof.kcal, delta = goal - e.tdee;
+  const eta = e.weeks ? new Date(Date.now() + e.weeks * 7 * 864e5).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : '';
+  pv.innerHTML = `<div class="pprev">
+    <div class="pp-row"><span>Metabolisme basal (BMR)</span><b>${r0(e.bmr)} kkal</b></div>
+    <div class="pp-row"><span>Pembakaran harian (TDEE)</span><b>${r0(e.tdee)} kkal</b></div>
+    <div class="pp-big"><span>Target kalori / hari</span>${ui.prof.auto ? `<b>${r0(goal)} kkal</b>` : stepper('pKcal', 50, 'pKcalV', r0(goal) + ' kkal')}</div>
+    <p class="pp-note">${Math.abs(delta) < 50 ? 'Setara pembakaran harian: berat badan dipertahankan.' : `${delta < 0 ? 'Defisit' : 'Surplus'} ${r0(Math.abs(delta))} kkal/hari ≈ ${delta < 0 ? 'turun' : 'naik'} ${fmt1(Math.abs(delta) * 7 / 7700)} kg per minggu.`}
+      ${ui.prof.auto && eta ? `<br>Target ${fmt1(o.goalW)} kg tercapai sekitar <b>${eta}</b> (${Math.ceil(e.weeks)} minggu).` : ''}</p>
+    ${ui.prof.auto && e.floored ? `<p class="pp-warn">${I('alert')} Dibatasi minimal ${r0(e.floor)} kkal/hari agar tetap aman. Pilih kecepatan lebih pelan.</p>` : ''}
+    ${!ui.prof.auto && goal < e.floor ? `<p class="pp-warn">${I('alert')} Di bawah ${r0(e.floor)} kkal/hari tidak disarankan tanpa pengawasan ahli gizi.</p>` : ''}
+  </div>`;
+}
+function openWeightLog() {
+  ui.wkg = nowWeight() || +ui.prof?.kg || 70;
+  sheet(`<h2 class="sh">Catat berat badan</h2>
+    <p class="scope" style="margin-top:-8px">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })} · timbang di pagi hari setelah bangun agar konsisten.</p>
+    <div class="wlog"><button class="icon-btn" data-a="wD" data-d="-1" aria-label="Kurangi 0,1 kg">−</button>
+      <label><input id="wIn" inputmode="decimal" value="${fmt1(ui.wkg)}" aria-label="Berat dalam kg"><em>kg</em></label>
+      <button class="icon-btn" data-a="wD" data-d="1" aria-label="Tambah 0,1 kg">+</button></div>
+    <p class="ferr" id="wErr" role="alert"></p>
+    <button class="btn pri block" data-a="wSave">Simpan</button>`);
+}
+function saveWeight(kg) {
+  const id = dayKey(new Date());
+  S.weights = S.weights.filter(w => w.id !== id); S.weights.push({ id, date: new Date().toISOString(), kg: Math.round(kg * 10) / 10 });
+  S.weights.sort((x, y) => y.date.localeCompare(x.date));
+  if (!S.settings.startW) { S.settings.startW = S.weights[0].kg; S.settings.startD = id }
+}
+
 // Monday-to-Sunday strip for the calorie page: picks the day and shows how full each day was.
 function mealWeek(key, today, goal) {
   const d = new Date(key + 'T12:00:00'), mon = new Date(d); mon.setDate(d.getDate() - (d.getDay() + 6) % 7);
@@ -2073,7 +2245,7 @@ function mealWeek(key, today, goal) {
   </section>`;
 }
 function vMeals() {
-  const key = ui.mealDay || dayKey(new Date()), today = dayKey(new Date()), goal = S.settings.kcal || 2000, t = dayTotals(key);
+  const key = ui.mealDay || dayKey(new Date()), today = dayKey(new Date()), goal = kcalGoal(), t = dayTotals(key);
   const d = new Date(key + 'T12:00:00');
   const label = key === today ? 'Hari ini' : d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
   const meals = dayMeals(key);
@@ -2084,12 +2256,15 @@ function vMeals() {
       return `<button class="meal glass" data-a="mealOpen" data-id="${m.id}"><span class="mi">${I('apple')}</span><span class="mt"><b>${esc(m.name)}</b><small>P ${r0(x.p)} · K ${r0(x.c)} · L ${r0(x.f)} g · ${new Date(m.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small></span><span class="kk">${r0(x.kcal)}<small>kkal</small></span></button>` }).join('');
   }).join('');
   const full = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
-  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="aiSetup" aria-label="Pengaturan Gemini">${I('sliders')}</button></header>
+  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="profile" aria-label="Profil tubuh dan target">${I('user')}</button></header>
     ${mealWeek(key, today, goal)}
     <section class="glass card kc"><div class="kc-sum"><h2>${label}</h2><small>target ${r0(goal)} kkal</small></div>
       <div class="kc-row">${kcalRing(t.kcal, goal, 128)}${macroBars(t, goal)}</div>
+      ${balanceHtml(t.kcal)}
       ${key === today ? kcActions() : ''}</section>
-    ${slots || `<div class="meal-empty glass"><span class="ic">${I('apple')}</span><b>${key === today ? 'Belum ada makanan hari ini' : 'Tidak ada catatan'}</b><p>${key === today ? 'Foto piringmu sebelum makan, AI menghitung kalori dan makronya.' : 'Tidak ada makanan yang dicatat di hari ini.'}</p></div>`}`;
+    ${energy() ? '' : profileCta()}
+    ${slots || `<div class="meal-empty glass"><span class="ic">${I('apple')}</span><b>${key === today ? 'Belum ada makanan hari ini' : 'Tidak ada catatan'}</b><p>${key === today ? 'Foto piringmu sebelum makan, AI menghitung kalori dan makronya.' : 'Tidak ada makanan yang dicatat di hari ini.'}</p></div>`}
+    ${weightCard()}`;
 }
 // ---- Gemini
 function openAiSetup(then) {
@@ -2764,13 +2939,13 @@ const A = {
   },
   import: openImport,
   doImport: () => importText($('#impTxt').value),
-  exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history, meals: S.meals } }, null, 1)),
+  exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history, meals: S.meals, weights: S.weights } }, null, 1)),
   copyClaude,
   install,
   installHide: () => { try { localStorage.setItem(INSTALL_HIDE, '1') } catch {} render() },
   reset: async () => {
     if (!(await ask({ title: 'Hapus semua data latihan?', msg: 'Semua program, plan mingguan, dan riwayat di akunmu akan dihapus dari semua perangkat. Pengaturan akun tetap. Tindakan ini tidak bisa dibatalkan.', ok: 'Hapus semua', icon: 'alert' }))) return;
-    const keep = S.settings, meals = S.meals; S = defaults(); S.settings = keep; S.meals = meals; save(); stopRest(); closeSheet(); go('home'); toast('Data latihan dihapus');
+    const keep = S.settings, meals = S.meals, weights = S.weights; S = defaults(); Object.assign(S, { settings: keep, meals, weights }); save(); stopRest(); closeSheet(); go('home'); toast('Data latihan dihapus');
   },
   // plan
   day: el => openDay(+el.dataset.d),
@@ -2872,7 +3047,34 @@ const A = {
     document.querySelectorAll('#aiModels .mopt').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
   },
   aiForget: async () => { if (!(await ask({ title: 'Hapus API key?', msg: 'Fitur foto kalori berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return; localStorage.removeItem(AI_KEY); closeSheet(); toast('API key dihapus'); render() },
-  kcalD: el => { S.settings.kcal = clamp((S.settings.kcal || 2000) + +el.dataset.d, 1000, 5000); save(); $('#kcalV').textContent = r0(S.settings.kcal); render() },
+  profile: openProfile,
+  pSet: el => {
+    const k = el.dataset.k, v = el.dataset.v;
+    ui.prof[k] = k === 'pace' ? +v : k === 'auto' ? v === '1' : v;
+    if (k !== 'pace') el.parentElement.querySelectorAll('[role=radio]').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
+    profRefresh();
+  },
+  pKcal: el => { ui.prof.kcal = clamp((ui.prof.kcal || 2000) + +el.dataset.d, 1000, 5000); profRefresh() },
+  pSave: () => {
+    const { o, err } = profDraft();
+    if (err) { $('#pfErr').textContent = err; return }
+    const st = S.settings, goalChanged = o.goalW !== st.goalW;
+    Object.assign(st, { sex: o.sex, birth: o.birth, height: o.height, goalW: o.goalW, act: o.act, pace: o.pace, kcalAuto: !!ui.prof.auto, kcal: ui.prof.kcal || st.kcal });
+    if (Math.abs(o.kg - nowWeight()) >= .05) saveWeight(o.kg);
+    // a new goal starts a new stretch: progress is measured from today's weight
+    if (goalChanged || !st.startW) { st.startW = o.kg; st.startD = dayKey(new Date()) }
+    if (!ui.prof.auto) st.kcal = ui.prof.kcal;
+    else st.kcal = energy()?.target || st.kcal;
+    save(); closeSheet(); render(); toast('Profil disimpan');
+  },
+  wLog: openWeightLog,
+  wD: el => { const i = $('#wIn'), v = parseFloat(i.value.replace(',', '.')) || ui.wkg; i.value = fmt1(clamp(v + +el.dataset.d / 10, 30, 300)) },
+  wSave: () => {
+    const v = parseFloat($('#wIn').value.replace(',', '.'));
+    if (!(v >= 30 && v <= 300)) { $('#wErr').textContent = 'Berat antara 30–300 kg.'; return }
+    saveWeight(v); if (S.settings.kcalAuto) S.settings.kcal = energy()?.target || S.settings.kcal;
+    save(); closeSheet(); render(); toast('Berat dicatat');
+  },
   scan: openScan,
   scanClose: stopScan,
   iconPick: el => openIconPick(el.dataset.id),
@@ -2913,6 +3115,7 @@ document.addEventListener('input', e => {
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
+  else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; $('#pfErr').textContent = ''; profRefresh() }
   else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {

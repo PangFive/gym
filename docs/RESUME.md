@@ -51,7 +51,13 @@ tersinkron di semua perangkat.
   pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → Gemini). Hasil: nama hidangan,
   rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi
   ¼×–4×, waktu makan) sebelum disimpan. Foto tidak disimpan.
-- Target kalori harian di Pengaturan saya; target makro otomatis 25% protein, 50% karbo, 25% lemak.
+- **Profil tubuh** (jenis kelamin, tahun lahir, tinggi, berat, target berat, aktivitas, kecepatan
+  0,25–1 kg/minggu), seperti onboarding MyFitnessPal / Lose It. BMR dengan rumus Mifflin–St Jeor
+  × faktor aktivitas = TDEE; target harian = TDEE ± kecepatan × 7.700 / 7 kkal, minimal 1.500 (pria)
+  / 1.200 (wanita). Bisa juga diatur sendiri. Protein 1,8 g/kg berat, lemak 25%, sisanya karbo.
+- **Defisit / surplus** hari ini (masuk − pembakaran) di halaman Kalori dan kartu Beranda.
+- **Berat badan**: catat harian, progres dari berat awal ke target, grafik 30 catatan terakhir,
+  perkiraan tanggal tercapai.
 
 ### Statistik
 - Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
@@ -96,11 +102,12 @@ tersinkron di semua perangkat.
 | `app/tutorials` | Data alat: `{ v, count, updatedAt, items: { <id>: { id, t, m, y, d, p, s } } }` | baca: semua · tulis: admin |
 | `app/admins/<uid>` | `true` untuk admin | akun pertama mengklaim sendiri; berikutnya lewat Console |
 | `app/meta/hasAdmin` | `true` begitu ada admin | baca: semua |
-| `users/<uid>/settings` | Pengaturan user: `name`, `goal`, `rest`, `body`, `sound`, `vibrate` | pemilik akun |
+| `users/<uid>/settings` | Pengaturan user: `name`, `goal`, `rest`, `body`, `sound`, `vibrate`, `kcal`, profil tubuh `sex`, `birth`, `height`, `goalW`, `act`, `pace`, `kcalAuto`, `startW`, `startD` | pemilik akun |
 | `users/<uid>/routines` | Program: `{ id, name, items: [{ id, sets, reps }], icon?, color? }` | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → id program | pemilik akun |
 | `users/<uid>/history/<id>` | Riwayat workout | pemilik akun |
 | `users/<uid>/meals/<id>` | Catatan makan: `{ date, slot, name, portion, conf, note, items: [{ n, g, kcal, p, c, f }] }` | pemilik akun |
+| `users/<uid>/weights/<YYYY-MM-DD>` | Berat badan per hari: `{ date, kg }` | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
 | `users/<uid>/profile` | Email, nama, waktu login terakhir | pemilik akun |
 
@@ -174,6 +181,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 6. Pengaturan didesain ulang; data alat pindah ke Firebase (Import/Export JSON).
 7. Bagikan program, ikon program otomatis, scan QR mesin, header Beranda baru.
 8. Pelacak kalori dengan foto + Gemini (API key milik pengguna).
+9. Profil tubuh, target kalori otomatis (TDEE), defisit/surplus harian, log berat badan.
 
 ## 8. Ide berikutnya
 
