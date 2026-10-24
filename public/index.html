@@ -611,6 +611,11 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 /* calories */
 .kc{padding:18px;background:linear-gradient(160deg,rgba(212,246,229,.9),rgba(240,252,246,.72) 55%,rgba(255,255,255,.6));border-color:rgba(11,148,102,.12)}
 .kc .today-h>button{color:#0b8a5e}
+.kc .today-h{margin-bottom:8px}
+.kbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.kb{display:inline-flex;align-items:center;min-height:26px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#0b6b4a;background:rgba(255,255,255,.75);border:1px solid rgba(11,148,102,.16)}
+.kb.ok{color:#0b6b4a;background:rgba(18,163,114,.14);border-color:transparent}
+.kb.warn{color:#a34a0b;background:rgba(217,119,6,.13);border-color:transparent}
 .kc-act{margin-top:16px;display:grid;gap:8px}
 .kc-snap{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:8px 14px 8px 8px;border:0;border-radius:18px;background:linear-gradient(145deg,#0d8a5f,#05663f);color:#fff;text-align:left;font:inherit;box-shadow:0 14px 24px -14px rgba(11,148,102,.9);transition:transform .15s}
 .kc-snap:active,.kc-alt button:active{transform:scale(.98)}
@@ -2126,7 +2131,12 @@ function balanceHtml(eaten) {
   return `<div class="bal"><div><small>Masuk</small><b>${r0(eaten)}</b></div><span class="op">−</span><div><small>Pembakaran</small><b>${r0(e.tdee)}</b></div><span class="op">=</span>
     <div class="${good ? 'ok' : 'warn'}"><small>${def ? 'Defisit' : 'Surplus'}</small><b>${r0(Math.abs(d))}</b></div></div>`;
 }
-const balanceWord = eaten => { const e = energy(); if (!e) return ''; const d = eaten - e.tdee; return `${d < 0 ? 'defisit' : 'surplus'} ${r0(Math.abs(d))} kkal` };
+// Deficit/surplus as a badge: green when it points the way the goal wants, amber otherwise.
+const balanceBadge = eaten => {
+  const e = energy(); if (!e) return '';
+  const d = eaten - e.tdee, def = d < 0, good = e.dir ? (e.dir < 0) === def : Math.abs(d) < 250;
+  return `<span class="kb ${good ? 'ok' : 'warn'}">${def ? 'Defisit' : 'Surplus'} ${r0(Math.abs(d))} kkal</span>`;
+};
 const r0 = n => Math.round(n).toLocaleString('id-ID');
 function kcalRing(eaten, goal, size = 118) {
   const sw = 12, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2, pct = Math.min(1, eaten / goal), over = eaten > goal;
@@ -2142,10 +2152,10 @@ function macroBars(t, goal) {
   return `<div class="mac">${row('Protein', t.p, g.p, '#2f7cf6')}${row('Karbo', t.c, g.c, '#f59e0b')}${row('Lemak', t.f, g.f, '#8b5cf6')}</div>`;
 }
 function calCard() {
-  const goal = kcalGoal(), t = dayTotals(dayKey(new Date())), bw = balanceWord(t.kcal);
+  const goal = kcalGoal(), t = dayTotals(dayKey(new Date()));
   return `<section class="glass card kc">
-    <div class="today-h"><h2 class="ct">Kalori Hari Ini <small>target ${r0(goal)} kkal${bw ? ` · ${bw}` : ''}</small></h2>
-      <button data-a="go" data-to="makan">Detail ${I('chev')}</button></div>
+    <div class="today-h"><h2 class="ct">Kalori Hari Ini</h2><button data-a="go" data-to="makan">Detail ${I('chev')}</button></div>
+    <div class="kbs"><span class="kb">Target ${r0(goal)} kkal</span>${balanceBadge(t.kcal)}</div>
     <div class="kc-row">${kcalRing(t.kcal, goal)}${macroBars(t, goal)}</div>
     ${kcActions()}
   </section>`;
