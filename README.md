@@ -6,6 +6,8 @@ jadi tersinkron di semua perangkat.
 
 Live: https://pangfive.github.io/gym/
 
+Ringkasan lengkap proyek: [docs/RESUME.md](docs/RESUME.md). Contoh file import: [docs/contoh/](docs/contoh/).
+
 ## Isi repo
 
 | File | Isi |

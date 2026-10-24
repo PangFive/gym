@@ -1,0 +1,53 @@
+{
+  "why_plan": 1,
+  "routines": [
+    {
+      "name": "Day 1 · Dada & Trisep",
+      "items": [
+        { "id": 49, "sets": 3, "reps": "10-12" },
+        { "id": 78, "sets": 3, "reps": "10-12" },
+        { "id": 46, "sets": 3, "reps": "10-12" },
+        { "id": 72, "sets": 3, "reps": "10-12" },
+        { "id": 75, "sets": 3, "reps": "10-12" },
+        { "id": 73, "sets": 3, "reps": "10-12" }
+      ]
+    },
+    {
+      "name": "Day 2 · Kaki",
+      "items": [
+        { "id": 53, "sets": 3, "reps": "10-12" },
+        { "id": 57, "sets": 3, "reps": "10-12" },
+        { "id": 60, "sets": 3, "reps": "10-12" },
+        { "id": 58, "sets": 3, "reps": "10-12" },
+        { "id": 57, "sets": 3, "reps": "10-12" },
+        { "id": 68, "sets": 3, "reps": "10-12" }
+      ]
+    },
+    {
+      "name": "Day 3 · Bahu",
+      "items": [
+        { "id": 46, "sets": 3, "reps": "10-12" },
+        { "id": 67, "sets": 3, "reps": "10-12" },
+        { "id": 67, "sets": 3, "reps": "10-12" },
+        { "id": 42, "sets": 3, "reps": "10-12" }
+      ]
+    },
+    {
+      "name": "Day 4 · Lengan",
+      "items": [
+        { "id": 72, "sets": 3, "reps": "10-12" },
+        { "id": 75, "sets": 3, "reps": "10-12" },
+        { "id": 31, "sets": 3, "reps": "10-12" },
+        { "id": 73, "sets": 3, "reps": "10-12" },
+        { "id": 31, "sets": 3, "reps": "10-12" },
+        { "id": 74, "sets": 3, "reps": "10-12" }
+      ]
+    }
+  ],
+  "week": {
+    "senin": ["Day 1 · Dada & Trisep"],
+    "selasa": ["Day 2 · Kaki"],
+    "kamis": ["Day 3 · Bahu"],
+    "jumat": ["Day 4 · Lengan"]
+  }
+}

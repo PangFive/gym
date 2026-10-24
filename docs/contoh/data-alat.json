@@ -1,0 +1,766 @@
+{
+  "why_tutorials": 1,
+  "exported": "2026-10-24T11:56:27.722Z",
+  "count": 56,
+  "note": "Edit lalu import lagi lewat Pengaturan → Data alat. youtube boleh berisi id atau link; primary/secondary memakai kode di \"muscles\".",
+  "muscles": {
+    "chest": "Dada",
+    "deltoids": "Bahu",
+    "trapezius": "Trapezius",
+    "upper-back": "Punggung atas",
+    "lower-back": "Punggung bawah",
+    "biceps": "Bisep",
+    "triceps": "Trisep",
+    "forearm": "Lengan bawah",
+    "abs": "Perut",
+    "obliques": "Perut samping",
+    "gluteal": "Glutes",
+    "quadriceps": "Paha depan",
+    "hamstring": "Paha belakang",
+    "adductors": "Paha dalam",
+    "calves": "Betis"
+  },
+  "items": [
+    {
+      "id": 36,
+      "title": "Decline Pec Fly",
+      "category": "chest",
+      "youtube": "VeTnytd1cyU",
+      "description": "Membentuk otot dada dengan gerakan buka-tutup lengan dari posisi menurun.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 45,
+      "title": "Decline/Mid Pec Press",
+      "category": "chest",
+      "youtube": "Z9f0TsfLfHI",
+      "description": "Membentuk otot dada bawah / tengah dengan gerakan dorong ke depan.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    {
+      "id": 79,
+      "title": "Dual Upper Smith",
+      "category": "chest",
+      "youtube": "QPdli8JVPVE",
+      "description": "Membentuk otot dada atas / bahu dengan gerakan dorong ke atas dual upper smith.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "deltoids",
+        "triceps"
+      ]
+    },
+    {
+      "id": 47,
+      "title": "Flat Chest Press",
+      "category": "chest",
+      "youtube": "6EbsD3Nx5kE",
+      "description": "Membentuk otot dada tengah dengan gerakan dorong ke atas.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 34,
+      "title": "GYM80 Chest Press",
+      "category": "chest",
+      "youtube": "qR2D3CooiF0",
+      "description": "Membentuk otot dada dengan gerakan dorong ke depan.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 43,
+      "title": "Horizontal Multi Press",
+      "category": "chest",
+      "youtube": "Lt2eE-PKqgc",
+      "description": "Membentuk otot tubuh dada / bahu bagian atas dengan gerakan dorong horizontal.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "deltoids",
+        "triceps"
+      ]
+    },
+    {
+      "id": 44,
+      "title": "Incline Pec Fly",
+      "category": "chest",
+      "youtube": "Var03-DzaDU",
+      "description": "Membentuk otot dada atas dengan gerakan buka-tutup lengan dari posisi bawah ke atas.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "deltoids"
+      ]
+    },
+    {
+      "id": 48,
+      "title": "Incline Press Machine",
+      "category": "chest",
+      "youtube": "D_envxCViu4",
+      "description": "Membentuk otot dada atas dengan gerakan dorong ke atas.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "deltoids",
+        "triceps"
+      ]
+    },
+    {
+      "id": 78,
+      "title": "Incline Press Machine",
+      "category": "chest",
+      "youtube": "1GT1OEbYgx0",
+      "description": "Membentuk otot dada atas dengan gerakan mendorong beban pada mesin incline press.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "deltoids",
+        "triceps"
+      ]
+    },
+    {
+      "id": 49,
+      "title": "Olympic Bench Press",
+      "category": "chest",
+      "youtube": "uWvO1fHlBQY",
+      "description": "Membentuk otot dada dengan gerakan dorong beban menggunakan barbell.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 46,
+      "title": "Pec/Rear Delt Fly",
+      "category": "chest",
+      "youtube": "91_k6j8WSOs",
+      "description": "Membentuk dada dan bahu dengan gerakan membuka-tutup lengan.",
+      "primary": [
+        "chest",
+        "deltoids"
+      ],
+      "secondary": [
+        "upper-back"
+      ]
+    },
+    {
+      "id": 38,
+      "title": "Selectorized Chest Press",
+      "category": "chest",
+      "youtube": "-zLwVSx2Pfc",
+      "description": "Membentuk otot dada dengan gerakan dorong menggunakan mesin beban pin.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 35,
+      "title": "Super Converging Chest Press",
+      "category": "chest",
+      "youtube": "3FSpn1rKvic",
+      "description": "Membentuk otot dada dengan gerakan dorong yang mengarah ke tengah.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 33,
+      "title": "XPLOAD Linear Press",
+      "category": "chest",
+      "youtube": "VsLGEZeglbU",
+      "description": "Membentuk otot dada dengan gerakan dorong lurus ke depan.",
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "triceps",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 77,
+      "title": "Selectorized Shoulder Press",
+      "category": "shoulders",
+      "youtube": "2rLOU1EasEg",
+      "description": "Membentuk otot bahu dengan gerakan mendorong beban ke atas pada mesin shoulder press.",
+      "primary": [
+        "deltoids"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    {
+      "id": 42,
+      "title": "Shoulder Press Machine",
+      "category": "shoulders",
+      "youtube": "Sw5L3QJM3J0",
+      "description": "Membentuk otot bahu dengan gerakan dorong ke atas menggunakan mesin beban pin.",
+      "primary": [
+        "deltoids"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    {
+      "id": 67,
+      "title": "Standing Multi Flight",
+      "category": "shoulders",
+      "youtube": "Rxy-bs9e6aM",
+      "description": "Membentuk otot bahu samping / dada dengan variasi gerakan berbeda.",
+      "primary": [
+        "deltoids"
+      ],
+      "secondary": [
+        "chest"
+      ]
+    },
+    {
+      "id": 76,
+      "title": "Shrugs Machine",
+      "category": "shoulders",
+      "youtube": "eI7xwq8cCRE",
+      "description": "Membentuk otot bahu dan trapezius dengan gerakan angkat bahu pada mesin shrugs.",
+      "primary": [
+        "trapezius"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 31,
+      "title": "Adjustable Low Pulley",
+      "category": "back",
+      "youtube": "gFA-AEHlEwA",
+      "description": "Membentuk otot punggung dengan variasi ketinggian yg dapat di atur.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 30,
+      "title": "Adjustable Resistance Profile Seated Row",
+      "category": "back",
+      "youtube": "nIB1Z82zdEg",
+      "description": "Membentuk otot punggung dengan gerakan tarik sambil duduk.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 69,
+      "title": "Assisted Pull Ups",
+      "category": "back",
+      "youtube": "ZazTACvgXaI",
+      "description": "Membentuk otot punggung dan lengan dengan gerakan tarik tubuh pada mesin assisted pull up",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps",
+        "forearm"
+      ]
+    },
+    {
+      "id": 82,
+      "title": "Chest Supported Bar Row",
+      "category": "back",
+      "youtube": "mSn5evH_N1U",
+      "description": "Membentuk otot punggung dan lengan dengan gerakan menarik beban ke arah tubuh pada mesin chest support bar row, sambil menjaga dada tetap menempel pada bantalan agar gerakan lebih stabil dan fokus ke otot punggung.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps",
+        "trapezius",
+        "deltoids"
+      ]
+    },
+    {
+      "id": 50,
+      "title": "Circular Lat Pulldown",
+      "category": "back",
+      "youtube": "lcJGcpz5QHY",
+      "description": "Membentuk otot punggung dengan gerakan tarik melingkar.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 65,
+      "title": "Dual Cable Lat Pulldown",
+      "category": "back",
+      "youtube": "BPclFt6HphY",
+      "description": "Membentuk otot punggung dengan variasi 2 cable , gerakan tarik dari atas.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 70,
+      "title": "Frontal Pulldowns",
+      "category": "back",
+      "youtube": "ZmlPXpOOLWQ",
+      "description": "Membentuk otot punggung dengan gerakan menarik beban ke depan pada mesin frontal pulldown",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 66,
+      "title": "Lat Pulldown / Row Machine",
+      "category": "back",
+      "youtube": "yOHlLVxDTGg",
+      "description": "Membentuk otot punggung dengan variasi gerakan tarik dari atas / depan ke arah tubuh.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 52,
+      "title": "Low Row Machine",
+      "category": "back",
+      "youtube": "rqIsqcufVH4",
+      "description": "Membentuk otot punggung dengan gerakan tarik ke arah tubuh.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps",
+        "trapezius"
+      ]
+    },
+    {
+      "id": 71,
+      "title": "Mid Back / Rear Delt Row",
+      "category": "back",
+      "youtube": "OpALf1C_3JY",
+      "description": "Membentuk otot bahu dan punggung dengan gerakan membuka lengan pada mesin rear delt / mid back fly",
+      "primary": [
+        "upper-back",
+        "deltoids"
+      ],
+      "secondary": [
+        "trapezius"
+      ]
+    },
+    {
+      "id": 51,
+      "title": "Pullover Machine",
+      "category": "back",
+      "youtube": "nBdc1Twpvbk",
+      "description": "Membentuk otot punggung dengan gerakan tarik dari atas ke bawah.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "chest",
+        "triceps"
+      ]
+    },
+    {
+      "id": 40,
+      "title": "Selectorized Rowing Machine",
+      "category": "back",
+      "youtube": "lnjZKHJBd7s",
+      "description": "Membentuk otot punggung dengan gerakan tarik menggunakan mesin beban pin.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 41,
+      "title": "Standing T Bar Row",
+      "category": "back",
+      "youtube": "9pu4Ca3BQ38",
+      "description": "Membentuk otot punggung dengan gerakan tarik dari posisi berdiri.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps",
+        "trapezius",
+        "lower-back"
+      ]
+    },
+    {
+      "id": 29,
+      "title": "Super Circular Row Machine",
+      "category": "back",
+      "youtube": "aA9ky_ECDug",
+      "description": "Membentuk otot punggung atas dengan gerakan tarik melingkar.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "trapezius",
+        "biceps"
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Super Low Row Machine",
+      "category": "back",
+      "youtube": "88gwj1EH2k0",
+      "description": "Membentuk otot punggung dengan gerakan tarik dari posisi rendah.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 28,
+      "title": "Super Rowing Machine",
+      "category": "back",
+      "youtube": "xSt5DHVYjek",
+      "description": "Membentuk otot punggung dengan gerakan tarik seperti mendayung.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Two Way Row",
+      "category": "back",
+      "youtube": "g2ga4oueEuo",
+      "description": "Membentuk otot punggung dengan variasi gerakan tarik.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 32,
+      "title": "Vertical Pulldown Machine",
+      "category": "back",
+      "youtube": "A7r3NAwFZFI",
+      "description": "Membentuk otot punggung dengan gerakan tarik dari atas ke bawah.",
+      "primary": [
+        "upper-back"
+      ],
+      "secondary": [
+        "biceps"
+      ]
+    },
+    {
+      "id": 91,
+      "title": "Hyperextension bench - TBH",
+      "category": "back",
+      "youtube": "5-Lw-5hn4pA",
+      "description": "",
+      "primary": [
+        "lower-back"
+      ],
+      "secondary": [
+        "gluteal",
+        "hamstring"
+      ]
+    },
+    {
+      "id": 63,
+      "title": "Multi Back Extension",
+      "category": "glutes",
+      "youtube": "9frfHier_iA",
+      "description": "Membentuk otot punggung bawah dengan gerakan menekuk lalu dorong tubuh ke belakang.",
+      "primary": [
+        "lower-back"
+      ],
+      "secondary": [
+        "gluteal",
+        "hamstring"
+      ]
+    },
+    {
+      "id": 74,
+      "title": "Preacher Curl Machine",
+      "category": "arms",
+      "youtube": "pq_piY5hUcI",
+      "description": "Membentuk otot bicep dengan gerakan angkat beban pada mesin preacher curl posisi duduk.",
+      "primary": [
+        "biceps"
+      ],
+      "secondary": [
+        "forearm"
+      ]
+    },
+    {
+      "id": 73,
+      "title": "Total Arms Machine",
+      "category": "arms",
+      "youtube": "CM8_vY0Xg_c",
+      "description": "Membentuk otot lengan dengan gerakan latihan bicep / tricep posisi berdiri.",
+      "primary": [
+        "biceps",
+        "triceps"
+      ],
+      "secondary": [
+        "forearm"
+      ]
+    },
+    {
+      "id": 75,
+      "title": "Overhead Tricep",
+      "category": "arms",
+      "youtube": "jFXhXTTybNY",
+      "description": "Membentuk otot trisep dengan gerakan dorong beban di atas kepala pada mesin overhead tricep.",
+      "primary": [
+        "triceps"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 72,
+      "title": "Tricep / Dip Press",
+      "category": "arms",
+      "youtube": "fsA4v2GXM0o",
+      "description": "Membentuk otot trisep dan dada dengan gerakan menekan beban pada mesin tricep / dip press",
+      "primary": [
+        "triceps"
+      ],
+      "secondary": [
+        "chest"
+      ]
+    },
+    {
+      "id": 39,
+      "title": "Abs Crunches Machine",
+      "category": "core",
+      "youtube": "xtSmy9vbbUo",
+      "description": "Membentuk otot perut dengan gerakan menekuk tubuh ke depan.",
+      "primary": [
+        "abs"
+      ],
+      "secondary": [
+        "obliques"
+      ]
+    },
+    {
+      "id": 61,
+      "title": "3D Smith Hip Thrust",
+      "category": "glutes",
+      "youtube": "q7PkctCiztw",
+      "description": "Membentuk otot glutes gerakan dorong pinggul ke atas pada jalur smith machine.",
+      "primary": [
+        "gluteal"
+      ],
+      "secondary": [
+        "hamstring"
+      ]
+    },
+    {
+      "id": 59,
+      "title": "Selectorized Hip Thruster",
+      "category": "glutes",
+      "youtube": "qiT8JA6QNZk",
+      "description": "Membentuk otot glutes dengan gerakan dorong pinggul ke atas.",
+      "primary": [
+        "gluteal"
+      ],
+      "secondary": [
+        "hamstring"
+      ]
+    },
+    {
+      "id": 62,
+      "title": "Standing Abduction",
+      "category": "glutes",
+      "youtube": "Z3SNVwU-udQ",
+      "description": "Membentuk otot bokong luar dengan gerakan membuka kaki ke samping.",
+      "primary": [
+        "gluteal"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 64,
+      "title": "Standing Hip Thrust",
+      "category": "glutes",
+      "youtube": "JQYf173p95g",
+      "description": "Membentuk otot glutes dengan gerakan dorong pinggul dari posisi duduk-berdiri.",
+      "primary": [
+        "gluteal"
+      ],
+      "secondary": [
+        "hamstring"
+      ]
+    },
+    {
+      "id": 54,
+      "title": "Belt Squat Machine",
+      "category": "legs",
+      "youtube": "H3Lx0Zqd8PQ",
+      "description": "Membentuk kaki gerakan squat menggunakan beban belt pada pinggang.",
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "gluteal",
+        "adductors"
+      ]
+    },
+    {
+      "id": 68,
+      "title": "GYM80 Leg Press",
+      "category": "legs",
+      "youtube": "xdVuPn-7Mws",
+      "description": "Membentuk otot kaki dengan gerakan mendorong beban pada mesin leg press.",
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "gluteal",
+        "hamstring"
+      ]
+    },
+    {
+      "id": 53,
+      "title": "Hack Squat Machine",
+      "category": "legs",
+      "youtube": "Qtj-dgGsd8A",
+      "description": "Membentuk otot kaki dengan sandaran pinggang gerakan squat.",
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "gluteal"
+      ]
+    },
+    {
+      "id": 57,
+      "title": "Leg Extension / Leg Curl Machine",
+      "category": "legs",
+      "youtube": "KHx9oncpBKs",
+      "description": "Membentuk otot paha depan atas belakang dengan gerakan terpisah.",
+      "primary": [
+        "quadriceps",
+        "hamstring"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 55,
+      "title": "Pendulum Squat Machine",
+      "category": "legs",
+      "youtube": "0w-bIbAptlI",
+      "description": "Membentuk otot kaki dengan gerakan squat pada jalur ayunan mesin.",
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "gluteal"
+      ]
+    },
+    {
+      "id": 56,
+      "title": "V Squat Machine",
+      "category": "legs",
+      "youtube": "0NgCS7xq9AI",
+      "description": "Membentuk otot kaki dengan gerakan squat pada jalur mesin berbentuk V.",
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "gluteal"
+      ]
+    },
+    {
+      "id": 58,
+      "title": "Lying Leg Curl",
+      "category": "legs",
+      "youtube": "LsAWJKoinps",
+      "description": "Membentuk otot paha belakang dengan gerakan tekuk kaki dari posisi berbaring.",
+      "primary": [
+        "hamstring"
+      ],
+      "secondary": [
+        "calves"
+      ]
+    },
+    {
+      "id": 60,
+      "title": "Selectorized Abduction/Adduction Machine",
+      "category": "glutes",
+      "youtube": "Ye2nepVGeGs",
+      "description": "Membentuk otot paha dalam dan luar dengan gerakan buka-tutup kaki.",
+      "primary": [
+        "adductors",
+        "gluteal"
+      ],
+      "secondary": []
+    },
+    {
+      "id": 80,
+      "title": "Standing Calves Machine",
+      "category": "legs",
+      "youtube": "pugB9CtYSJU",
+      "description": "Melatih otot betis saat berdiri dengan sandaran bantalan.",
+      "primary": [
+        "calves"
+      ],
+      "secondary": []
+    }
+  ]
+}
