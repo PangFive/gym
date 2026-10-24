@@ -326,6 +326,8 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .srow.done .inp{background:transparent;border-color:transparent}
 .wx-f{display:flex;gap:4px;margin-top:6px}
 #rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:10px;padding:9px 9px 9px 18px;border-radius:999px;background:rgba(24,32,47,.9);color:#fff;backdrop-filter:blur(12px);box-shadow:0 18px 34px -14px rgba(24,32,47,.7);overflow:hidden}
+/* before sign-in there is no tab bar to keep clear of */
+body.pre #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 #rest .rl{font-size:12px;opacity:.7;font-weight:700}
 #rest b{font-size:20px;font-variant-numeric:tabular-nums;min-width:52px}
@@ -852,7 +854,7 @@ function render() {
   const nav = $('#nav');
   if (phase !== 'app') {
     $('#app').innerHTML = phase === 'login' ? vLogin() : phase === 'error' ? vError() : vSplash(phase === 'loading' ? 'Memuat datamu…' : 'Menyiapkan…');
-    nav.hidden = true; document.body.classList.add('navless'); $('#offline').hidden = true; lastRoute = ''; return;
+    nav.hidden = true; document.body.classList.add('navless', 'pre'); $('#offline').hidden = true; lastRoute = ''; return;
   }
   let html;
   if (page === 'library') html = vLibrary();
@@ -862,6 +864,7 @@ function render() {
   else if (page === 'edit') html = vEdit(arg);
   else html = vHome();
   $('#app').innerHTML = html;
+  document.body.classList.remove('pre');
   const full = page === 'workout' || page === 'edit';
   nav.hidden = full;
   document.body.classList.toggle('navless', full);
