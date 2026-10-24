@@ -30,7 +30,10 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html,body{margin:0;min-height:100%}
-body{color:var(--ink);background:#e7eefb;background:linear-gradient(155deg,#cfe3fb 0%,#e4ebfb 40%,#fbe6da 76%,#f8d3c0 100%) fixed;-webkit-font-smoothing:antialiased}
+body{color:var(--ink);background:#e7eefb;-webkit-font-smoothing:antialiased}
+/* The gradient sits on its own fixed layer: mobile browsers mishandle background-attachment:fixed,
+   which left a darker band under horizontally scrolling rows. */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(155deg,#cfe3fb 0%,#e4ebfb 40%,#fbe6da 76%,#f8d3c0 100%)}
 body.noscroll{overflow:hidden}
 button{font:inherit;cursor:pointer}
 html{-webkit-text-size-adjust:100%}
@@ -133,6 +136,9 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .qi{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 15%,white);color:var(--c);flex:none}
 .qtile b{font-size:14px;line-height:1.25}
 .mus{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:2px 16px 12px;scrollbar-width:none}
+/* Chrome spreads a backdrop-filter inside a horizontal scroller over the scroller's whole box (a light
+   band with a dark one under it), so these tiles skip the blur and are a little more opaque instead. */
+.mus .glass{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.72)}
 .mus::-webkit-scrollbar,.chips::-webkit-scrollbar{display:none}
 .mtile{flex:none;width:132px;padding:10px 10px 13px;border-radius:22px;text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:3px}
 .mtile b,.mtile small{padding:0 4px}
