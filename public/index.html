@@ -2021,9 +2021,9 @@ function openAiSetup(then) {
     <ol class="steps-ai">
       <li>Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
       <li>Masuk dengan akun Google, lalu ketuk <b>Create API key</b></li>
-      <li>Salin key-nya (diawali <b>AIza</b>) dan tempel di bawah</li>
+      <li>Ketuk ikon salin di samping key, lalu tempel di bawah</li>
     </ol>
-    <label class="fld"><span>API key Gemini</span><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…" value="${esc(c.key)}"></label>
+    <label class="fld"><span>API key Gemini</span><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
     <label class="fld"><span>Model</span><input id="aiModel" autocomplete="off" spellcheck="false" value="${esc(c.model)}"></label>
     <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke Google Gemini untuk dianalisis dan tidak disimpan di mana pun.</p>
     <p class="ferr" id="aiErr" role="alert"></p>
@@ -2685,8 +2685,10 @@ const A = {
   },
   aiSetup: () => openAiSetup(),
   aiSave: async el => {
-    const key = $('#aiKey').value.trim(), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
-    if (!/^AIza[\w-]{20,}$/.test(key)) { err.textContent = 'Key Gemini diawali "AIza". Salin ulang dari AI Studio.'; return }
+    // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
+    // so Gemini itself decides whether it is valid.
+    const key = $('#aiKey').value.replace(/[\s"']+/g, ''), model = $('#aiModel').value.trim() || 'gemini-flash-latest', err = $('#aiErr');
+    if (key.length < 20) { err.textContent = 'Key terlalu pendek. Salin ulang seluruh key dari AI Studio.'; return }
     busy(el, true); err.textContent = '';
     try {
       await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false);
