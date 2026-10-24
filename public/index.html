@@ -1150,6 +1150,7 @@ function render() {
     history.replaceState(null, '', location.pathname + location.search + '#/plan/program');
     return render();
   }
+  if (draft && !(page === 'edit' && arg === draft.id)) { if (draft.items.length) keepDraft(); else draft = null }
   const nav = $('#nav');
   if (phase !== 'app') {
     $('#app').innerHTML = phase === 'login' ? vLogin() : phase === 'error' ? vError() : vSplash(phase === 'loading' ? 'Memuat datamu…' : 'Menyiapkan…');
@@ -1511,9 +1512,14 @@ function vPlan(tab) {
     </section>`;
 }
 
-const curR = () => S.routines.find(x => x.id === route().arg);
+// A new program is a draft outside S (so nothing syncs) until Selesai or Mulai keeps it.
+let draft = null;
+const findR = id => S.routines.find(x => x.id === id) || (draft && draft.id === id ? draft : null);
+function keepDraft() { if (!draft) return; S.routines.push(draft); draft = null; save() }
+function newDraft(items = []) { draft = { id: uid(), name: 'Program Baru', items }; go('edit/' + draft.id) }
+const curR = () => findR(route().arg);
 function vEdit(id) {
-  const r = S.routines.find(x => x.id === id);
+  const r = findR(id);
   if (!r) { setTimeout(() => go('plan/program')); return '' }
   const row = (it, i) => {
     const t = T[it.id];
@@ -1526,7 +1532,7 @@ function vEdit(id) {
         <div class="ed-o"><button data-a="edMove" data-d="-1" data-ix="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Pindah ke atas">${I('up')}</button><button data-a="edMove" data-d="1" data-ix="${i}" ${i === r.items.length - 1 ? 'disabled' : ''} aria-label="Pindah ke bawah">${I('down')}</button></div></div>
     </div>`;
   };
-  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
+  return `<header class="bar-top glass"><button class="icon-btn" data-a="edBack" aria-label="Kembali">${I('back')}</button><b>${r === draft ? 'Program Baru' : 'Edit Program'}</b><button class="btn ghost sm" data-a="edDone">${r === draft ? 'Simpan' : 'Selesai'}</button></header>
     <section class="glass edhead">
       <button class="eh-ic" data-a="iconPick" data-id="${r.id}" aria-label="Ubah ikon dan warna">${rIcon(r, 'xl')}<span class="eh-badge" aria-hidden="true">${I('edit')}</span></button>
       <div class="eh-main">
@@ -2686,7 +2692,7 @@ function colorOptions(r) {
     + COLORS.map(c => `<button class="sw8 ${cur === c ? 'on' : ''}" style="--c:${c}" data-a="setColor" data-v="${c}" aria-label="Warna ${c}" aria-pressed="${cur === c}"></button>`).join('');
 }
 function openIconPick(rid) {
-  const r = S.routines.find(x => x.id === rid); if (!r) return;
+  const r = findR(rid); if (!r) return;
   ui.iconFor = rid;
   sheet(`<h2 class="sh">Ikon & warna</h2>
     <div class="ipv" id="ipv">${iconPreview(r)}</div>
@@ -2696,7 +2702,7 @@ function openIconPick(rid) {
     <div class="igrid" id="ipi">${iconOptions(r)}</div>`);
 }
 function refreshIconPick() {
-  const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return;
+  const r = findR(ui.iconFor); if (!r) return;
   $('#ipv').innerHTML = iconPreview(r); $('#ipc').innerHTML = colorOptions(r); $('#ipi').innerHTML = iconOptions(r);
   fitThumbs(); save(); render();
 }
@@ -2974,18 +2980,25 @@ const A = {
     r.items.push({ id: +el.dataset.id, sets: 3, reps: '10' }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
-  newWith: el => { const r = { id: uid(), name: 'Program Baru', items: [{ id: +el.dataset.id, sets: 3, reps: '10' }] }; S.routines.push(r); save(); closeSheet(); go('edit/' + r.id) },
+  newWith: el => { closeSheet(); newDraft([{ id: +el.dataset.id, sets: 3, reps: '10' }]) },
   quick: el => { const t = T[+el.dataset.id]; closeSheet(); startWorkout([{ id: t.id, sets: 3, reps: '10' }], t.t) },
   startPick: openStartPick,
   start: el => {
-    const r = S.routines.find(x => x.id === el.dataset.id); if (!r) return;
+    const r = findR(el.dataset.id); if (!r) return;
     if (!r.items.length) return toast('Program ini belum punya latihan', 'err');
+    if (r === draft) keepDraft();
     closeSheet(); startWorkout(r.items, r.name || 'Workout', [r.id]);
   },
   empty: () => { closeSheet(); startWorkout([], 'Workout Bebas') },
-  newRoutine: () => { const r = { id: uid(), name: 'Program Baru', items: [] }; S.routines.push(r); save(); go('edit/' + r.id) },
+  newRoutine: () => newDraft(),
+  edDone: () => { const was = !!draft; keepDraft(); go('plan/program'); if (was) toast('Program disimpan') },
+  edBack: async () => {
+    if (draft && draft.items.length && !(await ask({ title: 'Buang program baru?', msg: 'Program ini belum disimpan. Ketuk Simpan untuk menyimpannya.', ok: 'Buang', icon: 'trash' }))) return;
+    draft = null; go('plan/program');
+  },
   edit: el => go('edit/' + el.dataset.id),
   delRoutine: async el => {
+    if (draft && draft.id === el.dataset.id) { draft = null; go('plan/program'); return toast('Program baru dibuang') }
     const r = S.routines.find(x => x.id === el.dataset.id); if (!r) return;
     if (!(await ask({ title: 'Hapus program?', msg: `${r.name || 'Program ini'} akan dihapus. Riwayat workout-nya tetap tersimpan.`, ok: 'Hapus' }))) return;
     S.routines = S.routines.filter(x => x !== r);
@@ -3001,7 +3014,7 @@ const A = {
   pickDone: () => {
     const p = ui.pick; if (!p.sel.size) return toast('Pilih minimal satu latihan', 'err');
     const ids = [...p.sel];
-    if (p.mode === 'edit') { const r = S.routines.find(x => x.id === p.rid); if (r) ids.forEach(id => r.items.push({ id, sets: 3, reps: '10' })) }
+    if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push({ id, sets: 3, reps: '10' })) }
     else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem({ id, sets: 3, reps: '10' })));
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
   },
@@ -3185,8 +3198,8 @@ const A = {
   scan: openScan,
   scanClose: stopScan,
   iconPick: el => openIconPick(el.dataset.id),
-  setIcon: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
-  setColor: el => { const r = S.routines.find(x => x.id === ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.color; else r.color = el.dataset.v; refreshIconPick() },
+  setIcon: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
+  setColor: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.color; else r.color = el.dataset.v; refreshIconPick() },
   shareWeek: el => { ui.share.week = !ui.share.week; el.setAttribute('aria-checked', String(ui.share.week)) },
   shareNative, shareLink, shareFile,
   tutOpen: openTutImport,
