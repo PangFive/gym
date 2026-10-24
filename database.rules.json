@@ -4,12 +4,33 @@
       "settings": {
         ".read": true,
         ".write": "auth != null && root.child('app/admins/' + auth.uid).val() === true",
-        "appName": { ".validate": "newData.isString() && newData.val().length <= 40" },
-        "announcement": { ".validate": "newData.isString() && newData.val().length <= 300" },
-        "defaultRest": { ".validate": "newData.isNumber() && newData.val() >= 15 && newData.val() <= 300" },
-        "defaultGoal": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 7" },
-        "suggestion": { ".validate": "newData.isString() && newData.val().length <= 40" },
-        "$other": { ".validate": false }
+        "appName": {
+          ".validate": "newData.isString() && newData.val().length <= 40"
+        },
+        "announcement": {
+          ".validate": "newData.isString() && newData.val().length <= 300"
+        },
+        "defaultRest": {
+          ".validate": "newData.isNumber() && newData.val() >= 15 && newData.val() <= 300"
+        },
+        "defaultGoal": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 7"
+        },
+        "suggestion": {
+          ".validate": "newData.isString() && newData.val().length <= 40"
+        },
+        "$other": {
+          ".validate": false
+        }
+      },
+      "tutorials": {
+        ".read": true,
+        ".write": "auth != null && root.child('app/admins/' + auth.uid).val() === true",
+        "items": {
+          "$id": {
+            ".validate": "newData.hasChildren(['id', 't', 'y'])"
+          }
+        }
       },
       "admins": {
         "$uid": {

@@ -550,9 +550,11 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
-// The tutorial videos (from the gym's tutorial list). id = tutorial id, t = title,
-// m = the gym's own category for the machine, y = YouTube video id, d = description.
-const TUTORIALS = [{"id":36,"t":"Decline Pec Fly","m":"chest","y":"VeTnytd1cyU","d":"Membentuk otot dada dengan gerakan buka-tutup lengan dari posisi menurun."},{"id":45,"t":"Decline/Mid Pec Press","m":"chest","y":"Z9f0TsfLfHI","d":"Membentuk otot dada bawah / tengah dengan gerakan dorong ke depan."},{"id":79,"t":"Dual Upper Smith","m":"chest","y":"QPdli8JVPVE","d":"Membentuk otot dada atas / bahu dengan gerakan dorong ke atas dual upper smith."},{"id":47,"t":"Flat Chest Press","m":"chest","y":"6EbsD3Nx5kE","d":"Membentuk otot dada tengah dengan gerakan dorong ke atas."},{"id":34,"t":"GYM80 Chest Press","m":"chest","y":"qR2D3CooiF0","d":"Membentuk otot dada dengan gerakan dorong ke depan."},{"id":43,"t":"Horizontal Multi Press","m":"chest","y":"Lt2eE-PKqgc","d":"Membentuk otot tubuh dada / bahu bagian atas dengan gerakan dorong horizontal."},{"id":44,"t":"Incline Pec Fly","m":"chest","y":"Var03-DzaDU","d":"Membentuk otot dada atas dengan gerakan buka-tutup lengan dari posisi bawah ke atas."},{"id":78,"t":"Incline Press Machine","m":"chest","y":"1GT1OEbYgx0","d":"Membentuk otot dada atas dengan gerakan mendorong beban pada mesin incline press."},{"id":48,"t":"Incline Press Machine","m":"chest","y":"D_envxCViu4","d":"Membentuk otot dada atas dengan gerakan dorong ke atas."},{"id":49,"t":"Olympic Bench Press","m":"chest","y":"uWvO1fHlBQY","d":"Membentuk otot dada dengan gerakan dorong beban menggunakan barbell."},{"id":46,"t":"Pec/Rear Delt Fly","m":"chest","y":"91_k6j8WSOs","d":"Membentuk dada dan bahu dengan gerakan membuka-tutup lengan."},{"id":38,"t":"Selectorized Chest Press","m":"chest","y":"-zLwVSx2Pfc","d":"Membentuk otot dada dengan gerakan dorong menggunakan mesin beban pin."},{"id":35,"t":"Super Converging Chest Press","m":"chest","y":"3FSpn1rKvic","d":"Membentuk otot dada dengan gerakan dorong yang mengarah ke tengah."},{"id":33,"t":"XPLOAD Linear Press","m":"chest","y":"VsLGEZeglbU","d":"Membentuk otot dada dengan gerakan dorong lurus ke depan."},{"id":31,"t":"Adjustable Low Pulley","m":"back","y":"gFA-AEHlEwA","d":"Membentuk otot punggung dengan variasi ketinggian yg dapat di atur."},{"id":30,"t":"Adjustable Resistance Profile Seated Row","m":"back","y":"nIB1Z82zdEg","d":"Membentuk otot punggung dengan gerakan tarik sambil duduk."},{"id":69,"t":"Assisted Pull Ups","m":"back","y":"ZazTACvgXaI","d":"Membentuk otot punggung dan lengan dengan gerakan tarik tubuh pada mesin assisted pull up"},{"id":82,"t":"Chest Supported Bar Row","m":"back","y":"mSn5evH_N1U","d":"Membentuk otot punggung dan lengan dengan gerakan menarik beban ke arah tubuh pada mesin chest support bar row, sambil menjaga dada tetap menempel pada bantalan agar gerakan lebih stabil dan fokus ke otot punggung."},{"id":50,"t":"Circular Lat Pulldown","m":"back","y":"lcJGcpz5QHY","d":"Membentuk otot punggung dengan gerakan tarik melingkar."},{"id":65,"t":"Dual Cable Lat Pulldown","m":"back","y":"BPclFt6HphY","d":"Membentuk otot punggung dengan variasi 2 cable , gerakan tarik dari atas."},{"id":70,"t":"Frontal Pulldowns","m":"back","y":"ZmlPXpOOLWQ","d":"Membentuk otot punggung dengan gerakan menarik beban ke depan pada mesin frontal pulldown"},{"id":91,"t":"Hyperextension bench - TBH","m":"back","y":"5-Lw-5hn4pA","d":""},{"id":66,"t":"Lat Pulldown / Row Machine","m":"back","y":"yOHlLVxDTGg","d":"Membentuk otot punggung dengan variasi gerakan tarik dari atas / depan ke arah tubuh."},{"id":52,"t":"Low Row Machine","m":"back","y":"rqIsqcufVH4","d":"Membentuk otot punggung dengan gerakan tarik ke arah tubuh."},{"id":71,"t":"Mid Back / Rear Delt Row","m":"back","y":"OpALf1C_3JY","d":"Membentuk otot bahu dan punggung dengan gerakan membuka lengan pada mesin rear delt / mid back fly"},{"id":51,"t":"Pullover Machine","m":"back","y":"nBdc1Twpvbk","d":"Membentuk otot punggung dengan gerakan tarik dari atas ke bawah."},{"id":40,"t":"Selectorized Rowing Machine","m":"back","y":"lnjZKHJBd7s","d":"Membentuk otot punggung dengan gerakan tarik menggunakan mesin beban pin."},{"id":41,"t":"Standing T Bar Row","m":"back","y":"9pu4Ca3BQ38","d":"Membentuk otot punggung dengan gerakan tarik dari posisi berdiri."},{"id":29,"t":"Super Circular Row Machine","m":"back","y":"aA9ky_ECDug","d":"Membentuk otot punggung atas dengan gerakan tarik melingkar."},{"id":27,"t":"Super Low Row Machine","m":"back","y":"88gwj1EH2k0","d":"Membentuk otot punggung dengan gerakan tarik dari posisi rendah."},{"id":28,"t":"Super Rowing Machine","m":"back","y":"xSt5DHVYjek","d":"Membentuk otot punggung dengan gerakan tarik seperti mendayung."},{"id":26,"t":"Two Way Row","m":"back","y":"g2ga4oueEuo","d":"Membentuk otot punggung dengan variasi gerakan tarik."},{"id":32,"t":"Vertical Pulldown Machine","m":"back","y":"A7r3NAwFZFI","d":"Membentuk otot punggung dengan gerakan tarik dari atas ke bawah."},{"id":77,"t":"Selectorized Shoulder Press","m":"shoulders","y":"2rLOU1EasEg","d":"Membentuk otot bahu dengan gerakan mendorong beban ke atas pada mesin shoulder press."},{"id":42,"t":"Shoulder Press Machine","m":"shoulders","y":"Sw5L3QJM3J0","d":"Membentuk otot bahu dengan gerakan dorong ke atas menggunakan mesin beban pin."},{"id":76,"t":"Shrugs Machine","m":"shoulders","y":"eI7xwq8cCRE","d":"Membentuk otot bahu dan trapezius dengan gerakan angkat bahu pada mesin shrugs."},{"id":67,"t":"Standing Multi Flight","m":"shoulders","y":"Rxy-bs9e6aM","d":"Membentuk otot bahu samping / dada dengan variasi gerakan berbeda."},{"id":75,"t":"Overhead Tricep","m":"arms","y":"jFXhXTTybNY","d":"Membentuk otot trisep dengan gerakan dorong beban di atas kepala pada mesin overhead tricep."},{"id":74,"t":"Preacher Curl Machine","m":"arms","y":"pq_piY5hUcI","d":"Membentuk otot bicep dengan gerakan angkat beban pada mesin preacher curl posisi duduk."},{"id":73,"t":"Total Arms Machine","m":"arms","y":"CM8_vY0Xg_c","d":"Membentuk otot lengan dengan gerakan latihan bicep / tricep posisi berdiri."},{"id":72,"t":"Tricep / Dip Press","m":"arms","y":"fsA4v2GXM0o","d":"Membentuk otot trisep dan dada dengan gerakan menekan beban pada mesin tricep / dip press"},{"id":54,"t":"Belt Squat Machine","m":"legs","y":"H3Lx0Zqd8PQ","d":"Membentuk kaki gerakan squat menggunakan beban belt pada pinggang."},{"id":68,"t":"GYM80 Leg Press","m":"legs","y":"xdVuPn-7Mws","d":"Membentuk otot kaki dengan gerakan mendorong beban pada mesin leg press."},{"id":53,"t":"Hack Squat Machine","m":"legs","y":"Qtj-dgGsd8A","d":"Membentuk otot kaki dengan sandaran pinggang gerakan squat."},{"id":57,"t":"Leg Extension / Leg Curl Machine","m":"legs","y":"KHx9oncpBKs","d":"Membentuk otot paha depan atas belakang dengan gerakan terpisah."},{"id":58,"t":"Lying Leg Curl","m":"legs","y":"LsAWJKoinps","d":"Membentuk otot paha belakang dengan gerakan tekuk kaki dari posisi berbaring."},{"id":55,"t":"Pendulum Squat Machine","m":"legs","y":"0w-bIbAptlI","d":"Membentuk otot kaki dengan gerakan squat pada jalur ayunan mesin."},{"id":80,"t":"Standing Calves Machine","m":"legs","y":"pugB9CtYSJU","d":"Melatih otot betis saat berdiri dengan sandaran bantalan."},{"id":56,"t":"V Squat Machine","m":"legs","y":"0NgCS7xq9AI","d":"Membentuk otot kaki dengan gerakan squat pada jalur mesin berbentuk V."},{"id":61,"t":"3D Smith Hip Thrust","m":"glutes","y":"q7PkctCiztw","d":"Membentuk otot glutes gerakan dorong pinggul ke atas pada jalur smith machine."},{"id":63,"t":"Multi Back Extension","m":"glutes","y":"9frfHier_iA","d":"Membentuk otot punggung bawah dengan gerakan menekuk lalu dorong tubuh ke belakang."},{"id":60,"t":"Selectorized Abduction/Adduction Machine","m":"glutes","y":"Ye2nepVGeGs","d":"Membentuk otot paha dalam dan luar dengan gerakan buka-tutup kaki."},{"id":59,"t":"Selectorized Hip Thruster","m":"glutes","y":"qiT8JA6QNZk","d":"Membentuk otot glutes dengan gerakan dorong pinggul ke atas."},{"id":62,"t":"Standing Abduction","m":"glutes","y":"Z3SNVwU-udQ","d":"Membentuk otot bokong luar dengan gerakan membuka kaki ke samping."},{"id":64,"t":"Standing Hip Thrust","m":"glutes","y":"JQYf173p95g","d":"Membentuk otot glutes dengan gerakan dorong pinggul dari posisi duduk-berdiri."},{"id":39,"t":"Abs Crunches Machine","m":"core","y":"xtSmy9vbbUo","d":"Membentuk otot perut dengan gerakan menekuk tubuh ke depan."}];
+// The machines and their tutorial videos live in Firebase (/app/tutorials), where admins replace
+// them by importing JSON. This copy of the gym's original list is only the fallback until that
+// has happened. id = tutorial id, t = title, m = the gym's own category, y = YouTube video id,
+// d = description; the muscles they train come from TAGS below.
+const BUILTIN = [{"id":36,"t":"Decline Pec Fly","m":"chest","y":"VeTnytd1cyU","d":"Membentuk otot dada dengan gerakan buka-tutup lengan dari posisi menurun."},{"id":45,"t":"Decline/Mid Pec Press","m":"chest","y":"Z9f0TsfLfHI","d":"Membentuk otot dada bawah / tengah dengan gerakan dorong ke depan."},{"id":79,"t":"Dual Upper Smith","m":"chest","y":"QPdli8JVPVE","d":"Membentuk otot dada atas / bahu dengan gerakan dorong ke atas dual upper smith."},{"id":47,"t":"Flat Chest Press","m":"chest","y":"6EbsD3Nx5kE","d":"Membentuk otot dada tengah dengan gerakan dorong ke atas."},{"id":34,"t":"GYM80 Chest Press","m":"chest","y":"qR2D3CooiF0","d":"Membentuk otot dada dengan gerakan dorong ke depan."},{"id":43,"t":"Horizontal Multi Press","m":"chest","y":"Lt2eE-PKqgc","d":"Membentuk otot tubuh dada / bahu bagian atas dengan gerakan dorong horizontal."},{"id":44,"t":"Incline Pec Fly","m":"chest","y":"Var03-DzaDU","d":"Membentuk otot dada atas dengan gerakan buka-tutup lengan dari posisi bawah ke atas."},{"id":78,"t":"Incline Press Machine","m":"chest","y":"1GT1OEbYgx0","d":"Membentuk otot dada atas dengan gerakan mendorong beban pada mesin incline press."},{"id":48,"t":"Incline Press Machine","m":"chest","y":"D_envxCViu4","d":"Membentuk otot dada atas dengan gerakan dorong ke atas."},{"id":49,"t":"Olympic Bench Press","m":"chest","y":"uWvO1fHlBQY","d":"Membentuk otot dada dengan gerakan dorong beban menggunakan barbell."},{"id":46,"t":"Pec/Rear Delt Fly","m":"chest","y":"91_k6j8WSOs","d":"Membentuk dada dan bahu dengan gerakan membuka-tutup lengan."},{"id":38,"t":"Selectorized Chest Press","m":"chest","y":"-zLwVSx2Pfc","d":"Membentuk otot dada dengan gerakan dorong menggunakan mesin beban pin."},{"id":35,"t":"Super Converging Chest Press","m":"chest","y":"3FSpn1rKvic","d":"Membentuk otot dada dengan gerakan dorong yang mengarah ke tengah."},{"id":33,"t":"XPLOAD Linear Press","m":"chest","y":"VsLGEZeglbU","d":"Membentuk otot dada dengan gerakan dorong lurus ke depan."},{"id":31,"t":"Adjustable Low Pulley","m":"back","y":"gFA-AEHlEwA","d":"Membentuk otot punggung dengan variasi ketinggian yg dapat di atur."},{"id":30,"t":"Adjustable Resistance Profile Seated Row","m":"back","y":"nIB1Z82zdEg","d":"Membentuk otot punggung dengan gerakan tarik sambil duduk."},{"id":69,"t":"Assisted Pull Ups","m":"back","y":"ZazTACvgXaI","d":"Membentuk otot punggung dan lengan dengan gerakan tarik tubuh pada mesin assisted pull up"},{"id":82,"t":"Chest Supported Bar Row","m":"back","y":"mSn5evH_N1U","d":"Membentuk otot punggung dan lengan dengan gerakan menarik beban ke arah tubuh pada mesin chest support bar row, sambil menjaga dada tetap menempel pada bantalan agar gerakan lebih stabil dan fokus ke otot punggung."},{"id":50,"t":"Circular Lat Pulldown","m":"back","y":"lcJGcpz5QHY","d":"Membentuk otot punggung dengan gerakan tarik melingkar."},{"id":65,"t":"Dual Cable Lat Pulldown","m":"back","y":"BPclFt6HphY","d":"Membentuk otot punggung dengan variasi 2 cable , gerakan tarik dari atas."},{"id":70,"t":"Frontal Pulldowns","m":"back","y":"ZmlPXpOOLWQ","d":"Membentuk otot punggung dengan gerakan menarik beban ke depan pada mesin frontal pulldown"},{"id":91,"t":"Hyperextension bench - TBH","m":"back","y":"5-Lw-5hn4pA","d":""},{"id":66,"t":"Lat Pulldown / Row Machine","m":"back","y":"yOHlLVxDTGg","d":"Membentuk otot punggung dengan variasi gerakan tarik dari atas / depan ke arah tubuh."},{"id":52,"t":"Low Row Machine","m":"back","y":"rqIsqcufVH4","d":"Membentuk otot punggung dengan gerakan tarik ke arah tubuh."},{"id":71,"t":"Mid Back / Rear Delt Row","m":"back","y":"OpALf1C_3JY","d":"Membentuk otot bahu dan punggung dengan gerakan membuka lengan pada mesin rear delt / mid back fly"},{"id":51,"t":"Pullover Machine","m":"back","y":"nBdc1Twpvbk","d":"Membentuk otot punggung dengan gerakan tarik dari atas ke bawah."},{"id":40,"t":"Selectorized Rowing Machine","m":"back","y":"lnjZKHJBd7s","d":"Membentuk otot punggung dengan gerakan tarik menggunakan mesin beban pin."},{"id":41,"t":"Standing T Bar Row","m":"back","y":"9pu4Ca3BQ38","d":"Membentuk otot punggung dengan gerakan tarik dari posisi berdiri."},{"id":29,"t":"Super Circular Row Machine","m":"back","y":"aA9ky_ECDug","d":"Membentuk otot punggung atas dengan gerakan tarik melingkar."},{"id":27,"t":"Super Low Row Machine","m":"back","y":"88gwj1EH2k0","d":"Membentuk otot punggung dengan gerakan tarik dari posisi rendah."},{"id":28,"t":"Super Rowing Machine","m":"back","y":"xSt5DHVYjek","d":"Membentuk otot punggung dengan gerakan tarik seperti mendayung."},{"id":26,"t":"Two Way Row","m":"back","y":"g2ga4oueEuo","d":"Membentuk otot punggung dengan variasi gerakan tarik."},{"id":32,"t":"Vertical Pulldown Machine","m":"back","y":"A7r3NAwFZFI","d":"Membentuk otot punggung dengan gerakan tarik dari atas ke bawah."},{"id":77,"t":"Selectorized Shoulder Press","m":"shoulders","y":"2rLOU1EasEg","d":"Membentuk otot bahu dengan gerakan mendorong beban ke atas pada mesin shoulder press."},{"id":42,"t":"Shoulder Press Machine","m":"shoulders","y":"Sw5L3QJM3J0","d":"Membentuk otot bahu dengan gerakan dorong ke atas menggunakan mesin beban pin."},{"id":76,"t":"Shrugs Machine","m":"shoulders","y":"eI7xwq8cCRE","d":"Membentuk otot bahu dan trapezius dengan gerakan angkat bahu pada mesin shrugs."},{"id":67,"t":"Standing Multi Flight","m":"shoulders","y":"Rxy-bs9e6aM","d":"Membentuk otot bahu samping / dada dengan variasi gerakan berbeda."},{"id":75,"t":"Overhead Tricep","m":"arms","y":"jFXhXTTybNY","d":"Membentuk otot trisep dengan gerakan dorong beban di atas kepala pada mesin overhead tricep."},{"id":74,"t":"Preacher Curl Machine","m":"arms","y":"pq_piY5hUcI","d":"Membentuk otot bicep dengan gerakan angkat beban pada mesin preacher curl posisi duduk."},{"id":73,"t":"Total Arms Machine","m":"arms","y":"CM8_vY0Xg_c","d":"Membentuk otot lengan dengan gerakan latihan bicep / tricep posisi berdiri."},{"id":72,"t":"Tricep / Dip Press","m":"arms","y":"fsA4v2GXM0o","d":"Membentuk otot trisep dan dada dengan gerakan menekan beban pada mesin tricep / dip press"},{"id":54,"t":"Belt Squat Machine","m":"legs","y":"H3Lx0Zqd8PQ","d":"Membentuk kaki gerakan squat menggunakan beban belt pada pinggang."},{"id":68,"t":"GYM80 Leg Press","m":"legs","y":"xdVuPn-7Mws","d":"Membentuk otot kaki dengan gerakan mendorong beban pada mesin leg press."},{"id":53,"t":"Hack Squat Machine","m":"legs","y":"Qtj-dgGsd8A","d":"Membentuk otot kaki dengan sandaran pinggang gerakan squat."},{"id":57,"t":"Leg Extension / Leg Curl Machine","m":"legs","y":"KHx9oncpBKs","d":"Membentuk otot paha depan atas belakang dengan gerakan terpisah."},{"id":58,"t":"Lying Leg Curl","m":"legs","y":"LsAWJKoinps","d":"Membentuk otot paha belakang dengan gerakan tekuk kaki dari posisi berbaring."},{"id":55,"t":"Pendulum Squat Machine","m":"legs","y":"0w-bIbAptlI","d":"Membentuk otot kaki dengan gerakan squat pada jalur ayunan mesin."},{"id":80,"t":"Standing Calves Machine","m":"legs","y":"pugB9CtYSJU","d":"Melatih otot betis saat berdiri dengan sandaran bantalan."},{"id":56,"t":"V Squat Machine","m":"legs","y":"0NgCS7xq9AI","d":"Membentuk otot kaki dengan gerakan squat pada jalur mesin berbentuk V."},{"id":61,"t":"3D Smith Hip Thrust","m":"glutes","y":"q7PkctCiztw","d":"Membentuk otot glutes gerakan dorong pinggul ke atas pada jalur smith machine."},{"id":63,"t":"Multi Back Extension","m":"glutes","y":"9frfHier_iA","d":"Membentuk otot punggung bawah dengan gerakan menekuk lalu dorong tubuh ke belakang."},{"id":60,"t":"Selectorized Abduction/Adduction Machine","m":"glutes","y":"Ye2nepVGeGs","d":"Membentuk otot paha dalam dan luar dengan gerakan buka-tutup kaki."},{"id":59,"t":"Selectorized Hip Thruster","m":"glutes","y":"qiT8JA6QNZk","d":"Membentuk otot glutes dengan gerakan dorong pinggul ke atas."},{"id":62,"t":"Standing Abduction","m":"glutes","y":"Z3SNVwU-udQ","d":"Membentuk otot bokong luar dengan gerakan membuka kaki ke samping."},{"id":64,"t":"Standing Hip Thrust","m":"glutes","y":"JQYf173p95g","d":"Membentuk otot glutes dengan gerakan dorong pinggul dari posisi duduk-berdiri."},{"id":39,"t":"Abs Crunches Machine","m":"core","y":"xtSmy9vbbUo","d":"Membentuk otot perut dengan gerakan menekuk tubuh ke depan."}];
 
 // The body-map muscles at least one tutorial trains. k is the body part's own name in BODY;
 // side is the view it shows best on (the Home tiles zoom in on it there).
@@ -610,12 +612,19 @@ const INERT = ['head', 'hair', 'neck', 'hands', 'feet', 'knees', 'ankles'];
 
 const T = {}, MI = {}, CNT = {};
 MUSCLES.forEach(m => { MI[m.k] = m });
-TUTORIALS.forEach(t => {
-  const [p = '', s = ''] = TAGS[t.id] || [];
-  t.p = p.split(' ').filter(k => MI[k]); t.s = s.split(' ').filter(k => MI[k]);
-  T[t.id] = t;
-  [...t.p, ...t.s].forEach(k => { CNT[k] = (CNT[k] || 0) + 1 });
-});
+let TUTORIALS = [];
+// Muscles may come as a list or as space-separated keys; anything not on the map is dropped.
+const muscleList = v => (Array.isArray(v) ? v : v && typeof v === 'object' ? Object.values(v) : String(v || '').split(/[\s,]+/)).map(String).filter(k => MI[k]);
+const builtinList = () => BUILTIN.map(x => { const [pp = '', ss = ''] = TAGS[x.id] || []; return { ...x, p: pp, s: ss } });
+function setTutorials(list) {
+  const at = t => { const i = MUSCLES.findIndex(m => m.k === t.p[0]); return i < 0 ? 99 : i };
+  TUTORIALS = (list || []).map(x => ({ id: +x.id, t: String(x.t || '').trim(), m: x.m || 'other', y: String(x.y || '').trim(), d: String(x.d || '').trim(), p: muscleList(x.p), s: muscleList(x.s) }))
+    .filter(x => x.id && x.t && x.y)
+    .sort((a, b) => at(a) - at(b) || a.t.localeCompare(b.t));
+  for (const k in T) delete T[k];
+  for (const k in CNT) delete CNT[k];
+  TUTORIALS.forEach(t => { T[t.id] = t; [...t.p, ...t.s].forEach(k => { CNT[k] = (CNT[k] || 0) + 1 }) });
+}
 const count = k => CNT[k] || 0;
 const trains = (t, k) => t.p.includes(k) || t.s.includes(k);
 const pTags = t => `<div class="tags">${t.p.map(mTag).join('')}</div>`;
@@ -890,7 +899,8 @@ const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA433
 const LOGO = 'icons/icon-192.png';
 function vLogin() {
   const up = ui.authMode === 'up';
-  const pics = [38, 53, 32].map(i => T[i]).filter(Boolean);
+  let pics = [38, 53, 32].map(i => T[i]).filter(Boolean);
+  if (pics.length < 3) pics = TUTORIALS.slice(0, 3);
   return `<section class="onb glass compact">
       <div class="brand"><img src="${LOGO}" alt="" width="40" height="40">${esc(APP.appName)}</div>
       <div class="collage">${pics.map((t, i) => pic(t.y, 'tall c' + i)).join('')}
@@ -1184,7 +1194,7 @@ function vEdit(id) {
   };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="plan/program" aria-label="Kembali">${I('back')}</button><b>Edit Program</b><button class="btn ghost sm" data-a="go" data-to="plan/program">Selesai</button></header>
     <input class="title-inp glass" data-i="rname" value="${esc(r.name)}" placeholder="Nama program" maxlength="40">
-    ${r.items.filter(it => T[it.id]).map(row).join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
+    ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
 }
@@ -1478,6 +1488,7 @@ function adminSection() {
       <div class="qchips" id="apChips">${SUGGESTIONS.map(v => `<button class="chip ${d.suggestion === v ? 'on' : ''}" data-a="apSug" data-v="${v}" aria-pressed="${d.suggestion === v}">${v}</button>`).join('')}</div>
       <input id="apSug" class="sin" data-i="ap" data-k="suggestion" value="${esc(d.suggestion)}" maxlength="40" placeholder="Atau tulis sendiri, mis. 5 × 5" aria-label="Saran set × reps">
     </div></div>
+    ${tutCard()}
     <div class="savebar" id="apBar" role="status" ${appDirty() ? '' : 'hidden'}><span>Ada perubahan yang belum disimpan</span>
       <button class="btn soft sm" data-a="apReset">Batal</button><button class="btn pri sm" data-a="appSave">Simpan</button></div>`;
 }
@@ -1703,6 +1714,9 @@ const FIREBASE = {
 const SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
 async function boot() {
   buildNav();
+  // The machines: last list seen from Firebase on this device, else the built-in one.
+  try { const c = JSON.parse(localStorage.getItem(TUT_CACHE)); if (c && c.items) { setTutorials(Object.values(c.items)); tutMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
+  if (!TUTORIALS.length) setTutorials(builtinList());
   // Someone was signed in here last time: open on this device's copy straight away.
   const last = localStorage.getItem(LAST), c = last && cacheLoad(last);
   if (c) { S = c.S; synced = c.synced; fromCache = true; fb.user = { uid: last, cached: true }; phase = 'app' }
@@ -1718,6 +1732,7 @@ async function boot() {
     }, () => {});
     d.onValue(d.ref(fb.db, '.info/connected'), s => setOnline(s.val() === true));
     d.onValue(d.ref(fb.db, 'app/meta/hasAdmin'), s => { fb.hasAdmin = s.val() === true; offerAdmin() }, () => {});
+    d.onValue(d.ref(fb.db, 'app/tutorials'), s => applyTutorials(s.val()), () => {});
     au.getRedirectResult(fb.auth).catch(authFail);
     au.onAuthStateChanged(fb.auth, onUser);
   } catch (e) {
@@ -1752,6 +1767,98 @@ function onUser(user) {
     if (phase !== 'app') { phase = 'error'; render() } else toast('Data tidak bisa disinkron: ' + (e.code || e.message), 'err');
   });
 }
+// ---------- machines (tutorials) ----------
+// Stored at /app/tutorials as { v, count, updatedAt, items: { <id>: { id, t, m, y, d, p, s } } }.
+// Everyone reads it; admins replace it by importing JSON (an Export from here, or the gym's own
+// tutorial API response), and export it again to edit.
+const TUT_CACHE = 'why_tutorials';
+let tutMeta = { source: 'builtin', updatedAt: 0 };
+function applyTutorials(val) {
+  if (val && val.items) {
+    setTutorials(Object.values(val.items));
+    tutMeta = { source: 'firebase', updatedAt: +val.updatedAt || 0 };
+    try { localStorage.setItem(TUT_CACHE, JSON.stringify({ items: val.items, updatedAt: val.updatedAt || 0 })) } catch {}
+  } else {
+    setTutorials(builtinList()); tutMeta = { source: 'builtin', updatedAt: 0 };
+    try { localStorage.removeItem(TUT_CACHE) } catch {}
+  }
+  softRender();
+}
+const GYM_CAT = { CHEST: 'chest', BACK: 'back', SHOULDER: 'shoulders', SHOULDERS: 'shoulders', ARM: 'arms', ARMS: 'arms', LEG: 'legs', LEGS: 'legs', GLUTE: 'glutes', GLUTES: 'glutes', ABS: 'core', CORE: 'core' };
+const CAT_MUSCLES = { chest: 'chest', back: 'upper-back', shoulders: 'deltoids', arms: 'biceps triceps', legs: 'quadriceps', glutes: 'gluteal', core: 'abs' };
+const ytId = v => { const m = String(v || '').match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : /^[\w-]{11}$/.test(String(v || '').trim()) ? String(v).trim() : '' };
+function parseTutorials(txt) {
+  txt = String(txt || '');
+  const a = txt.search(/[[{]/), b = Math.max(txt.lastIndexOf('}'), txt.lastIndexOf(']'));
+  let o; try { o = JSON.parse(txt.slice(a, b + 1)) } catch { throw new Error('Format JSON tidak valid') }
+  const raw = Array.isArray(o) ? o : Array.isArray(o?.items) ? o.items : Array.isArray(o?.data) ? o.data : o?.items && typeof o.items === 'object' ? Object.values(o.items) : null;
+  if (!raw) throw new Error('Tidak ada daftar alat di JSON ini');
+  let skipped = 0;
+  const seen = new Set(), list = [];
+  raw.forEach(x => {
+    if (!x || x.aktif === false) { skipped++; return }
+    const id = +x.id, t = String(x.t ?? x.title ?? '').trim(), y = ytId(x.y ?? x.youtube ?? x.youtube_id ?? x.youtube_url);
+    if (!id || !t || !y || seen.has(id)) { skipped++; return }
+    seen.add(id);
+    const m = String(x.m ?? x.category ?? GYM_CAT[String(x.jenis_alat?.name || '').trim().toUpperCase()] ?? 'other');
+    // Muscles: from the file, else the ones already known for this machine, else from its category.
+    let pm = muscleList(x.p ?? x.primary), sm = muscleList(x.s ?? x.secondary);
+    if (!pm.length) { const known = T[id] || builtinList().find(q => q.id === id); pm = known ? muscleList(known.p) : muscleList(CAT_MUSCLES[m]); if (!sm.length && known) sm = muscleList(known.s) }
+    list.push({ id, t: t.slice(0, 80), m, y, d: String(x.d ?? x.description ?? '').trim().slice(0, 500), p: pm, s: sm });
+  });
+  return { list, skipped };
+}
+const tutKey = x => JSON.stringify([x.t, x.m, x.y, x.d, x.p, x.s]);
+async function saveTutorials(list) {
+  const items = {};
+  list.forEach(x => { items[x.id] = { id: x.id, t: x.t, m: x.m, y: x.y, d: x.d || '', p: x.p, s: x.s } });
+  await fb.mod.set(fb.mod.ref(fb.db, 'app/tutorials'), { v: 1, count: list.length, updatedAt: fb.mod.serverTimestamp(), items });
+}
+async function importTutorials(txt, btn) {
+  let parsed;
+  try { parsed = parseTutorials(txt) } catch (e) { return toast(e.message, 'err') }
+  const { list, skipped } = parsed;
+  if (!list.length) return toast('Tidak ada alat yang lengkap (id, nama, video) di JSON ini', 'err');
+  const now = new Map(TUTORIALS.map(x => [x.id, tutKey(x)]));
+  const added = list.filter(x => !now.has(x.id)).length;
+  const changed = list.filter(x => now.has(x.id) && now.get(x.id) !== tutKey(x)).length;
+  const removed = [...now.keys()].filter(id => !list.some(x => x.id === id)).length;
+  const ok = await ask({ title: `Simpan ${list.length} alat?`, tone: 'warn', icon: 'upload', ok: 'Simpan ke Firebase',
+    msg: `${added} baru · ${changed} berubah · ${removed} dihapus${skipped ? ` · ${skipped} dilewati (tidak lengkap atau nonaktif)` : ''}. Data alat semua pengguna diganti dengan isi file ini.` });
+  if (!ok) return;
+  busy(btn, true);
+  try { await saveTutorials(list); closeSheet(); toast(`${list.length} alat tersimpan di Firebase`) }
+  catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
+  finally { if (btn?.isConnected) busy(btn, false) }
+}
+function exportTutorials() {
+  const items = TUTORIALS.map(x => ({ id: x.id, title: x.t, category: x.m, youtube: x.y, description: x.d, primary: x.p, secondary: x.s }));
+  download(`why-alat-${dayKey(new Date())}.json`, JSON.stringify({
+    why_tutorials: 1, exported: new Date().toISOString(), count: items.length,
+    note: 'Edit lalu import lagi lewat Pengaturan → Data alat. youtube boleh berisi id atau link; primary/secondary memakai kode di "muscles".',
+    muscles: Object.fromEntries(MUSCLES.map(m => [m.k, m.n])),
+    items
+  }, null, 2));
+}
+function openTutImport() {
+  sheet(`<h2 class="sh">Import data alat</h2>
+    <p class="scope" style="margin-top:-8px">Tempel JSON atau pilih file: hasil <b>Export</b> dari sini, atau JSON dari API tutorial gym (<code>{"data":[…]}</code>). Semua data alat diganti dengan isi file ini.</p>
+    <textarea id="tutTxt" class="ta" placeholder='{"why_tutorials":1,"items":[{"id":38,"title":"…","youtube":"…","primary":["chest"]}]}'></textarea>
+    <div class="row2"><label class="btn soft">${I('upload')} Pilih file<input type="file" id="tutFile" accept=".json,application/json,text/plain" hidden></label><button class="btn pri" data-a="tutImport">Import</button></div>`);
+}
+function tutCard() {
+  const when = tutMeta.updatedAt ? new Date(tutMeta.updatedAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  const src = tutMeta.source === 'firebase' ? `Di Firebase${when ? ' · diperbarui ' + when : ''}` : 'Data bawaan aplikasi, belum di Firebase';
+  const link = (icon, c, title, a, sub = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}"`, right: I('chev') });
+  return `<h3 class="sh2">Data alat</h3>
+    <div class="sgroup">
+      ${sRow({ icon: 'video', c: '#f59e0b', title: `${TUTORIALS.length} alat & video tutorial`, sub: src })}
+      ${tutMeta.source === 'firebase' ? '' : link('upload', '#2f7cf6', 'Simpan data bawaan ke Firebase', 'tutPublish', 'Supaya bisa dikelola dari sini')}
+      ${link('upload', '#14b8a6', 'Import JSON', 'tutOpen', 'Ganti semua data alat dari file')}
+      ${link('download', '#8b5cf6', 'Export JSON', 'tutExport', 'Unduh untuk diedit atau dicadangkan')}
+    </div>`;
+}
+
 // ---------- first admin ----------
 // While the app has no admin at all, whoever is signed in is offered the role. The database rules
 // let exactly one account take it (app/admins/<uid> plus the public app/meta/hasAdmin flag, in one
@@ -2007,6 +2114,16 @@ const A = {
     d[k] = clamp((parseInt(d[k]) || 0) + +el.dataset.d, rest ? 15 : 1, rest ? 300 : 7);
     $(rest ? '#apRestV' : '#apGoalV').textContent = d[k] + (rest ? ' dtk' : '×'); syncAppBar();
   },
+  tutOpen: openTutImport,
+  tutImport: el => importTutorials($('#tutTxt').value, el),
+  tutExport: exportTutorials,
+  tutPublish: async el => {
+    if (!(await ask({ title: 'Simpan data bawaan ke Firebase?', msg: `${BUILTIN.length} alat bawaan aplikasi disimpan ke Firebase. Setelah itu data alat dikelola lewat Import dan Export di sini.`, ok: 'Simpan', tone: 'info', icon: 'upload' }))) return;
+    busy(el, true);
+    try { await saveTutorials(builtinList().map(x => ({ ...x, p: muscleList(x.p), s: muscleList(x.s) }))); toast('Data alat tersimpan di Firebase'); if ($('#adminSec')) $('#adminSec').innerHTML = adminSection() }
+    catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
+    finally { if (el.isConnected) busy(el, false) }
+  },
   apSug: el => {
     ui.appDraft.suggestion = el.dataset.v; $('#apSug').value = el.dataset.v;
     document.querySelectorAll('#apChips .chip').forEach(c => { const on = c.dataset.v === el.dataset.v; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) });
@@ -2063,6 +2180,9 @@ document.addEventListener('submit', async e => {
   } catch (err) { authFail(err) } finally { busy(btn, false) }
 });
 document.addEventListener('change', e => {
+  if (e.target.id === 'tutFile' && e.target.files[0]) {
+    return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
+  }
   if (e.target.id !== 'impFile' || !e.target.files[0]) return;
   e.target.files[0].text().then(importText);
 });

@@ -34,6 +34,7 @@ Pengaturan aplikasi dan pengaturan user disimpan terpisah.
 | Path | Isi | Akses |
 |---|---|---|
 | `app/settings` | **Pengaturan aplikasi**: `appName`, `announcement`, `defaultRest`, `defaultGoal`, `suggestion` | dibaca semua orang, diubah admin |
+| `app/tutorials` | **Data alat**: nama, kategori, video YouTube, deskripsi, otot utama/pendukung | dibaca semua orang, diubah admin |
 | `app/admins/<uid>` | `true` untuk akun admin | akun pertama mengklaim sendiri; selanjutnya lewat Firebase Console |
 | `app/meta/hasAdmin` | `true` begitu ada admin; popup admin hanya muncul selama ini kosong | dibaca semua orang |
 | `users/<uid>/settings` | **Pengaturan user**: `name`, `goal`, `rest`, `body`, `sound`, `vibrate` | pemilik akun |
@@ -52,6 +53,28 @@ WHY bisa dipasang seperti aplikasi: di Android/Chrome lewat tombol **Pasang** di
 **Pengaturan → Perangkat ini**, di iPhone lewat Safari → **Bagikan → Tambahkan ke Layar Utama**.
 Service worker menyimpan aplikasi, SDK Firebase, font, dan thumbnail video supaya tetap terbuka
 saat offline. Halaman selalu diambil baru dari jaringan bila online, jadi update langsung terlihat.
+
+## Data alat (tutorial)
+
+Data alat ada di Firebase (`app/tutorials`) dan dikelola admin lewat **Pengaturan → Data alat**:
+
+- **Simpan data bawaan ke Firebase**: sekali saja di awal, memindahkan 56 alat bawaan ke Firebase.
+- **Export JSON**: unduh semua alat (`why-alat-<tanggal>.json`) untuk diedit atau dicadangkan.
+- **Import JSON**: ganti semua alat dari file. Menerima hasil Export di atas, atau JSON dari API
+  tutorial gym (`{"data":[...]}`) yang langsung dikonversi. Sebelum disimpan muncul ringkasan
+  berapa alat yang baru, berubah, dan dihapus.
+
+Format hasil Export (field yang bisa diedit):
+
+```json
+{"why_tutorials":1,
+ "items":[{"id":38,"title":"Selectorized Chest Press","category":"chest",
+           "youtube":"-zLwVSx2Pfc","description":"…",
+           "primary":["chest"],"secondary":["triceps","deltoids"]}]}
+```
+
+`youtube` boleh berisi id video atau link YouTube. Kode otot untuk `primary`/`secondary` tercantum di
+bagian `muscles` pada file Export.
 
 ## Program dari Claude
 
