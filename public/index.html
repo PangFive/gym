@@ -711,6 +711,20 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .pp-note{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--ink)}
 .pp-warn{display:flex;gap:8px;align-items:flex-start;margin:8px 0 0;font-size:13px;color:#b45309;font-weight:600}
 .pp-warn svg.i{flex:none;width:18px;height:18px}
+.aibtn{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:7px 14px;border-radius:999px;border:1px solid rgba(47,124,246,.22);background:#fff;color:var(--acc-2);font:inherit;font-size:13.5px;font-weight:700}
+.aibtn svg.i{width:16px;height:16px}
+.aibtn.pri{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 16px -10px rgba(37,99,235,.9)}
+.aibtn.ask{margin-top:12px}
+.aiadv{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.75);font-size:13.5px;color:var(--muted);font-weight:600}
+.aiadv .spin{width:18px;height:18px;border-width:2.5px;flex:none}
+.aiadv.err{flex-wrap:wrap;color:#b45309}
+.aiadv.ok{display:block;color:var(--ink);border:1px solid rgba(47,124,246,.18)}
+.aa-h{display:flex;align-items:center;gap:8px;color:var(--acc-2)}
+.aa-h svg.i{width:18px;height:18px}
+.aa-h b{font-size:15px;font-weight:800;color:var(--ink)}
+.aiadv.ok small{display:block;margin:4px 0 0 26px;font-size:12.5px;color:var(--muted);font-weight:600}
+.aiadv.ok p{margin:6px 0 10px;font-size:13.5px;line-height:1.5;font-weight:500}
+.aa-b{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .wlog{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 6px}
 .wlog .icon-btn{width:52px;height:52px;font-size:24px;font-weight:700;color:#0b8a5e}
 .wlog label{display:flex;align-items:baseline;gap:6px}
@@ -2231,7 +2245,49 @@ function profRefresh() {
       ${ui.prof.auto && eta ? `<br>Target ${fmt1(o.goalW)} kg tercapai sekitar <b>${eta}</b> (${Math.ceil(e.weeks)} minggu).` : ''}</p>
     ${ui.prof.auto && e.floored ? `<p class="pp-warn">${I('alert')} Dibatasi minimal ${r0(e.floor)} kkal/hari agar tetap aman. Pilih kecepatan lebih pelan.</p>` : ''}
     ${!ui.prof.auto && goal < e.floor ? `<p class="pp-warn">${I('alert')} Di bawah ${r0(e.floor)} kkal/hari tidak disarankan tanpa pengawasan ahli gizi.</p>` : ''}
+    ${aiAdviceHtml()}
   </div>`;
+}
+// ---- target advice from Gemini: the same profile plus the last two weeks of intake and weight
+function aiAdviceHtml() {
+  const a = ui.prof.ai;
+  if (ui.prof.aiBusy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menghitung saran…</span></div>`;
+  if (a && a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pAsk">${I('refresh')} Coba lagi</button></div>`;
+  if (a) return `<div class="aiadv ok"><div class="aa-h">${I('sparkles')}<b>Saran Gemini: ${r0(a.kcal)} kkal/hari</b></div>
+    ${a.protein ? `<small>Protein sekitar ${r0(a.protein)} g/hari</small>` : ''}<p>${esc(a.reason)}</p>
+    <div class="aa-b"><button class="aibtn" data-a="pAsk">${I('refresh')} Tanya lagi</button><button class="aibtn pri" data-a="pUseAi">Pakai ${r0(a.kcal)} kkal</button></div></div>`;
+  return `<button class="aibtn ask" data-a="pAsk">${I('sparkles')} Tanya Gemini rekomendasinya</button>`;
+}
+function recentStats() {
+  const days = Array.from({ length: 14 }, (_, i) => dayKey(new Date(Date.now() - (i + 1) * 864e5)));
+  const kc = days.map(k => dayTotals(k).kcal).filter(v => v > 0);
+  const since = Date.now() - 15 * 864e5, ws = S.weights.filter(w => new Date(w.date).getTime() >= since);
+  return { avg: kc.length ? Math.round(kc.reduce((a, v) => a + v, 0) / kc.length) : 0, days: kc.length,
+    wFrom: ws.length > 1 ? ws.at(-1).kg : 0, wTo: ws.length > 1 ? ws[0].kg : 0 };
+}
+async function askTargetAdvice() {
+  const { o, err } = profDraft();
+  if (err) { $('#pfErr').textContent = err; return }
+  if (!aiConf().key) { ui.prof.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return profRefresh() }
+  const e = energy(o, o.kg), act = ACTS.find(a => a[0] === o.act) || ACTS[1], r = recentStats();
+  const goal = !o.goalW || !e.dir ? 'mempertahankan berat' : `${e.dir < 0 ? 'turun' : 'naik'} ke ${o.goalW} kg, ${o.pace} kg per minggu`;
+  const prompt = `Kamu ahli gizi olahraga. Rekomendasikan target kalori harian yang aman dan realistis untuk orang ini.
+- Jenis kelamin: ${o.sex === 'male' ? 'pria' : 'wanita'}, umur ${e.age} tahun, tinggi ${o.height} cm, berat ${o.kg} kg
+- Tujuan: ${goal}
+- Aktivitas: ${act[2]} (${act[3]}); juga latihan beban di gym
+- Hitungan rumus: BMR ${Math.round(e.bmr)} kkal, TDEE ${Math.round(e.tdee)} kkal (Mifflin–St Jeor × ${act[1]})
+- 14 hari terakhir: ${r.days ? `rata-rata ${r.avg} kkal dari ${r.days} hari tercatat` : 'belum ada catatan makan'}${r.wFrom ? `, berat ${r.wFrom} → ${r.wTo} kg` : ''}
+Kalau data 14 hari menunjukkan TDEE sebenarnya berbeda dari rumus, sesuaikan. Jangan di bawah ${e.floor} kkal.
+Balas HANYA JSON: {"kcal": angka bulat, "protein": gram per hari, "reason": "alasan singkat maksimal 2 kalimat dalam bahasa Indonesia"}`;
+  ui.prof.aiBusy = true; ui.prof.ai = null; profRefresh();
+  try {
+    const t = await gemini([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}');
+    const j = JSON.parse(t.slice(a, b + 1)), kcal = clamp(Math.round((+j.kcal || 0) / 10) * 10, 1000, 5000);
+    if (!(+j.kcal > 0)) throw new Error('Jawaban Gemini tidak berisi angka kalori. Coba lagi.');
+    ui.prof.ai = { kcal, protein: +j.protein || 0, reason: String(j.reason || '').slice(0, 300) };
+  } catch (x) { ui.prof.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
+  ui.prof.aiBusy = false;
+  if ($('#pfPrev')) profRefresh();
 }
 function openWeightLog() {
   ui.wkg = nowWeight() || +ui.prof?.kg || 70;
@@ -3074,8 +3130,15 @@ const A = {
   pSet: el => {
     const k = el.dataset.k, v = el.dataset.v;
     ui.prof[k] = k === 'pace' ? +v : k === 'auto' ? v === '1' : v;
+    if (k !== 'auto') ui.prof.ai = null;   // advice was for the old values
     if (k !== 'pace') el.parentElement.querySelectorAll('[role=radio]').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
     profRefresh();
+  },
+  pAsk: askTargetAdvice,
+  pUseAi: () => {
+    ui.prof.auto = false; ui.prof.kcal = ui.prof.ai.kcal;
+    document.querySelectorAll('[data-a=pSet][data-k=auto]').forEach(b => { const on = b.dataset.v === '0'; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
+    profRefresh(); toast('Target diisi dari saran Gemini. Ketuk Simpan profil.');
   },
   pKcal: el => { ui.prof.kcal = clamp((ui.prof.kcal || 2000) + +el.dataset.d, 1000, 5000); profRefresh() },
   pSave: () => {
@@ -3138,7 +3201,7 @@ document.addEventListener('input', e => {
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
-  else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; $('#pfErr').textContent = ''; profRefresh() }
+  else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
   else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {
