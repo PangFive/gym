@@ -443,6 +443,10 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 .fld>span{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:0 4px 6px}
 .fld input{width:100%;min-height:50px;border:1px solid rgba(24,32,47,.1);background:#fff;border-radius:16px;padding:12px 16px;font:inherit;font-size:16px;color:var(--ink);outline:none}
 .fld input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.fld select{width:100%;min-height:50px;border:1px solid rgba(24,32,47,.1);border-radius:16px;padding:12px 44px 12px 16px;font:inherit;font-size:16px;color:var(--ink);outline:none;appearance:none;-webkit-appearance:none;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2364708a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 8 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center}
+.fld select:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.fld select:disabled{color:var(--muted)}
+.fld .fhint{display:block;font-size:13px;color:var(--muted);margin:6px 4px 0}
 .fld input[aria-invalid="true"]{border-color:#e5392d;box-shadow:0 0 0 3px rgba(229,57,45,.12)}
 .fld .ta{margin:0;min-height:88px;font-family:inherit}
 .ferr{margin:0 4px 12px;color:#c2410c;font-size:13.5px;font-weight:600;line-height:1.45}
@@ -1963,7 +1967,10 @@ const AI_KEY = 'why_ai';
 // gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
 // thinking answers in a couple of seconds.
 const AI_MODEL = 'gemini-3.5-flash';
-const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model } } catch { return { key: '', model: AI_MODEL } } };
+const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model, models: asList(c.models) } } catch { return { key: '', model: AI_MODEL, models: [] } } };
+// Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
+// so Gemini itself decides whether it is valid.
+const cleanKey = v => String(v || '').replace(/[^\w.-]+/g, '');
 const slotNow = () => { const h = new Date().getHours(); return h < 10 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snack' };
 const mealTotals = m => { const k = m.portion || 1, t = { kcal: 0, p: 0, c: 0, f: 0 }; m.items.forEach(i => { t.kcal += i.kcal * k; t.p += i.p * k; t.c += i.c * k; t.f += i.f * k }); return t };
 const dayMeals = key => S.meals.filter(m => dayKey(m.date) === key);
@@ -2026,11 +2033,65 @@ function openAiSetup(then) {
       <li>Masuk dengan akun Google, lalu ketuk <b>Create API key</b></li>
       <li>Ketuk ikon salin di samping key, lalu tempel di bawah</li>
     </ol>
-    <label class="fld"><span>API key Gemini</span><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
-    <label class="fld"><span>Model</span><input id="aiModel" autocomplete="off" spellcheck="false" value="${esc(c.model)}"></label>
+    <label class="fld"><span>API key Gemini</span><input id="aiKey" data-i="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
+    <label class="fld"><span>Model</span><select id="aiModel"${c.models.length ? '' : ' disabled'}>${modelOpts(c.models.length ? c.models : [c.model], c.model)}</select>
+      <small class="fhint" id="aiMs" role="status">${c.models.length ? `${c.models.length} model tersedia untuk key ini.` : 'Pilihan model muncul setelah key ditempel.'}</small></label>
     <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke Google Gemini untuk dianalisis dan tidak disimpan di mana pun.</p>
     <p class="ferr" id="aiErr" role="alert"></p>
     <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`);
+  aiMsFor = ''; ui.aiModels = c.models;
+  if (c.key) loadAiModels();
+}
+// The models a key can use, best for meal photos first: the recommended one, then Flash (newest
+// first), Flash Lite, Pro. Speech, image, live, embedding and robotics models are left out.
+const AI_SKIP = /tts|image|live|embed|robotics|computer|transcribe|audio|banana|customtools|omni|argon|nano/;
+const modelOpts = (list, cur, rec = AI_MODEL, ms = {}) => list.map(n => `<option value="${esc(n)}"${n === cur ? ' selected' : ''}>${esc(n)}${ms[n] ? ` · ${(ms[n] / 1000).toFixed(1).replace('.', ',')} dtk` : ''}${n === rec ? ' (disarankan)' : ''}</option>`).join('');
+async function geminiModels(key) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+  let res, j;
+  try {
+    res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key }, signal: ctl.signal });
+    j = await res.json().catch(() => ({}));
+  } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'Daftar model tidak termuat. Coba lagi.' : 'Tidak bisa menghubungi Gemini. Periksa koneksi internet.') }
+  finally { clearTimeout(timer) }
+  if (!res.ok) throw new Error(geminiError(res.status, j));
+  const ver = n => +(n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || 0;
+  const rank = n => n === AI_MODEL ? 0 : /pro/.test(n) ? 3 : /lite/.test(n) ? 2 : 1;
+  return asList(j.models).filter(m => asList(m.supportedGenerationMethods).includes('generateContent'))
+    .map(m => String(m.name || '').replace(/^models\//, '')).filter(n => /^gemini-/.test(n) && !AI_SKIP.test(n))
+    .sort((a, b) => rank(a) - rank(b) || /latest|preview/.test(a) - /latest|preview/.test(b) || ver(b) - ver(a) || a.localeCompare(b));
+}
+// Google lists models a key cannot really use (retired for new users, or thinking for over a
+// minute), so each one gets a tiny test call and only those that answer in time are offered.
+async function probeModel(key, model) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000), t0 = performance.now();
+  try { const [res] = await geminiCall(key, model, [{ text: 'Balas hanya: OK' }], false, ctl.signal); return res.ok ? performance.now() - t0 : 0 }
+  catch { return 0 } finally { clearTimeout(timer) }
+}
+let aiMsFor = '', aiMsT = 0;
+async function loadAiModels(force) {
+  const key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), msg = $('#aiMs');
+  if (!sel || key.length < 20 || (!force && key === aiMsFor)) return;
+  aiMsFor = key; msg.textContent = 'Memuat daftar model…';
+  const stale = () => cleanKey($('#aiKey')?.value) !== key || !sel.isConnected;
+  try {
+    const all = await geminiModels(key);
+    if (stale()) return;
+    if (!all.length) throw new Error('Key ini tidak punya model Gemini yang cocok.');
+    let done = 0;
+    msg.textContent = `Mengetes ${all.length} model…`;
+    const ms = Object.fromEntries(await Promise.all(all.map(async n => {
+      const t = await probeModel(key, n);
+      if (!stale()) msg.textContent = `Mengetes model… ${++done}/${all.length}`;
+      return [n, t];
+    })));
+    if (stale()) return;
+    const list = all.filter(n => ms[n]);
+    if (!list.length) throw new Error('Belum ada model yang menjawab. Server Gemini mungkin sibuk; coba lagi sebentar lagi.');
+    const rec = ms[AI_MODEL] ? AI_MODEL : list[0], cur = list.includes(sel.value) ? sel.value : rec;
+    sel.innerHTML = modelOpts(list, cur, rec, ms); sel.disabled = false; ui.aiModels = list;
+    msg.textContent = `${list.length} dari ${all.length} model menjawab dan bisa dipakai.`;
+  } catch (e) { if (aiMsFor === key) { aiMsFor = ''; msg.textContent = e.message } }
 }
 function geminiError(status, j) {
   const m = j?.error?.message || '', st = j?.error?.status || '';
@@ -2044,24 +2105,27 @@ function geminiError(status, j) {
 // Gemini sometimes takes long or never answers; nothing waits forever. When a model is busy
 // (503 "high demand") or out of free quota (429, counted per model) the lighter models take over.
 const AI_BACKUP = ['gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];
-async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs = 90000) {
-  if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
-  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
-  const call = async (model, thinking) => {
+async function geminiCall(key, model, parts, json, signal) {
+  const call = async thinking => {
     const generationConfig = json ? { responseMimeType: 'application/json', temperature: .2 } : { temperature: 0, maxOutputTokens: 512 };
     if (thinking) generationConfig.thinkingConfig = { thinkingLevel: 'minimal' };
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, signal: ctl.signal,
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, signal,
       body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig })
     });
     return [r, await r.json().catch(() => ({}))];
   };
+  const out = await call(true);
+  // models without a minimal thinking level refuse the setting; ask again without it
+  return out[0].status === 400 && /thinking/i.test(out[1]?.error?.message || '') ? call(false) : out;
+}
+async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs = 90000) {
+  if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
   let res, j;
   try {
     for (const m of [model, ...AI_BACKUP.filter(b => b !== model)]) {
-      [res, j] = await call(m, true);
-      // models without a minimal thinking level refuse the setting; ask again without it
-      if (res.status === 400 && /thinking/i.test(j?.error?.message || '')) [res, j] = await call(m, false);
+      [res, j] = await geminiCall(key, m, parts, json, ctl.signal);
       if (res.status !== 429 && res.status < 500) break;
     }
   } catch (e) {
@@ -2708,14 +2772,14 @@ const A = {
   },
   aiSetup: () => openAiSetup(),
   aiSave: async el => {
-    // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
-    // so Gemini itself decides whether it is valid.
-    const key = $('#aiKey').value.replace(/[^\w.-]+/g, ''), model = $('#aiModel').value.trim() || AI_MODEL, err = $('#aiErr');
+    const key = cleanKey($('#aiKey').value), err = $('#aiErr');
     if (key.length < 20) { err.textContent = 'Key terlalu pendek. Salin ulang seluruh key dari AI Studio.'; return }
     busy(el, true); err.textContent = '';
     try {
+      if (key !== aiMsFor) await loadAiModels(true);
+      const model = $('#aiModel').value || AI_MODEL;
       await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false, 30000);
-      localStorage.setItem(AI_KEY, JSON.stringify({ key, model }));
+      localStorage.setItem(AI_KEY, JSON.stringify({ key, model, models: key === aiMsFor ? ui.aiModels : [] }));
       const then = ui.aiThen; closeSheet(); toast('Gemini terhubung'); render();
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
       else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
@@ -2764,6 +2828,7 @@ document.addEventListener('input', e => {
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
+  else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {
     const f = el.dataset.k; ui.appDraft[f] = el.value;
