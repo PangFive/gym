@@ -51,6 +51,12 @@ svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stro
 h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:6px 2px 18px}
 .hello{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.top:has(.hi){align-items:center;margin:2px 2px 16px}
+.hi{display:flex;align-items:center;gap:12px;min-width:0;flex:1;border:0;background:transparent;padding:0;text-align:left;color:var(--ink)}
+.hi .avatar{width:48px;height:48px;font-size:19px;box-shadow:0 10px 20px -10px rgba(37,99,235,.8),0 0 0 3px rgba(255,255,255,.85)}
+.hi-t{display:flex;flex-direction:column;min-width:0}
+.hi-t small{font-size:13px;font-weight:600;color:var(--muted)}
+.hi-t b{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub{color:var(--muted);font-size:14px;margin-top:4px}
 .card{padding:18px;margin-bottom:14px}
 .ct{font-size:16px;font-weight:700;margin:0 0 14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -1068,7 +1074,8 @@ function vHome() {
   const greet = hr < 11 ? 'Selamat pagi' : hr < 15 ? 'Selamat siang' : hr < 18 ? 'Selamat sore' : 'Selamat malam';
   const qa = (ic, label, a, c, to) => `<button class="qtile glass" data-a="${a}" ${to ? `data-to="${to}"` : ''} style="--c:${c}"><span class="qi">${I(ic)}</span><b>${label}</b></button>`;
   return `<header class="top">
-      <div><div class="hello">Hi, ${esc(S.settings.name || 'kamu')} 👋</div><div class="sub">${greet}, siap kejar targetmu?</div></div>
+      <button class="hi" data-a="settings" aria-label="Profil dan pengaturan"><span class="avatar">${esc((S.settings.name || 'W').trim().charAt(0).toUpperCase())}</span>
+        <span class="hi-t"><small>${greet}</small><b>${esc(S.settings.name || 'kamu')}</b></span></button>
       <button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button>
     </header>
     ${APP.announcement ? `<div class="banner glass" role="note"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p>${esc(APP.announcement)}</p></div>` : ''}
