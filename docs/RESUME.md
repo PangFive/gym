@@ -29,12 +29,16 @@ tersinkron di semua perangkat.
 - **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot.
 - Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini**.
 - **Scan QR di mesin** (tombol QR di kanan atas semua halaman): membuka tutorial alat itu, atau saat
-  workout langsung menambahkannya ke workout.
+  workout langsung menambahkannya ke workout. Dari Edit Program: tiap alat yang di-scan masuk ke program
+  itu, kamera tetap terbuka untuk alat berikutnya.
+- Kamera scan minta 1080p + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** dan
+  **Zoom** muncul kalau kameranya mendukung; ketuk layar untuk fokus; petunjuk muncul setelah 7 detik.
 
 ### Program & plan mingguan
 - Tab **Jadwal**: tiap hari Senin–Minggu berisi satu/lebih program atau hari istirahat, dengan status
   Selesai / Terlewat.
 - Tab **Program**: buat, edit (set, reps, urutan), hapus program. Program baru berupa draf sampai disimpan.
+  Urutan diubah dengan **drag** pegangan ⋮⋮ (halaman bergulir sendiri di tepi; panah atas/bawah di keyboard).
 - **Pilih latihan**: peta otot (bisa pilih beberapa otot), preview video, dan **Rekomendasi Gemini**
   (latihan dari daftar alat gym beserta set × reps, sesuai program, otot pilihan, dan tujuan).
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).

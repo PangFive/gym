@@ -58,8 +58,8 @@ button{font:inherit;cursor:pointer}
 html{-webkit-text-size-adjust:100%}
 body{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(47,124,246,.55);outline-offset:2px}
-.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.step button,.ed-o button,.pkrow,.mini,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
-.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.step button:active,.ed-o button:active,.pkrow:active,.mini:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
+.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.step button,.pkrow,.mini,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
+.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.step button:active,.pkrow:active,.mini:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
 .list button:active{background:rgba(24,32,47,.05)}
 .nb:active{transform:scale(.92)}
 .big,.kv b,.wsum b,.bal b,.hd b,.stats3 b,.bw small{font-variant-numeric:tabular-nums}
@@ -410,10 +410,16 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .reps .inp{width:52px;min-height:42px;padding:7px 4px}
 .ed-c .step button{width:40px;height:40px}
 .step button{display:grid;place-items:center;line-height:1}
-.ed-o{display:flex;gap:6px;margin-left:auto}
-.ed-o button{width:40px;height:40px;border:1px solid rgba(24,32,47,.08);border-radius:13px;background:#fff;color:var(--muted);display:grid;place-items:center;padding:0}
-.ed-o button svg.i{width:18px;height:18px}
-.ed-o button:disabled{opacity:.3}
+.ed-grip{margin-left:auto;width:44px;height:44px;border:0;border-radius:14px;background:transparent;color:var(--faint);display:grid;place-items:center;padding:0;cursor:grab;touch-action:none}
+.ed-grip svg.i{width:22px;height:22px;stroke-width:3}
+.ed-grip:active{background:rgba(24,32,47,.06);color:var(--ink)}
+/* dragging: the held card lifts, the others slide to make room */
+.edrow{transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+.edrow.drag{position:relative;z-index:6;transition:none;scale:1.02;box-shadow:0 26px 46px -18px rgba(24,32,47,.5);cursor:grabbing}
+.edrow.drag .ed-grip{background:var(--acc-soft);color:var(--acc-2)}
+body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
+.edrow.drop{animation:dropIn .4s ease-out}
+@keyframes dropIn{0%{box-shadow:0 0 0 3px rgba(47,124,246,.45),var(--shadow)}100%{box-shadow:0 0 0 3px rgba(47,124,246,0),var(--shadow)}}
 .wt{text-align:center;min-width:0;flex:1}
 .wprog{position:absolute;left:22px;right:22px;bottom:0;height:3px;border-radius:3px;background:rgba(47,124,246,.12);overflow:hidden}
 .wprog i{display:block;height:100%;background:var(--grad);border-radius:3px;transition:width .3s}
@@ -1057,6 +1063,7 @@ const ICONS = {
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
   up: '<path d="M6 15l6-6 6 6"/>',
+  grip: '<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
   edit: '<path d="M4 20h4.5L19 9.5 14.5 5 4 15.5z"/><path d="M13 6.5l4.5 4.5"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M9 7V4.5h6V7M6 7l1 12.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/>',
@@ -1274,7 +1281,8 @@ function applyRemote(val) {
 let renderLater = false;
 function softRender() {
   const a = document.activeElement;
-  if (a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && $('#app').contains(a)) { renderLater = true; return }
+  // not while typing or while a card is being dragged; it catches up afterwards
+  if (edDrag || a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && $('#app').contains(a)) { renderLater = true; return }
   renderLater = false; render();
 }
 document.addEventListener('focusout', () => { if (renderLater) setTimeout(softRender, 0) });
@@ -1682,13 +1690,13 @@ function vEdit(id) {
   if (!r) { setTimeout(() => go('plan/program')); return '' }
   const row = (it, i) => {
     const t = T[it.id];
-    return `<div class="edrow glass">
+    return `<div class="edrow glass" data-ix="${i}">
       <div class="ed-top">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}
         <div class="ed-m"><b>${esc(t.t)}</b>${pTags(t)}</div>
         <button class="icon-btn sm" data-a="edDel" data-ix="${i}" aria-label="Hapus ${esc(t.t)}">${I('trash')}</button></div>
       <div class="ed-c"><div class="step"><button data-a="edSets" data-d="-1" data-ix="${i}" aria-label="Kurangi set">−</button><span>${it.sets} set</span><button data-a="edSets" data-d="1" data-ix="${i}" aria-label="Tambah set">+</button></div>
         <label class="reps"><input class="inp" data-i="edReps" data-ix="${i}" value="${esc(it.reps)}" inputmode="numeric" maxlength="7" aria-label="Reps"> reps</label>
-        <div class="ed-o"><button data-a="edMove" data-d="-1" data-ix="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Pindah ke atas">${I('up')}</button><button data-a="edMove" data-d="1" data-ix="${i}" ${i === r.items.length - 1 ? 'disabled' : ''} aria-label="Pindah ke bawah">${I('down')}</button></div></div>
+        <button class="ed-grip" data-ix="${i}" aria-label="Urutan ${i + 1}. Tahan dan geser untuk memindah, atau pakai panah atas/bawah">${I('grip')}</button></div>
     </div>`;
   };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="edBack" aria-label="Kembali">${I('back')}</button><b>${r === draft ? 'Program Baru' : 'Edit Program'}</b><button class="btn ghost sm" data-a="edDone">${r === draft ? 'Simpan' : 'Selesai'}</button></header>
@@ -1702,7 +1710,7 @@ function vEdit(id) {
       </div>
     </section>
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
-    <button class="btn soft block" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button>
+    <div class="row2"><button class="btn soft" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan" data-rid="${r.id}">${I('qr')} Scan alat</button></div>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
 }
 
@@ -2932,7 +2940,7 @@ function parseMachineQr(raw) {
   return { id, yid };
 }
 const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
-const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0 };
+const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, added: 0 };
 let jsQRp = null;
 const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   const sc = document.createElement('script');
@@ -2941,12 +2949,14 @@ const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   document.head.appendChild(sc);
 }));
 function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg; t.classList.toggle('err', !!err) } }
-async function openScan() {
+// rid: scanning from Edit Program, where each machine scanned joins that program and the camera stays open
+async function openScan(rid = null) {
   closeSheet();
+  Object.assign(scan, { rid: rid && findR(rid) ? rid : null, last: 0, added: 0 });
   const el = $('#scan');
   el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Alatnya langsung masuk ke program. Bisa scan beberapa alat berturut-turut.' : S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>
     <div class="scan-ctl" id="scanCtl" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
   // closing and reopening while this one still waits on the camera must not leave two readers running
@@ -3030,6 +3040,11 @@ function stopScan() {
   scan.stream = null;
   const el = $('#scan'); el.hidden = true; el.innerHTML = '';
   if (!$('#sheet').classList.contains('open')) document.body.classList.remove('noscroll');
+  if (scan.added) {
+    toast(`${scan.added} alat ditambahkan ke program`);
+    setTimeout(() => { const rows = document.querySelectorAll('.edrow'); rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 60);
+  }
+  scan.rid = null; scan.added = 0; scan.last = 0;
 }
 async function onScan(raw) {
   const q = parseMachineQr(raw), t = machineFor(q);
@@ -3043,6 +3058,16 @@ async function onScan(raw) {
       return;
     }
     return scanTip('QR ini bukan QR alat.<small>Coba arahkan ke QR yang tertempel di mesin.</small>', true);
+  }
+  if (scan.rid) {
+    const r = findR(scan.rid); if (!r) return stopScan();
+    if (t.id === scan.last) return;   // the same QR is still in view
+    scan.last = t.id; scan.miss = '';
+    try { navigator.vibrate?.(60) } catch {}
+    if (r.items.some(it => it.id === t.id)) return scanTip(`${esc(t.t)} sudah ada di program<small>Scan alat lain, atau tutup kalau sudah.</small>`);
+    const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
+    r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
+    return scanTip(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
   }
   stopScan();
   try { navigator.vibrate?.(60) } catch {}
@@ -3410,7 +3435,6 @@ const A = {
     save(); go('plan/program'); toast('Program dihapus');
   },
   edSets: el => { const it = curR().items[+el.dataset.ix]; it.sets = clamp(it.sets + +el.dataset.d, 1, 10); save(); render() },
-  edMove: el => { const r = curR(), i = +el.dataset.ix, j = i + +el.dataset.d; if (j < 0 || j >= r.items.length) return; [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render() },
   edDel: async el => {
     const r = curR(), it = r?.items[+el.dataset.ix]; if (!it) return;
     if (!(await ask({ title: 'Hapus latihan?', msg: `${T[it.id]?.t || 'Latihan ini'} akan dihapus dari ${r.name ? `program ${r.name}` : 'program ini'}.`, ok: 'Hapus' }))) return;
@@ -3670,7 +3694,7 @@ const A = {
     saveWeight(v); if (S.settings.kcalAuto) S.settings.kcal = energy()?.target || S.settings.kcal;
     save(); closeSheet(); render(); toast('Berat dicatat');
   },
-  scan: openScan,
+  scan: el => openScan(el?.dataset?.rid || null),
   scanClose: stopScan,
   scanTorch: el => {
     const tr = scan.track; if (!tr) return;
@@ -3713,6 +3737,59 @@ document.addEventListener('click', e => {
   if (!el || el.disabled) return;
   const f = A[el.dataset.a];
   if (f) { e.preventDefault(); f(el) }
+});
+// Drag to reorder in Edit Program: hold the grip and move. The rows were measured when the edDrag began,
+// so positions are compared in that frame, with the page scroll since then added in.
+let edDrag = null;
+document.addEventListener('pointerdown', e => {
+  const g = e.target.closest('.ed-grip'); if (!g || e.button > 0) return;
+  const row = g.closest('.edrow'), rows = [...document.querySelectorAll('.edrow')]; if (rows.length < 2) return;
+  e.preventDefault(); try { g.setPointerCapture(e.pointerId) } catch {}
+  const rects = rows.map(x => x.getBoundingClientRect()), from = rows.indexOf(row);
+  edDrag = { id: e.pointerId, row, rows, rects, from, to: from, y0: e.clientY, y: e.clientY, sy0: scrollY, gap: rects[1].top - rects[0].bottom, v: 0, raf: 0 };
+  row.classList.add('drag'); document.body.classList.add('dragging');
+  try { navigator.vibrate?.(15) } catch {}
+});
+function dragMove() {
+  const d = edDrag, dy = d.y - d.y0 + scrollY - d.sy0, r = d.rects[d.from], mid = r.top + r.height / 2 + dy;
+  d.row.style.transform = `translateY(${dy}px)`;
+  let to = d.from;
+  d.rects.forEach((x, i) => { const m = x.top + x.height / 2; if (i < d.from && mid < m) to = Math.min(to, i); if (i > d.from && mid > m) to = Math.max(to, i) });
+  if (to !== d.to) { d.to = to; try { navigator.vibrate?.(8) } catch {} }
+  const sh = r.height + d.gap;
+  d.rows.forEach((x, i) => { if (x !== d.row) x.style.transform = i > d.from && i <= to ? `translateY(${-sh}px)` : i < d.from && i >= to ? `translateY(${sh}px)` : '' });
+}
+// near the top or bottom edge the page scrolls by itself, faster the closer the finger is
+function dragScroll() {
+  const d = edDrag; if (!d) return;
+  if (d.v) { scrollBy(0, d.v); dragMove() }
+  d.raf = requestAnimationFrame(dragScroll);
+}
+document.addEventListener('pointermove', e => {
+  if (!edDrag || e.pointerId !== edDrag.id) return;
+  edDrag.y = e.clientY;
+  const top = 110, bot = innerHeight - 70;
+  edDrag.v = e.clientY < top ? -Math.ceil((top - e.clientY) / 6) : e.clientY > bot ? Math.ceil((e.clientY - bot) / 6) : 0;
+  if (!edDrag.raf) edDrag.raf = requestAnimationFrame(dragScroll);
+  dragMove();
+});
+function dragEnd(e) {
+  if (!edDrag || e.pointerId !== edDrag.id) return;
+  const d = edDrag; edDrag = null; cancelAnimationFrame(d.raf); document.body.classList.remove('dragging');
+  const r = curR(), from = +d.row.dataset.ix, to = +d.rows[d.to].dataset.ix;
+  if (!r || from === to || !r.items[from]) { d.rows.forEach(x => { x.style.transform = '' }); d.row.classList.remove('drag'); if (renderLater) softRender(); return }
+  const [it] = r.items.splice(from, 1); r.items.splice(to, 0, it); save(); renderLater = false; render();
+  $(`.edrow[data-ix="${to}"]`)?.classList.add('drop');
+}
+document.addEventListener('pointerup', dragEnd);
+document.addEventListener('pointercancel', dragEnd);
+// keyboard: arrow keys on the grip move the exercise one place
+document.addEventListener('keydown', e => {
+  const g = e.target.closest?.('.ed-grip'); if (!g || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+  e.preventDefault();
+  const r = curR(), i = +g.dataset.ix, j = i + (e.key === 'ArrowUp' ? -1 : 1); if (!r || j < 0 || j >= r.items.length) return;
+  [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render();
+  $(`.ed-grip[data-ix="${j}"]`)?.focus();
 });
 document.addEventListener('input', e => {
   const el = e.target, k = el.dataset.i; if (!k) return;
