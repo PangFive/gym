@@ -58,11 +58,11 @@ button{font:inherit;cursor:pointer}
 html{-webkit-text-size-adjust:100%}
 body{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(47,124,246,.55);outline-offset:2px}
-.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.ckb,.step button,.ed-o button,.pkrow,.mini,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
-.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.ckb:active,.step button:active,.ed-o button:active,.pkrow:active,.mini:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
+.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.step button,.ed-o button,.pkrow,.mini,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
+.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.step button:active,.ed-o button:active,.pkrow:active,.mini:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
 .list button:active{background:rgba(24,32,47,.05)}
 .nb:active{transform:scale(.92)}
-.big,.kv b,.wsum b,.bal b,.hd b,.stats3 b,.bw small,.sn{font-variant-numeric:tabular-nums}
+.big,.kv b,.wsum b,.bal b,.hd b,.stats3 b,.bw small{font-variant-numeric:tabular-nums}
 .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
 .orb.a{width:130px;height:130px;background:radial-gradient(circle at 32% 30%,#fff 0,#a9cbf8 45%,#5f9cf0 100%);top:-36px;right:-38px;opacity:.6}
 .orb.b{width:170px;height:170px;background:radial-gradient(circle at 32% 30%,#fff 0,#fcc9ae 45%,#f39a77 100%);bottom:70px;left:-80px;opacity:.5}
@@ -422,22 +422,53 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .wsum{display:grid;grid-template-columns:repeat(3,1fr);padding:14px 8px;margin-bottom:14px;text-align:center}
 .wsum small{display:block;color:var(--muted);font-size:12px;font-weight:600}
 .wsum b{font-size:19px;font-weight:800}
-.wx{padding:14px;margin-bottom:12px;border-radius:22px}
+.wx{padding:14px;margin-bottom:12px;border-radius:22px;scroll-margin-top:96px}
 .wx-h{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .wx-h .vt{width:42px;height:56px;border-radius:12px;cursor:pointer}
-.wx-h div{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.wx-h div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .wx-h b{font-size:15px;line-height:1.3}
-.sh-r,.srow{display:grid;grid-template-columns:22px 1fr 66px 58px 44px;gap:8px;align-items:center}
-.sh-r{font-size:11px;color:var(--faint);font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:0 6px 6px}
-.srow{padding:5px 6px;border-radius:14px;transition:background .2s}
-.srow.done{background:var(--acc-soft)}
-.sn{font-weight:800;text-align:center}
-.pv{color:var(--faint);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ckb{width:44px;height:44px;border-radius:12px;border:1.5px solid rgba(24,32,47,.12);background:#fff;color:var(--faint);display:grid;place-items:center;padding:0}
-.ckb svg.i{stroke-width:2.6;width:18px;height:18px}
-.srow.done .ckb{background:var(--acc);border-color:var(--acc);color:#fff}
-.srow.done .inp{background:transparent;border-color:transparent}
-.wx-f{display:flex;gap:4px;margin-top:6px}
+.wx-h small{color:var(--muted);font-size:12.5px;font-weight:600}
+.wx-h small b{font-size:inherit;color:var(--acc-2)}
+/* folded exercise: one row */
+.wx.mini{padding:0}
+.wx-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px 10px 10px;border:0;border-radius:inherit;background:transparent;text-align:left;color:var(--ink)}
+.wx-row:active{background:rgba(24,32,47,.04)}
+.wx-row .vt{width:34px;height:44px;border-radius:10px;flex:none}
+.wx-row>span:not(.vt):not(.wx-n){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.wx-row b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-row small{color:var(--muted);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.wx-n{flex:none;min-width:40px;height:28px;padding:0 9px;border-radius:999px;display:grid;place-items:center;background:rgba(24,32,47,.06);color:var(--muted);font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
+.wx-n.ok{background:#dcf4e8;color:#0b7a55}
+.wx-n svg.i{width:16px;height:16px;stroke-width:2.8}
+/* one chip per set: done (green), the one being edited (blue), still to do */
+.wx-sets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.sc{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(24,32,47,.1);background:rgba(255,255,255,.75);color:var(--muted);font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums;transition:transform .14s ease,background-color .2s,color .2s}
+.sc:active{transform:scale(.95)}
+.sc.ok{background:#dcf4e8;border-color:#bfe9d3;color:#0b7a55}
+.sc.cur{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 6px 14px -8px rgba(37,99,235,.8)}
+.sc.ok.cur{background:#0b9466;border-color:#0b9466}
+.sc.add{padding:0 11px;border-style:dashed;color:var(--acc-2)}
+.sc.add svg.i{width:17px;height:17px}
+/* the set being done */
+.fs{padding:6px 12px 12px;border-radius:18px;background:rgba(255,255,255,.72);border:1px solid rgba(24,32,47,.06)}
+.fs.was{background:#effaf4}
+.fs-r{display:flex;align-items:center;gap:10px;padding:6px 0}
+.fs-r+.fs-r{border-top:1px solid rgba(24,32,47,.06)}
+.fs-r label{flex:1;min-width:0;font-size:14.5px;font-weight:700}
+.fs-r label small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.fs-s{flex:none;display:flex;align-items:center;gap:6px}
+.fs-s button{width:46px;height:46px;padding:0;border:0;border-radius:14px;background:var(--acc-soft);color:var(--acc-2);font-size:24px;font-weight:600;line-height:1;display:grid;place-items:center;transition:transform .14s ease,background-color .2s}
+.fs-s button:active{transform:scale(.92);background:rgba(47,124,246,.22)}
+.fs-s input{width:76px;height:46px;padding:0;border:1px solid transparent;border-radius:12px;background:transparent;font:inherit;font-size:24px;font-weight:800;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums;outline:none}
+.fs-s input:focus{background:#fff;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.fs-p{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:40px;margin:2px 0 0;padding:0;border:0;border-radius:12px;background:transparent;color:var(--muted);font-size:13px;font-weight:600}
+.fs-p b{color:var(--ink);font-variant-numeric:tabular-nums}
+.fs-p span{color:var(--acc-2);font-weight:800}
+.fs-p[disabled]{cursor:default}
+.fs-b{display:flex;align-items:center;gap:8px;margin-top:8px}
+.fs-b .fs-go{flex:1;min-height:50px;font-size:15.5px}
+.fs-b .fs-del{color:var(--muted);padding-left:6px;padding-right:8px}
+.wx-all{margin:0;padding:4px 4px 2px;color:var(--muted);font-size:13px;text-align:center}
 #rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:10px;padding:9px 9px 9px 18px;border-radius:999px;background:rgba(24,32,47,.9);color:#fff;backdrop-filter:blur(12px);box-shadow:0 18px 34px -14px rgba(24,32,47,.7);overflow:hidden}
 /* before sign-in there is no tab bar to keep clear of */
 body.pre #app,body.padless #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
@@ -1633,29 +1664,66 @@ function updSum() {
   if (a) a.textContent = doneCount(); if (b) b.textContent = fmt(activeVol()) + ' kg'; if (c) c.style.width = setPct() + '%';
 }
 
+// Focus set: one exercise is open at a time, on one set (the first not done, unless the user tapped another).
+// The others fold to a single row. Weight and reps change with −/+ so the keyboard is rarely needed.
+function wxState() {
+  if (!ui.wx || ui.wx.k !== S.active.start) ui.wx = { k: S.active.start, open: null, at: {}, touched: new Set() };
+  return ui.wx;
+}
+function openEx() {
+  const w = wxState(), its = S.active.items;
+  if (w.open !== null && its[w.open] && T[its[w.open].id]) return w.open;
+  return its.findIndex(it => T[it.id] && it.sets.some(s => !s.done));
+}
+function focusSet(ei) {
+  const f = wxState().at[ei], sets = S.active.items[ei].sets;
+  return f != null && sets[f] ? f : sets.findIndex(s => !s.done);
+}
+const sLab = s => `${fmtW(s.w || 0)}×${s.r || 0}`;
+function setsLine(it) {
+  const d = it.sets.filter(s => s.done), n = it.sets.length;
+  if (!d.length) return `${n} set · ${fmtW(it.sets[0]?.w || 0)} kg × ${it.sets[0]?.r || 0}`;
+  return d.map(sLab).join(' · ') + (d.length < n ? ` · ${n - d.length} lagi` : '');
+}
+function wxCard(it, ei) {
+  const t = T[it.id]; if (!t) return '';
+  const n = it.sets.length, done = it.sets.filter(s => s.done).length;
+  if (ei !== openEx()) return `<section class="wx glass mini" id="wx${ei}">
+      <button class="wx-row" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
+        <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button></section>`;
+  const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id), p = prev && (prev[fi] || prev[prev.length - 1]);
+  const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
+  const chip = (x, si) => `<button class="sc${x.done ? ' ok' : ''}${si === fi ? ' cur' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}"
+      aria-label="Set ${si + 1}: ${fmtW(x.w || 0)} kg × ${x.r || 0}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}"><span>${si === fi && !x.done ? `Set ${si + 1}` : sLab(x)}</span></button>`;
+  const stepper = (k, label, unit, d) => `<div class="fs-r"><label for="f${k}${ei}">${label}${unit ? `<small>${unit}</small>` : ''}</label><div class="fs-s">
+      <button data-a="wxStep" data-k="${k}" data-d="-${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Kurangi ${label.toLowerCase()}">−</button>
+      <input id="f${k}${ei}" data-i="${k === 'w' ? 'sw' : 'sr'}" data-ex="${ei}" data-ix="${fi}" value="${esc(s[k])}" inputmode="${k === 'w' ? 'decimal' : 'numeric'}" placeholder="0" autocomplete="off">
+      <button data-a="wxStep" data-k="${k}" data-d="${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Tambah ${label.toLowerCase()}">+</button></div></div>`;
+  const same = p && num(s?.w) === p.w && (parseInt(s?.r) || 0) === p.r;
+  return `<section class="wx glass on" id="wx${ei}">
+      <div class="wx-h">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}<div><b>${esc(t.t)}</b>
+        <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
+        <button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
+      <div class="wx-sets">${it.sets.map(chip).join('')}<button class="sc add" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set">${I('plus')}</button></div>
+      ${s ? `<div class="fs${s.done ? ' was' : ''}">
+        ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
+        ${p ? `<button class="fs-p" data-a="wxPrev" data-ex="${ei}" data-ix="${fi}"${same ? ' disabled' : ''}>Terakhir <b>${fmtW(p.w)} kg × ${p.r}</b>${same ? '' : '<span>Pakai</span>'}</button>` : ''}
+        <div class="fs-b">${n > 1 && !s.done ? `<button class="btn ghost sm fs-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}">${I('trash')} Hapus set</button>` : ''}
+          ${s.done ? `<button class="btn soft fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">Batalkan selesai</button>`
+            : `<button class="btn pri fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">${I('check')} Selesai set ${fi + 1}</button>`}</div>
+      </div>` : `<p class="wx-all">Ketuk set untuk mengubah, atau + untuk menambah set.</p>`}
+    </section>`;
+}
+const drawWx = ei => { const el = $('#wx' + ei), it = S.active?.items[ei]; if (el && it) el.outerHTML = wxCard(it, ei) };
+
 function vWorkout() {
   const a = S.active;
-  const card = (it, ei) => {
-    const t = T[it.id]; if (!t) return '';
-    const prev = prevFor(it.id);
-    return `<section class="wx glass">
-      <div class="wx-h">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}<div><b>${esc(t.t)}</b>${pTags(t)}</div>
-        <button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
-      <div class="sh-r"><span>Set</span><span>Sebelumnya</span><span>kg</span><span>Reps</span><span></span></div>
-      ${it.sets.map((s, si) => `<div class="srow ${s.done ? 'done' : ''}" id="s${ei}_${si}"><span class="sn">${si + 1}</span>
-        <span class="pv">${prev && prev[si] ? `${fmtW(prev[si].w)}×${prev[si].r}` : '—'}</span>
-        <input class="inp" data-i="sw" data-ex="${ei}" data-ix="${si}" value="${esc(s.w)}" inputmode="decimal" placeholder="0" aria-label="Beban set ${si + 1}">
-        <input class="inp" data-i="sr" data-ex="${ei}" data-ix="${si}" value="${esc(s.r)}" inputmode="numeric" placeholder="0" aria-label="Reps set ${si + 1}">
-        <button class="ckb" data-a="setDone" data-ex="${ei}" data-ix="${si}" aria-label="Tandai set ${si + 1} selesai">${I('check')}</button></div>`).join('')}
-      <div class="wx-f"><button class="btn ghost sm" data-a="setAdd" data-ex="${ei}">${I('plus')} Set</button>${it.sets.length > 1 ? `<button class="btn ghost sm" style="color:var(--muted)" data-a="setDel" data-ex="${ei}">− Set</button>` : ''}</div>
-    </section>`;
-  };
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kecilkan">${I('down')}</button>
       <div class="wt"><b>${esc(a.name)}</b><small id="elapsed">0:00</small></div>
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
     <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div><small>Latihan</small><b>${a.items.length}</b></div></div>
-    ${a.items.map(card).join('') || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
+    ${a.items.map(wxCard).join('') || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
     <div class="row2"><button class="btn soft" data-a="pick" data-mode="workout">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan">${I('qr')} Scan alat</button></div>
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
 }
@@ -2810,8 +2878,9 @@ async function onScan(raw) {
   if (S.active) {
     if (!S.active.items.some(it => it.id === t.id)) { S.active.items.push(newActiveItem({ id: t.id, sets: 3, reps: '10' })); save(); toast(`${t.t} ditambahkan ke workout`) }
     else toast(`${t.t} sudah ada di workout`, 'info');
+    const i = S.active.items.findIndex(it => it.id === t.id); wxState().open = i;
     go('workout');
-    setTimeout(() => { const i = S.active.items.findIndex(it => it.id === t.id); document.querySelectorAll('.wx')[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 120);
+    setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
   } else openDetail(t.id);
 }
 
@@ -3204,17 +3273,50 @@ const A = {
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
   },
   setDone: el => {
-    const ei = +el.dataset.ex, si = +el.dataset.ix, s = S.active.items[ei].sets[si];
-    s.done = !s.done; save();
-    $(`#s${ei}_${si}`).classList.toggle('done', s.done); updSum();
-    if (s.done) startRest();
+    const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si]; if (!s) return;
+    const w = wxState();
+    s.done = !s.done;
+    if (!s.done) { w.at[ei] = si; save(); drawWx(ei); updSum(); return }
+    // a new weight carries to the sets after it that the user has not set by hand
+    it.sets.forEach((x, j) => { if (j > si && !x.done && !w.touched.has(`${ei}_${j}`)) x.w = s.w });
+    delete w.at[ei]; save(); updSum(); startRest();
+    try { navigator.vibrate?.(30) } catch {}
+    if (it.sets.some(x => !x.done)) return drawWx(ei);
+    // this exercise is done: open the next one that still has sets to do
+    w.open = null; render();
+    const next = openEx();
+    if (next >= 0 && next !== ei) setTimeout(() => $('#wx' + next)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+    else if (next < 0) toast('Semua set selesai. Ketuk Selesai untuk menyimpan.');
   },
-  setAdd: el => { const it = S.active.items[+el.dataset.ex], l = it.sets[it.sets.length - 1]; it.sets.push({ w: l ? l.w : '', r: l ? l.r : '10', done: false }); save(); render() },
-  setDel: el => { const it = S.active.items[+el.dataset.ex]; if (it.sets.length > 1) it.sets.pop(); save(); render() },
+  wxOpen: el => {
+    const ei = +el.dataset.ex, w = wxState(); w.open = ei; delete w.at[ei]; render();
+    setTimeout(() => $('#wx' + ei)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+  },
+  wxSet: el => { const ei = +el.dataset.ex, w = wxState(); w.open = ei; w.at[ei] = +el.dataset.ix; drawWx(ei) },
+  wxStep: el => {
+    const ei = +el.dataset.ex, si = +el.dataset.ix, k = el.dataset.k, s = S.active.items[ei]?.sets[si]; if (!s) return;
+    const v = Math.max(0, Math.round(((k === 'w' ? num(s.w) : parseInt(s.r) || 0) + +el.dataset.d) * 100) / 100);
+    s[k] = k === 'w' ? fmtW(v) : String(v); wxState().touched.add(`${ei}_${si}`);
+    save(); updSum(); drawWx(ei);
+  },
+  wxPrev: el => {
+    const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si], prev = it && prevFor(it.id);
+    const p = prev && (prev[si] || prev[prev.length - 1]); if (!s || !p) return;
+    s.w = fmtW(p.w); s.r = String(p.r); wxState().touched.add(`${ei}_${si}`); save(); updSum(); drawWx(ei);
+  },
+  setAdd: el => {
+    const ei = +el.dataset.ex, it = S.active.items[ei], l = it.sets[it.sets.length - 1], w = wxState();
+    it.sets.push({ w: l ? l.w : '', r: l ? l.r : '10', done: false });
+    w.open = ei; w.at[ei] = it.sets.length - 1; save(); drawWx(ei);
+  },
+  setDel: el => {
+    const ei = +el.dataset.ex, it = S.active.items[ei], si = +el.dataset.ix; if (!it || it.sets.length < 2) return;
+    it.sets.splice(si, 1); const w = wxState(); delete w.at[ei]; w.touched.clear(); save(); drawWx(ei); updSum();
+  },
   wxDel: async el => {
     const it = S.active.items[+el.dataset.ex]; if (!it) return;
     if (!(await ask({ title: 'Hapus latihan?', msg: `${T[it.id]?.t || 'Latihan ini'} dan set-nya akan dihapus dari workout ini.`, ok: 'Hapus' }))) return;
-    const i = S.active?.items.indexOf(it); if (i >= 0) { S.active.items.splice(i, 1); save(); render() }
+    const i = S.active?.items.indexOf(it); if (i >= 0) { S.active.items.splice(i, 1); ui.wx = null; save(); render() }
   },
   finish,
   cancelWorkout: async () => {
@@ -3420,7 +3522,11 @@ document.addEventListener('input', e => {
   else if (k === 'pkAiQ') ui.pick.aiQ = el.value.slice(0, 200);
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
-  else if (k === 'sw' || k === 'sr') { const s = S.active.items[+el.dataset.ex].sets[+el.dataset.ix]; s[k === 'sw' ? 'w' : 'r'] = el.value; save(); updSum() }
+  else if (k === 'sw' || k === 'sr') {
+    const ei = +el.dataset.ex, si = +el.dataset.ix, s = S.active.items[ei].sets[si];
+    s[k === 'sw' ? 'w' : 'r'] = el.value; wxState().touched.add(`${ei}_${si}`); save(); updSum();
+    const c = $(`#sc${ei}_${si} span`); if (c && s.done) c.textContent = sLab(s);
+  }
   else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
   else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }

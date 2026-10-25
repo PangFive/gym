@@ -42,7 +42,9 @@ tersinkron di semua perangkat.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude.
 
 ### Workout
-- Catat kg × reps per set, angka sesi sebelumnya sebagai acuan, centang set → **timer istirahat**
+- **Fokus set**: satu latihan terbuka, satu set aktif; kg (±2,5) dan reps (±1) lewat tombol −/+ (angka tetap bisa diketik), "Terakhir 50 kg × 10 · Pakai" dari sesi sebelumnya
+- Set tampil sebagai chip (hijau = selesai, biru = sedang diisi); ketuk chip untuk mengedit set mana saja, + untuk tambah set
+- "Selesai set" → **timer istirahat**, beban baru terbawa ke set berikutnya yang belum diubah manual, lalu lanjut otomatis ke set/latihan berikutnya; latihan lain terlipat jadi satu baris
   (bunyi/getar bisa diatur).
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
