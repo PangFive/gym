@@ -1732,7 +1732,7 @@ function updSum() {
 // Focus set: one exercise is open at a time, on one set (the first not done, unless the user tapped another).
 // The others fold to a single row. Weight and reps change with −/+ so the keyboard is rarely needed.
 function wxState() {
-  if (!ui.wx || ui.wx.k !== S.active.start) ui.wx = { k: S.active.start, open: null, at: {}, touched: new Set() };
+  if (!ui.wx || ui.wx.k !== S.active.start) ui.wx = { k: S.active.start, open: null, at: {}, touched: new Set(), fin: {} };
   return ui.wx;
 }
 function openEx() {
@@ -1789,10 +1789,14 @@ function centerTl() {
   if (over && sel) tl.scrollLeft = sel.offsetLeft - (tl.clientWidth - sel.offsetWidth) / 2;
 }
 // folded exercises next to each other share one list, so they read as a calm list, not a stack of cards
+// Finished exercises move to the top, in the order they were finished; the rest keep the program's order.
+// Only the display order changes: the indexes, the saved workout and its history stay as they are.
 function wxCards() {
-  const open = openEx(), out = []; let rows = [];
+  const w = wxState(), its = S.active.items, open = openEx(), out = []; let rows = [];
+  const all = its.map((_, ei) => ei), fin = ei => its[ei].sets.every(x => x.done);
+  const done = all.filter(fin).sort((a, b) => (w.fin[a] || 0) - (w.fin[b] || 0) || a - b);
   const flush = () => { if (rows.length) out.push(`<div class="wx-list">${rows.join('')}</div>`); rows = [] };
-  S.active.items.forEach((it, ei) => { const h = wxCard(it, ei); if (!h) return; if (ei === open) { flush(); out.push(h) } else rows.push(h) });
+  [...done, ...all.filter(ei => !fin(ei))].forEach(ei => { const h = wxCard(its[ei], ei); if (!h) return; if (ei === open) { flush(); out.push(h) } else rows.push(h) });
   flush();
   return out.join('');
 }
@@ -3473,15 +3477,15 @@ const A = {
     const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si]; if (!s) return;
     const w = wxState();
     s.done = !s.done;
-    if (!s.done) { w.at[ei] = si; save(); drawWx(ei); updSum(); return }
+    if (!s.done) { const was = w.fin[ei]; delete w.fin[ei]; w.at[ei] = si; save(); updSum(); return was ? render() : drawWx(ei) }
     // a new weight carries to the sets after it that the user has not set by hand
     it.sets.forEach((x, j) => { if (j > si && !x.done && !w.touched.has(`${ei}_${j}`)) x.w = s.w });
     delete w.at[ei]; w.just = `${ei}_${si}`; save(); updSum(); startRest(S.settings.rest, ei);
     setTimeout(() => { if (w.just === `${ei}_${si}`) w.just = null }, 600);
     try { navigator.vibrate?.(30) } catch {}
     if (it.sets.some(x => !x.done)) return drawWx(ei);
-    // this exercise is done: open the next one that still has sets to do
-    w.open = null; render();
+    // this exercise is done: it moves up with the finished ones, and the next one with sets to do opens
+    w.fin[ei] = Date.now(); w.open = null; render();
     const next = openEx();
     if (next >= 0 && next !== ei) setTimeout(() => $('#wx' + next)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
     else if (next < 0) toast('Semua set selesai. Ketuk Selesai untuk menyimpan.');

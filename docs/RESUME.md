@@ -49,7 +49,7 @@ tersinkron di semua perangkat.
 - **Fokus set**: satu latihan terbuka, satu set aktif; kg (±2,5) dan reps (±1) lewat tombol −/+ (angka tetap bisa diketik), "Terakhir 50 kg × 10 · Pakai" dari sesi sebelumnya
 - Set tampil sebagai **timeline** (hijau = selesai, biru = sedang diisi, abu = belum); ketuk titik untuk mengedit set mana saja, + untuk tambah set; set banyak → bisa digeser
 - **Timer istirahat** = kartu dengan cincin hitung mundur, info set berikutnya, −15/+15/Lewati; 3 detik terakhir kuning, lalu kartu hijau "Lanjut Set 2". Bunyi (3 tik + nada naik) dijadwalkan di jam audio saat set selesai, dan audio dibuka saat tombol diketuk (aturan autoplay HP)
-- "Selesai set" → **timer istirahat**, beban baru terbawa ke set berikutnya yang belum diubah manual, lalu lanjut otomatis ke set/latihan berikutnya; latihan lain terlipat jadi satu baris
+- "Selesai set" → **timer istirahat**, beban baru terbawa ke set berikutnya yang belum diubah manual, lalu lanjut otomatis ke set/latihan berikutnya; latihan lain terlipat jadi satu baris; yang sudah selesai naik ke atas (urut waktu selesai)
   (bunyi/getar bisa diatur).
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
