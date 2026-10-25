@@ -429,10 +429,12 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .wx-h b{font-size:15px;line-height:1.3}
 .wx-h small{color:var(--muted);font-size:12.5px;font-weight:600}
 .wx-h small b{font-size:inherit;color:var(--acc-2)}
-/* folded exercise: one row */
-.wx.mini{padding:0}
-.wx-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px 10px 10px;border:0;border-radius:inherit;background:transparent;text-align:left;color:var(--ink)}
+/* folded exercises: rows in one bright list (no glass, so the page colour does not muddy it) */
+.wx-list{margin-bottom:12px;border-radius:22px;overflow:hidden;background:rgba(255,255,255,.9);border:1px solid #fff;box-shadow:0 10px 24px -18px rgba(52,72,120,.4)}
+.wx-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px 10px 10px;border:0;background:transparent;text-align:left;color:var(--ink);scroll-margin-top:96px}
+.wx-row+.wx-row{border-top:1px solid rgba(24,32,47,.07)}
 .wx-row:active{background:rgba(24,32,47,.04)}
+.wx-row.done b{color:var(--muted)}
 .wx-row .vt{width:34px;height:44px;border-radius:10px;flex:none}
 .wx-row>span:not(.vt):not(.wx-n){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .wx-row b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1679,18 +1681,17 @@ function focusSet(ei) {
   const f = wxState().at[ei], sets = S.active.items[ei].sets;
   return f != null && sets[f] ? f : sets.findIndex(s => !s.done);
 }
-const sLab = s => `${fmtW(s.w || 0)}×${s.r || 0}`;
+const sLab = s => num(s.w) ? `${fmtW(s.w)}×${s.r || 0}` : `${s.r || 0} reps`;
 function setsLine(it) {
-  const d = it.sets.filter(s => s.done), n = it.sets.length;
-  if (!d.length) return `${n} set · ${fmtW(it.sets[0]?.w || 0)} kg × ${it.sets[0]?.r || 0}`;
+  const d = it.sets.filter(s => s.done), n = it.sets.length, f = it.sets[0];
+  if (!d.length) return num(f?.w) ? `${n} set · ${fmtW(f.w)} kg × ${f.r || 0}` : `${n} set × ${f?.r || 0} reps`;
   return d.map(sLab).join(' · ') + (d.length < n ? ` · ${n - d.length} lagi` : '');
 }
 function wxCard(it, ei) {
   const t = T[it.id]; if (!t) return '';
   const n = it.sets.length, done = it.sets.filter(s => s.done).length;
-  if (ei !== openEx()) return `<section class="wx glass mini" id="wx${ei}">
-      <button class="wx-row" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
-        <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button></section>`;
+  if (ei !== openEx()) return `<button class="wx-row${done === n ? ' done' : ''}" id="wx${ei}" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
+      <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id), p = prev && (prev[fi] || prev[prev.length - 1]);
   const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
   const chip = (x, si) => `<button class="sc${x.done ? ' ok' : ''}${si === fi ? ' cur' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}"
@@ -1715,6 +1716,14 @@ function wxCard(it, ei) {
     </section>`;
 }
 const drawWx = ei => { const el = $('#wx' + ei), it = S.active?.items[ei]; if (el && it) el.outerHTML = wxCard(it, ei) };
+// folded exercises next to each other share one list, so they read as a calm list, not a stack of cards
+function wxCards() {
+  const open = openEx(), out = []; let rows = [];
+  const flush = () => { if (rows.length) out.push(`<div class="wx-list">${rows.join('')}</div>`); rows = [] };
+  S.active.items.forEach((it, ei) => { const h = wxCard(it, ei); if (!h) return; if (ei === open) { flush(); out.push(h) } else rows.push(h) });
+  flush();
+  return out.join('');
+}
 
 function vWorkout() {
   const a = S.active;
@@ -1723,7 +1732,7 @@ function vWorkout() {
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
     <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div><small>Latihan</small><b>${a.items.length}</b></div></div>
-    ${a.items.map(wxCard).join('') || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
+    ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
     <div class="row2"><button class="btn soft" data-a="pick" data-mode="workout">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan">${I('qr')} Scan alat</button></div>
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
 }
