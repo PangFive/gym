@@ -6,21 +6,23 @@
 //
 // Strategies:
 //   the page itself         network first (4 s), cached copy when offline
-//   icons, manifest         cache, refreshed in the background
+//   manifest                network first (it carries the app's name and icons)
+//   icons                   cache, refreshed in the background
 //   Firebase SDK            cache first: the URLs carry a version and never change
 //   Google Fonts            cache, refreshed in the background
 //   jsQR (QR reader)        cache first: a pinned version
 //   YouTube thumbnails      cache first, the newest 200 kept
 // Firebase Auth and the Realtime Database go straight to the network.
 
-const VERSION = 'why-v2';   // bumped when the icons change, so the new ones are fetched
+const VERSION = 'why-v3';   // bump when icons or the manifest change, so phones fetch the new ones
 const SHELL = VERSION + '-shell', RUNTIME = VERSION + '-runtime', THUMBS = VERSION + '-thumbs';
 const PAGE = new URL('./index.html', self.registration.scope).href;
 const ASSETS = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png',
   './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo.svg'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(SHELL).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  // cache: 'reload' skips the browser's HTTP cache, which could still hold the previous files
+  e.waitUntil(caches.open(SHELL).then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
@@ -40,6 +42,8 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (req.mode === 'navigate') return e.respondWith(networkFirst(req));
+  // the manifest names and pictures the installed app, so it comes fresh whenever there is a network
+  if (url.origin === location.origin && url.pathname.endsWith('/manifest.json')) return e.respondWith(fresh(req));
   if (url.origin === location.origin) return e.respondWith(refreshing(req, SHELL));
   if (url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/')) return e.respondWith(cacheFirst(req, RUNTIME));
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') return e.respondWith(refreshing(req, RUNTIME));
@@ -55,6 +59,17 @@ async function networkFirst(req) {
     return res;
   } catch {
     return (await cache.match(PAGE)) || (await cache.match(req)) || Response.error();
+  }
+}
+
+async function fresh(req) {
+  const cache = await caches.open(SHELL);
+  try {
+    const res = await fetch(req, { cache: 'no-cache' });
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch {
+    return (await cache.match(req, { ignoreSearch: true })) || Response.error();
   }
 }
 
