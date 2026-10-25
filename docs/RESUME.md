@@ -29,8 +29,8 @@ tersinkron di semua perangkat.
 - **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot.
 - Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini** (saat
   workout berjalan: **Tambah ke workout** / **Buka di workout**).
-- **Scan QR di mesin** (tombol QR di kanan atas semua halaman, dan saat workout): membuka detail alat itu;
-  menambahkannya ke workout dipilih dari detail. Dari Edit Program muncul kartu konfirmasi (Batal /
+- **Scan QR di mesin** (tombol QR di kanan atas semua halaman): membuka detail alat itu. Saat workout:
+  popup ringkas (video, otot, saran, deskripsi) dengan **Tutup** / **Tambah ke workout** (atau **Buka di workout**). Dari Edit Program muncul kartu konfirmasi (Batal /
   Tambahkan) dan kamera tetap terbuka untuk alat berikutnya. Tombol **Tambah** dan **Scan** ada di atas daftar latihan.
 - Kamera scan minta 1080p + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** muncul kalau
   kameranya mendukung; **Zoom** digital (1×–2,5×) di lensa utama, karena zoom kamera membuat HP pindah ke lensa tele; ketuk layar untuk fokus; petunjuk muncul setelah 7 detik.
