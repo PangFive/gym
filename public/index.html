@@ -273,13 +273,7 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pk-v .vt{width:46px;height:62px;display:block}
 .pk-v .pm{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 3px 8px -3px rgba(24,32,47,.45)}
 .pk-v .pm svg.i{width:11px;height:11px;fill:currentColor;stroke:none;margin-left:1px}
-.pk-v[aria-expanded="true"] .vt{outline:2px solid var(--acc);outline-offset:1px}
 .pk-b{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:6px 4px 6px 6px;border:0;background:transparent;text-align:left;color:var(--ink);font:inherit;border-radius:12px}
-.pk-prev{margin:2px 6px 12px;padding:12px;border-radius:18px;background:#fff;border:1px solid rgba(24,32,47,.08)}
-.pk-vid{position:relative;width:min(100%,230px);aspect-ratio:9/16;margin:0 auto 10px;border-radius:14px;overflow:hidden;background:#0b0f19}
-.pk-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.pk-prev p{margin:0 2px 6px;font-size:13.5px;line-height:1.5;color:var(--ink)}
-.pk-prev .also{display:block;margin:0 2px 10px}
 .pkexp{margin:0 0 12px;padding:12px 12px 6px;border-radius:20px;background:rgba(255,255,255,.7);border:1px solid rgba(24,32,47,.06)}
 .pkexp-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .pkexp-h b{font-size:15px;font-weight:800}
@@ -459,6 +453,20 @@ body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
 #toast .ti{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;flex:none}
 #toast .ti svg.i{width:16px;height:16px;stroke-width:2.6}
 #dialog{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:24px}
+#vmodal{position:fixed;inset:0;z-index:72;display:grid;place-items:center;padding:16px}
+#vmodal .scrim{z-index:0}
+.vm{position:relative;z-index:1;width:min(360px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;border-radius:26px;padding:14px;box-shadow:0 30px 60px -20px rgba(24,32,47,.55);animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
+.vm-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:2px 2px 10px}
+.vm-h>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.vm-h b{font-size:16px;font-weight:800;line-height:1.3}
+.vm-vid{position:relative;height:min(56dvh,440px);aspect-ratio:9/16;max-width:100%;margin:0 auto;border-radius:16px;overflow:hidden;background:#0b0f19}
+.vm-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vm p{margin:12px 2px 4px;font-size:14px;line-height:1.5;color:var(--ink)}
+.vm .also{display:block;margin:0 2px}
+.vm-b{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.vm-b .btn{min-height:40px;padding:8px 16px;font-size:14px}
+.vm-b .btn svg.i{width:17px;height:17px}
+.vm-b .btn[disabled]{opacity:.65}
 #dialog .scrim{z-index:0}
 .dlg{position:relative;z-index:1;width:min(340px,100%);background:linear-gradient(180deg,#fff,rgba(245,248,255,.98));border:1px solid #fff;border-radius:30px;padding:26px 22px 20px;text-align:center;box-shadow:0 30px 60px -20px rgba(24,32,47,.5);animation:pop .3s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes pop{from{transform:scale(.88);opacity:0}}
@@ -833,6 +841,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <input type="file" id="mealGal" accept="image/*" hidden>
 <div id="scan" hidden role="dialog" aria-modal="true" aria-label="Scan QR alat"></div>
 <div id="dialog" hidden></div>
+<div id="vmodal" hidden role="dialog" aria-modal="true" aria-label="Video latihan"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
@@ -1746,6 +1755,7 @@ function sheet(html) {
   fitThumbs();
 }
 function closeSheet() {
+  closeVideo();
   const s = $('#sheet');
   if (!s.classList.contains('open')) return;
   s.classList.remove('open'); s.classList.add('closing'); document.body.classList.remove('noscroll');
@@ -1811,13 +1821,24 @@ function pickList() {
   const xs = TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q));
   if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
   return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
-      <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}" aria-expanded="${p.prev === t.id}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+      <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
       <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>
-    </div>${p.prev === t.id ? pickPrev(t) : ''}`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
+    </div>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
 }
-const pickPrev = t => `<div class="pk-prev" id="pkPrev"><div class="pk-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div>
+// Video preview over the picker: a small popup, so the list keeps its place underneath.
+function openVideo(id) {
+  const t = T[id]; if (!t) return;
+  const on = ui.pick?.sel.has(id), m = $('#vmodal');
+  m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
+    <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
+    <div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div>
     ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
-    <div class="row2"><button class="btn soft" data-a="pkPrev" data-id="${t.id}">${I('x')} Tutup</button><button class="btn pri" data-a="pkAdd" data-id="${t.id}">${ui.pick.sel.has(t.id) ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih latihan ini`}</button></div></div>`;
+    ${ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
+  </div>`;
+  m.hidden = false;
+}
+function closeVideo() { const m = $('#vmodal'); if (m.hidden) return; m.hidden = true; m.innerHTML = '' }
+
 // ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
 // The user's own request for Gemini ("fokus dada atas, tanpa barbel"), kept while the sheet is open.
@@ -1885,7 +1906,8 @@ function refreshPick(keepScroll) {
 }
 const pickLabel = () => ui.pick.sel.size ? `Tambah ${ui.pick.sel.size} latihan` : 'Pilih latihan';
 function openPicker(mode, rid) {
-  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, prev: 0, ai: null, rec: new Map() };
+  closeVideo();
+  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, ai: null, rec: new Map() };
   sheet(`<h2 class="sh">Pilih latihan</h2>
     <label class="search">${I('search')}<input data-i="pq" type="search" placeholder="Cari…" autocomplete="off"></label>
     <div id="pkAi">${pickAiHtml()}</div>
@@ -3131,17 +3153,15 @@ const A = {
   edMove: el => { const r = curR(), i = +el.dataset.ix, j = i + +el.dataset.d; if (j < 0 || j >= r.items.length) return; [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render() },
   edDel: el => { curR().items.splice(+el.dataset.ix, 1); save(); render() },
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
-  pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); ui.pick.prev = 0; refreshPick() },
+  pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
-  pkPrev: el => {
-    const id = +el.dataset.id; ui.pick.prev = ui.pick.prev === id ? 0 : id;
-    $('#pkList').innerHTML = pickList();
-    if (ui.pick.prev) setTimeout(() => $('#pk' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  },
+  pkPrev: el => openVideo(+el.dataset.id),
+  vClose: closeVideo,
   pkAdd: el => {
-    const id = +el.dataset.id; ui.pick.sel.add(id); ui.pick.prev = 0;
-    $('#pkList').innerHTML = pickList(); $('#pkBtn').textContent = pickLabel();
-    setTimeout(() => $('#pk' + id)?.scrollIntoView({ block: 'center' }), 30);
+    const id = +el.dataset.id; ui.pick.sel.add(id); closeVideo();
+    document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', 'true'); (b.closest('.pkrow') || b).classList.add('on') });
+    if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
+    $('#pkBtn').textContent = pickLabel(); toast(`${T[id].t} dipilih`);
   },
   pickToggle: el => {
     const id = +el.dataset.id, s = ui.pick.sel; s.has(id) ? s.delete(id) : s.add(id);
@@ -3435,7 +3455,7 @@ document.addEventListener('change', e => {
   e.target.files[0].text().then(importText);
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (dlgDone) dlgDone(false); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet() }
+  if (e.key === 'Escape') { if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet() }
   // The muscles on the body map are SVG paths, which do not click on Enter/Space by themselves.
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A.muscle(e.target) }
 });
