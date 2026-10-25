@@ -523,8 +523,8 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 #rest.done .rs-adj,#rest.done .rs-sk .a{display:none}
 #rest.done .rs-sk .b{display:inline}
 @keyframes restDone{0%{box-shadow:0 0 0 0 rgba(18,163,114,.6),0 22px 40px -16px rgba(24,32,47,.75)}100%{box-shadow:0 0 0 18px rgba(18,163,114,0),0 22px 40px -16px rgba(24,32,47,.75)}}
-/* before sign-in there is no tab bar to keep clear of */
-body.pre #app,body.padless #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+/* before sign-in, and on workout / edit / kalori, there is no tab bar to keep clear of (the rest card adds its own room below) */
+body.pre #app,body.navless #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 body.navless #rest{bottom:calc(16px + env(safe-area-inset-bottom))}
 /* while the rest card shows on the workout page, keep the end of the page above it */
 body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom))}
@@ -1335,8 +1335,6 @@ function render() {
   const full = page === 'workout' || page === 'edit' || page === 'makan';
   nav.hidden = full;
   document.body.classList.toggle('navless', full);
-  // no bottom nav and no rest-timer bar here, so no room kept for them
-  document.body.classList.toggle('padless', page === 'makan');
   nav.querySelectorAll('[data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === page));
   const key = location.hash;
   if (key !== lastRoute) { window.scrollTo(0, 0); lastRoute = key }
