@@ -326,9 +326,13 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-q textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
 .pkai-q .aibtn{align-self:flex-end}
 .pkai p{margin:6px 0 8px}
-.pkai-row{display:flex;align-items:center;gap:10px;width:100%;padding:6px;margin:0 0 4px;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--ink);font:inherit}
-.pkai-row .vt{width:36px;height:48px;border-radius:10px;flex:none}
-.pkai-row>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+/* a suggestion: the thumbnail opens its video, the rest of the row picks it */
+.pkai-row{display:flex;align-items:center;gap:8px;width:100%;padding:4px 6px 4px 4px;margin:0 0 4px;border-radius:12px;color:var(--ink);transition:background-color .2s}
+.pkai-row .pk-v .vt{width:38px;height:50px;border-radius:10px}
+.pkai-row .pk-v .pm{width:20px;height:20px}
+.pkai-row .pk-v .pm svg.i{width:10px;height:10px}
+.pkai-sel{flex:1;min-width:0;display:flex;align-items:center;gap:10px;min-height:50px;padding:0;border:0;background:transparent;text-align:left;color:inherit;font:inherit}
+.pkai-sel>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .pkai-row b{font-size:14px}
 .aiadv.ok .pkai-row small{margin:0;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.35}
 .pkai-row.on{background:var(--acc-soft)}
@@ -2095,8 +2099,9 @@ function pickAiHtml() {
   const all = a.items.every(it => ui.pick.sel.has(it.id));
   return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
     ${a.summary ? `<p>${esc(a.summary)}</p>` : ''}
-    ${a.items.map(it => { const t = T[it.id], on = ui.pick.sel.has(it.id); return `<button class="pkai-row${on ? ' on' : ''}" data-a="pickToggle" data-id="${it.id}" aria-pressed="${on}">
-      ${pic(t.y)}<span><b>${esc(t.t)}</b><small>${it.sets} × ${esc(it.reps)} · ${esc(it.reason)}</small></span><i class="ck">${I('check')}</i></button>` }).join('')}
+    ${a.items.map(it => { const t = T[it.id], on = ui.pick.sel.has(it.id); return `<div class="pkai-row${on ? ' on' : ''}">
+      <button class="pk-v" data-a="pkPrev" data-id="${it.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+      <button class="pkai-sel" data-a="pickToggle" data-id="${it.id}" aria-pressed="${on}"><span><b>${esc(t.t)}</b><small>${it.sets} × ${esc(it.reps)} · ${esc(it.reason)}</small></span><i class="ck">${I('check')}</i></button></div>` }).join('')}
     <div class="aa-b"><button class="aibtn pri" data-a="pkAiAll"${all ? ' disabled' : ''}>${all ? `${I('check')} Semua dipilih` : `Pilih semua (${a.items.length})`}</button></div>
     ${pkAiAsk('Minta lagi', 'refresh')}</div>`;
 }
