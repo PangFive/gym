@@ -594,9 +594,12 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 #dialog{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:24px}
 #vmodal{position:fixed;inset:0;z-index:72;display:grid;place-items:center;padding:16px}
 #vmodal .scrim{z-index:0}
-.vm-vw{position:relative}
-.vm-vw .vm-vid{position:relative;z-index:1}
-.vm-glow{position:absolute;left:50%;top:50%;width:min(100%,calc(min(56dvh,440px) * .5625 + 40px));height:calc(100% + 24px);transform:translate(-50%,-50%);object-fit:cover;border-radius:28px;filter:blur(26px) saturate(2.2) brightness(1.25);opacity:.7;z-index:0;pointer-events:none}
+/* ambient light: the video's picture, blurred, glowing around the player (popup and detail sheet) */
+.amb{position:relative;width:fit-content;max-width:100%;margin:0 auto}
+.amb>.video,.amb>.vm-vid{position:relative;z-index:1}
+.amb-glow{position:absolute;left:-16px;top:-12px;width:calc(100% + 32px);height:calc(100% + 24px);object-fit:cover;border-radius:32px;filter:blur(26px) saturate(2.4) brightness(1.3);opacity:.72;z-index:0;pointer-events:none}
+.dt-amb{margin-top:18px}
+.dt-amb .video{margin:0;box-shadow:none}
 .vm{position:relative;z-index:1;width:min(360px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;border-radius:26px;padding:14px;box-shadow:0 30px 60px -20px rgba(24,32,47,.55);animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
 .vm-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:2px 2px 10px}
 .vm-h>div{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -2025,7 +2028,13 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
   });
 }
 
-const detailTop = t => `<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
+// Ambient light around a video, as YouTube does: its picture blurred behind the player. A YouTube player cannot
+// be read frame by frame from here, so the picture is the video's thumbnail.
+// The upright thumbnail (as shown in the player) so each edge glows in that edge's colours; videos without one
+// get YouTube's 120 px placeholder, which is swapped for the landscape one.
+const ambGlow = y => { const hq = esc(thumb(y, 'hq')); return `<img class="amb-glow" src="${esc(thumb(y, 'oar'))}" alt="" aria-hidden="true"
+  onerror="this.onerror=null;this.src='${hq}'" onload="if(this.naturalWidth<=120)this.src='${hq}'">` };
+const detailTop = t => `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
     <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
@@ -2070,12 +2079,9 @@ function pickList() {
 function openVideo(id) {
   const t = T[id]; if (!t) return;
   const on = ui.pick?.sel.has(id), m = $('#vmodal');
-  // ambient light around the player, as YouTube does: the video's picture blurred behind it
-  // (a YouTube player cannot be read frame by frame from here, so the picture is its thumbnail)
-  const pic2 = esc(thumb(t.y, 'hq'));
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
-    <div class="vm-vw"><img class="vm-glow" src="${pic2}" alt="" aria-hidden="true"><div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>
+    <div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>
     ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
     ${ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
   </div>`;
