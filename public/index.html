@@ -765,6 +765,15 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .scan-tip{position:absolute;left:24px;right:24px;top:calc(44% + min(34vw,130px) + 24px);text-align:center;color:#fff;font-weight:700;font-size:15px;line-height:1.5;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .scan-tip small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:4px}
 .scan-tip.err{color:#ffd7cf}
+.scan-ctl{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));z-index:2;display:flex;justify-content:center;gap:12px}
+.scan-b{min-width:76px;min-height:64px;padding:8px 14px;border:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:rgba(255,255,255,.16);color:#fff;font-size:12px;font-weight:700;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.scan-b svg.i{width:22px;height:22px}
+.scan-b b{font-size:17px;font-weight:800;line-height:22px;font-variant-numeric:tabular-nums}
+.scan-b[aria-pressed="true"]{background:#fff;color:var(--ink)}
+.scan-b:active{transform:scale(.95)}
+/* tap-to-focus ring */
+.scan-fx{position:fixed;z-index:1;width:66px;height:66px;margin:-33px 0 0 -33px;border:2px solid #fff;border-radius:50%;pointer-events:none;animation:focusRing .75s ease-out forwards}
+@keyframes focusRing{from{transform:scale(1.6);opacity:0}30%{opacity:1}to{transform:scale(1);opacity:0}}
 /* calories */
 .kc{padding:18px;background:linear-gradient(160deg,rgba(212,246,229,.9),rgba(240,252,246,.72) 55%,rgba(255,255,255,.6));border-color:rgba(11,148,102,.12)}
 .kc .today-h>button{color:#0b8a5e}
@@ -2923,7 +2932,7 @@ function parseMachineQr(raw) {
   return { id, yid };
 }
 const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
-const scan = { stream: null, timer: null, busy: false, miss: '' };
+const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0 };
 let jsQRp = null;
 const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   const sc = document.createElement('script');
@@ -2935,15 +2944,24 @@ function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg
 async function openScan() {
   closeSheet();
   const el = $('#scan');
-  el.innerHTML = `<video id="scanV" playsinline muted></video><div class="scan-frame"></div>
+  el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>`;
-  el.hidden = false; document.body.classList.add('noscroll'); scan.miss = '';
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-ctl" id="scanCtl" hidden></div>`;
+  el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
+  // closing and reopening while this one still waits on the camera must not leave two readers running
+  const run = ++scan.run, live = () => run === scan.run && scan.stream;
   if (!navigator.mediaDevices?.getUserMedia) return scanTip('Browser ini tidak bisa membuka kamera.', true);
-  try { scan.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }) }
-  catch (e) { return scanTip(e && e.name === 'NotAllowedError' ? 'Izin kamera ditolak.<small>Izinkan kamera untuk situs ini di pengaturan browser, lalu coba lagi.</small>' : 'Kamera tidak bisa dibuka.', true) }
-  if (el.hidden) return stopScan();
+  // Without a size, many Android phones open the camera at 640×480: blurry on screen and too few pixels for a dense QR.
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false }) }
+  catch (e) { return run === scan.run && scanTip(e && e.name === 'NotAllowedError' ? 'Izin kamera ditolak.<small>Izinkan kamera untuk situs ini di pengaturan browser, lalu coba lagi.</small>' : 'Kamera tidak bisa dibuka.', true) }
+  if (el.hidden || run !== scan.run) { stream.getTracks().forEach(t => t.stop()); return }
+  scan.stream = stream;
   const v = $('#scanV'); v.srcObject = scan.stream; await v.play().catch(() => {});
+  camTune(); v.addEventListener('click', focusAt);
+  clearTimeout(scan.hintT);
+  scan.hintT = setTimeout(() => { if (scan.stream && !$('#scanTip')?.classList.contains('err')) scanTip(`QR belum terbaca<small>Jauhkan HP sedikit sampai QR terlihat tajam, atau ketuk layar untuk fokus${scan.caps.torch ? '. Di tempat gelap, nyalakan senter' : ''}.</small>`) }, 7000);
   let detect = null;
   try {
     if ('BarcodeDetector' in window && (await BarcodeDetector.getSupportedFormats()).includes('qr_code')) {
@@ -2954,22 +2972,60 @@ async function openScan() {
   if (!detect) {
     let jsQR; try { jsQR = await loadJsQR() } catch { return scanTip('Pembaca QR tidak bisa dimuat.<small>Periksa koneksi internet, lalu coba lagi.</small>', true) }
     const c = document.createElement('canvas'), ctx = c.getContext('2d', { willReadFrequently: true });
+    // Mostly read the scan box at full camera resolution; every third try the whole picture, smaller.
     detect = async () => {
       const w = v.videoWidth, h = v.videoHeight; if (!w) return null;
-      const k = Math.min(1, 720 / Math.max(w, h)); c.width = w * k | 0; c.height = h * k | 0;
-      ctx.drawImage(v, 0, 0, c.width, c.height);
+      let [sx, sy, sw, sh] = [0, 0, w, h], max = 720;
+      if (++scan.n % 3) { const b = scanBox(v); if (b) { [sx, sy, sw, sh] = b; max = 1000 } }
+      const k = Math.min(1, max / Math.max(sw, sh)); c.width = sw * k | 0; c.height = sh * k | 0;
+      ctx.drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
       return jsQR(ctx.getImageData(0, 0, c.width, c.height).data, c.width, c.height, { inversionAttempts: 'dontInvert' })?.data;
     };
   }
-  if (!scan.stream) return;
+  if (!live()) return;
   scan.timer = setInterval(async () => {
-    if (scan.busy || !scan.stream) return;
+    if (scan.busy || !live()) return;
     scan.busy = true;
     try { const raw = await detect(); if (raw) await onScan(raw) } catch {} finally { scan.busy = false }
   }, 250);
 }
+// The video fills the screen with object-fit: cover, so a point on screen maps to the camera frame through that crop.
+function toVideo(v, x, y) {
+  const r = v.getBoundingClientRect(), s = Math.max(r.width / v.videoWidth, r.height / v.videoHeight);
+  return [(x - r.left - (r.width - v.videoWidth * s) / 2) / s, (y - r.top - (r.height - v.videoHeight * s) / 2) / s];
+}
+// the scan box (with some margin) in camera pixels
+function scanBox(v) {
+  const f = $('.scan-frame')?.getBoundingClientRect(); if (!f || !f.width) return null;
+  const m = f.width * .25, [x0, y0] = toVideo(v, f.left - m, f.top - m), [x1, y1] = toVideo(v, f.right + m, f.bottom + m);
+  const sx = Math.max(0, x0), sy = Math.max(0, y0), sw = Math.min(v.videoWidth, x1) - sx, sh = Math.min(v.videoHeight, y1) - sy;
+  return sw > 40 && sh > 40 ? [sx, sy, sw, sh] : null;
+}
+// Sharper scans: continuous autofocus, plus torch and zoom buttons when the camera offers them.
+function camTune() {
+  const tr = scan.stream?.getVideoTracks()[0]; let caps = {};
+  try { caps = tr?.getCapabilities?.() || {} } catch {}
+  Object.assign(scan, { track: tr, caps, zoom: caps.zoom ? caps.zoom.min || 1 : 0, torch: false });
+  if (caps.focusMode?.includes('continuous')) tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {});
+  const b = [];
+  if (caps.torch) b.push(`<button class="scan-b" data-a="scanTorch" aria-pressed="false">${I('bolt')}<span>Senter</span></button>`);
+  if (caps.zoom && caps.zoom.max >= 1.5) b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);
+  const ctl = $('#scanCtl'); if (ctl) { ctl.innerHTML = b.join(''); ctl.hidden = !b.length }
+}
+// tap to focus there (where the phone supports it), with a ring where the finger was
+function focusAt(e) {
+  const v = e.currentTarget, ring = document.createElement('i');
+  ring.className = 'scan-fx'; ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+  $('#scan')?.appendChild(ring); setTimeout(() => ring.remove(), 800);
+  const tr = scan.track, modes = scan.caps.focusMode || []; if (!tr || !modes.length || !v.videoWidth) return;
+  const [x, y] = toVideo(v, e.clientX, e.clientY), pt = { x: Math.min(1, Math.max(0, x / v.videoWidth)), y: Math.min(1, Math.max(0, y / v.videoHeight)) };
+  const mode = modes.includes('single-shot') ? 'single-shot' : modes.includes('continuous') ? 'continuous' : null; if (!mode) return;
+  tr.applyConstraints({ advanced: [{ focusMode: mode, pointsOfInterest: [pt] }] })
+    .catch(() => tr.applyConstraints({ advanced: [{ focusMode: mode }] })).catch(() => {})
+    .then(() => { if (mode === 'single-shot' && modes.includes('continuous')) setTimeout(() => scan.track === tr && tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}), 2500) });
+}
 function stopScan() {
-  clearInterval(scan.timer); scan.timer = null;
+  scan.run++; clearInterval(scan.timer); scan.timer = null; clearTimeout(scan.hintT);
   if (scan.stream) scan.stream.getTracks().forEach(t => t.stop());
   scan.stream = null;
   const el = $('#scan'); el.hidden = true; el.innerHTML = '';
@@ -3616,6 +3672,17 @@ const A = {
   },
   scan: openScan,
   scanClose: stopScan,
+  scanTorch: el => {
+    const tr = scan.track; if (!tr) return;
+    const on = !scan.torch;
+    tr.applyConstraints({ advanced: [{ torch: on }] }).then(() => { scan.torch = on; el.setAttribute('aria-pressed', on) }).catch(() => toast('Senter tidak bisa dinyalakan', 'err'));
+  },
+  scanZoom: () => {
+    const tr = scan.track, z = scan.caps.zoom; if (!tr || !z) return;
+    const base = z.min || 1, steps = [base, 2, 3].filter((x, i) => !i || (x > base && x <= z.max));
+    const next = steps[(steps.indexOf(scan.zoom) + 1) % steps.length] ?? base;
+    tr.applyConstraints({ advanced: [{ zoom: next }] }).then(() => { scan.zoom = next; const b = $('#scanZ'); if (b) b.textContent = `${Math.round(next / base * 10) / 10}×` }).catch(() => {});
+  },
   iconPick: el => openIconPick(el.dataset.id),
   setIcon: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
   setColor: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.color; else r.color = el.dataset.v; refreshIconPick() },
