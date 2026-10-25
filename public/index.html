@@ -576,15 +576,11 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .vm-b .btn svg.i{width:17px;height:17px}
 .vm-b .btn[disabled]{opacity:.65}
 .vm-b .btn.soft{background:#eef1f6}
-/* the machine popup after a scan during a workout */
-.mp .vm-vid{height:min(36dvh,300px)}
-.mp .vm-vid .vt{position:absolute;inset:0;width:100%;height:100%;border-radius:0}
-.mp-kv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
-.mp-kv div{padding:8px 10px;border-radius:14px;background:#f3f6fb;min-width:0}
-.mp-kv small{display:block;color:var(--muted);font-size:11.5px;font-weight:600}
-.mp-kv b{display:block;font-size:13.5px;line-height:1.3;margin-top:1px}
-.mp .dmap{margin:8px 0 0;border-color:transparent;background:#f3f6fb}
-.mp .dmap .bm-v{max-height:118px}
+/* the short detail after a scan during a workout: a small button row, not the big pair */
+.dt-b{display:flex;justify-content:flex-end;gap:8px;margin:2px 0 4px}
+.dt-b .btn{min-height:42px;padding:8px 16px;font-size:14px}
+.dt-b .btn svg.i{width:17px;height:17px}
+.dt-b .btn.soft{background:#eef1f6}
 #dialog .scrim{z-index:0}
 .dlg{position:relative;z-index:1;width:min(340px,100%);background:linear-gradient(180deg,#fff,rgba(245,248,255,.98));border:1px solid #fff;border-radius:30px;padding:26px 22px 20px;text-align:center;box-shadow:0 30px 60px -20px rgba(24,32,47,.5);animation:pop .3s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes pop{from{transform:scale(.88);opacity:0}}
@@ -1992,15 +1988,16 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
   });
 }
 
-function openDetail(id) {
-  const t = T[id]; if (!t) return;
-  const similar = TUTORIALS.filter(x => x.id !== t.id && x.p[0] === t.p[0]).slice(0, 4);
-  sheet(`<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
+const detailTop = t => `<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
     <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
       ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>
-    ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}
+    ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
+function openDetail(id) {
+  const t = T[id]; if (!t) return;
+  const similar = TUTORIALS.filter(x => x.id !== t.id && x.p[0] === t.p[0]).slice(0, 4);
+  sheet(`${detailTop(t)}
     <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
       : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${S.active.items.some(it => it.id === t.id) ? `${I('playf')} Buka di workout` : `${I('plus')} Tambah ke workout`}</button>`}</div>
     <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>
@@ -2044,20 +2041,13 @@ function openVideo(id) {
   </div>`;
   m.hidden = false;
 }
-// After a scan during a workout: the machine in a small popup (video, muscles, how-to) with one button.
+// After a scan during a workout: the machine's detail up to its how-to, with one small button to add it.
 function openMachinePop(id) {
   const t = T[id]; if (!t || !S.active) return;
-  const inW = S.active.items.some(it => it.id === id), m = $('#vmodal');
-  m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm mp">
-    <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
-    <div class="vm-vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div>
-    <div class="mp-kv"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
-    <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
-      ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>
-    ${t.d ? `<p>${esc(t.d)}</p>` : ''}
-    <div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="wxAddId" data-id="${id}">${inW ? `${I('playf')} Buka di workout` : `${I('plus')} Tambah ke workout`}</button></div>
-  </div>`;
-  m.hidden = false;
+  const inW = S.active.items.some(it => it.id === id);
+  sheet(`${detailTop(t)}
+    <div class="dt-b"><button class="btn soft sm" data-a="close">Tutup</button><button class="btn pri sm" data-a="wxAddId" data-id="${id}">${inW ? `${I('playf')} Buka di workout` : `${I('plus')} Tambah ke workout`}</button></div>`);
+  $('#sheet .sheet-body').scrollTop = 0;
 }
 function closeVideo() { const m = $('#vmodal'); if (m.hidden) return; m.hidden = true; m.innerHTML = '' }
 
