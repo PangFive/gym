@@ -279,6 +279,19 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .list button svg.i{color:var(--acc);width:20px;height:20px}
 .list button span{flex:1}
 .list .red,.list .red svg.i{color:#dc2626}
+/* program picker: the programs' own icons, name with its size, + on the right */
+.plist button{padding:11px 14px 11px 12px}
+.plist .ricon{flex:none}
+.plist .ricon svg.i{color:inherit;width:22px;height:22px}
+.plist button>span:not(.ricon){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.plist b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plist small{color:var(--muted);font-size:12.5px;font-weight:600}
+.plist .pl-add{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);font-style:normal}
+.plist .pl-add svg.i{width:18px;height:18px;color:var(--acc-2)}
+.plist em{flex:none;display:inline-flex;align-items:center;gap:4px;font-style:normal;font-size:12.5px;font-weight:800;color:#0b7a55}
+.plist em svg.i{width:15px;height:15px;color:#0b7a55;stroke-width:2.8}
+.plist .pl-new{background:transparent;border:1.5px dashed rgba(47,124,246,.45)}
+.plist .pl-new svg.i{color:var(--acc-2)}
 .field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px;border-bottom:1px solid rgba(24,32,47,.06)}
 .field>span{font-weight:700;font-size:14.5px}
 .field input{width:150px;min-height:44px;border:1px solid rgba(24,32,47,.1);background:#fff;border-radius:12px;padding:9px 12px;font:inherit;font-size:16px;font-weight:700;text-align:right;outline:none}
@@ -453,7 +466,7 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wx-n.ok{background:#dcf4e8;color:#0b7a55}
 .wx-n svg.i{width:16px;height:16px;stroke-width:2.8}
 /* the sets as a timeline: done (green), the one open (blue), still to do (grey) */
-.tl{display:flex;margin:0 -6px 12px;padding:2px 0;overflow-x:auto;scrollbar-width:none}
+.tl{display:flex;margin:-6px -6px 6px;padding:8px 0;overflow-x:auto;scrollbar-width:none}
 .tl::-webkit-scrollbar{display:none}
 .tl.scroll{-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
 .tl-s{position:relative;flex:1 0 62px;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:0 2px;border:0;background:transparent;color:var(--muted);font:inherit}
@@ -2009,9 +2022,9 @@ function openDetail(id) {
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function openAddTo(id) {
-  sheet(`<h2 class="sh">Tambah ke program</h2><div class="list">
-    ${S.routines.map(r => `<button data-a="addToR" data-rid="${r.id}" data-id="${id}">${I('clip')}<span>${rName(r)}</span><small class="muted">${r.items.length} latihan</small></button>`).join('')}
-    <button data-a="newWith" data-id="${id}">${I('plus')}<span>Program baru</span></button></div>`);
+  sheet(`<h2 class="sh">Tambah ke program</h2><div class="list plist">
+    ${S.routines.map(r => { const has = r.items.some(it => it.id === id); return `<button data-a="addToR" data-rid="${r.id}" data-id="${id}"${has ? ' class="has"' : ''}>${rIcon(r)}<span><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>${has ? `<em>${I('check')}Sudah ada</em>` : `<i class="pl-add">${I('plus')}</i>`}</button>` }).join('')}
+    <button data-a="newWith" data-id="${id}"><span class="ricon pl-new">${I('plus')}</span><span><b>Program baru</b><small>Mulai dari latihan ini</small></span></button></div>`);
 }
 function openStartPick() {
   if (S.active) return go('workout');
@@ -3464,6 +3477,7 @@ const A = {
   addTo: el => openAddTo(+el.dataset.id),
   addToR: el => {
     const r = S.routines.find(x => x.id === el.dataset.rid); if (!r) return;
+    if (r.items.some(it => it.id === +el.dataset.id)) return toast(`Sudah ada di ${r.name || 'program ini'}`, 'info');
     r.items.push({ id: +el.dataset.id, sets: 3, reps: '10' }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
