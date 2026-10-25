@@ -1212,7 +1212,7 @@ function normalize(v) {
   const a = d.active;
   return {
     settings: { ...userDefaults(), ...clean(d.settings) },
-    routines: asList(d.routines).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10') })),
+    routines: asList(d.routines).filter((r, i, all) => !r?.id || all.findIndex(x => x?.id === r.id) === i).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10') })),
       ...(r.icon && r.icon !== 'auto' ? { icon: String(r.icon) } : {}), ...(/^#[0-9a-f]{6}$/i.test(String(r.color || '')) ? { color: String(r.color) } : {}) })),
     week,
     history: asList(d.history).filter(h => h.id && h.date).map(h => ({
@@ -1735,7 +1735,7 @@ function vPlan(tab) {
 let draft = null;
 const findR = id => S.routines.find(x => x.id === id) || (draft && draft.id === id ? draft : null);
 function keepDraft() { if (!draft) return; S.routines.push(draft); draft = null; save() }
-function newDraft(items = []) { draft = { id: uid(), name: 'Program Baru', items }; go('edit/' + draft.id) }
+function newDraft(items = []) { if (draft?.items.length) keepDraft(); draft = { id: uid(), name: 'Program Baru', items }; go('edit/' + draft.id) }
 const curR = () => findR(route().arg);
 function vEdit(id) {
   const r = findR(id);
@@ -2044,7 +2044,7 @@ function openStartPick() {
   const rs = dayRoutines(new Date().getDay());
   sheet(`<h2 class="sh">Mulai workout</h2>
     ${rs.length ? `<button class="spick plan" data-a="startDay">${rIcon(rs[0])}<div><small class="k">Plan hari ini</small><b>${esc(dayName(rs))}</b><small>${rs.reduce((n, r) => n + r.items.length, 0)} latihan · ±${estMin(rs.flatMap(r => r.items))} menit</small></div><span class="go">${I('playf')}</span></button>` : ''}
-    ${S.routines.map(r => `<button class="spick" data-a="start" data-id="${r.id}">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
+    ${S.routines.filter(r => !rs.includes(r)).map(r => `<button class="spick" data-a="start" data-id="${r.id}">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div><span class="go">${I('playf')}</span></button>`).join('')}
     <div class="list mt"><button data-a="scan">${I('qr')}<span>Scan QR di alat</span></button><button data-a="empty">${I('plus')}<span>Workout bebas (kosong)</span></button><button data-a="go" data-to="library">${I('video')}<span>Pilih dari tutorial</span></button></div>`);
 }
 // The picker filters by any number of muscles: an exercise shows when it trains one of them, and
@@ -3560,7 +3560,9 @@ const A = {
   delRoutine: async el => {
     if (draft && draft.id === el.dataset.id) { draft = null; go('plan/program'); return toast('Program baru dibuang') }
     const r = S.routines.find(x => x.id === el.dataset.id); if (!r) return;
-    if (!(await ask({ title: 'Hapus program?', msg: `${r.name || 'Program ini'} akan dihapus. Riwayat workout-nya tetap tersimpan.`, ok: 'Hapus' }))) return;
+    const days = DOW.filter(d => (S.week['d' + d] || []).includes(r.id)).map(d => DAYN[d]);
+    const onDays = days.length ? ` Juga dihapus dari jadwal ${days.length > 1 ? days.slice(0, -1).join(', ') + ' dan ' + days.at(-1) : days[0]}.` : '';
+    if (!(await ask({ title: 'Hapus program?', msg: `${r.name || 'Program ini'} akan dihapus.${onDays} Riwayat workout-nya tetap tersimpan.`, ok: 'Hapus' }))) return;
     S.routines = S.routines.filter(x => x !== r);
     Object.keys(S.week).forEach(k => { S.week[k] = S.week[k].filter(id => id !== r.id); if (!S.week[k].length) delete S.week[k] });
     save(); go('plan/program'); toast('Program dihapus');
