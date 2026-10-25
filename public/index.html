@@ -442,15 +442,31 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .wx-n{flex:none;min-width:40px;height:28px;padding:0 9px;border-radius:999px;display:grid;place-items:center;background:rgba(24,32,47,.06);color:var(--muted);font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
 .wx-n.ok{background:#dcf4e8;color:#0b7a55}
 .wx-n svg.i{width:16px;height:16px;stroke-width:2.8}
-/* one chip per set: done (green), the one being edited (blue), still to do */
-.wx-sets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.sc{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(24,32,47,.1);background:rgba(255,255,255,.75);color:var(--muted);font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums;transition:transform .14s ease,background-color .2s,color .2s}
-.sc:active{transform:scale(.95)}
-.sc.ok{background:#dcf4e8;border-color:#bfe9d3;color:#0b7a55}
-.sc.cur{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 6px 14px -8px rgba(37,99,235,.8)}
-.sc.ok.cur{background:#0b9466;border-color:#0b9466}
-.sc.add{padding:0 11px;border-style:dashed;color:var(--acc-2)}
-.sc.add svg.i{width:17px;height:17px}
+/* the sets as a timeline: done (green), the one open (blue), still to do (grey) */
+.tl{display:flex;margin:0 -6px 12px;padding:2px 0;overflow-x:auto;scrollbar-width:none}
+.tl::-webkit-scrollbar{display:none}
+.tl.scroll{-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.tl-s{position:relative;flex:1 0 62px;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:0 2px;border:0;background:transparent;color:var(--muted);font:inherit}
+.tl-s:not(:first-child)::before{content:'';position:absolute;top:17px;left:calc(-50% + 22px);right:calc(50% + 22px);height:3px;border-radius:3px;background:rgba(24,32,47,.1);transform-origin:left}
+.tl-s.lk::before{background:#12a372}
+.tl-s.add::before{height:0;top:18px;background:none;border-top:2px dashed rgba(24,32,47,.16)}
+.tl-s.fill::before{animation:tlLine .45s ease-out}
+@keyframes tlLine{from{transform:scaleX(0)}}
+.tl-d{width:36px;height:36px;margin-bottom:5px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:14px;font-weight:800;background:#fff;border:2px solid rgba(24,32,47,.13);color:var(--muted);transition:transform .2s,background-color .2s,box-shadow .2s}
+.tl-d svg.i{width:18px;height:18px;stroke-width:3}
+.tl-s b{font-size:12px;font-weight:800;color:var(--ink)}
+.tl-s small{font-size:11.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tl-s.ok .tl-d{background:#12a372;border-color:#12a372;color:#fff}
+.tl-s.ok small{color:#0b7a55}
+.tl-s.cur .tl-d{background:var(--acc);border-color:var(--acc);color:#fff}
+.tl-s.sel .tl-d{box-shadow:0 0 0 4px rgba(47,124,246,.2)}
+.tl-s.ok.sel .tl-d{box-shadow:0 0 0 4px rgba(18,163,114,.24)}
+.tl-s.sel b{color:var(--acc-2)}
+.tl-s.ok.sel b{color:#0b7a55}
+.tl-s.add .tl-d{border-style:dashed;background:transparent;color:var(--acc-2)}
+.tl-s:active .tl-d{transform:scale(.9)}
+.tl-s.just .tl-d{animation:tlPop .5s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes tlPop{0%{transform:scale(.6)}60%{transform:scale(1.15)}}
 /* the set being done */
 .fs{padding:6px 12px 12px;border-radius:18px;background:rgba(255,255,255,.72);border:1px solid rgba(24,32,47,.06)}
 .fs.was{background:#effaf4}
@@ -471,14 +487,41 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .fs-b .fs-go{flex:1;min-height:50px;font-size:15.5px}
 .fs-b .fs-del{color:var(--muted);padding-left:6px;padding-right:8px}
 .wx-all{margin:0;padding:4px 4px 2px;color:var(--muted);font-size:13px;text-align:center}
-#rest{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:10px;padding:9px 9px 9px 18px;border-radius:999px;background:rgba(24,32,47,.9);color:#fff;backdrop-filter:blur(12px);box-shadow:0 18px 34px -14px rgba(24,32,47,.7);overflow:hidden}
+/* rest timer: a card that pops up when a set is done, with a ring counting down */
+#rest{position:fixed;left:16px;right:16px;max-width:440px;margin:0 auto;bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ring text" "ring btns";align-items:center;column-gap:14px;row-gap:8px;padding:12px 12px 12px 14px;border-radius:24px;background:rgba(24,32,47,.93);color:#fff;box-shadow:0 22px 40px -16px rgba(24,32,47,.75);animation:restIn .38s cubic-bezier(.2,.9,.3,1.2);transition:background-color .3s}
+@keyframes restIn{from{transform:translateY(40px) scale(.92);opacity:0}}
+.rs-ring{grid-area:ring;position:relative;width:72px;height:72px}
+.rs-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rs-ring circle{fill:none;stroke-width:6}
+.rs-bg{stroke:rgba(255,255,255,.14)}
+.rs-fg{stroke:#7db1ff;stroke-linecap:round;stroke-dasharray:175.93;stroke-dashoffset:0;transition:stroke-dashoffset .25s linear,stroke .3s}
+.rs-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.rs-ring b svg.i{width:28px;height:28px;stroke-width:3;transform:none}
+.rs-t{grid-area:text;min-width:0;display:flex;flex-direction:column;gap:1px}
+.rs-t small{font-size:12px;font-weight:700;color:rgba(255,255,255,.65)}
+.rs-t span{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs-b{grid-area:btns;display:flex;gap:6px}
+.rs-b button{min-height:38px;padding:0 13px;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
+.rs-b button:active{background:rgba(255,255,255,.24)}
+.rs-b .rs-sk{margin-left:auto;background:#fff;color:var(--ink)}
+.rs-b .rs-sk:active{background:#e8ecf3}
+.rs-sk .b{display:none}
+/* the last seconds: amber and a beat on the number */
+#rest.soon .rs-fg{stroke:#fbbf24}
+#rest.soon .rs-ring b{animation:beat .9s ease-in-out infinite}
+@keyframes beat{50%{transform:scale(1.14)}}
+/* rest over: green, time to go */
+#rest.done{background:#0b9466;animation:restDone .9s ease-out 2}
+#rest.done .rs-fg{stroke:#fff}
+#rest.done .rs-t small{color:rgba(255,255,255,.85)}
+#rest.done .rs-adj,#rest.done .rs-sk .a{display:none}
+#rest.done .rs-sk .b{display:inline}
+@keyframes restDone{0%{box-shadow:0 0 0 0 rgba(18,163,114,.6),0 22px 40px -16px rgba(24,32,47,.75)}100%{box-shadow:0 0 0 18px rgba(18,163,114,0),0 22px 40px -16px rgba(24,32,47,.75)}}
 /* before sign-in there is no tab bar to keep clear of */
 body.pre #app,body.padless #app{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
-body.navless #rest{bottom:calc(20px + env(safe-area-inset-bottom))}
-#rest .rl{font-size:12px;opacity:.7;font-weight:700}
-#rest b{font-size:20px;font-variant-numeric:tabular-nums;min-width:52px}
-#rest button{border:0;border-radius:999px;padding:9px 13px;background:rgba(255,255,255,.15);color:#fff;font-weight:800;font-size:13px}
-#rest .rp{position:absolute;left:0;bottom:0;height:3px;background:#7db1ff;transition:width .25s linear}
+body.navless #rest{bottom:calc(16px + env(safe-area-inset-bottom))}
+/* while the rest card shows on the workout page, keep the end of the page above it */
+body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom))}
 
 /* stats */
 .seg{display:flex;padding:5px;border-radius:18px;margin-bottom:14px}
@@ -887,7 +930,11 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
 <main id="app"></main>
 <nav id="nav" class="glass" aria-label="Navigasi"></nav>
-<div id="rest" hidden><div class="rp"></div><span class="rl">Istirahat</span><b id="restT">0:00</b><button data-a="restAdd">+15</button><button data-a="restSkip">Lewati</button></div>
+<div id="rest" hidden role="timer" aria-label="Timer istirahat">
+  <div class="rs-ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" class="rs-bg"/><circle cx="32" cy="32" r="28" class="rs-fg" id="restRing"/></svg><b id="restT">0:00</b></div>
+  <div class="rs-t"><small id="restL">Istirahat</small><span id="restN"></span></div>
+  <div class="rs-b"><button class="rs-adj" data-a="restAdd" data-d="-15" aria-label="Kurangi 15 detik">−15</button><button class="rs-adj" data-a="restAdd" data-d="15" aria-label="Tambah 15 detik">+15</button><button class="rs-sk" data-a="restSkip"><span class="a">Lewati</span><span class="b">Oke</span></button></div>
+</div>
 <div id="sheet"></div>
 <div id="offline" hidden role="status"><i></i>Offline · perubahan disimpan di perangkat</div>
 <input type="file" id="mealCam" accept="image/*" capture="environment" hidden>
@@ -1266,6 +1313,7 @@ function render() {
   else if (page === 'makan') html = vMeals();
   else html = vHome();
   $('#app').innerHTML = html;
+  if (page === 'workout') centerTl();
   document.body.classList.remove('pre');
   const full = page === 'workout' || page === 'edit' || page === 'makan';
   nav.hidden = full;
@@ -1694,8 +1742,10 @@ function wxCard(it, ei) {
       <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id), p = prev && (prev[fi] || prev[prev.length - 1]);
   const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
-  const chip = (x, si) => `<button class="sc${x.done ? ' ok' : ''}${si === fi ? ' cur' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}"
-      aria-label="Set ${si + 1}: ${fmtW(x.w || 0)} kg × ${x.r || 0}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}"><span>${si === fi && !x.done ? `Set ${si + 1}` : sLab(x)}</span></button>`;
+  const w = wxState(), prevDone = si => si > 0 && it.sets[si - 1].done;
+  const step = (x, si) => `<button class="tl-s${x.done ? ' ok' : si === fi ? ' cur' : ''}${si === fi ? ' sel' : ''}${prevDone(si) ? ' lk' : ''}${w.just === `${ei}_${si}` ? ' just' : ''}${w.just === `${ei}_${si - 1}` ? ' fill' : ''}"
+      id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="Set ${si + 1}: ${fmtW(x.w || 0)} kg × ${x.r || 0}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}">
+      <i class="tl-d">${x.done ? I('check') : si + 1}</i><b>Set ${si + 1}</b><small>${sLab(x)}</small></button>`;
   const stepper = (k, label, unit, d) => `<div class="fs-r"><label for="f${k}${ei}">${label}${unit ? `<small>${unit}</small>` : ''}</label><div class="fs-s">
       <button data-a="wxStep" data-k="${k}" data-d="-${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Kurangi ${label.toLowerCase()}">−</button>
       <input id="f${k}${ei}" data-i="${k === 'w' ? 'sw' : 'sr'}" data-ex="${ei}" data-ix="${fi}" value="${esc(s[k])}" inputmode="${k === 'w' ? 'decimal' : 'numeric'}" placeholder="0" autocomplete="off">
@@ -1705,7 +1755,7 @@ function wxCard(it, ei) {
       <div class="wx-h">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}<div><b>${esc(t.t)}</b>
         <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
         <button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
-      <div class="wx-sets">${it.sets.map(chip).join('')}<button class="sc add" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set">${I('plus')}</button></div>
+      <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
         ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
         ${p ? `<button class="fs-p" data-a="wxPrev" data-ex="${ei}" data-ix="${fi}"${same ? ' disabled' : ''}>Terakhir <b>${fmtW(p.w)} kg × ${p.r}</b>${same ? '' : '<span>Pakai</span>'}</button>` : ''}
@@ -1715,7 +1765,14 @@ function wxCard(it, ei) {
       </div>` : `<p class="wx-all">Ketuk set untuk mengubah, atau + untuk menambah set.</p>`}
     </section>`;
 }
-const drawWx = ei => { const el = $('#wx' + ei), it = S.active?.items[ei]; if (el && it) el.outerHTML = wxCard(it, ei) };
+const drawWx = ei => { const el = $('#wx' + ei), it = S.active?.items[ei]; if (el && it) { el.outerHTML = wxCard(it, ei); centerTl() } };
+// with many sets the timeline scrolls: keep the open set in view
+function centerTl() {
+  const tl = $('.wx.on .tl'); if (!tl) return;
+  const over = tl.scrollWidth > tl.clientWidth + 1, sel = tl.querySelector('.sel');
+  tl.classList.toggle('scroll', over);
+  if (over && sel) tl.scrollLeft = sel.offsetLeft - (tl.clientWidth - sel.offsetWidth) / 2;
+}
 // folded exercises next to each other share one list, so they read as a calm list, not a stack of cards
 function wxCards() {
   const open = openEx(), out = []; let rows = [];
@@ -2175,29 +2232,78 @@ async function finish() {
 }
 
 let rest = null, restTimer = null;
-function startRest(sec = S.settings.rest) { rest = { end: Date.now() + sec * 1000, total: sec }; clearInterval(restTimer); restTimer = setInterval(drawRest, 250); drawRest() }
-function stopRest() { rest = null; clearInterval(restTimer); $('#rest').hidden = true }
+// Rest between sets. The end-of-rest sound is scheduled on the audio clock when the rest starts,
+// so it lands on time even when the phone throttles the page's timers.
+const RING = 175.93;   // 2πr of the ring, r = 28
+function startRest(sec = S.settings.rest, ei = -1) {
+  stopRest();
+  rest = { end: Date.now() + sec * 1000, total: sec, ei, snd: [] };
+  audio(); restSound();
+  const el = $('#rest'); el.classList.remove('done', 'soon'); $('#restL').textContent = 'Istirahat';
+  el.hidden = true; void el.offsetWidth; el.hidden = false;   // replay the pop-in
+  document.body.classList.add('resting');
+  restTimer = setInterval(drawRest, 200); drawRest();
+}
+function stopRest() {
+  if (rest) { cancelSound(); clearTimeout(rest.hideT) }
+  rest = null; clearInterval(restTimer); $('#rest').hidden = true; document.body.classList.remove('resting');
+}
+function restNext() {
+  if (!S.active) return '';
+  const ei = openEx(); if (ei < 0) return 'Semua set selesai';
+  const it = S.active.items[ei], fi = focusSet(ei), s = it.sets[fi]; if (!s) return '';
+  if (ei !== rest?.ei) return `${T[it.id].t} · set ${fi + 1}`;
+  return `Set ${fi + 1} · ${num(s.w) ? `${fmtW(s.w)} kg × ${s.r || 0}` : `${s.r || 0} reps`}`;
+}
 function drawRest() {
   const el = $('#rest');
   if (!rest) { el.hidden = true; return }
-  const left = Math.ceil((rest.end - Date.now()) / 1000);
-  if (left <= 0) { stopRest(); if (S.settings.sound) beep(); if (S.settings.vibrate) try { navigator.vibrate?.([200, 100, 200]) } catch {} toast('Istirahat selesai, lanjut set berikutnya', 'rest'); return }
-  el.hidden = false;
+  if (rest.over) return;
+  const ms = rest.end - Date.now();
+  if (ms <= 0) return restOver();
+  const left = Math.ceil(ms / 1000);
   $('#restT').textContent = mmss(left);
-  el.querySelector('.rp').style.width = (100 - (rest.end - Date.now()) / (rest.total * 1000) * 100) + '%';
+  $('#restRing').style.strokeDashoffset = (RING * (1 - ms / (rest.total * 1000))).toFixed(2);
+  el.classList.toggle('soon', left <= 3);
+  const n = restNext(); $('#restN').textContent = n ? `Berikutnya: ${n}` : '';
 }
+function restOver() {
+  rest.over = true; clearInterval(restTimer);
+  if (S.settings.vibrate) try { navigator.vibrate?.([220, 90, 220, 90, 320]) } catch {}
+  const el = $('#rest'), n = restNext();
+  el.classList.remove('soon'); el.classList.add('done');
+  $('#restRing').style.strokeDashoffset = 0;
+  $('#restT').innerHTML = I('check'); $('#restL').textContent = 'Istirahat selesai';
+  $('#restN').textContent = n && n !== 'Semua set selesai' ? `Lanjut ${n}` : 'Lanjut ke set berikutnya';
+  rest.hideT = setTimeout(stopRest, 8000);
+}
+
 let actx;
-function beep() {
+// The audio context has to be created or resumed inside a tap, or phones keep it muted.
+function audio() {
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    [0, .22].forEach(t => {
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.frequency.value = 880; o.connect(g); g.connect(actx.destination);
-      g.gain.setValueAtTime(.0001, actx.currentTime + t); g.gain.exponentialRampToValueAtTime(.25, actx.currentTime + t + .02); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + t + .18);
-      o.start(actx.currentTime + t); o.stop(actx.currentTime + t + .2);
-    });
-  } catch {}
+    if (actx.state === 'suspended') actx.resume();
+    return actx;
+  } catch { return null }
 }
+function tone(at, freq, dur, vol) {
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = 'sine'; o.frequency.value = freq; o.connect(g); g.connect(actx.destination);
+  g.gain.setValueAtTime(.0001, at); g.gain.exponentialRampToValueAtTime(vol, at + .02); g.gain.exponentialRampToValueAtTime(.0001, at + dur);
+  o.start(at); o.stop(at + dur + .05);
+  return o;
+}
+function cancelSound() { (rest?.snd || []).forEach(o => { try { o.disconnect() } catch {} }); if (rest) rest.snd = [] }
+// three short ticks for the last seconds, then a rising two-note chime when it is time to go
+function restSound() {
+  cancelSound();
+  if (!rest || !S.settings.sound || !actx) return;
+  const sec = (rest.end - Date.now()) / 1000, t0 = actx.currentTime + sec;
+  rest.snd = [3, 2, 1].filter(x => x < sec - .1).map(x => tone(t0 - x, 660, .12, .16))
+    .concat(sec > 0 ? [tone(t0, 880, .35, .32), tone(t0 + .32, 1320, .6, .32)] : []);
+}
+
 function tick() {
   if (!S.active) return;
   const s = mmss((Date.now() - S.active.start) / 1000);
@@ -3292,7 +3398,8 @@ const A = {
     if (!s.done) { w.at[ei] = si; save(); drawWx(ei); updSum(); return }
     // a new weight carries to the sets after it that the user has not set by hand
     it.sets.forEach((x, j) => { if (j > si && !x.done && !w.touched.has(`${ei}_${j}`)) x.w = s.w });
-    delete w.at[ei]; save(); updSum(); startRest();
+    delete w.at[ei]; w.just = `${ei}_${si}`; save(); updSum(); startRest(S.settings.rest, ei);
+    setTimeout(() => { if (w.just === `${ei}_${si}`) w.just = null }, 600);
     try { navigator.vibrate?.(30) } catch {}
     if (it.sets.some(x => !x.done)) return drawWx(ei);
     // this exercise is done: open the next one that still has sets to do
@@ -3339,7 +3446,11 @@ const A = {
     if (!(await ask({ title: 'Batalkan workout?', msg: 'Set yang sudah dicatat tidak akan disimpan.', ok: 'Batalkan', cancel: 'Lanjut latihan', icon: 'x' }))) return;
     S.active = null; save(); stopRest(); go('home');
   },
-  restAdd: () => { if (rest) { rest.end += 15000; rest.total += 15; drawRest() } },
+  restAdd: el => {
+    if (!rest || rest.over) return;
+    const d = +(el.dataset.d || 15); rest.end += d * 1000; rest.total = Math.max(1, rest.total + d);
+    restSound(); drawRest();
+  },
   restSkip: stopRest,
   range: el => { ui.range = el.dataset.k; render() },
   hist: el => openHist(el.dataset.id),
@@ -3546,7 +3657,7 @@ document.addEventListener('input', e => {
   else if (k === 'sw' || k === 'sr') {
     const ei = +el.dataset.ex, si = +el.dataset.ix, s = S.active.items[ei].sets[si];
     s[k === 'sw' ? 'w' : 'r'] = el.value; wxState().touched.add(`${ei}_${si}`); save(); updSum();
-    const c = $(`#sc${ei}_${si} span`); if (c && s.done) c.textContent = sLab(s);
+    const c = $(`#sc${ei}_${si} small`); if (c) c.textContent = sLab(s);
   }
   else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
   else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
