@@ -3249,7 +3249,11 @@ const A = {
   },
   edSets: el => { const it = curR().items[+el.dataset.ix]; it.sets = clamp(it.sets + +el.dataset.d, 1, 10); save(); render() },
   edMove: el => { const r = curR(), i = +el.dataset.ix, j = i + +el.dataset.d; if (j < 0 || j >= r.items.length) return; [r.items[i], r.items[j]] = [r.items[j], r.items[i]]; save(); render() },
-  edDel: el => { curR().items.splice(+el.dataset.ix, 1); save(); render() },
+  edDel: async el => {
+    const r = curR(), it = r?.items[+el.dataset.ix]; if (!it) return;
+    if (!(await ask({ title: 'Hapus latihan?', msg: `${T[it.id]?.t || 'Latihan ini'} akan dihapus dari ${r.name ? `program ${r.name}` : 'program ini'}.`, ok: 'Hapus' }))) return;
+    const i = r.items.indexOf(it); if (i >= 0) { r.items.splice(i, 1); save(); render() }
+  },
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
   pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
@@ -3318,9 +3322,12 @@ const A = {
     it.sets.push({ w: l ? l.w : '', r: l ? l.r : '10', done: false });
     w.open = ei; w.at[ei] = it.sets.length - 1; save(); drawWx(ei);
   },
-  setDel: el => {
-    const ei = +el.dataset.ex, it = S.active.items[ei], si = +el.dataset.ix; if (!it || it.sets.length < 2) return;
-    it.sets.splice(si, 1); const w = wxState(); delete w.at[ei]; w.touched.clear(); save(); drawWx(ei); updSum();
+  setDel: async el => {
+    const it = S.active.items[+el.dataset.ex], si = +el.dataset.ix, s = it?.sets[si]; if (!s || it.sets.length < 2) return;
+    const what = `${num(s.w) ? `${fmtW(s.w)} kg × ` : ''}${s.r || 0} reps`;
+    if (!(await ask({ title: `Hapus set ${si + 1}?`, msg: `Set ${si + 1} (${what}) dari ${T[it.id]?.t || 'latihan ini'} akan dihapus.`, ok: 'Hapus' }))) return;
+    const ei = S.active?.items.indexOf(it), j = it.sets.indexOf(s); if (ei < 0 || j < 0 || it.sets.length < 2) return;
+    it.sets.splice(j, 1); const w = wxState(); delete w.at[ei]; w.touched.clear(); save(); drawWx(ei); updSum();
   },
   wxDel: async el => {
     const it = S.active.items[+el.dataset.ex]; if (!it) return;
@@ -3424,7 +3431,12 @@ const A = {
   mealDay: el => { const d = new Date((ui.mealDay || dayKey(new Date())) + 'T12:00:00'); d.setDate(d.getDate() + +el.dataset.d); const t = dayKey(new Date()), k = dayKey(d); ui.mealDay = k > t ? t : k; render() },
   mPortion: el => { const m = ui.meal; m.portion = clamp(Math.round((m.portion + +el.dataset.d) * 4) / 4, .25, 4); $('#mPortV').textContent = fmtW(m.portion) + '×'; refreshMealTot() },
   mSlot: el => { ui.meal.slot = el.dataset.k; document.querySelectorAll('#mSlots .chip').forEach(c => { const on = c.dataset.k === ui.meal.slot; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on) }) },
-  miDel: el => { ui.meal.items.splice(+el.dataset.ix, 1); $('#mItems').innerHTML = mealItemsHtml(); refreshMealTot() },
+  miDel: async el => {
+    const m = ui.meal, it = m?.items[+el.dataset.ix]; if (!it) return;
+    if (!(await ask({ title: 'Hapus item?', msg: `${it.n || 'Item ini'} akan dihapus dari makanan ini.`, ok: 'Hapus' }))) return;
+    const i = ui.meal === m ? m.items.indexOf(it) : -1; if (i < 0) return;
+    m.items.splice(i, 1); $('#mItems').innerHTML = mealItemsHtml(); refreshMealTot();
+  },
   mealSave: () => {
     const m = ui.meal; if (!m.items.length) return toast('Tambahkan minimal satu item', 'err');
     const rec = { id: m.id || uid(), date: m.date, slot: m.slot, name: (m.name || '').trim() || 'Makanan', portion: m.portion, conf: m.conf || 0, note: m.note || '', items: m.items };
