@@ -74,7 +74,7 @@ tersinkron di semua perangkat.
   × faktor aktivitas = TDEE; target harian = TDEE ± kecepatan × 7.700 / 7 kkal, minimal 1.500 (pria)
   / 1.200 (wanita). Bisa juga diatur sendiri. Protein 1,8 g/kg berat, lemak 25%, sisanya karbo.
 - **Defisit / surplus** hari ini (masuk − pembakaran) di halaman Kalori dan kartu Beranda. Warnanya ikut
-  target harian: biru selama masih di bawah 90% target, hijau di 90–105% target, kuning di atas 105%.
+  target harian: oranye selama masih di bawah 90% target (defisit besar), hijau di 90–105% target, merah di atas 105%.
 - **Berat badan**: catat harian, progres dari berat awal ke target, grafik 30 catatan terakhir,
   perkiraan tanggal tercapai.
 
