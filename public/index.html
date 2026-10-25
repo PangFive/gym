@@ -840,6 +840,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .kb{display:inline-flex;align-items:center;min-height:26px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#0b6b4a;background:rgba(255,255,255,.75);border:1px solid rgba(11,148,102,.16)}
 .kb.ok{color:#0b6b4a;background:rgba(18,163,114,.14);border-color:transparent}
 .kb.warn{color:#a34a0b;background:rgba(217,119,6,.13);border-color:transparent}
+.kb.mid{color:#1d4ed8;background:rgba(47,124,246,.12);border-color:transparent}
 .kc-act{margin-top:16px;display:grid;gap:8px}
 .kc-snap{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:8px 14px 8px 8px;border:0;border-radius:18px;background:linear-gradient(145deg,#0d8a5f,#05663f);color:#fff;text-align:left;font:inherit;box-shadow:0 14px 24px -14px rgba(11,148,102,.9);transition:transform .15s}
 .kc-snap:active,.kc-alt button:active{transform:scale(.98)}
@@ -896,7 +897,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .bal small{font-size:11.5px;font-weight:600;color:var(--muted)}
 .bal b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
 .bal .op{color:var(--faint);font-weight:700}
-.bal .ok b{color:#0b8a5e}.bal .warn b{color:#c2410c}
+.bal .ok b{color:#0b8a5e}.bal .warn b{color:#c2410c}.bal .mid b{color:var(--acc-2)}
 .pcta{display:flex;align-items:center;gap:12px;width:100%;padding:14px;margin-bottom:14px;border-radius:20px;text-align:left;color:var(--ink);font:inherit}
 .pcta .ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e}
 .pcta>span:nth-child(2){flex:1;min-width:0}
@@ -2598,18 +2599,23 @@ const macroGoals = kcal => {
   return { p, c: Math.max(0, (kcal - p * 4 - f * 9) / 4), f };
 };
 const fmt1 = n => (Math.round(n * 10) / 10).toLocaleString('id-ID', { maximumFractionDigits: 1 });
-// Today's intake against the day's burn. Green when it points the way the goal wants.
-function balanceHtml(eaten) {
-  const e = energy(); if (!e) return '';
-  const d = eaten - e.tdee, def = d < 0, good = e.dir ? (e.dir < 0) === def : Math.abs(d) < 250;
-  return `<div class="bal"><div><small>Masuk</small><b>${r0(eaten)}</b></div><span class="op">−</span><div><small>Pembakaran</small><b>${r0(e.tdee)}</b></div><span class="op">=</span>
-    <div class="${good ? 'ok' : 'warn'}"><small>${def ? 'Defisit' : 'Surplus'}</small><b>${r0(Math.abs(d))}</b></div></div>`;
+// Today's intake against the day's burn. The colour follows the day's target, not the sign: a deficit is
+// only "done" once the food is near the target. Blue while there is still room to eat (early in the day
+// that is a big deficit), green from 90% of the target, amber past 105%.
+function kcalBalance(eaten) {
+  const e = energy(); if (!e) return null;
+  const d = eaten - e.tdee, goal = kcalGoal();
+  return { e, d, def: d < 0, tone: eaten > goal * 1.05 ? 'warn' : eaten >= goal * .9 ? 'ok' : 'mid' };
 }
-// Deficit/surplus as a badge: green when it points the way the goal wants, amber otherwise.
+function balanceHtml(eaten) {
+  const b = kcalBalance(eaten); if (!b) return '';
+  return `<div class="bal"><div><small>Masuk</small><b>${r0(eaten)}</b></div><span class="op">−</span><div><small>Pembakaran</small><b>${r0(b.e.tdee)}</b></div><span class="op">=</span>
+    <div class="${b.tone}"><small>${b.def ? 'Defisit' : 'Surplus'}</small><b>${r0(Math.abs(b.d))}</b></div></div>`;
+}
+// Deficit/surplus as a badge, coloured the same way
 const balanceBadge = eaten => {
-  const e = energy(); if (!e) return '';
-  const d = eaten - e.tdee, def = d < 0, good = e.dir ? (e.dir < 0) === def : Math.abs(d) < 250;
-  return `<span class="kb ${good ? 'ok' : 'warn'}">${def ? 'Defisit' : 'Surplus'} ${r0(Math.abs(d))} kkal</span>`;
+  const b = kcalBalance(eaten); if (!b) return '';
+  return `<span class="kb ${b.tone}">${b.def ? 'Defisit' : 'Surplus'} ${r0(Math.abs(b.d))} kkal</span>`;
 };
 const r0 = n => Math.round(n).toLocaleString('id-ID');
 function kcalRing(eaten, goal, size = 118) {
