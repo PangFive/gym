@@ -59,6 +59,8 @@ tersinkron di semua perangkat.
 - Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan.
+- Setelah foto dipilih ada langkah **Keterangan (opsional)**: porsi, cara masak, atau yang tidak terlihat
+  di foto; dikirim bersama foto dan diutamakan AI bila berbeda dengan tebakannya. **Ganti foto** memilih ulang.
 - Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** dengan API key milik
   pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → Gemini). Hasil: nama hidangan,
   rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi

@@ -982,6 +982,8 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .meal .kk{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;flex:none}
 .meal .kk small{font-size:11px;color:var(--muted);font-weight:700;margin-left:2px}
 .mprev{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:20px;margin-bottom:12px}
+.mhint{margin:6px 2px 14px;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.fld span small{font-weight:600;color:var(--faint)}
 .analyzing{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 18px;text-align:center;color:var(--muted);font-weight:600}
 .conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(22,163,74,.12);color:#15803d}
 .conf.mid{background:rgba(245,158,11,.14);color:#b45309}
@@ -2976,11 +2978,22 @@ async function shrinkImage(file) {
   } finally { URL.revokeObjectURL(url) }
 }
 const needKey = then => { if (aiConf().key) return false; openAiSetup(then); return true };
+// The photo first, with an optional note (portion, how it was cooked, what the photo does not show) for the AI.
+function openPhotoNote(dataUrl, src) {
+  ui.mealPhoto = { dataUrl, src };
+  sheet(`<h2 class="sh">Foto makanan</h2><img class="mprev" src="${dataUrl}" alt="Foto makanan">
+    <label class="fld"><span>Keterangan <small>(opsional)</small></span>
+      <textarea id="mealNote" class="ta" maxlength="300" placeholder="mis. nasi setengah porsi, ayam tanpa kulit, sambal sedikit, es teh manis"></textarea></label>
+    <p class="mhint">Bantu AI dengan porsi, cara masak, atau yang tidak terlihat di foto.</p>
+    <div class="row2"><button class="btn soft" data-a="mealRetake">${I(src === 'mealGal' ? 'image' : 'camera')} Ganti foto</button><button class="btn pri" data-a="mealPhotoGo">${I('sparkles')} Hitung kalori</button></div>`);
+}
 async function analyzeMeal({ dataUrl, text }) {
-  sheet(`<h2 class="sh">Menganalisis…</h2>${dataUrl ? `<img class="mprev" src="${dataUrl}" alt="Foto makanan">` : `<p class="scope">${esc(text)}</p>`}
+  sheet(`<h2 class="sh">Menganalisis…</h2>${dataUrl ? `<img class="mprev" src="${dataUrl}" alt="Foto makanan">${text ? `<p class="mnote">${esc(text)}</p>` : ''}` : `<p class="scope">${esc(text)}</p>`}
     <div class="analyzing"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menghitung kalori</span></div>`);
   try {
-    const parts = [{ text: MEAL_PROMPT + (text ? `\nDeskripsi: ${text}` : '') }];
+    const parts = [{ text: MEAL_PROMPT + (!text ? '' : dataUrl
+      ? `\nKeterangan dari pengguna tentang foto ini (pakai untuk porsi, cara masak, dan yang tidak terlihat; utamakan bila berbeda dengan tebakanmu): ${text}`
+      : `\nDeskripsi: ${text}`) }];
     if (dataUrl) parts.push({ inline_data: { mime_type: 'image/jpeg', data: dataUrl.split(',')[1] } });
     const r = parseMeal(await gemini(parts));
     if (!r.items.length) throw new Error(r.note || 'AI tidak mengenali makanan di foto ini.');
@@ -3766,6 +3779,8 @@ const A = {
       <button class="btn pri block" data-a="mealTextGo">${I('sparkles')} Hitung kalori</button>`);
     setTimeout(() => $('#mealTxt')?.focus(), 350);
   },
+  mealPhotoGo: () => { const p = ui.mealPhoto; if (!p) return; analyzeMeal({ dataUrl: p.dataUrl, text: ($('#mealNote')?.value || '').trim().slice(0, 300) }) },
+  mealRetake: () => { const p = ui.mealPhoto; closeSheet(); setTimeout(() => $('#' + (p?.src || 'mealCam')).click(), 250) },
   mealTextGo: () => { const t = $('#mealTxt').value.trim(); if (!t) return toast('Tulis dulu makanannya', 'err'); analyzeMeal({ text: t.slice(0, 500) }) },
   mealOpen: el => { const m = S.meals.find(x => x.id === el.dataset.id); if (!m) return; ui.meal = JSON.parse(JSON.stringify(m)); ui.meal.img = ''; openMealReview() },
   mealDayAt: el => { ui.mealDay = el.dataset.k; render() },
@@ -4018,8 +4033,8 @@ document.addEventListener('submit', async e => {
 });
 document.addEventListener('change', e => {
   if ((e.target.id === 'mealCam' || e.target.id === 'mealGal') && e.target.files[0]) {
-    const f = e.target.files[0]; e.target.value = '';
-    return shrinkImage(f).then(dataUrl => analyzeMeal({ dataUrl })).catch(() => toast('Foto tidak bisa dibaca', 'err'));
+    const f = e.target.files[0], src = e.target.id; e.target.value = '';
+    return shrinkImage(f).then(dataUrl => openPhotoNote(dataUrl, src)).catch(() => toast('Foto tidak bisa dibaca', 'err'));
   }
   if (e.target.id === 'tutFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
