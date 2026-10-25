@@ -805,8 +805,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .claim .stx b{font-size:15px}
 /* QR scanner */
 #scan{position:fixed;inset:0;z-index:75;background:#05070c;overflow:hidden}
-/* the whole camera picture, like the phone's own camera at 1×: filling the tall screen would crop the sides */
-#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .25s ease}
+#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
 .scan-frame{position:absolute;left:50%;top:44%;width:min(68vw,260px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:28px;box-shadow:0 0 0 100vmax rgba(5,7,12,.55);outline:3px solid rgba(255,255,255,.92);outline-offset:-3px;overflow:hidden}
 .scan-frame::after{content:'';position:absolute;left:10%;right:10%;height:2px;border-radius:2px;background:#7db1ff;box-shadow:0 0 12px #7db1ff;animation:scanline 2s ease-in-out infinite alternate}
 @keyframes scanline{from{top:12%}to{top:88%}}
@@ -3029,8 +3028,8 @@ function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg
 // Phones with several back lenses: Chrome's own "environment" pick is sometimes the ultra-wide (Samsung
 // S-series), which cannot focus up close. On Android the main lens is "camera2 0". The lens used last time,
 // picked here or with the Lensa button, is remembered.
-// 4:3 uses the whole sensor; a 16:9 mode crops it, and on a tall phone screen that read as zoomed in
-const CAM_KEY = 'why_scan_cam', CAM_SIZE = { width: { ideal: 1920 }, height: { ideal: 1440 } };
+// 4:3 is the sensor's own shape (the most pixels in the part a tall screen shows)
+const CAM_KEY = 'why_scan_cam2', CAM_SIZE = { width: { ideal: 1920 }, height: { ideal: 1440 } };
 const camOpen = id => navigator.mediaDevices.getUserMedia({ audio: false, video: id ? { deviceId: { exact: id }, ...CAM_SIZE } : { facingMode: { ideal: 'environment' }, ...CAM_SIZE } });
 async function backCams() {
   try { return (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput' && d.deviceId && !/front|user|depan/i.test(d.label)) } catch { return [] }
@@ -3113,10 +3112,10 @@ async function openScan(rid = null) {
     try { const raw = await detect(); if (raw) await onScan(raw) } catch {} finally { scan.busy = false }
   }, 250);
 }
-// The video is shown whole (object-fit: contain, bars above and below), so a point on screen maps to the camera
-// frame through that fit; with the digital zoom the box is scaled and the mapping follows.
+// The video fills the screen (object-fit: cover), so a point on screen maps to the camera frame through that
+// crop; with the digital zoom the box is scaled and the mapping follows.
 function toVideo(v, x, y) {
-  const r = v.getBoundingClientRect(), s = Math.min(r.width / v.videoWidth, r.height / v.videoHeight);
+  const r = v.getBoundingClientRect(), s = Math.max(r.width / v.videoWidth, r.height / v.videoHeight);
   return [(x - r.left - (r.width - v.videoWidth * s) / 2) / s, (y - r.top - (r.height - v.videoHeight * s) / 2) / s];
 }
 // the scan box (with some margin) in camera pixels
@@ -3126,14 +3125,19 @@ function scanBox(v) {
   const sx = Math.max(0, x0), sy = Math.max(0, y0), sw = Math.min(v.videoWidth, x1) - sx, sh = Math.min(v.videoHeight, y1) - sy;
   return sw > 40 && sh > 40 ? [sx, sy, sw, sh] : null;
 }
-// Sharper scans: continuous autofocus and a torch button when the camera offers one. Zoom is digital (the
-// picture is enlarged on screen and the reader takes the middle at full resolution): asking the camera
-// to zoom makes many phones switch to the tele lens, which cannot focus up close and is darker.
+// Sharper scans: continuous autofocus and a torch button when the camera offers one. The Zoom button is
+// digital (the picture is enlarged on screen and the reader takes the middle at full resolution): camera
+// zoom past 1× makes phones switch to the tele lens, which cannot focus up close and is darker.
+// Camera zoom is set to exactly 1× though: on Samsung's multi-lens back camera (0.6×–10×) Chrome can open
+// at the widest end, the 0.6× ultra-wide; 1× is the main wide lens, as in the phone's own camera.
 function camTune() {
   const tr = scan.stream?.getVideoTracks()[0]; let caps = {};
   try { caps = tr?.getCapabilities?.() || {} } catch {}
   Object.assign(scan, { track: tr, caps, zoom: 1, torch: false });
-  if (caps.focusMode?.includes('continuous')) tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {});
+  const adv = [];
+  if (caps.focusMode?.includes('continuous')) adv.push({ focusMode: 'continuous' });
+  if (caps.zoom && caps.zoom.min < 1 && caps.zoom.max >= 1) adv.push({ zoom: 1 });
+  if (adv.length) tr.applyConstraints({ advanced: adv }).catch(() => adv.forEach(c => tr.applyConstraints({ advanced: [c] }).catch(() => {})));
   const b = [];
   if (caps.torch) b.push(`<button class="scan-b" data-a="scanTorch" aria-pressed="false">${I('bolt')}<span>Senter</span></button>`);
   b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);

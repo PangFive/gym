@@ -32,7 +32,7 @@ tersinkron di semua perangkat.
 - **Scan QR di mesin** (tombol QR di kanan atas semua halaman): membuka detail alat itu. Saat workout:
   sheet detail yang berhenti di deskripsi (tanpa Program, YouTube, alat lain), tombol kecil **Tutup** / **Tambah ke workout** (atau **Buka di workout**). Dari Edit Program muncul kartu konfirmasi (Batal /
   Tambahkan) dan kamera tetap terbuka untuk alat berikutnya. Tombol **Tambah** dan **Scan** ada di atas daftar latihan.
-- Kamera scan minta 4:3 (1920×1440, seluruh sensor) dan ditampilkan utuh seperti kamera HP di 1× (bukan dipotong memenuhi layar) + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** muncul kalau
+- Kamera scan minta 4:3 (1920×1440), penuh layar, zoom kamera diset tepat 1× (kamera multi-lensa Samsung 0,6×–10× bisa terbuka di 0,6× ultrawide) + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** muncul kalau
   kameranya mendukung; **Zoom** digital (1×–2,5×) di lensa utama, karena zoom kamera membuat HP pindah ke lensa tele; scan pertama pindah dari ultrawide ke lensa utama (Android: camera2 0) dan lensa diingat, tombol **Lensa** untuk ganti manual; ketuk layar untuk fokus; petunjuk muncul setelah 7 detik.
 
 ### Program & plan mingguan
