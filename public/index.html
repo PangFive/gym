@@ -650,6 +650,9 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .banner p{margin:0;font-size:14px;line-height:1.5;font-weight:600}
 #offline{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;background:rgba(24,32,47,.9);color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;box-shadow:0 12px 24px -12px rgba(24,32,47,.6)}
 #offline i{width:8px;height:8px;border-radius:50%;background:#f59e0b}
+/* a newer version arrived after the page opened from the saved copy */
+#upd{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:26;display:flex;gap:10px;align-items:center;padding:6px 6px 6px 16px;border:0;border-radius:999px;background:rgba(24,32,47,.92);color:#fff;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 14px 30px -14px rgba(24,32,47,.7);animation:restIn .35s cubic-bezier(.2,.9,.3,1.2)}
+#upd b{padding:7px 12px;border-radius:999px;background:#fff;color:var(--ink);font-size:12.5px}
 /* today */
 .today-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
 .today-h .ct{margin:0;flex-direction:column;align-items:flex-start;gap:2px}
@@ -968,6 +971,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 </div>
 <div id="sheet"></div>
 <div id="offline" hidden role="status"><i></i>Offline · perubahan disimpan di perangkat</div>
+<button id="upd" hidden data-a="reload"><span>Versi baru tersedia</span><b>Muat ulang</b></button>
 <input type="file" id="mealCam" accept="image/*" capture="environment" hidden>
 <input type="file" id="mealGal" accept="image/*" hidden>
 <div id="scan" hidden role="dialog" aria-modal="true" aria-label="Scan QR alat"></div>
@@ -1987,7 +1991,8 @@ function openDetail(id) {
     <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
       ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>
     ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}
-    <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button><button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button></div>
+    <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
+      : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${S.active.items.some(it => it.id === t.id) ? `${I('playf')} Buka di workout` : `${I('plus')} Tambah ke workout`}</button>`}</div>
     <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>
     ${similar.length ? `<h3 class="sh2">${MI[t.p[0]].n} lainnya</h3>${similar.map(x => `<button class="mini" data-a="open" data-id="${x.id}">${pic(x.y)}<b>${esc(x.t)}</b>${I('chev')}</button>`).join('')}` : ''}`);
   $('#sheet .sheet-body').scrollTop = 0;
@@ -2977,7 +2982,7 @@ async function openScan(rid = null) {
   const el = $('#scan');
   el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Kamu bisa cek alatnya dulu sebelum ditambahkan' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Detail alatnya terbuka, tambahkan ke workout dari sana' : 'Tutorial alatnya langsung terbuka'}</small></div>
     <div class="scan-ctl" id="scanCtl" hidden></div><div class="scan-ask" id="scanAsk" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
   // closing and reopening while this one still waits on the camera must not leave two readers running
@@ -3070,13 +3075,11 @@ function stopScan() {
   scan.rid = null; scan.added = 0; scan.last = 0; scan.pending = null;
 }
 function scanAsk(t) {
-  const prog = scan.rid ? findR(scan.rid) : null, list = prog ? prog.items : S.active?.items || [];
-  const have = list.some(it => it.id === t.id), where = prog ? 'program' : 'workout';
+  const have = (findR(scan.rid)?.items || []).some(it => it.id === t.id);
   scan.pending = t;
-  $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? `Sudah ada di ${where}` : `Tambahkan ke ${where}?`}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
+  $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? 'Sudah ada di program' : 'Tambahkan ke program?'}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
     <div class="sa-b"><button class="btn soft" data-a="scanSkip">${have ? 'Scan lagi' : 'Batal'}</button>
-      ${have ? `<button class="btn pri" data-a="${prog ? 'scanClose' : 'scanGo'}">${prog ? 'Selesai' : 'Buka latihan'}</button>`
-        : `<button class="btn pri" data-a="scanAdd">${I('plus')} Tambahkan</button>`}</div>`;
+      ${have ? `<button class="btn pri" data-a="scanClose">Selesai</button>` : `<button class="btn pri" data-a="scanAdd">${I('plus')} Tambahkan</button>`}</div>`;
   $('#scanAsk').hidden = false; $('#scan').classList.add('asking');
 }
 function scanResume(tip) {
@@ -3097,15 +3100,16 @@ async function onScan(raw) {
     }
     return scanTip('QR ini bukan QR alat.<small>Coba arahkan ke QR yang tertempel di mesin.</small>', true);
   }
-  // Into a program or a running workout: show the machine and ask first. A QR that stays in view
-  // after "Batal" is not asked about again until it has been out of sight for a moment.
-  if (scan.rid || S.active) {
+  // Into a program: show the machine and ask first. A QR that stays in view after "Batal"
+  // is not asked about again until it has been out of sight for a moment.
+  if (scan.rid) {
     const now = Date.now(), again = t.id === scan.last && now - scan.seen < 2500;
     scan.seen = now; if (again) return;
     scan.last = t.id; scan.miss = '';
     try { navigator.vibrate?.(60) } catch {}
     return scanAsk(t);
   }
+  // anywhere else, including a running workout, the machine's detail opens; adding it is a choice made there
   stopScan();
   try { navigator.vibrate?.(60) } catch {}
   openDetail(t.id);
@@ -3380,7 +3384,11 @@ function busy(btn, on) {
 
 // ---------- PWA ----------
 // The worker keeps the app usable offline and replaces the one openGym left at this address.
-if ('serviceWorker' in navigator && location.protocol !== 'file:') addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('WHY sw', e)));
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('WHY sw', e)));
+  // on a slow network the app opens from the saved copy; when the newer page arrives later, offer it
+  navigator.serviceWorker.addEventListener('message', e => { if (e.data?.type === 'page-updated') $('#upd').hidden = false });
+}
 let installEvt = null;
 const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -3727,6 +3735,7 @@ const A = {
   },
   scan: el => openScan(el?.dataset?.rid || null),
   scanClose: stopScan,
+  reload: () => location.reload(),
   scanSkip: () => scanResume(),
   scanAdd: () => {
     const t = scan.pending; if (!t) return;
@@ -3738,15 +3747,14 @@ const A = {
       }
       return scanResume(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
     }
-    if (!S.active) return stopScan();
-    if (!S.active.items.some(it => it.id === t.id)) { S.active.items.push(newActiveItem({ id: t.id, sets: 3, reps: '10' })); save(); toast(`${t.t} ditambahkan ke workout`) }
-    A.scanGo();
+    stopScan();
   },
-  // close the camera and open that exercise in the workout
-  scanGo: () => {
-    const t = scan.pending, i = t && S.active ? S.active.items.findIndex(it => it.id === t.id) : -1;
-    stopScan(); if (i < 0) return;
-    wxState().open = i; go('workout');
+  // from a machine's detail during a workout: add it (once) and open it there
+  wxAddId: el => {
+    const id = +el.dataset.id; if (!S.active || !T[id]) return;
+    if (!S.active.items.some(it => it.id === id)) { S.active.items.push(newActiveItem({ id, sets: 3, reps: '10' })); save(); toast(`${T[id].t} ditambahkan ke workout`) }
+    const i = S.active.items.findIndex(it => it.id === id);
+    closeSheet(); wxState().open = i; go('workout');
     setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
   },
   scanTorch: el => {

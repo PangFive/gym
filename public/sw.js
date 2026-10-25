@@ -5,7 +5,8 @@
 // any were found, open pages reload into this app instead of the old one they were showing.
 //
 // Strategies:
-//   the page itself         network first (4 s), cached copy when offline
+//   the page itself         network first (4 s), else the saved copy while the network finishes in
+//                           the background; a newer page is saved and the open app offers a reload
 //   manifest                network first (it carries the app's name and icons)
 //   icons                   cache, refreshed in the background
 //   Firebase SDK            cache first: the URLs carry a version and never change
@@ -41,7 +42,7 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (req.mode === 'navigate') return e.respondWith(networkFirst(req));
+  if (req.mode === 'navigate') return e.respondWith(networkFirst(req, e));
   // the manifest names and pictures the installed app, so it comes fresh whenever there is a network
   if (url.origin === location.origin && url.pathname.endsWith('/manifest.json')) return e.respondWith(fresh(req));
   if (url.origin === location.origin) return e.respondWith(refreshing(req, SHELL));
@@ -51,14 +52,26 @@ self.addEventListener('fetch', e => {
   if (url.hostname === 'i.ytimg.com') return e.respondWith(cacheFirst(req, THUMBS, 200));
 });
 
-async function networkFirst(req) {
+async function networkFirst(req, e) {
   const cache = await caches.open(SHELL);
+  // no-cache: ask the server, not the browser's own copy (GitHub Pages lets that live for 10 minutes)
+  const net = fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
+    .then(async res => { if (res.ok) await cache.put(PAGE, res.clone()); return res });
+  let old = null;
   try {
-    const res = await Promise.race([fetch(req), new Promise((_, no) => setTimeout(() => no(new Error('slow')), 4000))]);
-    if (res.ok) cache.put(PAGE, res.clone());
-    return res;
+    old = await cache.match(PAGE);
+    if (!old) return await net;
+    return await Promise.race([net, new Promise((_, no) => setTimeout(() => no(new Error('slow')), 4000))]);
   } catch {
-    return (await cache.match(PAGE)) || (await cache.match(req)) || Response.error();
+    if (!old) return Response.error();
+    // too slow or offline: the saved copy now; the network still finishes, and if it brings a different
+    // page that one is saved and the open app is told it can reload
+    const before = await old.clone().text();
+    e.waitUntil(net.then(async res => {
+      if (!res.ok || (await res.clone().text()) === before) return;
+      for (const c of await self.clients.matchAll({ type: 'window' })) c.postMessage({ type: 'page-updated' });
+    }).catch(() => {}));
+    return old;
   }
 }
 

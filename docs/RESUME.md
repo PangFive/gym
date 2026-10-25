@@ -27,10 +27,11 @@ tersinkron di semua perangkat.
 ### Tutorial alat
 - 56 alat dengan video YouTube (vertikal), deskripsi, otot utama & pendukung.
 - **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot.
-- Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini**.
-- **Scan QR di mesin** (tombol QR di kanan atas semua halaman): membuka tutorial alat itu, atau saat
-  workout/Edit Program muncul kartu konfirmasi dulu (foto, nama, otot · Batal / Tambahkan); dari Edit
-  Program kamera tetap terbuka untuk alat berikutnya. Tombol **Tambah** dan **Scan** ada di atas daftar latihan.
+- Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini** (saat
+  workout berjalan: **Tambah ke workout** / **Buka di workout**).
+- **Scan QR di mesin** (tombol QR di kanan atas semua halaman, dan saat workout): membuka detail alat itu;
+  menambahkannya ke workout dipilih dari detail. Dari Edit Program muncul kartu konfirmasi (Batal /
+  Tambahkan) dan kamera tetap terbuka untuk alat berikutnya. Tombol **Tambah** dan **Scan** ada di atas daftar latihan.
 - Kamera scan minta 1080p + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** muncul kalau
   kameranya mendukung; **Zoom** digital (1×–2,5×) di lensa utama, karena zoom kamera membuat HP pindah ke lensa tele; ketuk layar untuk fokus; petunjuk muncul setelah 7 detik.
 
@@ -85,7 +86,9 @@ tersinkron di semua perangkat.
 ### PWA
 - Bisa dipasang di layar utama (Android: tombol Pasang; iPhone: Safari → Bagikan → Tambahkan ke
   Layar Utama), ikon WHY, shortcut Plan/Tutorial/Statistik.
-- Service worker menyimpan aplikasi, SDK Firebase, font, pembaca QR, dan thumbnail video.
+- Service worker menyimpan aplikasi, SDK Firebase, font, pembaca QR, dan thumbnail video. Halaman diambil
+  dari jaringan (maks 4 detik, tanpa cache HTTP); kalau lambat, salinan tersimpan dipakai dulu, versi baru
+  tetap diunduh di belakang, lalu muncul tombol **Versi baru tersedia · Muat ulang**.
 
 ---
 
