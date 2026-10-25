@@ -262,6 +262,15 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .stats3 div{background:#fff;border-radius:16px;padding:10px 12px;border:1px solid rgba(24,32,47,.05)}
 .stats3 small{display:block;color:var(--muted);font-size:11.5px;font-weight:600}
 .stats3 b{font-size:14px}
+/* estimated calories a workout burned */
+.burn{display:flex;align-items:center;gap:8px;width:100%;margin:-4px 0 14px;padding:10px 12px;border:0;border-radius:14px;background:#fff3ea;color:#9a3412;font:inherit;font-size:13.5px;font-weight:600;text-align:left}
+.burn svg.i{flex:none;width:18px;height:18px;color:#ea580c}
+.burn b{font-weight:800}
+.burn small{margin-left:auto;padding-left:8px;color:#b45309;font-size:12px;font-weight:600;white-space:nowrap}
+.burn.none{color:var(--muted);background:#f3f5f9}
+.burn.none span{flex:1}
+.burn.none svg.i:last-child{color:var(--faint)}
+.burn.sm{margin:12px 0 0}
 .desc{color:#3d4658;line-height:1.6;font-size:14.5px;margin:0 2px 16px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 /* two buttons side by side: equal when both labels fit, otherwise the longer one gets the room (never two lines) */
@@ -1963,10 +1972,28 @@ function balance(from) {
     ? worked.map(m => `<div class="bal"><span>${m.n}</span><div class="bt"><i style="width:${c[m.k] / mx * 100}%;--c:${m.c}"></i></div><b>${fmtSet(c[m.k])}</b></div>`).join('') + `<p class="hint" style="margin:10px 0 2px">Otot pendukung dihitung setengah set</p>`
     : `<p class="hint">Belum ada set di periode ini</p>`);
 }
+// Calories a workout burned, roughly: MET × body weight (kg) × hours (1 MET ≈ 1 kcal per kg per hour).
+// METs from the Compendium of Physical Activities (Ainsworth et al. 2011; Herrmann et al. 2024):
+// resistance training, 8–15 reps at varied resistance 3.5; circuit training, moderate 4.3; weight lifting,
+// vigorous (power lifting / body building) 6.0. Which one is read from the pace: sets per minute, so long
+// rests count as lighter work. Weight: the log entry on or before that day. A rough figure (about ±30%),
+// shown as information only: the daily calorie target does not use it.
+const WORK_METS = [[.25, 3.5], [.4, 4.3], [Infinity, 6]];
+const weightOn = date => { const k = String(date).slice(0, 10); return (S.weights.find(w => w.date <= k) || S.weights[S.weights.length - 1])?.kg || 0 };
+function workoutBurn(h) {
+  const kg = weightOn(h.date), min = +h.dur || 0; if (!kg || !min || !h.sets) return null;
+  const met = WORK_METS.find(([d]) => h.sets / min < d)[1];
+  return { kcal: Math.round(met * kg * min / 60 / 5) * 5, met, kg, min };
+}
+function burnLine(h, why = false) {
+  const b = workoutBurn(h);
+  if (!b) return why ? `<button class="burn none" data-a="profile">${I('flame')}<span>Isi berat badan di Profil untuk perkiraan kalori terbakar</span>${I('chev')}</button>` : '';
+  return `<div class="burn">${I('flame')}<span><b>±${r0(b.kcal)} kkal</b> terbakar</span><small>${why ? `MET ${fmtW(b.met)} × ${fmtW(b.kg)} kg × ${b.min} mnt` : 'perkiraan'}</small></div>`;
+}
 function histCard(h) {
   const d = new Date(h.date), ms = [...new Set(h.items.flatMap(i => T[i.id]?.p || []))];
   return `<button class="hcard glass" data-a="hist" data-id="${h.id}"><div class="hd"><b>${d.getDate()}</b><small>${MONTHS[d.getMonth()]}</small></div>
-    <div class="hm"><b>${esc(h.name)}</b><small>${h.dur} mnt · ${h.sets} set · ${fmtK(h.vol)} kg</small><div class="tags">${ms.slice(0, 3).map(mTag).join('')}</div></div>${I('chev')}</button>`;
+    <div class="hm"><b>${esc(h.name)}</b><small>${h.dur} mnt · ${h.sets} set · ${fmtK(h.vol)} kg${workoutBurn(h) ? ` · ±${r0(workoutBurn(h).kcal)} kkal` : ''}</small><div class="tags">${ms.slice(0, 3).map(mTag).join('')}</div></div>${I('chev')}</button>`;
 }
 function vStats() {
   const ser = series(ui.range), tot = ser.vals.reduce((a, b) => a + b, 0);
@@ -1981,7 +2008,9 @@ function vStats() {
     <section class="glass card"><small class="muted sm">Total volume · ${ser.title}</small>
       <div class="big">${fmt(tot)} <span>kg</span></div>
       ${delta !== null ? `<div class="delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '▲' : '▼'} ${Math.abs(delta)}% dibanding periode sebelumnya</div>` : `<div class="delta">${tot ? 'Periode pertama yang tercatat' : 'Catat workout untuk melihat tren'}</div>`}
-      ${lineChart(ser.vals, ser.labels)}</section>
+      ${lineChart(ser.vals, ser.labels)}
+      ${(() => { const hs = S.history.filter(h => new Date(h.date) >= ser.from), k = hs.reduce((a, h) => a + (workoutBurn(h)?.kcal || 0), 0);
+        return k ? `<div class="burn sm">${I('flame')}<span><b>±${r0(k)} kkal</b> terbakar · ${hs.length} workout</span><small>perkiraan</small></div>` : '' })()}</section>
     <section class="glass card"><h2 class="ct">Target Minggu Ini</h2>
       <div class="rings">${rings3(R)}<ul class="kv">${R.map(x => `<li><i style="--c:${x.c}"></i>${x.n}<b>${x.t}</b></li>`).join('')}</ul></div></section>
     <section class="glass card"><h2 class="ct">Keseimbangan Otot <span class="muted sm">set · ${ser.title}</span></h2>${balance(ser.from)}</section>
@@ -2186,6 +2215,7 @@ function openHist(id) {
   sheet(`<h2 class="sh">${esc(h.name)}</h2>
     <p class="muted" style="margin:-8px 2px 14px;font-size:14px">${d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
+    ${burnLine(h, true)}
     ${h.items.filter(it => T[it.id]).map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${it.sets.map(s => `${fmtW(s.w)} kg × ${s.r}`).join(' · ')}</small></div></div>` }).join('')}
     <div class="row2 mt"><button class="btn danger" data-a="histDel" data-id="${h.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="histAgain" data-id="${h.id}">${I('playf')} Ulangi</button></div>`);
 }
@@ -2311,6 +2341,7 @@ function summary(h) {
   return `<div class="done-b">${I('check')}</div><h2 class="dt" style="text-align:center;margin:18px 0 10px">Workout selesai!</h2>
     <p class="done-s">Mantap, ${esc(S.settings.name)}. ${esc(h.name)} tercatat di riwayat.</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
+    ${burnLine(h, true)}
     <div class="row2"><button class="btn soft" data-a="close">Tutup</button><button class="btn pri" data-a="go" data-to="stats">Lihat statistik</button></div>`;
 }
 

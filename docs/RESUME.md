@@ -54,6 +54,10 @@ tersinkron di semua perangkat.
   (bunyi/getar bisa diatur).
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
+- **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
+  MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
+  dipilih dari tempo (set per menit). Berat = catatan berat terakhir sebelum hari itu. Tampil di ringkasan,
+  riwayat (dengan rumusnya), kartu riwayat, dan Statistik per periode. Akurasi kira-kira ±30%.
 
 ### Kalori (AI Gemini)
 - Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
