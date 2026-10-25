@@ -3016,7 +3016,7 @@ function parseMachineQr(raw) {
   return { id, yid };
 }
 const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
-const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, seen: 0, added: 0, pending: null };
+const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, seen: 0, added: 0, pending: null, cams: [], swapping: false };
 let jsQRp = null;
 const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   const sc = document.createElement('script');
@@ -3025,6 +3025,27 @@ const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   document.head.appendChild(sc);
 }));
 function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg; t.classList.toggle('err', !!err) } }
+// Phones with several back lenses: Chrome's own "environment" pick is sometimes the ultra-wide (Samsung
+// S-series), which cannot focus up close. On Android the main lens is "camera2 0". The lens used last time,
+// picked here or with the Lensa button, is remembered.
+const CAM_KEY = 'why_scan_cam', CAM_SIZE = { width: { ideal: 1920 }, height: { ideal: 1080 } };
+const camOpen = id => navigator.mediaDevices.getUserMedia({ audio: false, video: id ? { deviceId: { exact: id }, ...CAM_SIZE } : { facingMode: { ideal: 'environment' }, ...CAM_SIZE } });
+async function backCams() {
+  try { return (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput' && d.deviceId && !/front|user|depan/i.test(d.label)) } catch { return [] }
+}
+const mainCam = cams => cams.find(d => /camera2 0\b/.test(d.label)) || cams.find(d => !/ultra|0[.,][56]|macro|depth|tele/i.test(d.label)) || null;
+const camId = st => st?.getVideoTracks()[0]?.getSettings?.().deviceId || '';
+const camSave = st => { try { const id = camId(st); if (id) localStorage.setItem(CAM_KEY, id) } catch {} };
+// the next back lens (Lensa button): the old one is stopped first, since some phones cannot run two at once
+async function swapCam(id) {
+  const run = scan.run;
+  scan.stream?.getTracks().forEach(t => t.stop());
+  let st = await camOpen(id).catch(() => null) || await camOpen(null).catch(() => null);
+  if (!st || run !== scan.run || $('#scan').hidden) { st?.getTracks().forEach(t => t.stop()); if (!st && run === scan.run) scanTip('Lensa ini tidak bisa dibuka.', true); return }
+  scan.stream = st; camSave(st);
+  const v = $('#scanV'); v.style.transform = ''; v.srcObject = st; await v.play().catch(() => {});
+  camTune();
+}
 // rid: scanning from Edit Program, where each machine scanned joins that program and the camera stays open
 async function openScan(rid = null) {
   closeSheet();
@@ -3039,10 +3060,25 @@ async function openScan(rid = null) {
   const run = ++scan.run, live = () => run === scan.run && scan.stream;
   if (!navigator.mediaDevices?.getUserMedia) return scanTip('Browser ini tidak bisa membuka kamera.', true);
   // Without a size, many Android phones open the camera at 640×480: blurry on screen and too few pixels for a dense QR.
-  let stream;
-  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false }) }
-  catch (e) { return run === scan.run && scanTip(e && e.name === 'NotAllowedError' ? 'Izin kamera ditolak.<small>Izinkan kamera untuk situs ini di pengaturan browser, lalu coba lagi.</small>' : 'Kamera tidak bisa dibuka.', true) }
+  let stream, err, saved = null;
+  try { saved = localStorage.getItem(CAM_KEY) } catch {}
+  try { stream = await camOpen(saved) } catch (e) { err = e }
+  // the remembered lens is gone (another phone, reset permissions): forget it and take the default
+  if (!stream && saved && err?.name !== 'NotAllowedError') { try { localStorage.removeItem(CAM_KEY) } catch {} saved = null; try { stream = await camOpen(null) } catch (e) { err = e } }
+  if (!stream) return run === scan.run && scanTip(err && err.name === 'NotAllowedError' ? 'Izin kamera ditolak.<small>Izinkan kamera untuk situs ini di pengaturan browser, lalu coba lagi.</small>' : 'Kamera tidak bisa dibuka.', true);
   if (el.hidden || run !== scan.run) { stream.getTracks().forEach(t => t.stop()); return }
+  // labels are readable once the camera is allowed: on the first scan, move off an ultra-wide onto the main lens
+  scan.cams = await backCams();
+  if (!saved && scan.cams.length > 1) {
+    const cur = stream.getVideoTracks()[0], best = mainCam(scan.cams);
+    if (best && best.deviceId !== camId(stream) && (/ultra|0[.,][56]/i.test(cur?.label || '') || /camera2 0\b/.test(best.label))) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = await camOpen(best.deviceId).catch(() => null) || await camOpen(null).catch(() => null);
+      if (!stream) return run === scan.run && scanTip('Kamera tidak bisa dibuka.', true);
+      if (el.hidden || run !== scan.run) { stream.getTracks().forEach(t => t.stop()); return }
+    }
+    camSave(stream);
+  }
   scan.stream = stream;
   const v = $('#scanV'); v.srcObject = scan.stream; await v.play().catch(() => {});
   camTune(); v.addEventListener('click', focusAt);
@@ -3098,6 +3134,8 @@ function camTune() {
   const b = [];
   if (caps.torch) b.push(`<button class="scan-b" data-a="scanTorch" aria-pressed="false">${I('bolt')}<span>Senter</span></button>`);
   b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);
+  const cams = scan.cams || [], ci = cams.findIndex(d => d.deviceId === camId(scan.stream));
+  if (cams.length > 1) b.push(`<button class="scan-b" data-a="scanLens" aria-label="Ganti lensa kamera"><b>${ci + 1 || 1}/${cams.length}</b><span>Lensa</span></button>`);
   const ctl = $('#scanCtl'); if (ctl) { ctl.innerHTML = b.join(''); ctl.hidden = !b.length }
 }
 // tap to focus there (where the phone supports it), with a ring where the finger was
@@ -3812,6 +3850,11 @@ const A = {
     const tr = scan.track; if (!tr) return;
     const on = !scan.torch;
     tr.applyConstraints({ advanced: [{ torch: on }] }).then(() => { scan.torch = on; el.setAttribute('aria-pressed', on) }).catch(() => toast('Senter tidak bisa dinyalakan', 'err'));
+  },
+  scanLens: async () => {
+    const cams = scan.cams || []; if (cams.length < 2 || scan.swapping) return;
+    const i = cams.findIndex(d => d.deviceId === camId(scan.stream));
+    scan.swapping = true; try { await swapCam(cams[(i + 1) % cams.length].deviceId) } finally { scan.swapping = false }
   },
   // digital zoom on the main lens; the scan box keeps mapping to camera pixels through the scaled video
   scanZoom: () => {
