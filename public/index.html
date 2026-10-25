@@ -492,6 +492,12 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .fs-b{display:flex;align-items:center;gap:8px;margin-top:8px}
 .fs-b .fs-go{flex:1;min-height:50px;font-size:15.5px}
 .fs-b .fs-del{color:var(--muted);padding-left:6px;padding-right:8px}
+.ltools{display:flex;align-items:center;gap:8px;margin:4px 2px 10px}
+.ltools h2{flex:1;min-width:0;margin:0;font-size:17px;font-weight:800;display:flex;align-items:baseline;gap:8px}
+.ltools h2 small{color:var(--muted);font-size:13px;font-weight:700}
+.tb{display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:0 14px 0 11px;border:0;border-radius:999px;background:rgba(255,255,255,.78);color:var(--acc-2);font-size:13.5px;font-weight:800;box-shadow:0 6px 16px -12px rgba(52,72,120,.55);transition:transform .14s ease,background-color .2s}
+.tb svg.i{width:17px;height:17px;stroke-width:2.4}
+.tb:active{transform:scale(.95);background:#fff}
 .wx-all{margin:0;padding:4px 4px 2px;color:var(--muted);font-size:13px;text-align:center}
 /* rest timer: a card that pops up when a set is done, with a ring counting down */
 #rest{position:fixed;left:16px;right:16px;max-width:440px;margin:0 auto;bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ring text" "ring btns";align-items:center;column-gap:14px;row-gap:8px;padding:12px 12px 12px 14px;border-radius:24px;background:rgba(24,32,47,.93);color:#fff;box-shadow:0 22px 40px -16px rgba(24,32,47,.75);animation:restIn .38s cubic-bezier(.2,.9,.3,1.2);transition:background-color .3s}
@@ -763,7 +769,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .claim .stx b{font-size:15px}
 /* QR scanner */
 #scan{position:fixed;inset:0;z-index:75;background:#05070c;overflow:hidden}
-#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
 .scan-frame{position:absolute;left:50%;top:44%;width:min(68vw,260px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:28px;box-shadow:0 0 0 100vmax rgba(5,7,12,.55);outline:3px solid rgba(255,255,255,.92);outline-offset:-3px;overflow:hidden}
 .scan-frame::after{content:'';position:absolute;left:10%;right:10%;height:2px;border-radius:2px;background:#7db1ff;box-shadow:0 0 12px #7db1ff;animation:scanline 2s ease-in-out infinite alternate}
 @keyframes scanline{from{top:12%}to{top:88%}}
@@ -771,6 +777,16 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .scan-tip{position:absolute;left:24px;right:24px;top:calc(44% + min(34vw,130px) + 24px);text-align:center;color:#fff;font-weight:700;font-size:15px;line-height:1.5;text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .scan-tip small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:4px}
 .scan-tip.err{color:#ffd7cf}
+/* the machine just scanned, waiting for "Tambahkan" */
+.scan-ask{position:absolute;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:3;max-width:440px;margin:0 auto;padding:14px;border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 24px 48px -16px rgba(0,0,0,.6);animation:restIn .32s cubic-bezier(.2,.9,.3,1.2)}
+#scan.asking .scan-ctl,#scan.asking .scan-tip,#scan.asking .scan-frame::after{display:none}
+.sa-top{display:flex;align-items:center;gap:12px}
+.sa-top .vt{width:48px;height:64px;border-radius:14px;flex:none}
+.sa-top>div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.sa-top small{color:var(--muted);font-size:12.5px;font-weight:700}
+.sa-top b{font-size:16px;line-height:1.3}
+.sa-b{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:14px}
+.sa-b .btn.soft{background:#eef1f6}
 .scan-ctl{position:absolute;left:0;right:0;bottom:calc(28px + env(safe-area-inset-bottom));z-index:2;display:flex;justify-content:center;gap:12px}
 .scan-b{min-width:76px;min-height:64px;padding:8px 14px;border:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:rgba(255,255,255,.16);color:#fff;font-size:12px;font-weight:700;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .scan-b svg.i{width:22px;height:22px}
@@ -1707,8 +1723,8 @@ function vEdit(id) {
         <button class="eh-link" data-a="iconPick" data-id="${r.id}">Ikon ${r.icon && r.icon !== 'auto' || r.color ? 'dipilih sendiri' : 'otomatis dari otot utama'} · <b>Ubah</b></button>
       </div>
     </section>
+    ${listTools('Latihan', r.items.length ? `${r.items.length} alat` : '', `data-a="pick" data-mode="edit" data-id="${r.id}"`, `data-rid="${r.id}"`)}
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
-    <div class="row2"><button class="btn soft" data-a="pick" data-mode="edit" data-id="${r.id}">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan" data-rid="${r.id}">${I('qr')} Scan alat</button></div>
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
 }
 
@@ -1780,6 +1796,9 @@ function wxCard(it, ei) {
       </div>` : `<p class="wx-all">Ketuk set untuk mengubah, atau + untuk menambah set.</p>`}
     </section>`;
 }
+// "Latihan" title with the add and scan buttons, above the list of exercises
+const listTools = (title, sub, add, scanAttrs) => `<div class="ltools"><h2>${title}${sub ? `<small>${sub}</small>` : ''}</h2>
+  <button class="tb" ${add}>${I('plus')}Tambah</button><button class="tb" data-a="scan" ${scanAttrs}>${I('qr')}Scan</button></div>`;
 const drawWx = ei => { const el = $('#wx' + ei), it = S.active?.items[ei]; if (el && it) { el.outerHTML = wxCard(it, ei); centerTl() } };
 // with many sets the timeline scrolls: keep the open set in view
 function centerTl() {
@@ -1808,8 +1827,8 @@ function vWorkout() {
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
     <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div><small>Latihan</small><b>${a.items.length}</b></div></div>
-    ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan dari daftar tutorial.</div>'}
-    <div class="row2"><button class="btn soft" data-a="pick" data-mode="workout">${I('plus')} Tambah latihan</button><button class="btn soft" data-a="scan">${I('qr')} Scan alat</button></div>
+    ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
+    ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan atau scan alatnya.</div>'}
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
 }
 
@@ -2942,7 +2961,7 @@ function parseMachineQr(raw) {
   return { id, yid };
 }
 const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
-const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, added: 0 };
+const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, seen: 0, added: 0, pending: null };
 let jsQRp = null;
 const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   const sc = document.createElement('script');
@@ -2954,12 +2973,12 @@ function scanTip(msg, err) { const t = $('#scanTip'); if (t) { t.innerHTML = msg
 // rid: scanning from Edit Program, where each machine scanned joins that program and the camera stays open
 async function openScan(rid = null) {
   closeSheet();
-  Object.assign(scan, { rid: rid && findR(rid) ? rid : null, last: 0, added: 0 });
+  Object.assign(scan, { rid: rid && findR(rid) ? rid : null, last: 0, seen: 0, added: 0, pending: null });
   const el = $('#scan');
   el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Alatnya langsung masuk ke program. Bisa scan beberapa alat berturut-turut.' : S.active ? 'Alatnya langsung ditambahkan ke workout' : 'Tutorial alatnya langsung terbuka'}</small></div>
-    <div class="scan-ctl" id="scanCtl" hidden></div>`;
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Kamu bisa cek alatnya dulu sebelum ditambahkan' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-ctl" id="scanCtl" hidden></div><div class="scan-ask" id="scanAsk" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
   // closing and reopening while this one still waits on the camera must not leave two readers running
   const run = ++scan.run, live = () => run === scan.run && scan.stream;
@@ -2996,7 +3015,7 @@ async function openScan(rid = null) {
   }
   if (!live()) return;
   scan.timer = setInterval(async () => {
-    if (scan.busy || !live()) return;
+    if (scan.busy || !live() || scan.pending) return;
     scan.busy = true;
     try { const raw = await detect(); if (raw) await onScan(raw) } catch {} finally { scan.busy = false }
   }, 250);
@@ -3013,15 +3032,17 @@ function scanBox(v) {
   const sx = Math.max(0, x0), sy = Math.max(0, y0), sw = Math.min(v.videoWidth, x1) - sx, sh = Math.min(v.videoHeight, y1) - sy;
   return sw > 40 && sh > 40 ? [sx, sy, sw, sh] : null;
 }
-// Sharper scans: continuous autofocus, plus torch and zoom buttons when the camera offers them.
+// Sharper scans: continuous autofocus and a torch button when the camera offers one. Zoom is digital (the
+// picture is enlarged on screen and the reader takes the middle at full resolution): asking the camera
+// to zoom makes many phones switch to the tele lens, which cannot focus up close and is darker.
 function camTune() {
   const tr = scan.stream?.getVideoTracks()[0]; let caps = {};
   try { caps = tr?.getCapabilities?.() || {} } catch {}
-  Object.assign(scan, { track: tr, caps, zoom: caps.zoom ? caps.zoom.min || 1 : 0, torch: false });
+  Object.assign(scan, { track: tr, caps, zoom: 1, torch: false });
   if (caps.focusMode?.includes('continuous')) tr.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {});
   const b = [];
   if (caps.torch) b.push(`<button class="scan-b" data-a="scanTorch" aria-pressed="false">${I('bolt')}<span>Senter</span></button>`);
-  if (caps.zoom && caps.zoom.max >= 1.5) b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);
+  b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);
   const ctl = $('#scanCtl'); if (ctl) { ctl.innerHTML = b.join(''); ctl.hidden = !b.length }
 }
 // tap to focus there (where the phone supports it), with a ring where the finger was
@@ -3046,7 +3067,22 @@ function stopScan() {
     toast(`${scan.added} alat ditambahkan ke program`);
     setTimeout(() => { const rows = document.querySelectorAll('.edrow'); rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 60);
   }
-  scan.rid = null; scan.added = 0; scan.last = 0;
+  scan.rid = null; scan.added = 0; scan.last = 0; scan.pending = null;
+}
+function scanAsk(t) {
+  const prog = scan.rid ? findR(scan.rid) : null, list = prog ? prog.items : S.active?.items || [];
+  const have = list.some(it => it.id === t.id), where = prog ? 'program' : 'workout';
+  scan.pending = t;
+  $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? `Sudah ada di ${where}` : `Tambahkan ke ${where}?`}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
+    <div class="sa-b"><button class="btn soft" data-a="scanSkip">${have ? 'Scan lagi' : 'Batal'}</button>
+      ${have ? `<button class="btn pri" data-a="${prog ? 'scanClose' : 'scanGo'}">${prog ? 'Selesai' : 'Buka latihan'}</button>`
+        : `<button class="btn pri" data-a="scanAdd">${I('plus')} Tambahkan</button>`}</div>`;
+  $('#scanAsk').hidden = false; $('#scan').classList.add('asking');
+}
+function scanResume(tip) {
+  scan.pending = null; scan.seen = Date.now();
+  $('#scanAsk').hidden = true; $('#scan').classList.remove('asking');
+  if (tip) scanTip(tip);
 }
 async function onScan(raw) {
   const q = parseMachineQr(raw), t = machineFor(q);
@@ -3061,25 +3097,18 @@ async function onScan(raw) {
     }
     return scanTip('QR ini bukan QR alat.<small>Coba arahkan ke QR yang tertempel di mesin.</small>', true);
   }
-  if (scan.rid) {
-    const r = findR(scan.rid); if (!r) return stopScan();
-    if (t.id === scan.last) return;   // the same QR is still in view
+  // Into a program or a running workout: show the machine and ask first. A QR that stays in view
+  // after "Batal" is not asked about again until it has been out of sight for a moment.
+  if (scan.rid || S.active) {
+    const now = Date.now(), again = t.id === scan.last && now - scan.seen < 2500;
+    scan.seen = now; if (again) return;
     scan.last = t.id; scan.miss = '';
     try { navigator.vibrate?.(60) } catch {}
-    if (r.items.some(it => it.id === t.id)) return scanTip(`${esc(t.t)} sudah ada di program<small>Scan alat lain, atau tutup kalau sudah.</small>`);
-    const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
-    r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
-    return scanTip(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
+    return scanAsk(t);
   }
   stopScan();
   try { navigator.vibrate?.(60) } catch {}
-  if (S.active) {
-    if (!S.active.items.some(it => it.id === t.id)) { S.active.items.push(newActiveItem({ id: t.id, sets: 3, reps: '10' })); save(); toast(`${t.t} ditambahkan ke workout`) }
-    else toast(`${t.t} sudah ada di workout`, 'info');
-    const i = S.active.items.findIndex(it => it.id === t.id); wxState().open = i;
-    go('workout');
-    setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
-  } else openDetail(t.id);
+  openDetail(t.id);
 }
 
 // ---------- sharing programs ----------
@@ -3698,16 +3727,38 @@ const A = {
   },
   scan: el => openScan(el?.dataset?.rid || null),
   scanClose: stopScan,
+  scanSkip: () => scanResume(),
+  scanAdd: () => {
+    const t = scan.pending; if (!t) return;
+    if (scan.rid) {
+      const r = findR(scan.rid); if (!r) return stopScan();
+      if (!r.items.some(it => it.id === t.id)) {
+        const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
+        r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
+      }
+      return scanResume(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
+    }
+    if (!S.active) return stopScan();
+    if (!S.active.items.some(it => it.id === t.id)) { S.active.items.push(newActiveItem({ id: t.id, sets: 3, reps: '10' })); save(); toast(`${t.t} ditambahkan ke workout`) }
+    A.scanGo();
+  },
+  // close the camera and open that exercise in the workout
+  scanGo: () => {
+    const t = scan.pending, i = t && S.active ? S.active.items.findIndex(it => it.id === t.id) : -1;
+    stopScan(); if (i < 0) return;
+    wxState().open = i; go('workout');
+    setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+  },
   scanTorch: el => {
     const tr = scan.track; if (!tr) return;
     const on = !scan.torch;
     tr.applyConstraints({ advanced: [{ torch: on }] }).then(() => { scan.torch = on; el.setAttribute('aria-pressed', on) }).catch(() => toast('Senter tidak bisa dinyalakan', 'err'));
   },
+  // digital zoom on the main lens; the scan box keeps mapping to camera pixels through the scaled video
   scanZoom: () => {
-    const tr = scan.track, z = scan.caps.zoom; if (!tr || !z) return;
-    const base = z.min || 1, steps = [base, 2, 3].filter((x, i) => !i || (x > base && x <= z.max));
-    const next = steps[(steps.indexOf(scan.zoom) + 1) % steps.length] ?? base;
-    tr.applyConstraints({ advanced: [{ zoom: next }] }).then(() => { scan.zoom = next; const b = $('#scanZ'); if (b) b.textContent = `${Math.round(next / base * 10) / 10}×` }).catch(() => {});
+    const steps = [1, 1.5, 2, 2.5], next = steps[(steps.indexOf(scan.zoom) + 1) % steps.length] || 1, v = $('#scanV');
+    scan.zoom = next; if (v) v.style.transform = next > 1 ? `scale(${next})` : '';
+    const b = $('#scanZ'); if (b) b.textContent = `${String(next).replace('.', ',')}×`;
   },
   iconPick: el => openIconPick(el.dataset.id),
   setIcon: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
