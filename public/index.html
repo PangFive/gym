@@ -3,18 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WHY</title>
-<meta name="description" content="WHY — tutorial alat gym, program latihan, dan catatan workout.">
+<title>Wegym</title>
+<meta name="description" content="Tutorial alat gym, program latihan, hitung kalori dengan AI, dan catatan workout dalam satu aplikasi.">
+<!-- link previews (WhatsApp, Telegram, X, Facebook…) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Wegym">
+<meta property="og:title" content="Wegym — Gym Tracker">
+<meta property="og:description" content="Tutorial alat gym, program latihan, hitung kalori dengan AI, dan catatan workout dalam satu aplikasi.">
+<meta property="og:url" content="https://pangfive.github.io/gym/">
+<meta property="og:image" content="https://pangfive.github.io/gym/og.png">
+<meta property="og:image:secure_url" content="https://pangfive.github.io/gym/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo Wegym: tutorial alat gym, plan mingguan, kalori AI">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wegym — Gym Tracker">
+<meta name="twitter:description" content="Tutorial alat gym, program latihan, hitung kalori dengan AI, dan catatan workout dalam satu aplikasi.">
+<meta name="twitter:image" content="https://pangfive.github.io/gym/og.png">
 <meta name="theme-color" content="#d6e8fb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="WHY">
+<meta name="apple-mobile-web-app-title" content="Wegym">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="application-name" content="WHY">
+<meta name="application-name" content="Wegym">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/svg+xml" href="icons/logo.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="icons/logo.svg?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=2">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1019,7 +1036,7 @@ function weekStart(d = new Date()) { const x = new Date(d); x.setHours(0, 0, 0, 
 //  S.settings  user settings: one set per account, at /users/<uid>/settings.
 // The rest of S is the user's own training data under /users/<uid>: routines, the weekly plan
 // (week: d0 = Sunday … d6 = Saturday, each a list of routine ids), history and the running workout.
-const APP_DEFAULTS = { appName: 'WHY', announcement: '', defaultRest: 90, defaultGoal: 4, suggestion: '3 × 10–12' };
+const APP_DEFAULTS = { appName: 'Wegym', announcement: '', defaultRest: 90, defaultGoal: 4, suggestion: '3 × 10–12' };
 let APP = { ...APP_DEFAULTS };
 // sex / birth (year) / height (cm) / goalW (kg) / act / pace (kg a week) make the body profile; with
 // kcalAuto the daily calorie target follows from it (energy()), otherwise kcal is set by hand.
@@ -1133,7 +1150,7 @@ function applyRemote(val) {
     if (fresh) {
       // A new account starts from what this device had, or from the starter plan.
       if (!fromCache) S = legacyState() || defaults();
-      if (!S.settings.name || S.settings.name === 'WHY') S.settings.name = pendingName || fb.user.displayName || (fb.user.email || '').split('@')[0] || 'WHY';
+      if (!S.settings.name || S.settings.name === 'WHY') S.settings.name = pendingName || fb.user.displayName || (fb.user.email || '').split('@')[0] || 'Kamu';
       synced = { settings: '', routines: '', week: '', active: '', history: {}, meals: {}, weights: {} };
     } else { S = remote; synced = rs }
     phase = 'app'; save(); render(); offerAdmin(); return;
@@ -1236,7 +1253,7 @@ function buildNav() {
 
 // ---------- views ----------
 const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
-const LOGO = 'icons/icon-192.png';
+const LOGO = 'icons/icon-192.png?v=2';   // ?v= busts browser caches when the logo changes
 function vLogin() {
   const up = ui.authMode === 'up';
   let pics = [38, 53, 32].map(i => T[i]).filter(Boolean);
@@ -1950,7 +1967,7 @@ const sRow = ({ icon, c, title, sub = '', right = '', tag = 'div', attrs = '', c
   `<${tag} class="srow ${cls}" ${attrs}><span class="sico" style="--c:${c}">${I(icon)}</span><span class="stx"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${right}</${tag}>`;
 const stepper = (a, d, id, val, extra = '') => `<div class="step"><button data-a="${a}" data-d="-${d}" ${extra} aria-label="Kurangi">−</button><b id="${id}">${val}</b><button data-a="${a}" data-d="${d}" ${extra} aria-label="Tambah">+</button></div>`;
 const SUGGESTIONS = ['3 × 8–10', '3 × 10–12', '4 × 6–8', '3 × 12–15'];
-const appFields = o => ({ appName: String(o.appName || '').trim().slice(0, 40) || 'WHY', announcement: String(o.announcement || '').trim().slice(0, 300),
+const appFields = o => ({ appName: String(o.appName || '').trim().slice(0, 40) || 'Wegym', announcement: String(o.announcement || '').trim().slice(0, 300),
   defaultRest: clamp(parseInt(o.defaultRest) || 90, 15, 300), defaultGoal: clamp(parseInt(o.defaultGoal) || 4, 1, 7),
   suggestion: String(o.suggestion || '').trim().slice(0, 40) || '3 × 10–12' });
 const appDirty = () => JSON.stringify(appFields(ui.appDraft)) !== JSON.stringify(appFields(APP));
@@ -1958,7 +1975,7 @@ function syncAppBar() { const b = $('#apBar'); if (b) b.hidden = !appDirty() }
 function appPreview(d) {
   const ann = String(d.announcement || '').trim();
   return `<div class="apv"><span class="apv-k">Pratinjau di Beranda</span>
-    <div class="brand"><img src="${LOGO}" alt="" width="32" height="32"><span id="pvName">${esc(String(d.appName || '').trim() || 'WHY')}</span></div>
+    <div class="brand"><img src="${LOGO}" alt="" width="32" height="32"><span id="pvName">${esc(String(d.appName || '').trim() || 'Wegym')}</span></div>
     <div class="banner glass${ann ? '' : ' empty'}" id="pvBan"><span class="qi" style="--c:var(--coral)">${I('mega')}</span><p id="pvAnn">${esc(ann || 'Belum ada pengumuman. Tulis di bawah untuk menampilkannya di Beranda.')}</p></div></div>`;
 }
 // The admin form edits a draft; nothing reaches Firebase until Simpan.
@@ -2042,7 +2059,7 @@ function openSettings() {
 }
 function openImport() {
   sheet(`<h2 class="sh">Import</h2>
-    <p class="muted" style="margin:0 2px;font-size:14px;line-height:1.5">Tempel jawaban Claude (program JSON), atau pilih file backup WHY.</p>
+    <p class="muted" style="margin:0 2px;font-size:14px;line-height:1.5">Tempel jawaban Claude (program JSON), atau pilih file backup Wegym.</p>
     <textarea id="impTxt" class="ta" placeholder='{"why_plan":1,"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10"}]}]}'></textarea>
     <div class="row2"><label class="btn soft">${I('upload')} Pilih file<input type="file" id="impFile" accept=".json,application/json,text/plain" hidden></label><button class="btn pri" data-a="doImport">Import</button></div>`);
 }
@@ -2166,7 +2183,7 @@ function claudeText() {
   const hist = S.history.slice(0, 12).map(h => `- ${dayKey(h.date)} ${h.name} (${h.dur} mnt): ` +
     h.items.map(it => `${T[it.id]?.t || it.id} ${it.sets.map(s => `${fmtW(s.w)}kg×${s.r}`).join(', ')}`).join('; '));
   return [
-    'Halo Claude, ini data latihan saya dari aplikasi WHY. Tolong buatkan program latihan untuk saya.',
+    'Halo Claude, ini data latihan saya dari aplikasi Wegym. Tolong buatkan program latihan untuk saya.',
     'Balas dengan JSON persis format ini supaya bisa saya import:',
     '{"why_plan":1,"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10"}]}],"week":{"senin":["Push Day"],"rabu":["Pull Day"]}}',
     'Gunakan hanya id dari daftar alat di bawah. Bagian "week" opsional: nama hari (senin sampai minggu) berisi nama program dari "routines"; hari yang tidak disebut jadi hari istirahat.',
@@ -2223,7 +2240,7 @@ async function boot() {
     const app = a.initializeApp(FIREBASE);
     fb.mod = { ...au, ...d }; fb.auth = au.getAuth(app); fb.db = d.getDatabase(app);
     d.onValue(d.ref(fb.db, 'app/settings'), s => {
-      APP = { ...APP_DEFAULTS, ...clean(s.val()) }; document.title = APP.appName;
+      APP = { ...APP_DEFAULTS, ...clean(s.val()) }; if (APP.appName === 'WHY') APP.appName = APP_DEFAULTS.appName; document.title = APP.appName;
       if (phase === 'app') softRender();
     }, () => {});
     d.onValue(d.ref(fb.db, '.info/connected'), s => setOnline(s.val() === true));
@@ -3406,7 +3423,7 @@ document.addEventListener('input', e => {
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {
     const f = el.dataset.k; ui.appDraft[f] = el.value;
-    if (f === 'appName') $('#pvName').textContent = el.value.trim() || 'WHY';
+    if (f === 'appName') $('#pvName').textContent = el.value.trim() || 'Wegym';
     if (f === 'announcement') {
       const t = el.value.trim(), c = $('#apCnt');
       $('#pvAnn').textContent = t || 'Belum ada pengumuman. Tulis di bawah untuk menampilkannya di Beranda.';
@@ -3424,7 +3441,7 @@ document.addEventListener('input', e => {
     else if (f === 'kcal') { const v = Math.max(0, parseFloat(el.value.replace(',', '.')) || 0); if (it.kcal > 0) { const k = v / it.kcal; it.p *= k; it.c *= k; it.f *= k } it.kcal = v }
     refreshMealTot();
   }
-  else if (k === 'setName') { S.settings.name = el.value.trim().slice(0, 20) || 'WHY'; save() }
+  else if (k === 'setName') { S.settings.name = el.value.trim().slice(0, 20) || 'Kamu'; save() }
 });
 document.addEventListener('submit', async e => {
   if (e.target.id !== 'authForm') return;

@@ -1,4 +1,4 @@
-// WHY service worker: the app opens offline, and a new deploy shows on the next open.
+// Wegym (formerly WHY) service worker: the app opens offline, and a new deploy shows on the next open.
 //
 // It lives at the same address openGym's worker used (/gym/sw.js), so browsers that still run
 // that one replace it with this. On activation every cache that is not WHY's is deleted, and if
@@ -13,7 +13,7 @@
 //   YouTube thumbnails      cache first, the newest 200 kept
 // Firebase Auth and the Realtime Database go straight to the network.
 
-const VERSION = 'why-v1';
+const VERSION = 'why-v2';   // bumped when the icons change, so the new ones are fetched
 const SHELL = VERSION + '-shell', RUNTIME = VERSION + '-runtime', THUMBS = VERSION + '-thumbs';
 const PAGE = new URL('./index.html', self.registration.scope).href;
 const ASSETS = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png',

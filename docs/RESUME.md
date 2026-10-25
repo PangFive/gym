@@ -1,4 +1,6 @@
-# WHY — Ringkasan Proyek
+# Wegym — Ringkasan Proyek
+
+_Dulu bernama WHY; nama internal (cache, key penyimpanan) tetap `why_…` agar data lama aman._
 
 Aplikasi gym berbasis web (PWA) untuk member gym: tonton tutorial alat, scan QR di mesin, susun
 program dan plan mingguan, catat setiap set, dan lihat progres. Data tersimpan di akun Firebase dan
