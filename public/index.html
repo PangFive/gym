@@ -805,7 +805,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .claim .stx b{font-size:15px}
 /* QR scanner */
 #scan{position:fixed;inset:0;z-index:75;background:#05070c;overflow:hidden}
-#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
+#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scan-frame{position:absolute;left:50%;top:44%;width:min(68vw,260px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:28px;box-shadow:0 0 0 100vmax rgba(5,7,12,.55);outline:3px solid rgba(255,255,255,.92);outline-offset:-3px;overflow:hidden}
 .scan-frame::after{content:'';position:absolute;left:10%;right:10%;height:2px;border-radius:2px;background:#7db1ff;box-shadow:0 0 12px #7db1ff;animation:scanline 2s ease-in-out infinite alternate}
 @keyframes scanline{from{top:12%}to{top:88%}}
@@ -3016,7 +3016,7 @@ function parseMachineQr(raw) {
   return { id, yid };
 }
 const machineFor = ({ id, yid }) => (T[id] && (!yid || T[id].y === yid)) ? T[id] : (yid && TUTORIALS.find(t => t.y === yid)) || T[id] || null;
-const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, zoom: 0, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, seen: 0, added: 0, pending: null, cams: [], swapping: false };
+const scan = { stream: null, timer: null, busy: false, miss: '', track: null, caps: {}, torch: false, n: 0, hintT: null, run: 0, rid: null, last: 0, seen: 0, added: 0, pending: null, cams: [], swapping: false };
 let jsQRp = null;
 const loadJsQR = () => jsQRp || (jsQRp = new Promise((res, rej) => {
   const sc = document.createElement('script');
@@ -3044,7 +3044,7 @@ async function swapCam(id) {
   let st = await camOpen(id).catch(() => null) || await camOpen(null).catch(() => null);
   if (!st || run !== scan.run || $('#scan').hidden) { st?.getTracks().forEach(t => t.stop()); if (!st && run === scan.run) scanTip('Lensa ini tidak bisa dibuka.', true); return }
   scan.stream = st; camSave(st);
-  const v = $('#scanV'); v.style.transform = ''; v.srcObject = st; await v.play().catch(() => {});
+  const v = $('#scanV'); v.srcObject = st; await v.play().catch(() => {});
   camTune();
 }
 // rid: scanning from Edit Program, where each machine scanned joins that program and the camera stays open
@@ -3112,8 +3112,7 @@ async function openScan(rid = null) {
     try { const raw = await detect(); if (raw) await onScan(raw) } catch {} finally { scan.busy = false }
   }, 250);
 }
-// The video fills the screen (object-fit: cover), so a point on screen maps to the camera frame through that
-// crop; with the digital zoom the box is scaled and the mapping follows.
+// The video fills the screen (object-fit: cover), so a point on screen maps to the camera frame through that crop.
 function toVideo(v, x, y) {
   const r = v.getBoundingClientRect(), s = Math.max(r.width / v.videoWidth, r.height / v.videoHeight);
   return [(x - r.left - (r.width - v.videoWidth * s) / 2) / s, (y - r.top - (r.height - v.videoHeight * s) / 2) / s];
@@ -3125,22 +3124,19 @@ function scanBox(v) {
   const sx = Math.max(0, x0), sy = Math.max(0, y0), sw = Math.min(v.videoWidth, x1) - sx, sh = Math.min(v.videoHeight, y1) - sy;
   return sw > 40 && sh > 40 ? [sx, sy, sw, sh] : null;
 }
-// Sharper scans: continuous autofocus and a torch button when the camera offers one. The Zoom button is
-// digital (the picture is enlarged on screen and the reader takes the middle at full resolution): camera
-// zoom past 1× makes phones switch to the tele lens, which cannot focus up close and is darker.
-// Camera zoom is set to exactly 1× though: on Samsung's multi-lens back camera (0.6×–10×) Chrome can open
-// at the widest end, the 0.6× ultra-wide; 1× is the main wide lens, as in the phone's own camera.
+// Sharper scans: continuous autofocus, and a torch button when the camera offers one. Camera zoom is set to
+// exactly 1×: on Samsung's multi-lens back camera (0.6×–10×) Chrome can open at the widest end, the 0.6×
+// ultra-wide; 1× is the main wide lens, as in the phone's own camera. Other lenses: the Lensa button.
 function camTune() {
   const tr = scan.stream?.getVideoTracks()[0]; let caps = {};
   try { caps = tr?.getCapabilities?.() || {} } catch {}
-  Object.assign(scan, { track: tr, caps, zoom: 1, torch: false });
+  Object.assign(scan, { track: tr, caps, torch: false });
   const adv = [];
   if (caps.focusMode?.includes('continuous')) adv.push({ focusMode: 'continuous' });
   if (caps.zoom && caps.zoom.min < 1 && caps.zoom.max >= 1) adv.push({ zoom: 1 });
   if (adv.length) tr.applyConstraints({ advanced: adv }).catch(() => adv.forEach(c => tr.applyConstraints({ advanced: [c] }).catch(() => {})));
   const b = [];
   if (caps.torch) b.push(`<button class="scan-b" data-a="scanTorch" aria-pressed="false">${I('bolt')}<span>Senter</span></button>`);
-  b.push(`<button class="scan-b" data-a="scanZoom" aria-label="Zoom kamera"><b id="scanZ">1×</b><span>Zoom</span></button>`);
   const cams = scan.cams || [], ci = cams.findIndex(d => d.deviceId === camId(scan.stream));
   if (cams.length > 1) b.push(`<button class="scan-b" data-a="scanLens" aria-label="Ganti lensa kamera"><b>${ci + 1 || 1}/${cams.length}</b><span>Lensa</span></button>`);
   const ctl = $('#scanCtl'); if (ctl) { ctl.innerHTML = b.join(''); ctl.hidden = !b.length }
@@ -3862,12 +3858,6 @@ const A = {
     const cams = scan.cams || []; if (cams.length < 2 || scan.swapping) return;
     const i = cams.findIndex(d => d.deviceId === camId(scan.stream));
     scan.swapping = true; try { await swapCam(cams[(i + 1) % cams.length].deviceId) } finally { scan.swapping = false }
-  },
-  // digital zoom on the main lens; the scan box keeps mapping to camera pixels through the scaled video
-  scanZoom: () => {
-    const steps = [1, 1.5, 2, 2.5], next = steps[(steps.indexOf(scan.zoom) + 1) % steps.length] || 1, v = $('#scanV');
-    scan.zoom = next; if (v) v.style.transform = next > 1 ? `scale(${next})` : '';
-    const b = $('#scanZ'); if (b) b.textContent = `${String(next).replace('.', ',')}×`;
   },
   iconPick: el => openIconPick(el.dataset.id),
   setIcon: el => { const r = findR(ui.iconFor); if (!r) return; if (el.dataset.v === 'auto') delete r.icon; else r.icon = el.dataset.v; refreshIconPick() },
