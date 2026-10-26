@@ -252,7 +252,8 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .sx{position:absolute;top:10px;right:14px;z-index:3;width:38px;height:38px;background:rgba(255,255,255,.92);border:1px solid rgba(24,32,47,.06);color:var(--ink);box-shadow:0 6px 16px -8px rgba(24,32,47,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sh{font-size:21px;font-weight:800;margin:2px 50px 16px 4px;letter-spacing:-.02em}
 .sh2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin:22px 2px 8px}
-.video{position:relative;aspect-ratio:9/16;height:min(54vh,480px);max-width:100%;border-radius:26px;overflow:hidden;background:#101624;margin:18px auto 0;box-shadow:0 18px 36px -18px rgba(24,32,47,.6)}
+/* the width is set, not left to aspect-ratio: inside the glow's fit-content box Safari on iOS makes it 0 wide */
+.video{position:relative;aspect-ratio:9/16;height:min(54vh,480px);width:calc(min(54vh,480px) * .5625);max-width:100%;border-radius:26px;overflow:hidden;background:#101624;margin:18px auto 0;box-shadow:0 18px 36px -18px rgba(24,32,47,.6)}
 .video .vt{position:absolute;inset:0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .playbig{position:absolute;inset:0;margin:auto;width:66px;height:66px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:var(--acc);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
@@ -713,7 +714,7 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .vm-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:2px 2px 10px}
 .vm-h>div{display:flex;flex-direction:column;gap:6px;min-width:0}
 .vm-h b{font-size:16px;font-weight:800;line-height:1.3}
-.vm-vid{position:relative;height:min(50dvh,420px);aspect-ratio:9/16;max-width:100%;margin:0 auto;border-radius:16px;overflow:hidden;background:#0b0f19}
+.vm-vid{position:relative;height:min(50vh,420px);height:min(50dvh,420px);width:calc(min(50vh,420px) * .5625);width:calc(min(50dvh,420px) * .5625);aspect-ratio:9/16;max-width:100%;margin:0 auto;border-radius:16px;overflow:hidden;background:#0b0f19}
 .vm-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vm p{margin:12px 2px 4px;font-size:14px;line-height:1.5;color:var(--ink)}
 .vm .also{display:block;margin:0 2px}
