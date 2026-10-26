@@ -348,10 +348,10 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
 .aibtn[disabled]{opacity:.6}
 /* swapping an exercise mid-workout */
-.wx-sw{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px 0 11px;border-radius:999px;border:1px solid rgba(47,124,246,.3);background:#e7f0fe;color:var(--acc-2);font:inherit;font-size:13.5px;font-weight:800;position:relative;transition:transform .14s ease}
-.wx-sw::after{content:'';position:absolute;inset:-3px 0}
+.wx-sw{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 11px 0 9px;border-radius:999px;border:1px solid rgba(47,124,246,.28);background:#e7f0fe;color:var(--acc-2);font:inherit;font-size:13px;font-weight:800;position:relative;transition:transform .14s ease}
+.wx-sw::after{content:'';position:absolute;inset:-6px -2px}
 .wx-sw:active{transform:scale(.95)}
-.wx-sw svg.i{width:16px;height:16px;stroke-width:2.2}
+.wx-sw svg.i{width:14px;height:14px;stroke-width:2.3}
 .sw-cur{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.75);border:1px solid var(--edge)}
 .sw-cur .vt{width:42px;height:56px;border-radius:12px;flex:none}
 .sw-cur>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -1948,7 +1948,7 @@ function wxCard(it, ei) {
   return `<section class="wx glass on" id="wx${ei}">
       <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>
         <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
-        ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti alat</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
+        ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
         ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
