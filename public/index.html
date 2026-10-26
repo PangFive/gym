@@ -191,6 +191,8 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .wv{position:relative;width:104px;flex:none;border-radius:19px;overflow:hidden;box-shadow:0 10px 22px -12px rgba(24,32,47,.55)}
 .wv .vt{position:absolute;inset:0}
 .wv::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,16,30,.45));pointer-events:none}
+.wv:has(.cx)::after{display:none}
+.wv:has(.cx){box-shadow:0 10px 22px -14px rgba(225,29,72,.5)}
 .wv .pm{z-index:1;position:absolute;right:12px;bottom:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--acc);display:grid;place-items:center}
 .wv .pm svg.i{width:14px;height:14px}
 .vt{position:relative;display:block;overflow:hidden;flex:none;background:linear-gradient(160deg,#dbe6f8,#c3d3ee)}
@@ -349,6 +351,20 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
 .aibtn[disabled]{opacity:.6}
 /* swapping an exercise mid-workout */
+/* cardio machines: an icon on a soft red tile where a video thumbnail would be */
+.vt.cx{display:grid;place-items:center;background:linear-gradient(160deg,#fff1f3,#ffd6dd);color:#e11d48}
+.vt.cx .cx-i{width:66%;height:66%;max-width:64px;max-height:64px}
+.vt.cx~.pm{display:none}
+.cx-i{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mill.cxm{display:grid;place-items:center;color:#e11d48}
+.mill.cxm .cx-i{width:64px;height:64px}
+.cx-hero{display:grid;place-items:center;width:200px;height:200px;margin:18px auto 0;border-radius:32px;background:linear-gradient(160deg,#fff1f3,#ffd0d8);color:#e11d48;box-shadow:0 18px 36px -22px rgba(225,29,72,.6)}
+.cx-hero .cx-i{width:120px;height:120px}
+.cx-hero.sm{width:150px;height:150px;margin:4px auto 0;border-radius:26px}
+.cx-hero.sm .cx-i{width:88px;height:88px}
+.ed-cx{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#e11d48}
+.ed-cx svg.i{width:16px;height:16px}
+.fs-x{margin:2px 0 8px;text-align:center;font-size:13px;font-weight:700;color:#be123c;min-height:18px}
 .wx-sw{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 11px 0 9px;border-radius:999px;border:1px solid rgba(47,124,246,.28);background:#e7f0fe;color:var(--acc-2);font:inherit;font-size:13px;font-weight:800;position:relative;transition:transform .14s ease}
 .wx-sw::after{content:'';position:absolute;inset:-6px -2px}
 .wx-sw:active{transform:scale(.95)}
@@ -1212,10 +1228,67 @@ function setTutorials(list) {
   for (const k in T) delete T[k];
   for (const k in CNT) delete CNT[k];
   TUTORIALS.forEach(t => { T[t.id] = t; [...t.p, ...t.s].forEach(k => { CNT[k] = (CNT[k] || 0) + 1 }) });
+  CARDIO.forEach(c => { T[c.id] = c });
 }
 const count = k => CNT[k] || 0;
+
+// ---------- cardio ----------
+// Cardio machines live in the app itself: the gym's list holds only machines with a tutorial video. A set on
+// one is a stretch on the machine: r = minutes, w = speed in km/h on the treadmill or the machine's level on
+// the others, g = the treadmill's incline in %. Their muscles (wk: main, supporting) only colour the body map;
+// they stay out of the muscle filters, the counts and a program's icon.
+const CARDIO_ICONS = {
+  run: '<circle cx="12.5" cy="3.8" r="1.6"/><path d="M8 8.5l3-1.7 2.6 1.4 1.3 2.6 2.4.6M11 6.8l-1.3 5.1 2.8 2.3-.9 3.3M9.7 11.9 8 14.5H5.2M3 20.5h15l2.5-6.5"/>',
+  bike: '<path d="M4 20.5h16M9 20.5l1.7-11M8.5 9.5h4.5M10.4 14h5.1M16.5 20.5 15 7.5h2.6"/><circle cx="15.5" cy="16.5" r="2.6"/>',
+  ell: '<path d="M3.5 20.5h17M6.5 20.5 9 15.5h6.5l2.5 5M9.5 4.5l1.8 11M15.5 4.5 14 15.5"/><circle cx="18.5" cy="12" r="2"/>',
+  row: '<path d="M2.5 18.5h17M4.5 18.5v2M17.5 18.5v2M7.5 16.5h4M11.5 11.5l6.5 2.5"/><circle cx="19.5" cy="14.5" r="2.5"/><circle cx="9" cy="7" r="1.6"/><path d="M9.5 9 8.5 13.5 12 16.5"/>',
+  stair: '<path d="M3.5 20.5h4v-4h4v-4h4v-4h4v-4"/>'
+};
+// mets: MET by level 1–4, 5–8, 9–12, 13–16, 17+ (Compendium of Physical Activities: stationary cycling
+// 3,5–11 by watts, rowing ergometer 4,8–12, elliptical 5,0 moderate, stair-treadmill 9,0)
+const CARDIO = [
+  { id: 9001, t: 'Treadmill', k: 'run', w0: 6, wk: ['quadriceps hamstring gluteal', 'calves'],
+    d: 'Jalan cepat atau lari di atas sabuk berjalan. Jalan cepat dengan incline 8–12% sudah cukup berat tanpa harus berlari.' },
+  { id: 9002, t: 'Sepeda statis', k: 'bike', w0: 6, mets: [3.5, 4.8, 6.8, 8.8, 11], wk: ['quadriceps', 'gluteal hamstring calves'],
+    d: 'Kayuh dengan punggung tegak dan lutut sejajar kaki. Naikkan level untuk menambah beban kayuhan.' },
+  { id: 9003, t: 'Elliptical', k: 'ell', w0: 6, mets: [4, 5, 6, 7, 8], wk: ['quadriceps gluteal', 'hamstring calves deltoids'],
+    d: 'Langkah melingkar tanpa hentakan, ringan untuk lutut. Dorong dan tarik pegangan supaya lengan ikut bekerja.' },
+  { id: 9004, t: 'Mesin dayung', k: 'row', w0: 5, mets: [4.8, 7, 8.5, 12, 12], wk: ['upper-back quadriceps', 'biceps gluteal hamstring lower-back'],
+    d: 'Dorong dengan kaki dulu, lalu tarik pegangan ke perut dengan punggung tetap lurus. Kembali dengan urutan terbalik.' },
+  { id: 9005, t: 'Stair climber', k: 'stair', w0: 6, mets: [6, 8, 9, 10, 11], wk: ['quadriceps gluteal', 'hamstring calves'],
+    d: 'Naik tangga berjalan dengan badan tegak. Pegangan untuk keseimbangan saja, jangan bertumpu di sana.' }
+].map(c => ({ ...c, m: 'cardio', y: 'cardio:' + c.k, p: [], s: [], c: true, wk: c.wk.map(muscleList) }));
+const CXM = Object.fromEntries(CARDIO.map(c => [c.id, c]));
+const CX = id => CXM[id] || null;
+const cxIcon = k => `<svg class="cx-i" viewBox="0 0 24 24" aria-hidden="true">${CARDIO_ICONS[k] || CARDIO_ICONS.run}</svg>`;
+const cxTag = '<span class="tag" style="--c:#e11d48">Kardio</span>';
+// main and supporting muscles, for a machine of either kind
+const musOf = t => t.c ? t.wk : [t.p, t.s];
+const planOf = id => CX(id) ? { sets: 1, reps: '20' } : { sets: 3, reps: '10' };
+// Calories per minute: the treadmill by the ACSM equations (walking 0,1·v + 1,8·v·grade + 3,5, running
+// 0,2·v + 0,9·v·grade + 3,5 ml O2/kg/min, v in m/min; about 5 kcal per litre of oxygen), the others by MET.
+function cardioKcalMin(c, s, kg) {
+  if (c.k === 'run') {
+    const kmh = num(s.w), v = kmh * 1000 / 60, g = num(s.g) / 100;
+    const vo2 = kmh >= 7.5 ? .2 * v + .9 * v * g + 3.5 : .1 * v + 1.8 * v * g + 3.5;
+    return vo2 * kg / 1000 * 5;
+  }
+  return c.mets[clamp(Math.floor((num(s.w) - 1) / 4), 0, c.mets.length - 1)] * kg / 60;
+}
+const cardioKcal = (id, s, kg) => { const c = CX(id); return c && kg ? cardioKcalMin(c, s, kg) * (parseInt(s.r) || 0) : 0 };
+const fmtKm = km => fmtW(Math.round(km * 10) / 10);
+// one stretch as text: "20 mnt · 6 km/j · 2% · 2 km", "20 mnt · level 8"
+function cardioText(c, s) {
+  const min = parseInt(s.r) || 0, w = num(s.w);
+  if (c.k !== 'run') return `${min} mnt${w ? ` · level ${fmtW(w)}` : ''}`;
+  return `${min} mnt${w ? ` · ${fmtW(w)} km/j` : ''}${num(s.g) ? ` · ${fmtW(num(s.g))}%` : ''}${w && min ? ` · ${fmtKm(w * min / 60)} km` : ''}`;
+}
+// any set as text; a lifting set as "50 kg × 10"
+const setText = (id, s) => { const c = CX(id); return c ? cardioText(c, s) : num(s.w) ? `${fmtW(s.w)} kg × ${s.r || 0}` : `${s.r || 0} reps` };
+// what a program plans: "3 set × 10 reps", "20 mnt"
+const planText = (id, sets, reps) => CX(id) ? `${parseInt(reps) || 20} mnt${+sets > 1 ? ` × ${sets}` : ''}` : `${sets} set × ${reps} reps`;
 const trains = (t, k) => t.p.includes(k) || t.s.includes(k);
-const pTags = t => `<div class="tags">${t.p.map(mTag).join('')}</div>`;
+const pTags = t => `<div class="tags">${t.c ? cxTag : t.p.map(mTag).join('')}</div>`;
 const alsoLine = t => t.s.length ? `<small class="also">Juga melatih ${t.s.map(k => MI[k].n).join(' · ')}</small>` : '';
 
 const DAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -1297,13 +1370,14 @@ const thumb = (y, q = 'mq') => `https://i.ytimg.com/vi/${y}/${q}default.jpg`;
 // its middle and blurred, stretched copies of it at the sides, so .vt shows only that middle frame.
 // A video that is private or gone comes back as YouTube's 120 px grey placeholder: .none hides it.
 const NOIMG = `onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')" onerror="this.parentNode.classList.add('none')"`;
-const pic = (y, cls = '', attrs = '') => `<span class="vt ${cls}" ${attrs}><img src="${thumb(y, 'hq')}" alt="" loading="lazy" crossorigin="anonymous" ${NOIMG}></span>`;
+const pic = (y, cls = '', attrs = '') => String(y).startsWith('cardio:') ? `<span class="vt cx ${cls}" ${attrs}>${cxIcon(y.slice(7))}</span>` : `<span class="vt ${cls}" ${attrs}><img src="${thumb(y, 'hq')}" alt="" loading="lazy" crossorigin="anonymous" ${NOIMG}></span>`;
 const mTag = k => MI[k] ? `<span class="tag" style="--c:${MI[k].c}">${MI[k].n}</span>` : '';
 const rName = r => esc(r.name || 'Tanpa nama');
 const pad = n => String(n).padStart(2, '0');
 const dayKey = d => { const x = new Date(d); return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}` };
 const mmss = s => { s = Math.max(0, s | 0); const h = s / 3600 | 0, m = (s % 3600) / 60 | 0; return (h ? h + ':' + pad(m) : m) + ':' + pad(s % 60) };
-const estMin = items => Math.max(5, Math.round(items.reduce((a, i) => a + (+i.sets || 0), 0) * 2.5 / 5) * 5);
+// about 2,5 minutes per lifting set, and a cardio machine's own minutes
+const estMin = items => Math.max(5, Math.round(items.reduce((a, i) => a + (CX(i.id) ? (parseInt(i.reps) || 20) * (+i.sets || 1) : (+i.sets || 0) * 2.5), 0) / 5) * 5);
 const routineMuscles = r => [...new Set(r.items.flatMap(i => T[i.id]?.p || []))];
 function weekStart(d = new Date()) { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x }
 
@@ -1343,7 +1417,7 @@ function normalize(v) {
     history: asList(d.history).filter(h => h.id && h.date).map(h => ({
       id: h.id, date: h.date, name: h.name || 'Workout', rids: asList(h.rids).length ? asList(h.rids) : h.rid ? [h.rid] : [],
       dur: +h.dur || 0, sets: +h.sets || 0, vol: +h.vol || 0,
-      items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0 })) })),
+      items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0, ...(+x.g ? { g: +x.g } : {}) })) })),
       ...(h.hr && +h.hr.avg ? { hr: { avg: +h.hr.avg, max: +h.hr.max || 0, min: +h.hr.min || 0, sec: +h.hr.sec || 0, s: asList(h.hr.s).map(b => +b || 0) } } : {})
     })).sort((x, y) => y.date.localeCompare(x.date)),
     meals: asList(d.meals).filter(m => m.id && m.date).map(m => ({
@@ -1354,7 +1428,7 @@ function normalize(v) {
     weights: asList(d.weights).filter(w => w.id && w.date && +w.kg > 0).map(w => ({ id: String(w.id), date: w.date, kg: +w.kg }))
       .sort((x, y) => y.date.localeCompare(x.date)),
     active: a && a.start ? { name: a.name || 'Workout', rids: asList(a.rids).length ? asList(a.rids) : a.rid ? [a.rid] : [], start: +a.start,
-      items: asList(a.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', done: !!x.done })) })) } : null
+      items: asList(a.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', ...(x.g != null ? { g: x.g } : {}), done: !!x.done })) })) } : null
   };
 }
 
@@ -1677,19 +1751,23 @@ function vHome() {
       ${qa('spark', 'Program dari Claude', 'import', 'var(--coral)')}
     </div>
     <h2 class="st">Jelajahi Otot</h2>
-    <div class="mus">${MUSCLES.map(m => `<button class="mtile glass" data-a="muscle" data-k="${m.k}" style="--c:${m.c}"><span class="mill">${muscleThumb(m.k)}</span><b>${m.n}</b><small>${count(m.k)} latihan</small></button>`).join('')}</div>
+    <div class="mus">${MUSCLES.map(m => `<button class="mtile glass" data-a="muscle" data-k="${m.k}" style="--c:${m.c}"><span class="mill">${muscleThumb(m.k)}</span><b>${m.n}</b><small>${count(m.k)} latihan</small></button>`).join('')}
+      <button class="mtile glass" data-a="muscle" data-k="cardio" style="--c:#e11d48"><span class="mill cxm">${cxIcon('run')}</span><b>Kardio</b><small>${CARDIO.length} alat</small></button></div>
     ${S.history[0] ? `<h2 class="st">Workout Terakhir</h2>${histCard(S.history[0])}` : ''}`;
 }
 
 function chips(sel, act) {
-  return `<button class="chip ${sel === 'all' ? 'on' : ''}" data-a="${act}" data-k="all">Semua <small>${TUTORIALS.length}</small></button>` +
+  return `<button class="chip ${sel === 'all' ? 'on' : ''}" data-a="${act}" data-k="all">Semua <small>${TUTORIALS.length + CARDIO.length}</small></button>` +
+    `<button class="chip ${sel === 'cardio' ? 'on' : ''}" data-a="${act}" data-k="cardio">Kardio <small>${CARDIO.length}</small></button>` +
     MUSCLES.map(m => `<button class="chip ${sel === m.k ? 'on' : ''}" data-a="${act}" data-k="${m.k}">${m.n} <small>${count(m.k)}</small></button>`).join('');
 }
-const matches = (t, m, q) => (m === 'all' || trains(t, m)) && (!q || t.t.toLowerCase().includes(q) || t.d.toLowerCase().includes(q));
+const matches = (t, m, q) => (m === 'all' || (m === 'cardio' ? !!t.c : trains(t, m))) && (!q || t.t.toLowerCase().includes(q) || t.d.toLowerCase().includes(q));
+// the machines a library filter looks through: cardio only shows under All and Kardio
+const libPool = m => m === 'all' || m === 'cardio' ? [...TUTORIALS, ...CARDIO] : TUTORIALS;
 function libList() {
   const q = ui.q.trim().toLowerCase();
   // A muscle's own exercises first, then the ones that train it on the side.
-  const xs = TUTORIALS.filter(t => matches(t, ui.muscle, q)).sort((a, b) => b.p.includes(ui.muscle) - a.p.includes(ui.muscle));
+  const xs = libPool(ui.muscle).filter(t => matches(t, ui.muscle, q)).sort((a, b) => b.p.includes(ui.muscle) - a.p.includes(ui.muscle));
   if (!xs.length) return `<div class="empty glass">Tidak ada latihan yang cocok.</div>`;
   return xs.map(t => `<button class="wcard glass" data-a="open" data-id="${t.id}">
       <div class="wtxt"><h3>${esc(t.t)}</h3>${pTags(t)}${alsoLine(t)}<span class="go">${I('arrow')}</span></div>
@@ -1748,8 +1826,9 @@ const headActs = () => `<div class="row-btns"><button class="icon-btn pri" data-
 const genderSeg = () => `<div class="gseg">${[['male', 'Pria'], ['female', 'Wanita']].map(([k, n]) => `<button class="${S.settings.body === k ? 'on' : ''}" data-a="body" data-k="${k}">${n}</button>`).join('')}</div>`;
 const libMap = () => bodyMap({ tap: true, sel: ui.muscle === 'all' ? null : ui.muscle, level: () => ui.muscle === 'all' ? 1 : 0 });
 function libHead() {
-  const xs = TUTORIALS.filter(t => matches(t, ui.muscle, ui.q.trim().toLowerCase()));
+  const xs = libPool(ui.muscle).filter(t => matches(t, ui.muscle, ui.q.trim().toLowerCase()));
   if (ui.muscle === 'all') return `<span>Semua latihan · <b>${xs.length}</b></span>`;
+  if (ui.muscle === 'cardio') return `<span>Alat <b>Kardio</b> · ${xs.length}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
   const main = xs.filter(t => t.p.includes(ui.muscle)).length;
   return `<span>Latihan untuk <b>${MI[ui.muscle].n}</b> · ${xs.length}${main < xs.length ? ` (${main} utama)` : ''}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
 }
@@ -1794,7 +1873,7 @@ function autoLook(r) {
   const c = {};
   r.items.forEach(i => (T[i.id]?.p || []).forEach(k => { c[k] = (c[k] || 0) + 1 }));
   const ks = Object.keys(c).sort((a, b) => c[b] - c[a]);
-  if (!ks.length) return { icon: 'g:dumbbell', muscles: [], color: '#2f7cf6' };
+  if (!ks.length) return r.items.some(i => CX(i.id)) ? { icon: 'g:heart', muscles: [], color: '#e11d48' } : { icon: 'g:dumbbell', muscles: [], color: '#2f7cf6' };
   // Every primary muscle of its exercises, on the side of the body that shows most of them.
   const g = BODY[S.settings.body] || BODY.male, weight = v => ks.reduce((n, k) => n + (g[v].p[k] ? c[k] : 0), 0);
   const side = weight('back') > weight('front') ? 'back' : 'front';
@@ -1872,8 +1951,10 @@ function vEdit(id) {
       <div class="ed-top">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}
         <div class="ed-m"><b>${esc(t.t)}</b>${pTags(t)}</div>
         <button class="icon-btn sm" data-a="edDel" data-ix="${i}" aria-label="Hapus ${esc(t.t)}">${I('trash')}</button></div>
-      <div class="ed-c"><div class="step"><button data-a="edSets" data-d="-1" data-ix="${i}" aria-label="Kurangi set">−</button><span>${it.sets} set</span><button data-a="edSets" data-d="1" data-ix="${i}" aria-label="Tambah set">+</button></div>
-        <label class="reps"><input class="inp" data-i="edReps" data-ix="${i}" value="${esc(it.reps)}" inputmode="numeric" maxlength="7" aria-label="Reps"> reps</label>
+      <div class="ed-c">${CX(t.id) ? `<span class="ed-cx">${I('clock')} Durasi</span>
+        <label class="reps"><input class="inp" data-i="edReps" data-ix="${i}" value="${esc(it.reps)}" inputmode="numeric" maxlength="3" aria-label="Menit"> menit</label>`
+        : `<div class="step"><button data-a="edSets" data-d="-1" data-ix="${i}" aria-label="Kurangi set">−</button><span>${it.sets} set</span><button data-a="edSets" data-d="1" data-ix="${i}" aria-label="Tambah set">+</button></div>
+        <label class="reps"><input class="inp" data-i="edReps" data-ix="${i}" value="${esc(it.reps)}" inputmode="numeric" maxlength="7" aria-label="Reps"> reps</label>`}
         <button class="ed-grip" data-ix="${i}" aria-label="Urutan ${i + 1}. Tahan dan geser untuk memindah, atau pakai panah atas/bawah">${I('grip')}</button></div>
     </div>`;
   };
@@ -1894,15 +1975,18 @@ function vEdit(id) {
 
 function prevFor(id) { for (const h of S.history) { const it = h.items.find(i => i.id === id); if (it) return it.sets } return null }
 function newActiveItem(it) {
-  const prev = prevFor(it.id);
-  return { id: it.id, sets: Array.from({ length: clamp(+it.sets || 3, 1, 10) }, (_, i) => {
+  const prev = prevFor(it.id), c = CX(it.id);
+  return { id: it.id, sets: Array.from({ length: clamp(+it.sets || (c ? 1 : 3), 1, 10) }, (_, i) => {
     const p = prev && (prev[i] || prev[prev.length - 1]);
-    return { w: p && p.w ? String(p.w) : '', r: String(parseInt(it.reps) || 10), done: false };
+    // cardio: minutes from the program, speed or level (and incline) from last time or a usual start
+    const x = { w: p && p.w ? String(p.w) : c ? String(c.w0) : '', r: String(parseInt(it.reps) || (c ? 20 : 10)), done: false };
+    if (c?.k === 'run') x.g = p && p.g ? String(p.g) : '0';
+    return x;
   }) };
 }
 const doneCount = () => S.active.items.reduce((n, it) => n + it.sets.filter(s => s.done).length, 0);
 const num = v => parseFloat(String(v).replace(',', '.')) || 0;
-const activeVol = () => S.active.items.reduce((v, it) => v + it.sets.filter(s => s.done).reduce((x, s) => x + num(s.w) * (parseInt(s.r) || 0), 0), 0);
+const activeVol = () => S.active.items.reduce((v, it) => v + (CX(it.id) ? 0 : it.sets.filter(s => s.done).reduce((x, s) => x + num(s.w) * (parseInt(s.r) || 0), 0)), 0);
 const setPct = () => { const all = S.active.items.reduce((n, it) => n + it.sets.length, 0); return all ? Math.round(doneCount() / all * 100) : 0 };
 function updSum() {
   const a = $('#wsDone'), b = $('#wsVol'), c = $('#wsBar');
@@ -1924,11 +2008,19 @@ function focusSet(ei) {
   const f = wxState().at[ei], sets = S.active.items[ei].sets;
   return f != null && sets[f] ? f : sets.findIndex(s => !s.done);
 }
-const sLab = s => num(s.w) ? `${fmtW(s.w)}×${s.r || 0}` : `${s.r || 0} reps`;
+const sLab = (s, id) => CX(id) ? `${parseInt(s.r) || 0} mnt` : num(s.w) ? `${fmtW(s.w)}×${s.r || 0}` : `${s.r || 0} reps`;
 function setsLine(it) {
-  const d = it.sets.filter(s => s.done), n = it.sets.length, f = it.sets[0];
+  const d = it.sets.filter(s => s.done), n = it.sets.length, f = it.sets[0], c = CX(it.id);
+  if (c) return (d.length ? d : it.sets).map(s => cardioText(c, s)).join(' · ') + (d.length && d.length < n ? ` · ${n - d.length} lagi` : '');
   if (!d.length) return num(f?.w) ? `${n} set · ${fmtW(f.w)} kg × ${f.r || 0}` : `${n} set × ${f?.r || 0} reps`;
-  return d.map(sLab).join(' · ') + (d.length < n ? ` · ${n - d.length} lagi` : '');
+  return d.map(s => sLab(s)).join(' · ') + (d.length < n ? ` · ${n - d.length} lagi` : '');
+}
+// on a cardio machine, the distance and calories for what is filled in: "2 km · ±150 kkal"
+function cardioEst(id, s) {
+  const c = CX(id), min = parseInt(s.r) || 0, kg = nowWeight(), out = [];
+  if (c.k === 'run' && num(s.w) && min) out.push(`${fmtKm(num(s.w) * min / 60)} km`);
+  if (kg && min) out.push(`±${r0(cardioKcal(id, s, kg))} kkal`);
+  return out.join(' · ');
 }
 function wxCard(it, ei) {
   const t = T[it.id]; if (!t) return '';
@@ -1936,30 +2028,34 @@ function wxCard(it, ei) {
   if (ei !== openEx()) return `<button class="wx-row${done === n ? ' done' : ''}" id="wx${ei}" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
       <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id), p = prev && (prev[fi] || prev[prev.length - 1]);
+  const c = CX(it.id), unit = c ? 'Bagian' : 'Set';
   const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
   const w = wxState(), prevDone = si => si > 0 && it.sets[si - 1].done;
   // the thumbnail pulses the first time this card opens, not on every redraw
   const hint = !(w.hinted ||= new Set()).has(it.id); w.hinted.add(it.id);
   const step = (x, si) => `<button class="tl-s${x.done ? ' ok' : si === fi ? ' cur' : ''}${si === fi ? ' sel' : ''}${prevDone(si) ? ' lk' : ''}${w.just === `${ei}_${si}` ? ' just' : ''}${w.just === `${ei}_${si - 1}` ? ' fill' : ''}"
-      id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="Set ${si + 1}: ${fmtW(x.w || 0)} kg × ${x.r || 0}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}">
-      <i class="tl-d">${x.done ? I('check') : si + 1}</i><b>Set ${si + 1}</b><small>${sLab(x)}</small></button>`;
+      id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="${unit} ${si + 1}: ${setText(it.id, x)}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}">
+      <i class="tl-d">${x.done ? I('check') : si + 1}</i><b>${unit} ${si + 1}</b><small>${sLab(x, it.id)}</small></button>`;
   const stepper = (k, label, unit, d) => `<div class="fs-r"><label for="f${k}${ei}">${label}${unit ? `<small>${unit}</small>` : ''}</label><div class="fs-s">
       <button data-a="wxStep" data-k="${k}" data-d="-${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Kurangi ${label.toLowerCase()}">−</button>
-      <input id="f${k}${ei}" data-i="${k === 'w' ? 'sw' : 'sr'}" data-ex="${ei}" data-ix="${fi}" value="${esc(s[k])}" inputmode="${k === 'w' ? 'decimal' : 'numeric'}" placeholder="0" autocomplete="off">
+      <input id="f${k}${ei}" data-i="s${k}" data-ex="${ei}" data-ix="${fi}" value="${esc(s[k] ?? '')}" inputmode="${k === 'r' ? 'numeric' : 'decimal'}" placeholder="0" autocomplete="off">
       <button data-a="wxStep" data-k="${k}" data-d="${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Tambah ${label.toLowerCase()}">+</button></div></div>`;
-  const same = p && num(s?.w) === p.w && (parseInt(s?.r) || 0) === p.r;
+  const same = p && num(s?.w) === p.w && (parseInt(s?.r) || 0) === p.r && (c?.k !== 'run' || num(s?.g) === (p.g || 0));
+  const fields = !c ? stepper('w', 'Beban', 'kg', 2.5) + stepper('r', 'Reps', '', 1)
+    : stepper('r', 'Durasi', 'menit', 1) + (c.k === 'run' ? stepper('w', 'Kecepatan', 'km/j', .5) + stepper('g', 'Incline', '%', .5) : stepper('w', 'Level', '', 1));
   return `<section class="wx glass on" id="wx${ei}">
       <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>
-        <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
+        <small>${s ? (c && n === 1 ? 'Kardio' : `${unit} <b>${fi + 1}</b> dari ${n}`) : c ? 'Selesai' : `Semua ${n} set selesai`}${mus}</small></div>
         ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
-      <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
+      <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah ${unit.toLowerCase()}"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
-        ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
-        ${p ? `<button class="fs-p" data-a="wxPrev" data-ex="${ei}" data-ix="${fi}"${same ? ' disabled' : ''}>Terakhir <b>${fmtW(p.w)} kg × ${p.r}</b>${same ? '' : '<span>Pakai</span>'}</button>` : ''}
-        <div class="fs-b">${n > 1 && !s.done ? `<button class="btn ghost sm fs-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}">${I('trash')} Hapus set</button>` : ''}
+        ${fields}
+        ${c ? `<p class="fs-x" id="fx${ei}">${cardioEst(it.id, s)}</p>` : ''}
+        ${p ? `<button class="fs-p" data-a="wxPrev" data-ex="${ei}" data-ix="${fi}"${same ? ' disabled' : ''}>Terakhir <b>${setText(it.id, p)}</b>${same ? '' : '<span>Pakai</span>'}</button>` : ''}
+        <div class="fs-b">${n > 1 && !s.done ? `<button class="btn ghost sm fs-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}">${I('trash')} Hapus ${unit.toLowerCase()}</button>` : ''}
           ${s.done ? `<button class="btn soft fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">Batalkan selesai</button>`
-            : `<button class="btn pri fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">${I('check')} Selesai set ${fi + 1}</button>`}</div>
-      </div>` : `<p class="wx-all">Ketuk set untuk mengubah, atau + untuk menambah set.</p>`}
+            : `<button class="btn pri fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">${I('check')} ${c && n === 1 ? 'Selesai' : `Selesai ${unit.toLowerCase()} ${fi + 1}`}</button>`}</div>
+      </div>` : `<p class="wx-all">${c ? 'Ketuk bagian untuk mengubah, atau + untuk menambah bagian (interval).' : 'Ketuk set untuk mengubah, atau + untuk menambah set.'}</p>`}
     </section>`;
 }
 // "Latihan" title with the add and scan buttons, above the list of exercises
@@ -2087,21 +2183,25 @@ const WORK_METS = [[.25, 3.5], [.4, 4.3], [Infinity, 6]];
 const weightOn = date => { const k = String(date).slice(0, 10); return (S.weights.find(w => w.date <= k) || S.weights[S.weights.length - 1])?.kg || 0 };
 // With a heart rate from the watch (h.hr) the minutes it measured use the heart rate instead (hrKcal),
 // and only the minutes it missed fall back to the MET.
+// Cardio by its own numbers (cardioKcalMin); the rest of the time by the lifting MET, from the lifting sets per minute.
 function workoutBurn(h) {
-  const kg = weightOn(h.date), min = +h.dur || 0;
-  const met = min && h.sets ? WORK_METS.find(([d]) => h.sets / min < d)[1] : WORK_METS[0][1];
+  const kg = weightOn(h.date), min = +h.dur || 0, cx = h.items.filter(it => CX(it.id));
+  const cmin = Math.min(min, cx.reduce((a, it) => a + it.sets.reduce((x, s) => x + (+s.r || 0), 0), 0));
+  const ck = cx.reduce((a, it) => a + it.sets.reduce((x, s) => x + cardioKcal(it.id, s, kg), 0), 0);
+  const sets = h.items.reduce((n, it) => n + (CX(it.id) ? 0 : it.sets.length), 0), smin = min - cmin;
+  const met = smin && sets ? WORK_METS.find(([d]) => sets / smin < d)[1] : WORK_METS[0][1];
   const body = h.hr?.sec >= 60 && hrBody(kg, h.date);
   if (body) {
     const cov = Math.min(min, h.hr.sec / 60);
     return { kcal: Math.round((hrKcal(h.hr.s, h.hr.sec, body) + met * kg * (min - cov) / 60) / 5) * 5, hr: true, cov: Math.round(cov), met, kg, min };
   }
-  if (!kg || !min || !h.sets) return null;
-  return { kcal: Math.round(met * kg * min / 60 / 5) * 5, met, kg, min };
+  if (!kg || !min || !(sets || ck)) return null;
+  return { kcal: Math.round((ck + (sets ? met * kg * smin / 60 : 0)) / 5) * 5, met, kg, min: smin, ck: Math.round(ck), sets };
 }
 function burnLine(h, why = false) {
   const b = workoutBurn(h);
   if (!b) return why ? `<button class="burn none" data-a="profile">${I('flame')}<span>Isi berat badan di Profil untuk perkiraan kalori terbakar</span>${I('chev')}</button>` : '';
-  const how = b.hr ? 'dari detak jantung' : `MET ${fmtW(b.met)} × ${fmtW(b.kg)} kg × ${b.min} mnt`;
+  const how = b.hr ? 'dari detak jantung' : [b.ck ? `kardio ±${r0(b.ck)} kkal` : '', b.sets ? `MET ${fmtW(b.met)} × ${fmtW(b.kg)} kg × ${b.min} mnt` : ''].filter(Boolean).join(' + ');
   return `<div class="burn">${I('flame')}<span><b>±${r0(b.kcal)} kkal</b> terbakar</span><small>${why ? how : 'perkiraan'}</small></div>`;
 }
 // The heart rate of a saved workout: average and peak, and the curve from its 30-second averages.
@@ -2118,9 +2218,9 @@ function hrSpark(v) {
   return `<svg class="hr-sp" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Grafik detak jantung"><path d="${d}" fill="none" stroke="#e11d48" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 }
 function histCard(h) {
-  const d = new Date(h.date), ms = [...new Set(h.items.flatMap(i => T[i.id]?.p || []))];
+  const d = new Date(h.date), ms = [...new Set(h.items.flatMap(i => T[i.id]?.p || []))], cardio = h.items.some(i => CX(i.id));
   return `<button class="hcard glass" data-a="hist" data-id="${h.id}"><div class="hd"><b>${d.getDate()}</b><small>${MONTHS[d.getMonth()]}</small></div>
-    <div class="hm"><b>${esc(h.name)}</b><small>${h.dur} mnt · ${h.sets} set · ${fmtK(h.vol)} kg${workoutBurn(h) ? ` · ±${r0(workoutBurn(h).kcal)} kkal` : ''}</small><div class="tags">${ms.slice(0, 3).map(mTag).join('')}</div></div>${I('chev')}</button>`;
+    <div class="hm"><b>${esc(h.name)}</b><small>${h.dur} mnt · ${h.sets} set · ${fmtK(h.vol)} kg${workoutBurn(h) ? ` · ±${r0(workoutBurn(h).kcal)} kkal` : ''}</small><div class="tags">${ms.slice(0, cardio ? 2 : 3).map(mTag).join('')}${cardio ? cxTag : ''}</div></div>${I('chev')}</button>`;
 }
 function vStats() {
   const ser = series(ui.range), tot = ser.vals.reduce((a, b) => a + b, 0);
@@ -2193,21 +2293,27 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
 const ambGlow = y => { const hq = esc(thumb(y, 'hq')); return `<img class="amb-glow" src="${esc(thumb(y, 'oar'))}" alt="" aria-hidden="true"
   onerror="this.onerror=null;this.src='${hq}'" onload="if(this.naturalWidth<=120)this.src='${hq}'">` };
 // The body with the machine's main muscles dark and the supporting ones light, front and back.
-const muscleMap = t => `<div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
-      ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>`;
-const detailTop = t => `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
+const muscleMap = t => { const [p, s] = musOf(t); return `<div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
+      ${bodyMap({ level: k => p.includes(k) ? 4 : s.includes(k) ? 2 : 0 })}</div>` };
+// a cardio machine has no video: its icon large, and what gets written down on it
+const cardioTop = t => `<div class="cx-hero">${cxIcon(t.k)}</div>
+    <h2 class="dt">${esc(t.t)}</h2>
+    <div class="stats3"><div><small>Jenis</small><b>Kardio</b></div><div><small>Saran</small><b>20–30 mnt</b></div><div><small>Dicatat</small><b>${t.k === 'run' ? 'km/j, incline' : 'Level'}</b></div></div>
+    ${muscleMap(t)}
+    ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
+const detailTop = t => t.c ? cardioTop(t) : `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
     ${muscleMap(t)}
     ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
 function openDetail(id) {
   const t = T[id]; if (!t) return;
-  const similar = TUTORIALS.filter(x => x.id !== t.id && x.p[0] === t.p[0]).slice(0, 4);
+  const similar = (t.c ? CARDIO : TUTORIALS).filter(x => x.id !== t.id && (t.c || x.p[0] === t.p[0])).slice(0, 4);
   sheet(`${detailTop(t)}
     ${S.active?.items.some(it => it.id === t.id) ? '' : `<div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
       : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${I('plus')} Tambah ke workout</button>`}</div>`}
-    <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>
-    ${similar.length ? `<h3 class="sh2">${MI[t.p[0]].n} lainnya</h3>${similar.map(x => `<button class="mini" data-a="open" data-id="${x.id}">${pic(x.y)}<b>${esc(x.t)}</b>${I('chev')}</button>`).join('')}` : ''}`);
+    ${t.c ? '' : `<a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`}
+    ${similar.length ? `<h3 class="sh2">${t.c ? 'Kardio' : MI[t.p[0]].n} lainnya</h3>${similar.map(x => `<button class="mini" data-a="open" data-id="${x.id}">${pic(x.y)}<b>${esc(x.t)}</b>${I('chev')}</button>`).join('')}` : ''}`);
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function openAddTo(id) {
@@ -2228,7 +2334,8 @@ function openStartPick() {
 const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : trains(t, k) ? 1 : 0), 0);
 function pickList() {
   const p = ui.pick, q = p.q.trim().toLowerCase();
-  const xs = TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q));
+  const xs = p.cx ? CARDIO.filter(t => matches(t, 'all', q))
+    : [...TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q)), ...(p.ms.size ? [] : CARDIO.filter(t => matches(t, 'all', q)))];
   if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
   return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
       <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
@@ -2242,7 +2349,7 @@ function openVideo(id, ctx) {
   const on = ui.pick?.sel.has(id), m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
-    <div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>
+    ${t.c ? `<div class="cx-hero sm">${cxIcon(t.k)}</div>` : `<div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>`}
     ${muscleMap(t)}${t.d ? `<p>${esc(t.d)}</p>` : ''}
     ${ctx === 'swap' ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="swUse" data-id="${id}">${I('swap')} Ganti ke ini</button></div>`
       : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
@@ -2266,7 +2373,7 @@ function aiWho() {
   return `Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.`;
 }
 const mNames = ks => ks.map(k => MI[k].n).join(', ');
-const aiMachines = (skip = new Set()) => TUTORIALS.filter(t => !skip.has(t.id)).map(t => `${t.id}|${t.t}|utama: ${mNames(t.p)}|pendukung: ${mNames(t.s) || '-'}`).join('\n');
+const aiMachines = (skip = new Set(), list = TUTORIALS) => list.filter(t => !skip.has(t.id)).map(t => { const [p, s] = musOf(t); return `${t.id}|${t.t}|utama: ${mNames(p)}|pendukung: ${mNames(s) || '-'}` }).join('\n');
 
 // ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
@@ -2339,8 +2446,8 @@ function swapCheckHtml() {
   const w = ui.swap, c = w.check, cur = swItem(), key = !!aiConf().key;
   if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, Gemini menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
   const t = T[c.id], same = c.id === cur.it.id, inW = !same && S.active.items.some(x => x.id === c.id);
-  const share = t.p.filter(k => cur.t.p.includes(k));
-  const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(t.p) || 'lain'}, bukan ${mNames(cur.t.p)} seperti ${cur.t.t}.`;
+  const [tp] = musOf(t), [cp] = musOf(cur.t), share = tp.filter(k => cp.includes(k));
+  const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(tp) || 'lain'}, bukan ${mNames(cp) || 'otot'} seperti ${cur.t.t}.`;
   let v;
   if (same) v = `<p class="swk-v no">Ini alat yang mau diganti. Scan alat yang lain.</p>`;
   else if (inW) v = `<p class="swk-v mid">Alat ini sudah ada di workout hari ini.</p>`;
@@ -2382,8 +2489,8 @@ function swapScan() {
 function swapTop() {
   const { it, t, left } = swItem(), done = it.sets.length - left.length;
   return `<div class="sw-cur">${pic(t.y)}<div><small>Diganti</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
-    <p class="mhint">${done ? `${done} set yang sudah selesai tetap tercatat di latihan ini. Sisa ${left.length} set pindah ke penggantinya.`
-      : `${left.length} set × ${esc(left[0].r || 10)} reps pindah ke latihan pengganti.`}</p>`;
+    <p class="mhint">${done ? `${done} ${t.c ? 'bagian' : 'set'} yang sudah selesai tetap tercatat di latihan ini. Sisa ${left.length} ${t.c ? 'bagian' : 'set'} pindah ke penggantinya.`
+      : `${esc(planText(it.id, left.length, left[0].r || 10))} pindah ke ${t.c ? 'alat' : 'latihan'} pengganti.`}</p>`;
 }
 const swRow = (id, sub, pri) => { const t = T[id]; return `<div class="sw-row">
     <button class="pk-v" data-a="swPrev" data-id="${id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
@@ -2411,6 +2518,7 @@ function swapAiHtml() {
 function swapList() {
   const { t } = swItem(), have = new Set([...S.active.items.map(x => x.id), ...(ui.swap.ai?.items || []).map(x => x.id)]);
   const hit = c => c.p.filter(k => t.p.includes(k)).length * 2 + [...c.p, ...c.s].filter(k => trains(t, k)).length;
+  if (t.c) { const cs = CARDIO.filter(c => !have.has(c.id)); return `<h3 class="sw-h">Alat kardio lain</h3>${cs.length ? `<div class="sw-list">${cs.map(c => swRow(c.id, mNames(c.wk[0]).replace(/, /g, ' · '), false)).join('')}</div>` : '<p class="mhint">Semua alat kardio sudah ada di workout ini.</p>'}` }
   const list = TUTORIALS.filter(c => !have.has(c.id) && (t.p.length ? c.p.some(k => t.p.includes(k)) : c.m === t.m))
     .sort((a, b) => hit(b) - hit(a) || a.t.localeCompare(b.t)).slice(0, 8);
   return `<h3 class="sw-h">${t.p.length ? `Alat lain untuk ${esc(t.p.map(k => MI[k].n).join(' & '))}` : 'Alat lain di kategori ini'}</h3>
@@ -2426,8 +2534,9 @@ async function askSwap(more) {
   const others = S.active.items.filter(x => x !== it).map(x => T[x.id]?.t).filter(Boolean);
   const recent = [...new Set(S.history.slice(0, 3).flatMap(h => h.items.map(x => T[x.id]?.t)).filter(Boolean))];
   const skip = new Set([...S.active.items.map(x => x.id), ...w.seen]);
+  const [tp, ts] = musOf(t);
   const prompt = `Kamu pelatih gym. Pengguna sedang workout dan ingin MENGGANTI satu latihan dengan alat lain dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
-Latihan yang diganti: ${t.t} (utama: ${mNames(t.p) || '-'}; pendukung: ${mNames(t.s) || '-'}). Sisa ${left.length} set × ${s.r || 10} reps${kg ? `, beban ${fmtW(kg)} kg` : ''}.
+Latihan yang diganti: ${t.t}${t.c ? ' (alat kardio)' : ''} (utama: ${mNames(tp) || '-'}; pendukung: ${mNames(ts) || '-'}). Sisa ${t.c ? cardioText(t, s) : `${left.length} set × ${s.r || 10} reps${kg ? `, beban ${fmtW(kg)} kg` : ''}`}.
 Alasan: ${why || 'tidak disebut'}.${q ? `\nCatatan pengguna (utamakan selama aman): ${q}` : ''}
 Latihan lain di workout ini: ${others.join(', ') || '-'}.${recent.length ? `\nAlat di 3 workout terakhir: ${recent.join(', ')}.` : ''}
 ${aiWho()}
@@ -2437,7 +2546,7 @@ Pilih 3 alat pengganti yang melatih otot utama yang sama (atau paling dekat), ur
 - Mau variasi: pilih sudut atau pola gerak lain untuk otot yang sama, utamakan yang tidak ada di workout terakhir.
 - tip: saran singkat soal beban atau teknik, mis. "mulai sekitar 20% lebih ringan"; kosongkan bila tidak perlu.
 DAFTAR ALAT (id|nama|otot):
-${aiMachines(skip)}
+${aiMachines(skip, t.c ? CARDIO : TUTORIALS)}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia${w.why === 'pain' ? ', ingatkan untuk berhenti bila nyeri tajam' : ''}", "items": [{"id": angka id dari daftar, "reason": "alasan maksimal 8 kata", "tip": "maksimal 10 kata atau kosong"}]}`;
   w.ai = { busy: true }; drawSwap();
   try {
@@ -2471,11 +2580,14 @@ function swapTo(id) {
 }
 function pickChips() {
   const ms = ui.pick.ms;
-  return `<button class="chip ${ms.size ? '' : 'on'}" data-a="pmuscle" data-k="all" aria-pressed="${!ms.size}">Semua <small>${TUTORIALS.length}</small></button>` +
+  const cx = ui.pick.cx, all = !ms.size && !cx;
+  return `<button class="chip ${all ? 'on' : ''}" data-a="pmuscle" data-k="all" aria-pressed="${all}">Semua <small>${TUTORIALS.length + CARDIO.length}</small></button>` +
+    `<button class="chip ${cx ? 'on' : ''}" data-a="pcardio" aria-pressed="${cx}">Kardio <small>${CARDIO.length}</small></button>` +
     MUSCLES.map(m => `<button class="chip ${ms.has(m.k) ? 'on' : ''}" data-a="pmuscle" data-k="${m.k}" aria-pressed="${ms.has(m.k)}">${m.n} <small>${count(m.k)}</small></button>`).join('');
 }
 function pickHead() {
   const ms = ui.pick.ms;
+  if (ui.pick.cx) return `<span><b>Kardio</b> · alat untuk jantung dan stamina</span><button data-a="pmuscle" data-k="all">Hapus pilihan</button>`;
   return ms.size ? `<span><b>${[...ms].map(k => MI[k].n).join(', ')}</b></span><button data-a="pmuscle" data-k="all">Hapus pilihan</button>`
     : `<span>Ketuk otot untuk menyaring. Bisa lebih dari satu.</span>`;
 }
@@ -2491,7 +2603,7 @@ function refreshPick(keepScroll) {
 const pickLabel = () => ui.pick.sel.size ? `Tambah ${ui.pick.sel.size} latihan` : 'Pilih latihan';
 function openPicker(mode, rid) {
   closeVideo();
-  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), q: '', map: true, ai: null, rec: new Map() };
+  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), cx: false, q: '', map: true, ai: null, rec: new Map() };
   sheet(`<h2 class="sh">Pilih latihan</h2>
     <label class="search">${I('search')}<input data-i="pq" type="search" placeholder="Cari…" autocomplete="off"></label>
     <div id="pkAi">${pickAiHtml()}</div>
@@ -2510,7 +2622,7 @@ function openHist(id) {
     <p class="muted" style="margin:-8px 2px 14px;font-size:14px">${d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
     ${burnLine(h, true)}${hrBlock(h)}
-    ${h.items.filter(it => T[it.id]).map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${it.sets.map(s => `${fmtW(s.w)} kg × ${s.r}`).join(' · ')}</small></div></div>` }).join('')}
+    ${h.items.filter(it => T[it.id]).map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${it.sets.map(s => setText(it.id, s)).join(' · ')}</small></div></div>` }).join('')}
     <div class="row2 mt"><button class="btn danger" data-a="histDel" data-id="${h.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="histAgain" data-id="${h.id}">${I('playf')} Ulangi</button></div>`);
 }
 function dayList() {
@@ -2647,7 +2759,7 @@ async function startWorkout(items, name, rids = []) {
 }
 async function finish() {
   const a = S.active;
-  const items = a.items.map(it => ({ id: it.id, sets: it.sets.filter(s => s.done).map(s => ({ w: num(s.w), r: parseInt(s.r) || 0 })) })).filter(it => it.sets.length);
+  const items = a.items.map(it => ({ id: it.id, sets: it.sets.filter(s => s.done).map(s => ({ w: num(s.w), r: parseInt(s.r) || 0, ...(num(s.g) ? { g: num(s.g) } : {}) })) })).filter(it => it.sets.length);
   if (!items.length) {
     if (await ask({ title: 'Belum ada set selesai', msg: 'Centang set yang sudah dikerjakan supaya tersimpan. Buang workout ini?', ok: 'Buang', cancel: 'Lanjut latihan' })) { S.active = null; save(); stopRest(); hrEnd(); go('home') }
     return;
@@ -2656,7 +2768,7 @@ async function finish() {
   if (open && !(await ask({ title: 'Selesaikan workout?', msg: `${open} set belum dicentang dan tidak akan disimpan.`, ok: 'Selesai', cancel: 'Lanjut latihan', tone: 'info', icon: 'check' }))) return;
   if (S.active !== a) return;
   const sets = items.reduce((n, i) => n + i.sets.length, 0);
-  const vol = Math.round(items.reduce((v, i) => v + i.sets.reduce((x, s) => x + s.w * s.r, 0), 0));
+  const vol = Math.round(items.reduce((v, i) => v + (CX(i.id) ? 0 : i.sets.reduce((x, s) => x + s.w * s.r, 0)), 0));
   const dur = Math.max(1, Math.round((Date.now() - a.start) / 60000));
   const hx = hrSummary();
   const h = { id: uid(), date: new Date().toISOString(), name: a.name, rids: a.rids || [], dur, sets, vol, items, ...(hx ? { hr: hx } : {}) };
@@ -2685,8 +2797,9 @@ function restNext() {
   if (!S.active) return '';
   const ei = openEx(); if (ei < 0) return 'Semua set selesai';
   const it = S.active.items[ei], fi = focusSet(ei), s = it.sets[fi]; if (!s) return '';
+  if (CX(it.id)) return `${T[it.id].t} · ${cardioText(CX(it.id), s)}`;
   if (ei !== rest?.ei) return `${T[it.id].t} · set ${fi + 1}`;
-  return `Set ${fi + 1} · ${num(s.w) ? `${fmtW(s.w)} kg × ${s.r || 0}` : `${s.r || 0} reps`}`;
+  return `Set ${fi + 1} · ${setText(it.id, s)}`;
 }
 function drawRest() {
   const el = $('#rest');
@@ -2957,7 +3070,7 @@ function tick() {
 const DAY_ALIAS = { sen: 1, senin: 1, mon: 1, monday: 1, sel: 2, selasa: 2, tue: 2, tuesday: 2, rab: 3, rabu: 3, wed: 3, wednesday: 3,
   kam: 4, kamis: 4, thu: 4, thursday: 4, jum: 5, jumat: 5, "jum'at": 5, fri: 5, friday: 5, sab: 6, sabtu: 6, sat: 6, saturday: 6,
   min: 0, minggu: 0, ahad: 0, sun: 0, sunday: 0 };
-const byTitle = name => { const n = String(name || '').trim().toLowerCase(); return n ? TUTORIALS.find(t => t.t.toLowerCase() === n) : null };
+const byTitle = name => { const n = String(name || '').trim().toLowerCase(); return n ? [...TUTORIALS, ...CARDIO].find(t => t.t.toLowerCase() === n) : null };
 async function importText(txt) {
   txt = String(txt || '');
   const a = txt.search(/[[{]/), b = Math.max(txt.lastIndexOf('}'), txt.lastIndexOf(']'));
@@ -3006,9 +3119,9 @@ function download(name, text) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function claudeText() {
-  const line = it => { const t = T[it.id]; return t ? `${t.t} ${it.sets}×${it.reps}` : null };
+  const line = it => { const t = T[it.id]; return t ? `${t.t} ${t.c ? planText(it.id, it.sets, it.reps) : `${it.sets}×${it.reps}`}` : null };
   const hist = S.history.slice(0, 12).map(h => `- ${dayKey(h.date)} ${h.name} (${h.dur} mnt${h.hr ? `, detak jantung rata-rata ${h.hr.avg} maks ${h.hr.max}` : ''}): ` +
-    h.items.map(it => `${T[it.id]?.t || it.id} ${it.sets.map(s => `${fmtW(s.w)}kg×${s.r}`).join(', ')}`).join('; '));
+    h.items.map(it => `${T[it.id]?.t || it.id} ${it.sets.map(s => CX(it.id) ? setText(it.id, s) : `${fmtW(s.w)}kg×${s.r}`).join(', ')}`).join('; '));
   return [
     'Halo Claude, ini data latihan saya dari aplikasi Wegym. Tolong buatkan program latihan untuk saya.',
     'Balas dengan JSON persis format ini supaya bisa saya import:',
@@ -3027,7 +3140,8 @@ function claudeText() {
     ...(hist.length ? hist : ['- (belum ada)']),
     '',
     'Daftar alat / latihan yang tersedia (id · nama · otot utama; otot pendukung):',
-    ...TUTORIALS.map(t => `${t.id} · ${t.t} · utama: ${t.p.map(k => MI[k].n).join(', ')}${t.s.length ? `; juga: ${t.s.map(k => MI[k].n).join(', ')}` : ''}`)
+    ...TUTORIALS.map(t => `${t.id} · ${t.t} · utama: ${t.p.map(k => MI[k].n).join(', ')}${t.s.length ? `; juga: ${t.s.map(k => MI[k].n).join(', ')}` : ''}`),
+    ...CARDIO.map(t => `${t.id} · ${t.t} · kardio (untuk alat ini sets = 1 dan reps = jumlah menit)`)
   ].join('\n');
 }
 async function copyClaude() {
@@ -4108,11 +4222,11 @@ const A = {
   addToR: el => {
     const r = S.routines.find(x => x.id === el.dataset.rid); if (!r) return;
     if (r.items.some(it => it.id === +el.dataset.id)) return toast(`Sudah ada di ${r.name || 'program ini'}`, 'info');
-    r.items.push({ id: +el.dataset.id, sets: 3, reps: '10' }); save(); closeSheet();
+    r.items.push({ id: +el.dataset.id, ...planOf(+el.dataset.id) }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
-  newWith: el => { closeSheet(); newDraft([{ id: +el.dataset.id, sets: 3, reps: '10' }]) },
-  quick: el => { const t = T[+el.dataset.id]; closeSheet(); startWorkout([{ id: t.id, sets: 3, reps: '10' }], t.t) },
+  newWith: el => { closeSheet(); newDraft([{ id: +el.dataset.id, ...planOf(+el.dataset.id) }]) },
+  quick: el => { const t = T[+el.dataset.id]; closeSheet(); startWorkout([{ id: t.id, ...planOf(t.id) }], t.t) },
   startPick: openStartPick,
   start: el => {
     const r = findR(el.dataset.id); if (!r) return;
@@ -4145,7 +4259,8 @@ const A = {
     const i = r.items.indexOf(it); if (i >= 0) { r.items.splice(i, 1); save(); render() }
   },
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
-  pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
+  pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; ui.pick.cx = false; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
+  pcardio: () => { const p = ui.pick; p.cx = !p.cx; p.ms.clear(); refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
   pkPrev: el => openVideo(+el.dataset.id),
   wxSwap: el => openSwap(+el.dataset.ex),
@@ -4176,7 +4291,7 @@ const A = {
   pickDone: () => {
     const p = ui.pick; if (!p.sel.size) return toast('Pilih minimal satu latihan', 'err');
     const ids = [...p.sel];
-    const it = id => ({ id, sets: p.rec.get(id)?.sets || 3, reps: p.rec.get(id)?.reps || '10' });
+    const it = id => ({ id, ...planOf(id), ...p.rec.get(id) && { sets: p.rec.get(id).sets, reps: p.rec.get(id).reps } });
     if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push(it(id))) }
     else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id))));
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
@@ -4188,7 +4303,8 @@ const A = {
     if (!s.done) { const was = w.fin[ei]; delete w.fin[ei]; w.at[ei] = si; save(); updSum(); return was ? render() : drawWx(ei) }
     // a new weight carries to the sets after it that the user has not set by hand
     it.sets.forEach((x, j) => { if (j > si && !x.done && !w.touched.has(`${ei}_${j}`)) x.w = s.w });
-    delete w.at[ei]; w.just = `${ei}_${si}`; save(); updSum(); startRest(S.settings.rest, ei);
+    // no rest timer after a stretch of cardio
+    delete w.at[ei]; w.just = `${ei}_${si}`; save(); updSum(); if (!CX(it.id)) startRest(S.settings.rest, ei);
     setTimeout(() => { if (w.just === `${ei}_${si}`) w.just = null }, 600);
     try { navigator.vibrate?.(30) } catch {}
     if (it.sets.some(x => !x.done)) return drawWx(ei);
@@ -4205,24 +4321,25 @@ const A = {
   wxSet: el => { const ei = +el.dataset.ex, w = wxState(); w.open = ei; w.at[ei] = +el.dataset.ix; drawWx(ei) },
   wxStep: el => {
     const ei = +el.dataset.ex, si = +el.dataset.ix, k = el.dataset.k, s = S.active.items[ei]?.sets[si]; if (!s) return;
-    const v = Math.max(0, Math.round(((k === 'w' ? num(s.w) : parseInt(s.r) || 0) + +el.dataset.d) * 100) / 100);
-    s[k] = k === 'w' ? fmtW(v) : String(v); wxState().touched.add(`${ei}_${si}`);
+    const v = Math.max(0, Math.round(((k === 'r' ? parseInt(s.r) || 0 : num(s[k])) + +el.dataset.d) * 100) / 100);
+    s[k] = k === 'r' ? String(v) : fmtW(v); wxState().touched.add(`${ei}_${si}`);
     save(); updSum(); drawWx(ei);
   },
   wxPrev: el => {
     const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si], prev = it && prevFor(it.id);
     const p = prev && (prev[si] || prev[prev.length - 1]); if (!s || !p) return;
-    s.w = fmtW(p.w); s.r = String(p.r); wxState().touched.add(`${ei}_${si}`); save(); updSum(); drawWx(ei);
+    s.w = fmtW(p.w); s.r = String(p.r); if (CX(it.id)?.k === 'run') s.g = fmtW(p.g || 0);
+    wxState().touched.add(`${ei}_${si}`); save(); updSum(); drawWx(ei);
   },
   setAdd: el => {
     const ei = +el.dataset.ex, it = S.active.items[ei], l = it.sets[it.sets.length - 1], w = wxState();
-    it.sets.push({ w: l ? l.w : '', r: l ? l.r : '10', done: false });
+    it.sets.push({ w: l ? l.w : '', r: l ? l.r : '10', ...(l && l.g != null ? { g: l.g } : {}), done: false });
     w.open = ei; w.at[ei] = it.sets.length - 1; save(); drawWx(ei);
   },
   setDel: async el => {
     const it = S.active.items[+el.dataset.ex], si = +el.dataset.ix, s = it?.sets[si]; if (!s || it.sets.length < 2) return;
-    const what = `${num(s.w) ? `${fmtW(s.w)} kg × ` : ''}${s.r || 0} reps`;
-    if (!(await ask({ title: `Hapus set ${si + 1}?`, msg: `Set ${si + 1} (${what}) dari ${T[it.id]?.t || 'latihan ini'} akan dihapus.`, ok: 'Hapus' }))) return;
+    const what = setText(it.id, s), unit = CX(it.id) ? 'Bagian' : 'Set';
+    if (!(await ask({ title: `Hapus ${unit.toLowerCase()} ${si + 1}?`, msg: `${unit} ${si + 1} (${what}) dari ${T[it.id]?.t || 'latihan ini'} akan dihapus.`, ok: 'Hapus' }))) return;
     const ei = S.active?.items.indexOf(it), j = it.sets.indexOf(s); if (ei < 0 || j < 0 || it.sets.length < 2) return;
     it.sets.splice(j, 1); const w = wxState(); delete w.at[ei]; w.touched.clear(); save(); drawWx(ei); updSum();
   },
@@ -4431,7 +4548,7 @@ const A = {
   // from a machine's detail during a workout: add it (once) and open it there
   wxAddId: el => {
     const id = +el.dataset.id; if (!S.active || !T[id]) return;
-    if (!S.active.items.some(it => it.id === id)) { S.active.items.push(newActiveItem({ id, sets: 3, reps: '10' })); save(); toast(`${T[id].t} ditambahkan ke workout`) }
+    if (!S.active.items.some(it => it.id === id)) { S.active.items.push(newActiveItem({ id, ...planOf(id) })); save(); toast(`${T[id].t} ditambahkan ke workout`) }
     const i = S.active.items.findIndex(it => it.id === id);
     closeVideo(); closeSheet(); wxState().open = i; go('workout');
     setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
@@ -4538,10 +4655,11 @@ document.addEventListener('input', e => {
   else if (k === 'swQ') { if (ui.swap) ui.swap.q = el.value.slice(0, 200) }
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
-  else if (k === 'sw' || k === 'sr') {
-    const ei = +el.dataset.ex, si = +el.dataset.ix, s = S.active.items[ei].sets[si];
-    s[k === 'sw' ? 'w' : 'r'] = el.value; wxState().touched.add(`${ei}_${si}`); save(); updSum();
-    const c = $(`#sc${ei}_${si} small`); if (c) c.textContent = sLab(s);
+  else if (k === 'sw' || k === 'sr' || k === 'sg') {
+    const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it.sets[si];
+    s[k.slice(1)] = el.value; wxState().touched.add(`${ei}_${si}`); save(); updSum();
+    const c = $(`#sc${ei}_${si} small`); if (c) c.textContent = sLab(s, it.id);
+    const x = $('#fx' + ei); if (x) x.textContent = cardioEst(it.id, s);
   }
   else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
   else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }

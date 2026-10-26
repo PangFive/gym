@@ -26,6 +26,12 @@ tersinkron di semua perangkat.
 
 ### Tutorial alat
 - 56 alat dengan video YouTube (vertikal), deskripsi, otot utama & pendukung.
+- **Kardio** (kategori sendiri, bawaan aplikasi, tanpa video): Treadmill, Sepeda statis, Elliptical, Mesin dayung,
+  Stair climber (id 9001–9005). Ikon garis merah di tempat thumbnail; detail = ikon besar, Jenis/Saran 20–30 mnt/
+  yang dicatat, peta otot (otot yang bekerja, hanya untuk gambar: tidak ikut filter otot, hitungan, atau ikon
+  program). Muncul di chip **Kardio** (Tutorial dan Pilih latihan), kartu **Kardio** di Jelajahi Otot (Beranda), dan
+  di "Semua"; tidak muncul di filter otot dan tidak dikirim ke rekomendasi Gemini "Pilih latihan". Tidak ikut data
+  alat gym di Firebase (Import/Export alat tetap 56 alat video).
 - **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot.
 - Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini** (saat
   workout berjalan: **Tambah ke workout** / **Buka di workout**).
@@ -71,6 +77,14 @@ tersinkron di semua perangkat.
   MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
   dipilih dari tempo (set per menit). Berat = catatan berat terakhir sebelum hari itu. Tampil di ringkasan,
   riwayat (dengan rumusnya), kartu riwayat, dan Statistik per periode. Akurasi kira-kira ±30%.
+  Kardio dihitung terpisah: treadmill dengan rumus **ACSM** (jalan < 7,5 km/j: 0,1·v + 1,8·v·incline + 3,5;
+  lari: 0,2·v + 0,9·v·incline + 3,5 ml O2/kg/menit, v dalam m/menit, ±5 kkal per liter O2), alat lain dengan MET
+  per level (1–4, 5–8, 9–12, 13–16, 17+): sepeda 3,5/4,8/6,8/8,8/11, dayung 4,8/7/8,5/12, elliptical 4–8 (5,0 sedang),
+  stair 6–11 (9,0 umum). Sisa durasi workout (durasi − menit kardio) memakai MET latihan beban dari tempo set beban.
+- **Kardio di workout**: satu "set" = satu **bagian** (default 1, bisa ditambah untuk interval): Durasi (menit),
+  Kecepatan (km/j, ±0,5) + Incline (%, ±0,5) untuk treadmill, atau Level untuk alat lain. Di bawahnya perkiraan
+  jarak dan kalori. Tidak ada timer istirahat setelah kardio, tidak ikut Volume (kg). Di program: menit, bukan
+  set × reps. "Ganti" pada alat kardio menawarkan alat kardio lain.
 - **Detak jantung dari jam** (Web Bluetooth, Chrome Android/desktop): jam Huawei dengan *Settings → HR Data
   Broadcasts* menyala jadi sensor detak jantung Bluetooth standar (service 0x180D, karakteristik 0x2A37), sama
   seperti chest strap. Sel ketiga ringkasan workout = "Detak jantung": ketuk → petunjuk (sekali, sampai pernah
@@ -154,7 +168,7 @@ tersinkron di semua perangkat.
 | `users/<uid>/settings` | Pengaturan user: `name`, `goal`, `rest`, `body`, `sound`, `vibrate`, `kcal`, profil tubuh `sex`, `birth`, `height`, `goalW`, `act`, `pace`, `kcalAuto`, `startW`, `startD` | pemilik akun |
 | `users/<uid>/routines` | Program: `{ id, name, items: [{ id, sets, reps }], icon?, color? }` | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → id program | pemilik akun |
-| `users/<uid>/history/<id>` | Riwayat workout: `{ date, name, rids, dur, sets, vol, items: [{ id, sets: [{ w, r }] }], hr? }`; `hr` = `{ avg, max, min, sec, s: [bpm tiap 30 dtk, 0 = kosong] }` | pemilik akun |
+| `users/<uid>/history/<id>` | Riwayat workout: `{ date, name, rids, dur, sets, vol, items: [{ id, sets: [{ w, r, g? }] }], hr? }` (kardio: `r` = menit, `w` = km/j atau level, `g` = incline %); `hr` = `{ avg, max, min, sec, s: [bpm tiap 30 dtk, 0 = kosong] }` | pemilik akun |
 | `users/<uid>/meals/<id>` | Catatan makan: `{ date, slot, name, portion, conf, note, items: [{ n, g, kcal, p, c, f }] }` | pemilik akun |
 | `users/<uid>/weights/<YYYY-MM-DD>` | Berat badan per hari: `{ date, kg }` | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
@@ -185,7 +199,7 @@ Menjalankan di komputer: `python -m http.server 8080 --directory public` → htt
  "routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10"}],"icon":"g:flame","color":"#f2785c"}],
  "week":{"senin":["Push Day"],"kamis":["Push Day"]}}
 ```
-`week`, `icon`, `color` opsional. `items` juga boleh berupa `[id, sets, reps]`. `icon`: `m:<otot>` atau
+`week`, `icon`, `color` opsional. `items` juga boleh berupa `[id, sets, reps]`. Alat kardio: `sets` 1, `reps` = menit. `icon`: `m:<otot>` atau
 `g:<dumbbell|barbell|kettlebell|flame|bolt|heart|target|trophy>`.
 
 ### Data alat (Import di Pengaturan → Data alat)
@@ -233,6 +247,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 9. Profil tubuh, target kalori otomatis (TDEE), defisit/surplus harian, log berat badan.
 10. Detak jantung live dari jam Huawei (HR Data Broadcasts lewat Web Bluetooth), kalori dari detak jantung.
 11. Ganti latihan saat workout dengan rekomendasi Gemini (alasan: alat dipakai, rusak, sakit, variasi).
+12. Kategori Kardio: 5 alat bawaan, dicatat menit + kecepatan/incline atau level, kalori ACSM/MET.
 
 ## 8. Ide berikutnya
 
