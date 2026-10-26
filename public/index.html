@@ -483,6 +483,10 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .hr-bar i.on{opacity:1}
 .hr-bar span{position:absolute;top:11px;left:-2px;right:-2px;text-align:center;font-size:10.5px;font-weight:700;font-style:normal;color:var(--faint);white-space:nowrap}
 .hr-bar i.on span{color:var(--ink)}
+.hr-dv{display:flex;align-items:center;gap:6px;margin-top:-6px}
+.hr-dv svg.i{flex:none;width:14px;height:14px;color:#e11d48}
+.hr-dv span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hr-sw{margin:-10px -6px -10px auto;padding:10px 6px;border:0;background:none;color:var(--acc);font:inherit;font-weight:700;white-space:nowrap}
 .hr-warn{display:flex;gap:8px;margin:0 2px 12px;padding:10px 12px;border-radius:14px;background:#fff7ed;color:#9a3412;font-size:13.5px;line-height:1.45}
 .hr-warn svg.i{flex:none;width:18px;height:18px;margin-top:1px}
 /* heart rate of a saved workout */
@@ -2509,7 +2513,7 @@ function restSound() {
 // it through Web Bluetooth. The watch can record its own workout meanwhile: the broadcast keeps going.
 // The readings belong to the running workout (keyed by its start) and are kept on this device until it is
 // finished, where they become h.hr: average, peak, low, seconds measured and 30-second averages.
-const HR_KEY = 'why_hr', HR_OK = 'why_hr_ok';
+const HR_KEY = 'why_hr', HR_OK = 'why_hr_ok', HR_DEV = 'why_hr_dev';
 const hr = { dev: null, ch: null, st: 'off', bpm: 0, at: 0, tries: 0, rt: 0, wake: null, ses: null };
 const hrSeen = new WeakSet();
 const hrLive = () => hr.st === 'on' && Date.now() - hr.at < 8000;
@@ -2565,31 +2569,50 @@ function hrValue(e) {
   if (bpm >= 30 && bpm <= 230) hrSample(bpm);
 }
 
-async function hrPick() {
+// Chrome's device chooser is its own dialog and cannot be styled. Where Chrome remembers a watch picked
+// before (getDevices), linking again goes straight to it; if it is not around, the next tap opens the chooser.
+async function hrPick(choose) {
   if (!navigator.bluetooth) return hrHelp();
-  let dev;
-  try { dev = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }, { namePrefix: 'HUAWEI' }, { namePrefix: 'HONOR' }], optionalServices: ['heart_rate'] }) }
+  let dev = choose ? null : await hrKnown();
+  const known = !!dev;
+  if (!dev) try { hr.pick = false; dev = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }, { namePrefix: 'HUAWEI' }, { namePrefix: 'HONOR' }], optionalServices: ['heart_rate'] }) }
   catch (e) { if (e.name !== 'NotFoundError') toast('Bluetooth tidak bisa dipakai di sini', 'err'); return }   // NotFoundError: the chooser was closed
   if (hr.dev && hr.dev !== dev) hrOff();
   hr.dev = dev; hr.tries = 0;
   if (!hrSeen.has(dev)) { hrSeen.add(dev); dev.addEventListener('gattserverdisconnected', hrLost) }
-  hrLink(false);
+  hrLink(false, known);
 }
-async function hrLink(again) {
+async function hrKnown() {
+  let id = ''; try { id = localStorage.getItem(HR_DEV) || '' } catch {}
+  if (hr.pick || !id || !navigator.bluetooth.getDevices) return null;
+  try { return (await navigator.bluetooth.getDevices()).find(d => d.id === id) || null } catch { return null }
+}
+// a remembered watch: wait for it to show up nearby before linking (where Chrome can watch for it)
+function hrNear(dev, ms = 7000) {
+  if (!dev.watchAdvertisements) return Promise.resolve();
+  return new Promise((ok, no) => {
+    const ac = new AbortController(), t = setTimeout(() => { ac.abort(); no(new DOMException('Jam tidak terlihat', 'NetworkError')) }, ms);
+    dev.addEventListener('advertisementreceived', () => { clearTimeout(t); ac.abort(); ok() }, { once: true });
+    dev.watchAdvertisements({ signal: ac.signal }).catch(() => { clearTimeout(t); ok() });   // cannot watch: just try
+  });
+}
+async function hrLink(again, known) {
   const dev = hr.dev; if (!dev) return;
   if (!again) { hr.st = 'wait'; hrDraw() }
   try {
+    if (known && !dev.gatt.connected) await hrNear(dev);
     const g = dev.gatt.connected ? dev.gatt : await dev.gatt.connect();
     const ch = await (await g.getPrimaryService('heart_rate')).getCharacteristic('heart_rate_measurement');
     if (hr.dev !== dev || hr.st === 'off') return;
     hr.ch?.removeEventListener('characteristicvaluechanged', hrValue);
     hr.ch = ch; ch.addEventListener('characteristicvaluechanged', hrValue);
     await ch.startNotifications();
-    hr.st = 'on'; hr.tries = 0; try { localStorage.setItem(HR_OK, '1') } catch {}
+    hr.st = 'on'; hr.tries = 0; try { localStorage.setItem(HR_OK, '1'); localStorage.setItem(HR_DEV, dev.id) } catch {}
     hrWake(); hrDraw();
     if (!again) toast(`Terhubung ke ${dev.name || 'jam'}`);
   } catch (e) {
     if (hr.dev !== dev || hr.st === 'off') return;
+    if (known) { hrOff(); hr.pick = true; return toast('Jam tidak ditemukan. Nyalakan HR Data Broadcasts, lalu ketuk lagi untuk memilih jam.', 'err') }
     if (e.name === 'NotFoundError') { hrOff(); return toast('Jam belum menyiarkan detak jantung. Nyalakan HR Data Broadcasts di jam.', 'err') }
     if (again) return hrRetry();
     hrOff(); toast('Tidak bisa tersambung ke jam. Coba lagi.', 'err');
@@ -2662,12 +2685,13 @@ function hrStats() {
   return `${age ? `<div class="hr-bar">${HR_ZONES.slice(1).map(([, n, c], i) => `<i class="${z && z.i === i + 1 ? 'on' : ''}" style="--c:${c}"><span>${n}</span></i>`).join('')}</div>`
       : `<p class="mhint">Isi tahun lahir di Profil untuk melihat zona detak jantung.</p>`}
     <div class="stats3"><div><small>Rata-rata</small><b>${s?.sec ? Math.round(s.sum / s.sec) : '--'}</b></div><div><small>Maks</small><b>${s?.max || '--'}</b></div><div><small>Kalori</small><b>${kcal ? '±' + r0(kcal) : '--'}</b></div></div>
-    <p class="mhint">${esc(hr.dev?.name || 'Jam')} · terukur ${mmss(s?.sec || 0)}${age ? `<br>Zona dari detak maks ${220 - age} bpm (220 − umur).` : ''}${p ? '' : '<br>Isi jenis kelamin, tahun lahir, dan berat di Profil untuk kalori dari detak jantung.'}</p>`;
+    <p class="mhint">Terukur ${mmss(s?.sec || 0)}${age ? `<br>Zona dari detak maks ${220 - age} bpm (220 − umur).` : ''}${p ? '' : '<br>Isi jenis kelamin, tahun lahir, dan berat di Profil untuk kalori dari detak jantung.'}</p>`;
 }
 function hrSheet() {
   sheet(`<h2 class="sh">Detak jantung</h2>
     <div class="hrs-top"><span class="hr-ic${hrLive() ? ' live' : ''}" id="hrsIc" style="--bt:${(hrLive() ? 60 / hr.bpm : 1).toFixed(2)}s">${I('heart')}</span><div id="hrsTop">${hrTop()}</div></div>
     <div id="hrs">${hrStats()}</div>
+    <p class="mhint hr-dv">${I('heart')}<span>${esc(hr.dev?.name || 'Jam')}</span><button class="hr-sw" data-a="hrSwap">Ganti jam</button></p>
     <div class="row2"><button class="btn soft" data-a="hrOff">${I('x')} Putuskan</button><button class="btn pri" data-a="close">Tutup</button></div>`);
 }
 
@@ -3959,6 +3983,7 @@ const A = {
   hrTap: () => { if (hr.st === 'on' || hr.st === 'lost') return hrSheet(); if (hr.st !== 'off') return;
     let ok = false; try { ok = !!localStorage.getItem(HR_OK) } catch {}
     ok && navigator.bluetooth ? hrPick() : hrHelp() },
+  hrSwap: () => { hrOff(); closeSheet(); hrPick(true) },
   hrPick: () => { hrPick(); closeSheet() },   // the chooser has to open inside the tap
   hrOff: () => { hrOff(); closeSheet() },
   range: el => { ui.range = el.dataset.k; render() },
