@@ -63,7 +63,10 @@ tersinkron di semua perangkat.
   seperti chest strap. Sel ketiga ringkasan workout = "Detak jantung": ketuk → petunjuk (sekali, sampai pernah
   tersambung) → pemilih perangkat Chrome (dialog bawaan Chrome, tidak bisa diubah tampilannya). Jam yang pernah dipilih
   diingat (`why_hr_dev`): kalau Chrome mendukung `getDevices()`, berikutnya langsung tersambung tanpa dialog (tunggu jam
-  terlihat ≤ 7 dtk; tidak ketemu → ketukan berikutnya membuka dialog). "Ganti jam" di detail. Tampil BPM live dengan warna zona (% dari 220 − umur, nama zona seperti
+  terlihat ≤ 7 dtk; tidak ketemu → ketukan berikutnya membuka dialog). "Ganti jam" di detail.
+  Refresh memutus Bluetooth (koneksi ikut halaman). Kalau jam tersambung saat refresh (`why_hr_on` = start workout), Wegym
+  menyambung lagi sendiri bila `getDevices()` ada (Chrome 169: masih di balik flag); kalau tidak, sel jadi "Terputus ·
+  Sambung lagi" (sekali ketuk → dialog). Bacaan sebelum refresh tetap ada (disimpan juga saat `pagehide`). Tampil BPM live dengan warna zona (% dari 220 − umur, nama zona seperti
   di jam), juga di timer istirahat; ketuk untuk detail (zona, rata-rata, maks, kalori). Putus → menyambung ulang
   otomatis 6× (jeda 1,5 s → 48 s). Layar dijaga menyala (Wake Lock) selama terhubung. Jam tetap bisa merekam
   Workout sendiri ke Huawei Health sambil menyiarkan. Bacaan disimpan di perangkat (`why_hr`) per workout, lalu
