@@ -58,6 +58,16 @@ tersinkron di semua perangkat.
   MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
   dipilih dari tempo (set per menit). Berat = catatan berat terakhir sebelum hari itu. Tampil di ringkasan,
   riwayat (dengan rumusnya), kartu riwayat, dan Statistik per periode. Akurasi kira-kira ±30%.
+- **Detak jantung dari jam** (Web Bluetooth, Chrome Android/desktop): jam Huawei dengan *Settings → HR Data
+  Broadcasts* menyala jadi sensor detak jantung Bluetooth standar (service 0x180D, karakteristik 0x2A37), sama
+  seperti chest strap. Sel ketiga ringkasan workout = "Detak jantung": ketuk → petunjuk (sekali, sampai pernah
+  tersambung) → pemilih perangkat Chrome. Tampil BPM live dengan warna zona (% dari 220 − umur, nama zona seperti
+  di jam), juga di timer istirahat; ketuk untuk detail (zona, rata-rata, maks, kalori). Putus → menyambung ulang
+  otomatis 6× (jeda 1,5 s → 48 s). Layar dijaga menyala (Wake Lock) selama terhubung. Jam tetap bisa merekam
+  Workout sendiri ke Huawei Health sambil menyiarkan. Bacaan disimpan di perangkat (`why_hr`) per workout, lalu
+  saat selesai jadi `hr` di riwayat: rata-rata, maks, min, detik terukur, rata-rata tiap 30 detik (grafik).
+  Kalori pada menit yang terukur pakai rumus **Keytel 2005** (jenis kelamin, umur, berat; minimal 1 MET),
+  menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
 ### Kalori (AI Gemini)
 - Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
@@ -126,7 +136,7 @@ tersinkron di semua perangkat.
 | `users/<uid>/settings` | Pengaturan user: `name`, `goal`, `rest`, `body`, `sound`, `vibrate`, `kcal`, profil tubuh `sex`, `birth`, `height`, `goalW`, `act`, `pace`, `kcalAuto`, `startW`, `startD` | pemilik akun |
 | `users/<uid>/routines` | Program: `{ id, name, items: [{ id, sets, reps }], icon?, color? }` | pemilik akun |
 | `users/<uid>/week` | Plan mingguan: `d0` (Minggu) … `d6` (Sabtu) → id program | pemilik akun |
-| `users/<uid>/history/<id>` | Riwayat workout | pemilik akun |
+| `users/<uid>/history/<id>` | Riwayat workout: `{ date, name, rids, dur, sets, vol, items: [{ id, sets: [{ w, r }] }], hr? }`; `hr` = `{ avg, max, min, sec, s: [bpm tiap 30 dtk, 0 = kosong] }` | pemilik akun |
 | `users/<uid>/meals/<id>` | Catatan makan: `{ date, slot, name, portion, conf, note, items: [{ n, g, kcal, p, c, f }] }` | pemilik akun |
 | `users/<uid>/weights/<YYYY-MM-DD>` | Berat badan per hari: `{ date, kg }` | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
@@ -203,6 +213,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 7. Bagikan program, ikon program otomatis, scan QR mesin, header Beranda baru.
 8. Pelacak kalori dengan foto + Gemini (API key milik pengguna).
 9. Profil tubuh, target kalori otomatis (TDEE), defisit/surplus harian, log berat badan.
+10. Detak jantung live dari jam Huawei (HR Data Broadcasts lewat Web Bluetooth), kalori dari detak jantung.
 
 ## 8. Ide berikutnya
 

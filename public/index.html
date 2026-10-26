@@ -458,6 +458,40 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wsum{display:grid;grid-template-columns:repeat(3,1fr);padding:14px 8px;margin-bottom:14px;text-align:center}
 .wsum small{display:block;color:var(--muted);font-size:12px;font-weight:600}
 .wsum b{font-size:19px;font-weight:800}
+/* the heart rate cell: tap to link a watch, then the live beat, coloured by zone */
+.wsum .ws-hr{display:block;width:100%;min-width:0;margin:-6px 0;padding:6px 4px;border:0;border-radius:14px;background:none;color:inherit;font:inherit}
+.wsum .ws-hr:active{background:rgba(24,32,47,.05)}
+.wsum .ws-hr small{display:flex;align-items:center;justify-content:center;gap:4px}
+.ws-hr small span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-hr small svg.i{flex:none;width:13px;height:13px;color:#e11d48;stroke-width:2.4}
+.ws-hr.live small{color:var(--zt,var(--muted))}
+.ws-hr.live small svg.i{fill:currentColor;color:#e11d48;animation:hrBeat var(--bt,1s) ease-in-out infinite}
+.wsum .ws-hr b small{display:inline;margin-left:3px;font-size:12px;font-weight:700;color:var(--muted)}
+.ws-hr.off b,.ws-hr.wait b{display:block;font-size:15px;line-height:23px;color:var(--acc)}
+.ws-hr.lost b{color:var(--faint)}
+@keyframes hrBeat{0%,55%,100%{transform:scale(1)}14%{transform:scale(1.28)}28%{transform:scale(1.06)}}
+.hrs-top{display:flex;align-items:center;gap:14px;margin:0 2px 16px}
+.hr-ic{flex:none;display:grid;place-items:center;width:54px;height:54px;border-radius:18px;background:#ffe4e6;color:#e11d48}
+.hr-ic svg.i{width:28px;height:28px}
+.hr-ic.live svg.i{fill:currentColor;animation:hrBeat var(--bt,1s) ease-in-out infinite}
+#hrsTop{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+#hrsTop b{font-size:40px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+#hrsTop small{font-size:14px;font-weight:700;color:var(--muted)}
+#hrsTop em{align-self:center;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--zc,#94a3b8) 24%,#fff);color:var(--zt,var(--muted));font-size:13px;font-weight:800;font-style:normal}
+.hr-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 2px 32px}
+.hr-bar i{position:relative;display:block;height:6px;border-radius:3px;background:var(--c);opacity:.28}
+.hr-bar i.on{opacity:1}
+.hr-bar span{position:absolute;top:11px;left:-2px;right:-2px;text-align:center;font-size:10.5px;font-weight:700;font-style:normal;color:var(--faint);white-space:nowrap}
+.hr-bar i.on span{color:var(--ink)}
+.hr-warn{display:flex;gap:8px;margin:0 2px 12px;padding:10px 12px;border-radius:14px;background:#fff7ed;color:#9a3412;font-size:13.5px;line-height:1.45}
+.hr-warn svg.i{flex:none;width:18px;height:18px;margin-top:1px}
+/* heart rate of a saved workout */
+.hrb{margin:-6px 0 14px;padding:10px 12px 6px;border-radius:14px;background:#fff1f2;color:#9f1239}
+.hrb-h{display:flex;align-items:baseline;gap:5px;font-size:13px;font-weight:600}
+.hrb-h svg.i{align-self:center;flex:none;width:17px;height:17px;color:#e11d48;fill:currentColor}
+.hrb-h b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.hrb-h span{margin-left:auto;padding-left:8px;color:#be123c;font-size:12px;white-space:nowrap}
+.hr-sp{display:block;width:100%;height:40px;margin-top:4px}
 .wx{padding:14px;margin-bottom:12px;border-radius:22px;scroll-margin-top:96px}
 .wx-h{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .wx-h .vt{width:42px;height:56px;border-radius:12px;cursor:pointer}
@@ -551,6 +585,9 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .rs-ring b svg.i{width:28px;height:28px;stroke-width:3;transform:none}
 .rs-t{grid-area:text;min-width:0;display:flex;flex-direction:column;gap:1px}
 .rs-t small{font-size:12px;font-weight:700;color:rgba(255,255,255,.65)}
+.rs-t small b{font-weight:inherit}
+.rs-t small em{display:inline-flex;align-items:center;gap:3px;margin-left:9px;font-style:normal;color:#fda4af;font-variant-numeric:tabular-nums}
+.rs-t small em svg.i{width:12px;height:12px;fill:currentColor;stroke-width:2.4}
 .rs-t span{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rs-b{grid-area:btns;display:flex;gap:6px}
 .rs-b button{min-height:38px;padding:0 13px;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
@@ -1021,7 +1058,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <nav id="nav" class="glass" aria-label="Navigasi"></nav>
 <div id="rest" hidden role="timer" aria-label="Timer istirahat">
   <div class="rs-ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" class="rs-bg"/><circle cx="32" cy="32" r="28" class="rs-fg" id="restRing"/></svg><b id="restT">0:00</b></div>
-  <div class="rs-t"><small id="restL">Istirahat</small><span id="restN"></span></div>
+  <div class="rs-t"><small><b id="restL">Istirahat</b><em id="restHr" hidden></em></small><span id="restN"></span></div>
   <div class="rs-b"><button class="rs-adj" data-a="restAdd" data-d="-15" aria-label="Kurangi 15 detik">−15</button><button class="rs-adj" data-a="restAdd" data-d="15" aria-label="Tambah 15 detik">+15</button><button class="rs-sk" data-a="restSkip"><span class="a">Lewati</span><span class="b">Oke</span></button></div>
 </div>
 <div id="sheet"></div>
@@ -1239,7 +1276,8 @@ function normalize(v) {
     history: asList(d.history).filter(h => h.id && h.date).map(h => ({
       id: h.id, date: h.date, name: h.name || 'Workout', rids: asList(h.rids).length ? asList(h.rids) : h.rid ? [h.rid] : [],
       dur: +h.dur || 0, sets: +h.sets || 0, vol: +h.vol || 0,
-      items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0 })) }))
+      items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0 })) })),
+      ...(h.hr && +h.hr.avg ? { hr: { avg: +h.hr.avg, max: +h.hr.max || 0, min: +h.hr.min || 0, sec: +h.hr.sec || 0, s: asList(h.hr.s).map(b => +b || 0) } } : {})
     })).sort((x, y) => y.date.localeCompare(x.date)),
     meals: asList(d.meals).filter(m => m.id && m.date).map(m => ({
       id: String(m.id), date: m.date, slot: MEAL_SLOTS.some(x => x[0] === m.slot) ? m.slot : 'snack', name: String(m.name || 'Makanan'),
@@ -1887,7 +1925,7 @@ function vWorkout() {
       <div class="wt"><b>${esc(a.name)}</b><small id="elapsed">0:00</small></div>
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
-    <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div><small>Latihan</small><b>${a.items.length}</b></div></div>
+    <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div></div>
     ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
     ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan atau scan alatnya.</div>'}
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
@@ -1980,15 +2018,37 @@ function balance(from) {
 // shown as information only: the daily calorie target does not use it.
 const WORK_METS = [[.25, 3.5], [.4, 4.3], [Infinity, 6]];
 const weightOn = date => { const k = String(date).slice(0, 10); return (S.weights.find(w => w.date <= k) || S.weights[S.weights.length - 1])?.kg || 0 };
+// With a heart rate from the watch (h.hr) the minutes it measured use the heart rate instead (hrKcal),
+// and only the minutes it missed fall back to the MET.
 function workoutBurn(h) {
-  const kg = weightOn(h.date), min = +h.dur || 0; if (!kg || !min || !h.sets) return null;
-  const met = WORK_METS.find(([d]) => h.sets / min < d)[1];
+  const kg = weightOn(h.date), min = +h.dur || 0;
+  const met = min && h.sets ? WORK_METS.find(([d]) => h.sets / min < d)[1] : WORK_METS[0][1];
+  const body = h.hr?.sec >= 60 && hrBody(kg, h.date);
+  if (body) {
+    const cov = Math.min(min, h.hr.sec / 60);
+    return { kcal: Math.round((hrKcal(h.hr.s, h.hr.sec, body) + met * kg * (min - cov) / 60) / 5) * 5, hr: true, cov: Math.round(cov), met, kg, min };
+  }
+  if (!kg || !min || !h.sets) return null;
   return { kcal: Math.round(met * kg * min / 60 / 5) * 5, met, kg, min };
 }
 function burnLine(h, why = false) {
   const b = workoutBurn(h);
   if (!b) return why ? `<button class="burn none" data-a="profile">${I('flame')}<span>Isi berat badan di Profil untuk perkiraan kalori terbakar</span>${I('chev')}</button>` : '';
-  return `<div class="burn">${I('flame')}<span><b>±${r0(b.kcal)} kkal</b> terbakar</span><small>${why ? `MET ${fmtW(b.met)} × ${fmtW(b.kg)} kg × ${b.min} mnt` : 'perkiraan'}</small></div>`;
+  const how = b.hr ? 'dari detak jantung' : `MET ${fmtW(b.met)} × ${fmtW(b.kg)} kg × ${b.min} mnt`;
+  return `<div class="burn">${I('flame')}<span><b>±${r0(b.kcal)} kkal</b> terbakar</span><small>${why ? how : 'perkiraan'}</small></div>`;
+}
+// The heart rate of a saved workout: average and peak, and the curve from its 30-second averages.
+function hrBlock(h) {
+  const x = h.hr; if (!x) return '';
+  return `<div class="hrb"><div class="hrb-h">${I('heart')}<b>${x.avg}</b><small>bpm rata-rata</small><span>maks ${x.max} · ${Math.round(x.sec / 60)} mnt terukur</span></div>${hrSpark(x.s)}</div>`;
+}
+function hrSpark(v) {
+  const on = v.filter(Boolean); if (on.length < 2) return '';
+  const W = 300, H = 44, n = v.length, lo = Math.min(...on) - 4, hi = Math.max(...on) + 4;
+  const X = i => (i * W / (n - 1)).toFixed(1), Y = b => (H - 3 - (b - lo) / (hi - lo) * (H - 6)).toFixed(1);
+  let d = '', pen = false;
+  v.forEach((b, i) => { if (!b) { pen = false; return } d += `${pen ? 'L' : 'M'}${X(i)},${Y(b)}`; pen = true });
+  return `<svg class="hr-sp" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Grafik detak jantung"><path d="${d}" fill="none" stroke="#e11d48" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 }
 function histCard(h) {
   const d = new Date(h.date), ms = [...new Set(h.items.flatMap(i => T[i.id]?.p || []))];
@@ -2215,7 +2275,7 @@ function openHist(id) {
   sheet(`<h2 class="sh">${esc(h.name)}</h2>
     <p class="muted" style="margin:-8px 2px 14px;font-size:14px">${d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
-    ${burnLine(h, true)}
+    ${burnLine(h, true)}${hrBlock(h)}
     ${h.items.filter(it => T[it.id]).map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${it.sets.map(s => `${fmtW(s.w)} kg × ${s.r}`).join(' · ')}</small></div></div>` }).join('')}
     <div class="row2 mt"><button class="btn danger" data-a="histDel" data-id="${h.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="histAgain" data-id="${h.id}">${I('playf')} Ulangi</button></div>`);
 }
@@ -2341,7 +2401,7 @@ function summary(h) {
   return `<div class="done-b">${I('check')}</div><h2 class="dt" style="text-align:center;margin:18px 0 10px">Workout selesai!</h2>
     <p class="done-s">Mantap, ${esc(S.settings.name)}. ${esc(h.name)} tercatat di riwayat.</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
-    ${burnLine(h, true)}
+    ${burnLine(h, true)}${hrBlock(h)}
     <div class="row2"><button class="btn soft" data-a="close">Tutup</button><button class="btn pri" data-a="go" data-to="stats">Lihat statistik</button></div>`;
 }
 
@@ -2355,7 +2415,7 @@ async function finish() {
   const a = S.active;
   const items = a.items.map(it => ({ id: it.id, sets: it.sets.filter(s => s.done).map(s => ({ w: num(s.w), r: parseInt(s.r) || 0 })) })).filter(it => it.sets.length);
   if (!items.length) {
-    if (await ask({ title: 'Belum ada set selesai', msg: 'Centang set yang sudah dikerjakan supaya tersimpan. Buang workout ini?', ok: 'Buang', cancel: 'Lanjut latihan' })) { S.active = null; save(); stopRest(); go('home') }
+    if (await ask({ title: 'Belum ada set selesai', msg: 'Centang set yang sudah dikerjakan supaya tersimpan. Buang workout ini?', ok: 'Buang', cancel: 'Lanjut latihan' })) { S.active = null; save(); stopRest(); hrEnd(); go('home') }
     return;
   }
   const open = a.items.reduce((n, it) => n + it.sets.filter(s => !s.done).length, 0);
@@ -2364,8 +2424,9 @@ async function finish() {
   const sets = items.reduce((n, i) => n + i.sets.length, 0);
   const vol = Math.round(items.reduce((v, i) => v + i.sets.reduce((x, s) => x + s.w * s.r, 0), 0));
   const dur = Math.max(1, Math.round((Date.now() - a.start) / 60000));
-  const h = { id: uid(), date: new Date().toISOString(), name: a.name, rids: a.rids || [], dur, sets, vol, items };
-  S.history.unshift(h); S.active = null; save(); stopRest(); go('home');
+  const hx = hrSummary();
+  const h = { id: uid(), date: new Date().toISOString(), name: a.name, rids: a.rids || [], dur, sets, vol, items, ...(hx ? { hr: hx } : {}) };
+  S.history.unshift(h); S.active = null; save(); stopRest(); hrEnd(); go('home');
   setTimeout(() => sheet(summary(h)), 60);
 }
 
@@ -2442,7 +2503,176 @@ function restSound() {
     .concat(sec > 0 ? [tone(t0, 880, .35, .32), tone(t0 + .32, 1320, .6, .32)] : []);
 }
 
+// ---------- heart rate from a watch ----------
+// A Huawei watch with Settings → HR Data Broadcasts on acts as a standard Bluetooth heart rate sensor
+// (GATT service 0x180D, Heart Rate Measurement 0x2A37), the same as a chest strap; Chrome on Android reads
+// it through Web Bluetooth. The watch can record its own workout meanwhile: the broadcast keeps going.
+// The readings belong to the running workout (keyed by its start) and are kept on this device until it is
+// finished, where they become h.hr: average, peak, low, seconds measured and 30-second averages.
+const HR_KEY = 'why_hr', HR_OK = 'why_hr_ok';
+const hr = { dev: null, ch: null, st: 'off', bpm: 0, at: 0, tries: 0, rt: 0, wake: null, ses: null };
+const hrSeen = new WeakSet();
+const hrLive = () => hr.st === 'on' && Date.now() - hr.at < 8000;
+// Zones by share of max heart rate (220 − age), named as on the watch.
+const HR_ZONES = [[.5, 'Santai', '#94a3b8', '#475569'], [.6, 'Pemanasan', '#60a5fa', '#1d4ed8'], [.7, 'Bakar lemak', '#2dd4bf', '#0f766e'],
+  [.8, 'Aerobik', '#4ade80', '#15803d'], [.9, 'Anaerobik', '#fbbf24', '#b45309'], [Infinity, 'Ekstrem', '#f87171', '#b91c1c']];
+const hrAge = (date = new Date()) => S.settings.birth ? new Date(date).getFullYear() - S.settings.birth : 0;
+function hrZone(bpm) {
+  const age = hrAge(); if (!age || !bpm) return null;
+  const i = HR_ZONES.findIndex(([f]) => bpm / (220 - age) < f);
+  return { i, n: HR_ZONES[i][1], c: HR_ZONES[i][2], t: HR_ZONES[i][3] };
+}
+// Calories from heart rate, Keytel et al. 2005 (J Sports Sci 23:289–97), the form without VO2max:
+//   men   kcal/min = (−55.0969 + 0.6309·HR + 0.1988·kg + 0.2017·age) / 4.184
+//   women kcal/min = (−20.4022 + 0.4472·HR − 0.1263·kg + 0.074·age) / 4.184
+// It was fitted on steady cardio, so for lifting it is still an estimate, but it follows this person's
+// effort rather than a table value. Never below resting burn (1 MET: 1 kcal per kg per hour).
+const hrBody = (kg, date) => { const age = hrAge(date), sex = S.settings.sex; return sex && age > 0 && kg ? { sex, age, kg } : null };
+function hrKcalMin(bpm, p) {
+  const k = p.sex === 'male' ? -55.0969 + .6309 * bpm + .1988 * p.kg + .2017 * p.age : -20.4022 + .4472 * bpm - .1263 * p.kg + .074 * p.age;
+  return Math.max(p.kg / 60, k / 4.184);
+}
+// over the seconds measured, from the 30-second averages (0 = no reading in that half minute)
+function hrKcal(v, sec, p) { const on = v.filter(Boolean); return on.length ? on.reduce((a, b) => a + hrKcalMin(b, p), 0) * sec / 60 / on.length : 0 }
+
+function hrSes() {
+  if (!S.active) return null;
+  if (hr.ses?.k !== S.active.start) {
+    let o = null; try { o = JSON.parse(localStorage.getItem(HR_KEY)) } catch {}
+    hr.ses = o && o.k === S.active.start ? o : { k: S.active.start, sec: 0, sum: 0, max: 0, min: 0, last: 0, b: [] };
+  }
+  return hr.ses;
+}
+const hrAvgs = s => Array.from(s.b, x => x && x[1] ? Math.round(x[0] / x[1]) : 0);
+function hrKeep() { const s = hr.ses; if (!s) return; s.saved = Date.now(); try { localStorage.setItem(HR_KEY, JSON.stringify(s)) } catch {} }
+function hrSample(bpm) {
+  if (!S.active) return hrEnd();
+  const s = hrSes(), now = Date.now(), gap = s.last ? (now - s.last) / 1000 : 1, dt = gap > 0 && gap <= 5 ? gap : 1;
+  hr.bpm = bpm; hr.at = now;
+  s.last = now; s.sec += dt; s.sum += bpm * dt; s.max = Math.max(s.max, bpm); s.min = s.min ? Math.min(s.min, bpm) : bpm;
+  const b = s.b[Math.floor((now - s.k) / 30000)] ||= [0, 0]; b[0] += bpm; b[1]++;
+  if (now - (s.saved || 0) > 15000) hrKeep();
+  hrDraw();
+}
+function hrSummary() {
+  const s = hrSes(); if (!s || s.sec < 60) return null;
+  return { avg: Math.round(s.sum / s.sec), max: s.max, min: s.min, sec: Math.round(s.sec), s: hrAvgs(s) };
+}
+function hrValue(e) {
+  const v = e.target.value, f = v.getUint8(0);
+  if ((f >> 1 & 3) === 2) return;   // the sensor reports no skin contact
+  const bpm = f & 1 ? v.getUint16(1, true) : v.getUint8(1);
+  if (bpm >= 30 && bpm <= 230) hrSample(bpm);
+}
+
+async function hrPick() {
+  if (!navigator.bluetooth) return hrHelp();
+  let dev;
+  try { dev = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }, { namePrefix: 'HUAWEI' }, { namePrefix: 'HONOR' }], optionalServices: ['heart_rate'] }) }
+  catch (e) { if (e.name !== 'NotFoundError') toast('Bluetooth tidak bisa dipakai di sini', 'err'); return }   // NotFoundError: the chooser was closed
+  if (hr.dev && hr.dev !== dev) hrOff();
+  hr.dev = dev; hr.tries = 0;
+  if (!hrSeen.has(dev)) { hrSeen.add(dev); dev.addEventListener('gattserverdisconnected', hrLost) }
+  hrLink(false);
+}
+async function hrLink(again) {
+  const dev = hr.dev; if (!dev) return;
+  if (!again) { hr.st = 'wait'; hrDraw() }
+  try {
+    const g = dev.gatt.connected ? dev.gatt : await dev.gatt.connect();
+    const ch = await (await g.getPrimaryService('heart_rate')).getCharacteristic('heart_rate_measurement');
+    if (hr.dev !== dev || hr.st === 'off') return;
+    hr.ch?.removeEventListener('characteristicvaluechanged', hrValue);
+    hr.ch = ch; ch.addEventListener('characteristicvaluechanged', hrValue);
+    await ch.startNotifications();
+    hr.st = 'on'; hr.tries = 0; try { localStorage.setItem(HR_OK, '1') } catch {}
+    hrWake(); hrDraw();
+    if (!again) toast(`Terhubung ke ${dev.name || 'jam'}`);
+  } catch (e) {
+    if (hr.dev !== dev || hr.st === 'off') return;
+    if (e.name === 'NotFoundError') { hrOff(); return toast('Jam belum menyiarkan detak jantung. Nyalakan HR Data Broadcasts di jam.', 'err') }
+    if (again) return hrRetry();
+    hrOff(); toast('Tidak bisa tersambung ke jam. Coba lagi.', 'err');
+  }
+}
+// The watch dropped out (out of range, broadcast stopped): try again a few times, waiting longer each time.
+function hrLost(e) { if (e?.target === hr.dev && hr.st !== 'off') hrRetry() }
+function hrRetry() {
+  clearTimeout(hr.rt);
+  if (hr.tries >= 6) { hrOff(); return toast('Jam terputus. Ketuk Detak jantung untuk menyambung lagi.', 'err') }
+  hr.st = 'lost'; hrDraw();
+  hr.rt = setTimeout(() => hrLink(true), 1500 * 2 ** hr.tries++);
+}
+function hrOff() {
+  const dev = hr.dev; clearTimeout(hr.rt);
+  try { hr.ch?.removeEventListener('characteristicvaluechanged', hrValue) } catch {}
+  Object.assign(hr, { st: 'off', dev: null, ch: null, bpm: 0 });
+  try { if (dev?.gatt.connected) dev.gatt.disconnect() } catch {}
+  try { hr.wake?.release() } catch {}
+  hr.wake = null; hrDraw();
+}
+function hrEnd() { if (hr.st !== 'off') hrOff(); hr.ses = null; try { localStorage.removeItem(HR_KEY) } catch {} }
+// the screen stays on while the watch is linked: a locked phone stops reading it
+async function hrWake() {
+  if (hr.st !== 'on' || hr.wake || document.hidden || !navigator.wakeLock) return;
+  try { const w = await navigator.wakeLock.request('screen'); if (hr.st !== 'on') return w.release(); hr.wake = w; w.addEventListener('release', () => { if (hr.wake === w) hr.wake = null }) } catch {}
+}
+
+function hrCell() {
+  const st = hr.st, live = hrLive(), z = live && hrZone(hr.bpm);
+  const lab = st === 'off' ? 'Detak jantung' : st === 'wait' ? 'Menyambung…' : st === 'lost' ? 'Sinyal hilang' : z ? z.n : 'Detak jantung';
+  return `<button class="ws-hr ${st}${live ? ' live' : ''}" id="hrc" data-st="${st}" data-a="hrTap" style="--bt:${live ? (60 / hr.bpm).toFixed(2) : 1}s${z ? `;--zt:${z.t}` : ''}"
+    aria-label="Detak jantung${live ? ` ${hr.bpm} bpm` : st === 'off' ? ', hubungkan jam' : ''}"><small id="hrLab">${I('heart')}<span>${lab}</span></small><b id="hrBpm">${hrVal()}</b></button>`;
+}
+const hrVal = () => hr.st === 'off' ? 'Hubungkan' : hr.st === 'wait' ? '…' : hrLive() ? `${hr.bpm}<small>bpm</small>` : '--';
+// Readings come about once a second: the cell, the rest timer and the open sheet update in place,
+// so the beating heart keeps its rhythm instead of restarting.
+function hrDraw() {
+  const c = $('#hrc'), live = hrLive(), z = live && hrZone(hr.bpm);
+  if (c && (c.dataset.st !== hr.st || c.classList.contains('live') !== live)) c.outerHTML = hrCell();
+  else if (c && live) {
+    c.style.setProperty('--bt', (60 / hr.bpm).toFixed(2) + 's');
+    if (z) c.style.setProperty('--zt', z.t); else c.style.removeProperty('--zt');
+    $('#hrBpm').innerHTML = hrVal(); $('#hrLab span').textContent = z ? z.n : 'Detak jantung';
+    c.setAttribute('aria-label', `Detak jantung ${hr.bpm} bpm`);
+  }
+  const r = $('#restHr');
+  if (r) { r.hidden = !live; if (live) r.innerHTML = `${I('heart')}<b>${hr.bpm}</b>` }
+  if ($('#hrs')) { const ic = $('#hrsIc'); ic.classList.toggle('live', live); ic.style.setProperty('--bt', (live ? 60 / hr.bpm : 1).toFixed(2) + 's'); $('#hrsTop').innerHTML = hrTop(); $('#hrs').innerHTML = hrStats() }
+}
+function hrHelp() {
+  const ok = !!navigator.bluetooth;
+  sheet(`<h2 class="sh">Hubungkan jam</h2>
+    ${ok ? '' : `<p class="hr-warn">${I('alert')}<span>Browser ini belum bisa membaca Bluetooth. Buka Wegym di <b>Chrome</b> di HP Android.</span></p>`}
+    <ol class="steps-ai">
+      <li>Di jam, buka daftar aplikasi → <b>Settings → HR Data Broadcasts</b>, lalu nyalakan.</li>
+      <li>Supaya tercatat juga di Huawei Health, ketuk <b>Workout</b> di layar itu dan mulai latihan.</li>
+      <li>Ketuk <b>Cari jam</b>, lalu pilih jam kamu di daftar.</li>
+    </ol>
+    <p class="mhint">Layar HP dibiarkan menyala selama terhubung. Jam lain atau chest strap Bluetooth juga bisa.</p>
+    <div class="row2"><button class="btn soft" data-a="close">Nanti</button><button class="btn pri" data-a="hrPick"${ok ? '' : ' disabled'}>${I('heart')} Cari jam</button></div>`);
+}
+function hrTop() {
+  const live = hrLive(), z = live && hrZone(hr.bpm);
+  return `<b>${live ? hr.bpm : '--'}</b><small>bpm</small>${z ? `<em style="--zt:${z.t};--zc:${z.c}">${z.n}</em>` : hr.st === 'lost' ? '<em>Menyambung ulang…</em>' : ''}`;
+}
+function hrStats() {
+  const s = hrSes(), z = hrLive() && hrZone(hr.bpm), age = hrAge(), p = hrBody(nowWeight());
+  const kcal = s && p && s.sec >= 30 ? hrKcal(hrAvgs(s), s.sec, p) : 0;
+  return `${age ? `<div class="hr-bar">${HR_ZONES.slice(1).map(([, n, c], i) => `<i class="${z && z.i === i + 1 ? 'on' : ''}" style="--c:${c}"><span>${n}</span></i>`).join('')}</div>`
+      : `<p class="mhint">Isi tahun lahir di Profil untuk melihat zona detak jantung.</p>`}
+    <div class="stats3"><div><small>Rata-rata</small><b>${s?.sec ? Math.round(s.sum / s.sec) : '--'}</b></div><div><small>Maks</small><b>${s?.max || '--'}</b></div><div><small>Kalori</small><b>${kcal ? '±' + r0(kcal) : '--'}</b></div></div>
+    <p class="mhint">${esc(hr.dev?.name || 'Jam')} · terukur ${mmss(s?.sec || 0)}${age ? `<br>Zona dari detak maks ${220 - age} bpm (220 − umur).` : ''}${p ? '' : '<br>Isi jenis kelamin, tahun lahir, dan berat di Profil untuk kalori dari detak jantung.'}</p>`;
+}
+function hrSheet() {
+  sheet(`<h2 class="sh">Detak jantung</h2>
+    <div class="hrs-top"><span class="hr-ic${hrLive() ? ' live' : ''}" id="hrsIc" style="--bt:${(hrLive() ? 60 / hr.bpm : 1).toFixed(2)}s">${I('heart')}</span><div id="hrsTop">${hrTop()}</div></div>
+    <div id="hrs">${hrStats()}</div>
+    <div class="row2"><button class="btn soft" data-a="hrOff">${I('x')} Putuskan</button><button class="btn pri" data-a="close">Tutup</button></div>`);
+}
+
 function tick() {
+  hrDraw();
   if (!S.active) return;
   const s = mmss((Date.now() - S.active.start) / 1000);
   const e = $('#elapsed'), r = $('#resumeT');
@@ -2504,7 +2734,7 @@ function download(name, text) {
 }
 function claudeText() {
   const line = it => { const t = T[it.id]; return t ? `${t.t} ${it.sets}×${it.reps}` : null };
-  const hist = S.history.slice(0, 12).map(h => `- ${dayKey(h.date)} ${h.name} (${h.dur} mnt): ` +
+  const hist = S.history.slice(0, 12).map(h => `- ${dayKey(h.date)} ${h.name} (${h.dur} mnt${h.hr ? `, detak jantung rata-rata ${h.hr.avg} maks ${h.hr.max}` : ''}): ` +
     h.items.map(it => `${T[it.id]?.t || it.id} ${it.sets.map(s => `${fmtW(s.w)}kg×${s.r}`).join(', ')}`).join('; '));
   return [
     'Halo Claude, ini data latihan saya dari aplikasi Wegym. Tolong buatkan program latihan untuk saya.',
@@ -3718,7 +3948,7 @@ const A = {
   finish,
   cancelWorkout: async () => {
     if (!(await ask({ title: 'Batalkan workout?', msg: 'Set yang sudah dicatat tidak akan disimpan.', ok: 'Batalkan', cancel: 'Lanjut latihan', icon: 'x' }))) return;
-    S.active = null; save(); stopRest(); go('home');
+    S.active = null; save(); stopRest(); hrEnd(); go('home');
   },
   restAdd: el => {
     if (!rest || rest.over) return;
@@ -3726,6 +3956,11 @@ const A = {
     restSound(); drawRest();
   },
   restSkip: stopRest,
+  hrTap: () => { if (hr.st === 'on' || hr.st === 'lost') return hrSheet(); if (hr.st !== 'off') return;
+    let ok = false; try { ok = !!localStorage.getItem(HR_OK) } catch {}
+    ok && navigator.bluetooth ? hrPick() : hrHelp() },
+  hrPick: () => { hrPick(); closeSheet() },   // the chooser has to open inside the tap
+  hrOff: () => { hrOff(); closeSheet() },
   range: el => { ui.range = el.dataset.k; render() },
   hist: el => openHist(el.dataset.id),
   histDel: async el => {
@@ -4100,7 +4335,7 @@ document.addEventListener('touchend', () => {
   p.style.transition = 'transform .22s cubic-bezier(.2,.85,.25,1)';
   if (dy > 110) closeSheet(); else p.style.transform = '';
 });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); drawRest() } else if (scan.stream) stopScan() });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); drawRest(); hrWake() } else { hrKeep(); if (scan.stream) stopScan() } });
 
 boot();
 </script>
