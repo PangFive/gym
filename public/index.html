@@ -348,9 +348,10 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
 .aibtn[disabled]{opacity:.6}
 /* swapping an exercise mid-workout */
-.wx-sw{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 12px 0 10px;border-radius:999px;border:1px solid rgba(47,124,246,.22);background:#fff;color:var(--acc-2);font:inherit;font-size:13px;font-weight:700;position:relative}
-.wx-sw::after{content:'';position:absolute;inset:-5px 0}
-.wx-sw svg.i{width:15px;height:15px}
+.wx-sw{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px 0 11px;border-radius:999px;border:1px solid rgba(47,124,246,.3);background:#e7f0fe;color:var(--acc-2);font:inherit;font-size:13.5px;font-weight:800;position:relative;transition:transform .14s ease}
+.wx-sw::after{content:'';position:absolute;inset:-3px 0}
+.wx-sw:active{transform:scale(.95)}
+.wx-sw svg.i{width:16px;height:16px;stroke-width:2.2}
 .sw-cur{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.75);border:1px solid var(--edge)}
 .sw-cur .vt{width:42px;height:56px;border-radius:12px;flex:none}
 .sw-cur>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -381,6 +382,28 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .sw-list{background:rgba(255,255,255,.9);border:1px solid #fff;border-radius:18px;padding:2px 12px;box-shadow:0 10px 24px -18px rgba(52,72,120,.4)}
 .sw-list .sw-row+.sw-row{border-top:1px solid rgba(24,32,47,.07)}
 .sw-note{margin-top:14px;text-align:center}
+.sw-scan{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:12px 12px 12px 14px;border-radius:16px;border:1px dashed rgba(47,124,246,.4);background:rgba(255,255,255,.7);color:var(--ink);font:inherit;text-align:left}
+.sw-scan>svg.i:first-child{width:22px;height:22px;flex:none;color:var(--acc-2)}
+.sw-scan>svg.i:last-child{width:16px;height:16px;flex:none;color:var(--faint)}
+.sw-scan span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sw-scan b{font-size:14.5px}
+.sw-scan small{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.4}
+.swk{margin-top:12px;padding:12px;border-radius:18px;background:rgba(255,255,255,.85);border:1px solid rgba(47,124,246,.25)}
+.swk-k{display:block;margin:0 2px 8px;font-size:11.5px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+.swk-m{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.swk-m>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.swk-m b{font-size:15px;line-height:1.3}
+.swk .dmap{margin:0 0 10px;padding:10px 8px 6px;background:#f7f9fc}
+.swk .dmap .bm-v{max-height:140px}
+.swk-v{display:flex;flex-direction:column;gap:3px;margin:0 0 10px;padding:10px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;font-weight:600}
+.swk-v b{font-size:14.5px;font-weight:800}
+.swk-v small{font-size:12.5px;opacity:.85}
+.swk-v.ok{background:#ecfdf3;color:#166534}
+.swk-v.mid{background:#fff7ed;color:#9a3412}
+.swk-v.no{background:#fef2f2;color:#991b1b}
+.swk .sw-busy{margin:0 0 10px}
+.swk-b{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.swk-b .btn.soft{background:#eef1f6}
 .pkrow b{font-size:14px}
 .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(24,32,47,.16);display:grid;place-items:center;color:transparent;flex:none}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
@@ -688,11 +711,13 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .vm-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:2px 2px 10px}
 .vm-h>div{display:flex;flex-direction:column;gap:6px;min-width:0}
 .vm-h b{font-size:16px;font-weight:800;line-height:1.3}
-.vm-vid{position:relative;height:min(56dvh,440px);aspect-ratio:9/16;max-width:100%;margin:0 auto;border-radius:16px;overflow:hidden;background:#0b0f19}
+.vm-vid{position:relative;height:min(50dvh,420px);aspect-ratio:9/16;max-width:100%;margin:0 auto;border-radius:16px;overflow:hidden;background:#0b0f19}
 .vm-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vm p{margin:12px 2px 4px;font-size:14px;line-height:1.5;color:var(--ink)}
 .vm .also{display:block;margin:0 2px}
-.vm-b{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.vm-b{position:sticky;bottom:-14px;display:flex;justify-content:flex-end;gap:8px;margin:12px -14px -14px;padding:10px 14px 14px;background:linear-gradient(rgba(255,255,255,.88),#fff 30%)}
+.vm .dmap{margin:12px 0 0;padding:10px 8px 6px;background:#f7f9fc}
+.vm .dmap .bm-v{max-height:150px}
 .vm-b .btn{min-height:40px;padding:8px 16px;font-size:14px}
 .vm-b .btn svg.i{width:17px;height:17px}
 .vm-b .btn[disabled]{opacity:.65}
@@ -1923,7 +1948,7 @@ function wxCard(it, ei) {
   return `<section class="wx glass on" id="wx${ei}">
       <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>
         <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
-        ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
+        ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti alat</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
         ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
@@ -2164,11 +2189,13 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
 // get YouTube's 120 px placeholder, which is swapped for the landscape one.
 const ambGlow = y => { const hq = esc(thumb(y, 'hq')); return `<img class="amb-glow" src="${esc(thumb(y, 'oar'))}" alt="" aria-hidden="true"
   onerror="this.onerror=null;this.src='${hq}'" onload="if(this.naturalWidth<=120)this.src='${hq}'">` };
+// The body with the machine's main muscles dark and the supporting ones light, front and back.
+const muscleMap = t => `<div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
+      ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>`;
 const detailTop = t => `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
-    <div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${t.s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${t.s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
-      ${bodyMap({ level: k => t.p.includes(k) ? 4 : t.s.includes(k) ? 2 : 0 })}</div>
+    ${muscleMap(t)}
     ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
 function openDetail(id) {
   const t = T[id]; if (!t) return;
@@ -2205,14 +2232,15 @@ function pickList() {
       <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>
     </div>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
 }
-// Video preview over the picker: a small popup, so the list keeps its place underneath.
+// Video preview over the picker: a small popup, so the list keeps its place underneath. The muscles it
+// trains show under the video; the buttons stay at the bottom while it scrolls.
 function openVideo(id, ctx) {
   const t = T[id]; if (!t) return;
   const on = ui.pick?.sel.has(id), m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
     <div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>
-    ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
+    ${muscleMap(t)}${t.d ? `<p>${esc(t.d)}</p>` : ''}
     ${ctx === 'swap' ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="swUse" data-id="${id}">${I('swap')} Ganti ke ini</button></div>`
       : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
   </div>`;
@@ -2293,9 +2321,60 @@ function swItem() {
 function openSwap(ei) {
   const it = S.active?.items[ei]; if (!it || !T[it.id] || it.sets.every(s => s.done)) return;
   closeVideo();
-  ui.swap = { it, why: '', q: '', ai: null, seen: new Set() };
-  sheet(`<h2 class="sh">Ganti latihan</h2>${swapTop()}<div id="swAi">${swapAiHtml()}</div><div id="swList">${swapList()}</div>
+  ui.swap = { it, why: '', q: '', ai: null, seen: new Set(), check: null };
+  swapSheet();
+}
+// also after the scanner closes, with what was asked so far
+function swapSheet() {
+  sheet(`<h2 class="sh">Ganti latihan</h2>${swapTop()}<div id="swChk">${swapCheckHtml()}</div><div id="swAi">${swapAiHtml()}</div><div id="swList">${swapList()}</div>
     <p class="mhint sw-note">Hanya workout hari ini yang berubah. Programmu tetap.</p>`);
+}
+// A machine the user sees free: scan its QR and Gemini says whether it can take over (without a key, only
+// which muscles it trains next to the old one's).
+const SW_FIT = { cocok: ['ok', 'Cocok jadi pengganti'], bisa: ['mid', 'Bisa, dengan catatan'], tidak: ['no', 'Kurang cocok'] };
+function swapCheckHtml() {
+  const w = ui.swap, c = w.check, cur = swItem(), key = !!aiConf().key;
+  if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, Gemini menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
+  const t = T[c.id], same = c.id === cur.it.id, inW = !same && S.active.items.some(x => x.id === c.id);
+  const share = t.p.filter(k => cur.t.p.includes(k));
+  const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(t.p) || 'lain'}, bukan ${mNames(cur.t.p)} seperti ${cur.t.t}.`;
+  let v;
+  if (same) v = `<p class="swk-v no">Ini alat yang mau diganti. Scan alat yang lain.</p>`;
+  else if (inW) v = `<p class="swk-v mid">Alat ini sudah ada di workout hari ini.</p>`;
+  else if (c.busy) v = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menilai alat ini…</span></div>`;
+  else if (c.fit) { const [cls, label] = SW_FIT[c.fit]; v = `<div class="swk-v ${cls}"><b>${label}</b>${c.reason ? `<span>${esc(c.reason)}</span>` : ''}${c.tip ? `<small>Tip: ${esc(c.tip)}</small>` : ''}</div>` }
+  else v = `<div class="swk-v ${share.length ? 'ok' : 'no'}"><span>${esc(local)}</span>${c.err ? `<small>${esc(c.err)}</small>` : ''}</div>`;
+  const use = !same && !inW && !c.busy;
+  return `<section class="swk" aria-live="polite"><small class="swk-k">Hasil scan</small>
+    <div class="swk-m"><button class="pk-v" data-a="swPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>${pTags(t)}</div></div>
+    ${muscleMap(t)}${v}
+    <div class="swk-b"><button class="btn soft sm" data-a="swScan">${I('qr')} Scan lagi</button>${use ? `<button class="btn ${c.fit === 'tidak' ? 'soft' : 'pri'} sm" data-a="swUse" data-id="${t.id}">${I('swap')} Pakai alat ini</button>` : ''}</div></section>`;
+}
+const drawCheck = () => { const el = $('#swChk'); if (el && ui.swap && swItem()) el.innerHTML = swapCheckHtml() };
+async function checkSwap() {
+  const w = ui.swap, c = w?.check, cur = swItem(); if (!cur || !c || c.busy || !T[c.id]) return;
+  const { it, t, left } = cur, x = T[c.id], s = left[0], kg = num(s.w);
+  if (c.id === it.id || S.active.items.some(y => y.id === c.id) || !aiConf().key) return drawCheck();
+  const why = SW_WHY.find(([k]) => k === w.why)?.[1], q = w.q.trim();
+  const prompt = `Kamu pelatih gym. Pengguna sedang workout dan ingin mengganti ${t.t} (utama: ${mNames(t.p) || '-'}; pendukung: ${mNames(t.s) || '-'}). Sisa ${left.length} set × ${s.r || 10} reps${kg ? `, beban ${fmtW(kg)} kg` : ''}.
+Alasan: ${why || 'tidak disebut'}.${q ? `\nCatatan pengguna: ${q}` : ''}
+Pengguna men-scan alat lain di gym: ${x.t} (utama: ${mNames(x.p) || '-'}; pendukung: ${mNames(x.s) || '-'}${x.d ? `; ${x.d.replace(/\.$/, '')}` : ''}).
+Latihan lain di workout ini: ${S.active.items.filter(y => y !== it).map(y => T[y.id]?.t).filter(Boolean).join(', ') || '-'}.
+${aiWho()}
+Nilai apakah alat yang di-scan cocok menggantikan ${t.t}: melatih otot utama yang sama, pola geraknya mirip, dan aman untuk alasan pengguna. Jangan mendiagnosis.
+fit: "cocok" = pengganti yang baik; "bisa" = bisa dipakai dengan catatan; "tidak" = otot atau geraknya terlalu berbeda.
+Balas HANYA JSON: {"fit": "cocok" | "bisa" | "tidak", "reason": "1 kalimat bahasa Indonesia, maksimal 20 kata", "tip": "saran beban atau teknik maksimal 10 kata, atau kosong"}`;
+  c.busy = true; delete c.err; drawCheck();
+  try {
+    const r = await gemini([{ text: prompt }]), a = r.indexOf('{'), b = r.lastIndexOf('}'), j = JSON.parse(r.slice(a, b + 1));
+    c.fit = SW_FIT[j.fit] ? j.fit : 'bisa'; c.reason = String(j.reason || '').slice(0, 200); c.tip = String(j.tip || '').slice(0, 80);
+  } catch (e) { c.err = e instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca.' : e.message }
+  c.busy = false;
+  if (ui.swap === w && w.check === c) drawCheck();
+}
+function swapScan() {
+  if (!swItem()) return;
+  closeVideo(); openScan(null, true);
 }
 function swapTop() {
   const { it, t, left } = swItem(), done = it.sets.length - left.length;
@@ -3530,13 +3609,14 @@ async function swapCam(id) {
   camTune();
 }
 // rid: scanning from Edit Program, where each machine scanned joins that program and the camera stays open
-async function openScan(rid = null) {
+// swap: scanning from Ganti latihan, where the machine is checked as a replacement and the sheet comes back
+async function openScan(rid = null, swap = false) {
   closeSheet();
-  Object.assign(scan, { rid: rid && findR(rid) ? rid : null, last: 0, seen: 0, added: 0, pending: null });
+  Object.assign(scan, { rid: rid && findR(rid) ? rid : null, swap, last: 0, seen: 0, added: 0, pending: null });
   const el = $('#scan');
   el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Detail alatnya terbuka, tambahkan ke workout dari sana' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.swap ? 'Dicek apakah alatnya bisa menggantikan latihan tadi' : scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Detail alatnya terbuka, tambahkan ke workout dari sana' : 'Tutorial alatnya langsung terbuka'}</small></div>
     <div class="scan-ctl" id="scanCtl" hidden></div><div class="scan-ask" id="scanAsk" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
   // closing and reopening while this one still waits on the camera must not leave two readers running
@@ -3646,6 +3726,7 @@ function stopScan() {
     setTimeout(() => { const rows = document.querySelectorAll('.edrow'); rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 60);
   }
   scan.rid = null; scan.added = 0; scan.last = 0; scan.pending = null;
+  if (scan.swap) { scan.swap = false; if (ui.swap && swItem()) swapSheet() }
 }
 function scanAsk(t) {
   const have = (findR(scan.rid)?.items || []).some(it => it.id === t.id);
@@ -3672,6 +3753,11 @@ async function onScan(raw) {
       return;
     }
     return scanTip('QR ini bukan QR alat.<small>Coba arahkan ke QR yang tertempel di mesin.</small>', true);
+  }
+  if (scan.swap) {
+    try { navigator.vibrate?.(60) } catch {}
+    if (ui.swap) ui.swap.check = { id: t.id };
+    stopScan(); return checkSwap();
   }
   // Into a program: show the machine and ask first. A QR that stays in view after "Batal"
   // is not asked about again until it has been out of sight for a moment.
@@ -4064,6 +4150,7 @@ const A = {
   swAsk: () => askSwap(!!ui.swap?.ai?.items),
   swPrev: el => openVideo(+el.dataset.id, 'swap'),
   swUse: el => swapTo(+el.dataset.id),
+  swScan: swapScan,
   vClose: closeVideo,
   pkAdd: el => {
     const id = +el.dataset.id; ui.pick.sel.add(id); closeVideo();

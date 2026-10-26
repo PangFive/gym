@@ -40,7 +40,8 @@ tersinkron di semua perangkat.
   Selesai / Terlewat.
 - Tab **Program**: buat, edit (set, reps, urutan), hapus program. Program baru berupa draf sampai disimpan.
   Urutan diubah dengan **drag** pegangan ⋮⋮ (halaman bergulir sendiri di tepi; panah atas/bawah di keyboard).
-- **Pilih latihan**: peta otot (bisa pilih beberapa otot), preview video, dan **Rekomendasi Gemini**
+- **Pilih latihan**: peta otot (bisa pilih beberapa otot), preview video (popup dengan peta otot utama/pendukung,
+  sama seperti di detail alat), dan **Rekomendasi Gemini**
   (latihan dari daftar alat gym beserta set × reps, sesuai program, otot pilihan, dan tujuan).
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
@@ -60,6 +61,10 @@ tersinkron di semua perangkat.
   tanpa API key / offline). "Terasa sakit" menampilkan peringatan untuk berhenti bila nyeri tajam. Belum ada set
   selesai → latihan diganti di tempat (jumlah set & reps sama, beban dari riwayat alat baru); sebagian selesai → set
   yang selesai tetap di alat lama, sisa set pindah ke alat baru tepat di bawahnya. Hanya workout hari ini; program tetap.
+  **Scan alat lain** dari sheet yang sama: kamera terbuka dalam mode cek, QR alat yang kosong dibaca, lalu sheet kembali
+  dengan kartu "Hasil scan" (peta otot alat itu + penilaian Gemini: Cocok / Bisa, dengan catatan / Kurang cocok,
+  alasan, tip) dan tombol "Pakai alat ini" / "Scan lagi". Tanpa API key: hanya perbandingan otot utama. Alat yang sama
+  atau yang sudah ada di workout tidak bisa dipakai. Menutup kamera tanpa scan mengembalikan sheet seperti semula.
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
