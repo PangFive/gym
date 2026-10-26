@@ -347,6 +347,40 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-row.on{background:var(--acc-soft)}
 .pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
 .aibtn[disabled]{opacity:.6}
+/* swapping an exercise mid-workout */
+.wx-sw{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 12px 0 10px;border-radius:999px;border:1px solid rgba(47,124,246,.22);background:#fff;color:var(--acc-2);font:inherit;font-size:13px;font-weight:700;position:relative}
+.wx-sw::after{content:'';position:absolute;inset:-5px 0}
+.wx-sw svg.i{width:15px;height:15px}
+.sw-cur{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.75);border:1px solid var(--edge)}
+.sw-cur .vt{width:42px;height:56px;border-radius:12px;flex:none}
+.sw-cur>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.sw-cur small{font-size:11.5px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+.sw-cur b{font-size:15px;line-height:1.3}
+.sw-cur .tags{margin-top:2px}
+.sw-cur+.mhint{margin:8px 4px 0}
+.aiadv.ok .sw-lab{margin:10px 0 6px;color:var(--ink);font-weight:700}
+.sw-why{display:flex;flex-wrap:wrap;gap:6px}
+.sw-c{min-height:38px;padding:6px 13px;border-radius:999px;border:1px solid var(--edge);background:#fff;font:inherit;font-size:13px;font-weight:700;color:var(--ink)}
+.sw-c.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 12px -8px rgba(37,99,235,.8)}
+.sw-c[disabled]{opacity:.6}
+.aiadv.ok .sw-warn{display:flex;gap:7px;align-items:flex-start;margin:10px 0 0;padding:8px 10px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:12.5px;line-height:1.45;font-weight:600}
+.sw-warn svg.i{width:15px;height:15px;flex:none;margin-top:1px}
+.sw-busy{display:flex;align-items:center;gap:10px;margin:14px 0 4px;color:var(--muted)}
+.sw-busy .spin{width:18px;height:18px;border-width:2.5px;flex:none}
+.aiadv.ok .sw-err{color:#b45309;margin:12px 0 4px}
+.aiadv.ok .sw-sum{margin:12px 0 6px}
+.sw-row{display:flex;align-items:center;gap:10px;min-height:58px;padding:4px 0}
+.sw-row .pk-v .vt{width:38px;height:50px;border-radius:10px}
+.sw-row .pk-v .pm{width:20px;height:20px}
+.sw-row .pk-v .pm svg.i{width:10px;height:10px}
+.sw-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sw-t b{font-size:14px;line-height:1.3}
+.sw-t small,.aiadv.ok .sw-t small{margin:0;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.35}
+.sw-go{flex:none;min-height:40px;padding:6px 15px}
+.sw-h{font-size:15px;font-weight:800;margin:20px 4px 8px}
+.sw-list{background:rgba(255,255,255,.9);border:1px solid #fff;border-radius:18px;padding:2px 12px;box-shadow:0 10px 24px -18px rgba(52,72,120,.4)}
+.sw-list .sw-row+.sw-row{border-top:1px solid rgba(24,32,47,.07)}
+.sw-note{margin-top:14px;text-align:center}
 .pkrow b{font-size:14px}
 .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(24,32,47,.16);display:grid;place-items:center;color:transparent;flex:none}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
@@ -1190,6 +1224,7 @@ const ICONS = {
   download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/>',
   alert: '<path d="M12 4.5 3 19.5h18z"/><path d="M12 10.5v4M12 17.3v.2"/>',
   refresh: '<path d="M19.5 11A7.5 7.5 0 0 0 6 6.6L4.5 8M4.5 4v4h4M4.5 13A7.5 7.5 0 0 0 18 17.4l1.5-1.4M19.5 20v-4h-4"/>',
+  swap: '<path d="M16.5 3.5 20 7l-3.5 3.5M20 7H8.5M7.5 13.5 4 17l3.5 3.5M4 17h11.5"/>',
   clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   dumbbell: '<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
   moon: '<path d="M19.5 14.5A8 8 0 1 1 9.5 4.5a6.5 6.5 0 0 0 10 10z"/>',
@@ -1888,7 +1923,7 @@ function wxCard(it, ei) {
   return `<section class="wx glass on" id="wx${ei}">
       <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>
         <small>${s ? `Set <b>${fi + 1}</b> dari ${n}` : `Semua ${n} set selesai`}${mus}</small></div>
-        <button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
+        ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">${I('swap')}Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl">${it.sets.map(step).join('')}<button class="tl-s add${it.sets[n - 1]?.done ? ' lk' : ''}" data-a="setAdd" data-ex="${ei}" aria-label="Tambah set"><i class="tl-d">${I('plus')}</i><b>Tambah</b></button></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
         ${stepper('w', 'Beban', 'kg', 2.5)}${stepper('r', 'Reps', '', 1)}
@@ -2171,14 +2206,15 @@ function pickList() {
     </div>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
 }
 // Video preview over the picker: a small popup, so the list keeps its place underneath.
-function openVideo(id) {
+function openVideo(id, ctx) {
   const t = T[id]; if (!t) return;
   const on = ui.pick?.sel.has(id), m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
     <div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>
     ${t.d ? `<p>${esc(t.d)}</p>` : ''}${alsoLine(t)}
-    ${ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
+    ${ctx === 'swap' ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="swUse" data-id="${id}">${I('swap')} Ganti ke ini</button></div>`
+      : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
   </div>`;
   m.hidden = false;
 }
@@ -2191,6 +2227,15 @@ function openMachinePop(id) {
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function closeVideo() { const m = $('#vmodal'); if (m.hidden) return; m.hidden = true; m.innerHTML = '' }
+
+// The user and the gym's machines as the Gemini prompts describe them.
+function aiWho() {
+  const st = S.settings, e = energy(), age = st.birth ? new Date().getFullYear() - st.birth : 0;
+  const goal = !e ? 'tidak diketahui' : !e.dir ? 'mempertahankan berat' : e.dir < 0 ? 'turun berat badan' : 'naik berat badan / tambah massa otot';
+  return `Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.`;
+}
+const mNames = ks => ks.map(k => MI[k].n).join(', ');
+const aiMachines = (skip = new Set()) => TUTORIALS.filter(t => !skip.has(t.id)).map(t => `${t.id}|${t.t}|utama: ${mNames(t.p)}|pendukung: ${mNames(t.s) || '-'}`).join('\n');
 
 // ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
@@ -2216,17 +2261,14 @@ async function askExercises() {
   const p = ui.pick;
   if (!aiConf().key) { p.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return $('#pkAi').innerHTML = pickAiHtml() }
   const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
-  const st = S.settings, e = energy(), age = st.birth ? new Date().getFullYear() - st.birth : 0;
-  const goal = !e ? 'tidak diketahui' : !e.dir ? 'mempertahankan berat' : e.dir < 0 ? 'turun berat badan' : 'naik berat badan / tambah massa otot';
-  const list = TUTORIALS.map(t => `${t.id}|${t.t}|utama: ${t.p.map(k => MI[k].n).join(', ')}|pendukung: ${t.s.map(k => MI[k].n).join(', ') || '-'}`).join('\n');
   const prompt = `Kamu pelatih gym. Pilih 4 sampai 6 latihan dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
 ${r ? `Program: "${r.name}"` : 'Workout yang sedang berjalan'}. Sudah berisi: ${have.length ? have.map(id => T[id]?.t).filter(Boolean).join(', ') : 'belum ada'}.
 ${p.ms.size ? `Otot yang ingin dilatih: ${[...p.ms].map(k => MI[k].n).join(', ')}.` : 'Lengkapi program agar otot yang dilatih seimbang.'}
-Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.
+${aiWho()}
 ${p.aiQ && p.aiQ.trim() ? `Permintaan pengguna (utamakan ini selama masih aman dan alatnya ada di daftar): ${p.aiQ.trim()}
 ` : ''}Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
 DAFTAR ALAT (id|nama|otot):
-${list}
+${aiMachines()}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
   try {
@@ -2238,6 +2280,112 @@ Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "items": [{"id": ang
     items.forEach(x => p.rec.set(x.id, x));
   } catch (x) { p.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
   if ($('#pkAi')) $('#pkAi').innerHTML = pickAiHtml();
+}
+// ---- swapping an exercise mid-workout: the machine is taken or broken, it hurts, or the user wants
+// something else. Gemini picks up to three machines from the gym's list for the same muscles with the
+// reason in mind; below it, the machines that share a main muscle, without Gemini (no key, offline).
+// A swap changes today's workout only: done sets stay with the old machine, the rest move to the new one.
+const SW_WHY = [['busy', 'Alat sedang dipakai'], ['broken', 'Alat rusak'], ['pain', 'Terasa sakit'], ['vary', 'Mau variasi']];
+function swItem() {
+  const it = ui.swap?.it, i = S.active ? S.active.items.indexOf(it) : -1;
+  return i < 0 || !T[it.id] ? null : { it, i, t: T[it.id], left: it.sets.filter(s => !s.done) };
+}
+function openSwap(ei) {
+  const it = S.active?.items[ei]; if (!it || !T[it.id] || it.sets.every(s => s.done)) return;
+  closeVideo();
+  ui.swap = { it, why: '', q: '', ai: null, seen: new Set() };
+  sheet(`<h2 class="sh">Ganti latihan</h2>${swapTop()}<div id="swAi">${swapAiHtml()}</div><div id="swList">${swapList()}</div>
+    <p class="mhint sw-note">Hanya workout hari ini yang berubah. Programmu tetap.</p>`);
+}
+function swapTop() {
+  const { it, t, left } = swItem(), done = it.sets.length - left.length;
+  return `<div class="sw-cur">${pic(t.y)}<div><small>Diganti</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
+    <p class="mhint">${done ? `${done} set yang sudah selesai tetap tercatat di latihan ini. Sisa ${left.length} set pindah ke penggantinya.`
+      : `${left.length} set × ${esc(left[0].r || 10)} reps pindah ke latihan pengganti.`}</p>`;
+}
+const swRow = (id, sub, pri) => { const t = T[id]; return `<div class="sw-row">
+    <button class="pk-v" data-a="swPrev" data-id="${id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+    <span class="sw-t"><b>${esc(t.t)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span>
+    <button class="aibtn${pri ? ' pri' : ''} sw-go" data-a="swUse" data-id="${id}" aria-label="Ganti ke ${esc(t.t)}">Pakai</button></div>` };
+function swapAiHtml() {
+  const w = ui.swap, a = w.ai, busy = !!a?.busy;
+  const head = `<div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>`;
+  if (!aiConf().key) return `<div class="aiadv ok sw-ai">${head}<p>Hubungkan Gemini di Pengaturan untuk saran pengganti. Alat untuk otot yang sama ada di bawah.</p>
+    <div class="aa-b"><button class="aibtn" data-a="settings">${I('sliders')} Buka Pengaturan</button></div></div>`;
+  let res = '';
+  if (busy) res = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang mencari pengganti…</span></div>`;
+  else if (a?.err) res = `<p class="sw-err" role="alert">${esc(a.err)}</p>`;
+  else if (a) res = `${a.summary ? `<p class="sw-sum">${esc(a.summary)}</p>` : ''}${a.items.map(x => swRow(x.id, [x.reason, x.tip].filter(Boolean).join(' · '), true)).join('')}`;
+  return `<div class="aiadv ok sw-ai">${head}
+    <small class="sw-lab">Kenapa diganti?</small>
+    <div class="sw-why">${SW_WHY.map(([k, n]) => `<button class="sw-c${w.why === k ? ' on' : ''}" data-a="swWhy" data-k="${k}" aria-pressed="${w.why === k}"${busy ? ' disabled' : ''}>${n}</button>`).join('')}</div>
+    ${w.why === 'pain' ? `<p class="sw-warn">${I('alert')}<span>Nyeri tajam, atau tidak hilang setelah istirahat? Hentikan latihan untuk bagian itu dulu.</span></p>` : ''}
+    ${res}
+    <div class="pkai-q"><textarea id="swQ" data-i="swQ" rows="2" maxlength="200" placeholder="Catatan (opsional), mis. bahu kanan nyeri, mau yang duduk">${esc(w.q)}</textarea>
+      <button class="aibtn pri" data-a="swAsk"${busy ? ' disabled' : ''}>${I(a?.items ? 'refresh' : 'sparkles')} ${a?.items ? 'Minta pilihan lain' : 'Minta rekomendasi'}</button></div></div>`;
+}
+// Machines with the same main muscle (by how much they share), or the same category when it has no tags;
+// the ones Gemini already suggests are left out.
+function swapList() {
+  const { t } = swItem(), have = new Set([...S.active.items.map(x => x.id), ...(ui.swap.ai?.items || []).map(x => x.id)]);
+  const hit = c => c.p.filter(k => t.p.includes(k)).length * 2 + [...c.p, ...c.s].filter(k => trains(t, k)).length;
+  const list = TUTORIALS.filter(c => !have.has(c.id) && (t.p.length ? c.p.some(k => t.p.includes(k)) : c.m === t.m))
+    .sort((a, b) => hit(b) - hit(a) || a.t.localeCompare(b.t)).slice(0, 8);
+  return `<h3 class="sw-h">${t.p.length ? `Alat lain untuk ${esc(t.p.map(k => MI[k].n).join(' & '))}` : 'Alat lain di kategori ini'}</h3>
+    ${list.length ? `<div class="sw-list">${list.map(c => swRow(c.id, mNames([...c.p, ...c.s]).replace(/, /g, ' · '), false)).join('')}</div>`
+      : '<p class="mhint">Belum ada alat lain di daftar untuk otot ini.</p>'}`;
+}
+const drawSwap = () => { const el = $('#swAi'); if (el && ui.swap && swItem()) { el.innerHTML = swapAiHtml(); $('#swList').innerHTML = swapList() } };
+async function askSwap(more) {
+  const w = ui.swap, cur = swItem(); if (!cur || w.ai?.busy) return;
+  const { it, t, left } = cur, s = left[0], kg = num(s.w), q = w.q.trim();
+  if (more) w.ai?.items?.forEach(x => w.seen.add(x.id)); else w.seen.clear();
+  const why = SW_WHY.find(([k]) => k === w.why)?.[1];
+  const others = S.active.items.filter(x => x !== it).map(x => T[x.id]?.t).filter(Boolean);
+  const recent = [...new Set(S.history.slice(0, 3).flatMap(h => h.items.map(x => T[x.id]?.t)).filter(Boolean))];
+  const skip = new Set([...S.active.items.map(x => x.id), ...w.seen]);
+  const prompt = `Kamu pelatih gym. Pengguna sedang workout dan ingin MENGGANTI satu latihan dengan alat lain dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
+Latihan yang diganti: ${t.t} (utama: ${mNames(t.p) || '-'}; pendukung: ${mNames(t.s) || '-'}). Sisa ${left.length} set × ${s.r || 10} reps${kg ? `, beban ${fmtW(kg)} kg` : ''}.
+Alasan: ${why || 'tidak disebut'}.${q ? `\nCatatan pengguna (utamakan selama aman): ${q}` : ''}
+Latihan lain di workout ini: ${others.join(', ') || '-'}.${recent.length ? `\nAlat di 3 workout terakhir: ${recent.join(', ')}.` : ''}
+${aiWho()}
+Pilih 3 alat pengganti yang melatih otot utama yang sama (atau paling dekat), urut dari yang paling cocok.
+- Alat dipakai orang atau rusak: pilih gerakan dan otot yang paling mirip.
+- Terasa sakit: pilih gerakan terpandu mesin yang lebih ringan untuk sendi atau bagian yang sakit. Jangan mendiagnosis.
+- Mau variasi: pilih sudut atau pola gerak lain untuk otot yang sama, utamakan yang tidak ada di workout terakhir.
+- tip: saran singkat soal beban atau teknik, mis. "mulai sekitar 20% lebih ringan"; kosongkan bila tidak perlu.
+DAFTAR ALAT (id|nama|otot):
+${aiMachines(skip)}
+Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia${w.why === 'pain' ? ', ingatkan untuk berhenti bila nyeri tajam' : ''}", "items": [{"id": angka id dari daftar, "reason": "alasan maksimal 8 kata", "tip": "maksimal 10 kata atau kosong"}]}`;
+  w.ai = { busy: true }; drawSwap();
+  try {
+    const x = await gemini([{ text: prompt }]), a = x.indexOf('{'), b = x.lastIndexOf('}'), j = JSON.parse(x.slice(a, b + 1));
+    const seen = new Set(skip), items = asList(j.items).map(y => ({ id: +y.id, reason: String(y.reason || '').slice(0, 80), tip: String(y.tip || '').slice(0, 80) }))
+      .filter(y => T[y.id] && !seen.has(y.id) && seen.add(y.id)).slice(0, 4);
+    if (!items.length) throw new Error('Gemini tidak menemukan pengganti. Coba alasan lain, atau pilih dari daftar di bawah.');
+    w.ai = { items, summary: String(j.summary || '').slice(0, 200) };
+  } catch (e) { w.ai = { err: e instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : e.message } }
+  if (ui.swap === w) drawSwap();
+}
+function swapTo(id) {
+  const cur = swItem(); if (!cur || !T[id] || !cur.left.length) return;
+  const { it, i, left } = cur, a = S.active, w = wxState(), whole = left.length === it.sets.length;
+  const next = newActiveItem({ id, sets: left.length, reps: left[0].r });
+  if (whole) {
+    a.items[i] = next; delete w.at[i];
+    w.touched.forEach(k => { if (k.startsWith(`${i}_`)) w.touched.delete(k) });
+    if (rest && rest.ei === i) rest.ei = -1;
+  } else {
+    // the done sets stay with the old machine, which is now finished; the new one comes right after it
+    it.sets = it.sets.filter(s => s.done); a.items.splice(i + 1, 0, next);
+    const up = k => +k > i ? +k + 1 : +k, move = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [up(k), v]));
+    w.at = move(w.at); delete w.at[i]; w.fin = move(w.fin); w.fin[i] = Date.now();
+    w.touched = new Set([...w.touched].map(k => { const [e, x] = k.split('_'); return `${up(e)}_${x}` }));
+    if (rest && rest.ei > i) rest.ei++;
+  }
+  w.open = whole ? i : i + 1; ui.swap = null;
+  save(); closeSheet(); render();
+  toast(whole ? `Diganti ke ${T[id].t}` : `Sisa ${left.length} set pindah ke ${T[id].t}`);
 }
 function pickChips() {
   const ms = ui.pick.ms;
@@ -3911,6 +4059,11 @@ const A = {
   pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
   pkPrev: el => openVideo(+el.dataset.id),
+  wxSwap: el => openSwap(+el.dataset.ex),
+  swWhy: el => { const w = ui.swap; if (!w || w.ai?.busy) return; w.why = el.dataset.k; askSwap(false) },
+  swAsk: () => askSwap(!!ui.swap?.ai?.items),
+  swPrev: el => openVideo(+el.dataset.id, 'swap'),
+  swUse: el => swapTo(+el.dataset.id),
   vClose: closeVideo,
   pkAdd: el => {
     const id = +el.dataset.id; ui.pick.sel.add(id); closeVideo();
@@ -4292,6 +4445,7 @@ document.addEventListener('input', e => {
   if (k === 'q') { ui.q = el.value; $('#libHead').innerHTML = libHead(); $('#libList').innerHTML = libList() }
   else if (k === 'pq') { ui.pick.q = el.value; $('#pkList').innerHTML = pickList() }
   else if (k === 'pkAiQ') ui.pick.aiQ = el.value.slice(0, 200);
+  else if (k === 'swQ') { if (ui.swap) ui.swap.q = el.value.slice(0, 200) }
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
   else if (k === 'edReps') { const r = curR(); if (r) { r.items[+el.dataset.ix].reps = el.value.slice(0, 7); save() } }
   else if (k === 'sw' || k === 'sr') {

@@ -52,6 +52,14 @@ tersinkron di semua perangkat.
 - **Timer istirahat** = kartu dengan cincin hitung mundur, info set berikutnya, −15/+15/Lewati; 3 detik terakhir kuning, lalu kartu hijau "Lanjut Set 2". Bunyi (3 tik + nada naik) dijadwalkan di jam audio saat set selesai, dan audio dibuka saat tombol diketuk (aturan autoplay HP)
 - "Selesai set" → **timer istirahat**, beban baru terbawa ke set berikutnya yang belum diubah manual, lalu lanjut otomatis ke set/latihan berikutnya; latihan lain terlipat jadi satu baris; yang sudah selesai naik ke atas (urut waktu selesai)
   (bunyi/getar bisa diatur).
+- **Ganti latihan** (tombol "Ganti" di kartu latihan yang terbuka, selama masih ada set belum selesai): pilih alasan
+  (alat sedang dipakai / rusak / terasa sakit / mau variasi, plus catatan opsional) → **Gemini** memilih 3 alat dari
+  daftar alat gym untuk otot utama yang sama, dengan alasan dan tip singkat; "Minta pilihan lain" tidak mengulang yang
+  sudah disarankan. Gemini melihat latihan yang diganti (otot, sisa set × reps, beban), latihan lain di workout,
+  alat di 3 workout terakhir, dan profil. Di bawahnya daftar alat lain untuk otot yang sama tanpa Gemini (tetap jalan
+  tanpa API key / offline). "Terasa sakit" menampilkan peringatan untuk berhenti bila nyeri tajam. Belum ada set
+  selesai → latihan diganti di tempat (jumlah set & reps sama, beban dari riwayat alat baru); sebagian selesai → set
+  yang selesai tetap di alat lama, sisa set pindah ke alat baru tepat di bawahnya. Hanya workout hari ini; program tetap.
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
@@ -219,6 +227,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 8. Pelacak kalori dengan foto + Gemini (API key milik pengguna).
 9. Profil tubuh, target kalori otomatis (TDEE), defisit/surplus harian, log berat badan.
 10. Detak jantung live dari jam Huawei (HR Data Broadcasts lewat Web Bluetooth), kalori dari detak jantung.
+11. Ganti latihan saat workout dengan rekomendasi Gemini (alasan: alat dipakai, rusak, sakit, variasi).
 
 ## 8. Ide berikutnya
 
