@@ -22,6 +22,8 @@ tersinkron di semua perangkat.
 - Masuk dengan **email/password** atau **Google**; daftar, lupa password, keluar.
 - Data di Firebase, juga di-cache di HP: aplikasi langsung terbuka, tetap jalan **offline**, dan
   perubahan terkirim begitu online lagi.
+- Perbandingan "sudah terkirim atau belum" memakai JSON dengan kunci terurut (`canon()`), karena Firebase
+  mengembalikan objek dengan kunci terurut; tanpa itu set kardio (`g`) selalu terlihat berubah dan dikirim ulang.
 - Data lama dari browser (sebelum ada akun) ikut pindah ke akun saat login pertama.
 
 ### Tutorial alat

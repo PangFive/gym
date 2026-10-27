@@ -1449,14 +1449,20 @@ const SECTIONS = ['settings', 'routines', 'week', 'active'];
 let synced = null, pushT = null, unsub = null, syncState = 'ok';
 // History, meals and weights grow without end, so they sync entry by entry (users/<uid>/<map>/<id>).
 const MAPS = ['history', 'meals', 'weights'];
+// JSON with every object's keys sorted, so the same data reads the same however it was built: Firebase
+// hands objects back with sorted keys, and a set built here as {w, r, done, g} must not look changed
+// against the {w, r, g, done} that comes back.
+const canon = v => JSON.stringify(v, (k, x) => x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(j => [j, x[j]])) : x);
 function snap(st) {
   const o = {};
-  SECTIONS.forEach(k => { o[k] = JSON.stringify(st[k] ?? null) });
-  MAPS.forEach(m => { o[m] = {}; (st[m] || []).forEach(x => { o[m][x.id] = JSON.stringify(x) }) });
+  SECTIONS.forEach(k => { o[k] = canon(st[k] ?? null) });
+  MAPS.forEach(m => { o[m] = {}; (st[m] || []).forEach(x => { o[m][x.id] = canon(x) }) });
   return o;
 }
+// a cache written before canon() existed holds plain JSON: brought to the same form, so nothing looks unsent
+const canonSynced = sy => sy && Object.fromEntries(Object.entries(sy).map(([k, v]) => [k, typeof v === 'string' ? (v && canon(JSON.parse(v))) : Object.fromEntries(Object.entries(v || {}).map(([id, x]) => [id, canon(JSON.parse(x))]))]));
 function cacheSave() { if (fb.user) try { localStorage.setItem(CACHE(fb.user.uid), JSON.stringify({ S, synced })) } catch {} }
-function cacheLoad(id) { try { const c = JSON.parse(localStorage.getItem(CACHE(id))); return c && c.S ? { S: normalize(c.S), synced: c.synced || null } : null } catch { return null } }
+function cacheLoad(id) { try { const c = JSON.parse(localStorage.getItem(CACHE(id))); return c && c.S ? { S: normalize(c.S), synced: canonSynced(c.synced) || null } : null } catch { return null } }
 function save() { cacheSave(); clearTimeout(pushT); pushT = setTimeout(push, 400) }
 const userRef = (path = '') => fb.mod.ref(fb.db, `users/${fb.user.uid}${path ? '/' + path : ''}`);
 function pending() {
