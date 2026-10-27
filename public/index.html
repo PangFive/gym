@@ -428,6 +428,10 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
 .pkrow.on{background:var(--acc-soft)}
 .pkrow.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
+/* already in the program or workout: a label in place of the tick, and it cannot be picked again */
+.pkrow.has .pk-b>span{opacity:.62}
+.pk-has{flex:none;display:inline-flex;align-items:center;gap:4px;font-style:normal;font-size:12px;font-weight:800;color:#0b7a55;background:#e3f6ee;padding:5px 9px 5px 7px;border-radius:999px;white-space:nowrap}
+.pk-has svg.i{width:14px;height:14px;color:#0b7a55;stroke-width:2.8}
 .sheet-foot{position:sticky;bottom:calc(-22px - env(safe-area-inset-bottom));margin:0 -18px -22px;padding:12px 18px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(rgba(249,250,255,0),rgba(249,250,255,.97) 28%)}
 .hx{display:flex;gap:12px;align-items:center;padding:8px 0}
 .hx .vt{width:42px;height:56px;border-radius:12px}
@@ -2339,12 +2343,18 @@ function openStartPick() {
 // The picker filters by any number of muscles: an exercise shows when it trains one of them, and
 // the ones that hit more of the chosen muscles (as a main muscle first) come first.
 const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : trains(t, k) ? 1 : 0), 0);
+// What the program (or the running workout) already holds: those rows say so and cannot be picked again.
+const pickHave = () => { const p = ui.pick, r = p?.mode === 'edit' ? findR(p.rid) : null; return new Set((r ? r.items : p?.mode === 'workout' ? S.active?.items || [] : []).map(it => it.id)) };
+const pickWhere = () => ui.pick?.mode === 'workout' ? 'workout' : 'program';
 function pickList() {
-  const p = ui.pick, q = p.q.trim().toLowerCase();
+  const p = ui.pick, q = p.q.trim().toLowerCase(), have = pickHave();
   const xs = p.cx ? CARDIO.filter(t => matches(t, 'all', q))
     : [...TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q)), ...(p.ms.size ? [] : CARDIO.filter(t => matches(t, 'all', q)))];
   if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
-  return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
+  return xs.map(t => have.has(t.id) ? `<div class="pkrow has" id="pk${t.id}">
+      <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+      <div class="pk-b"><span><b>${esc(t.t)}</b>${pTags(t)}</span><em class="pk-has">${I('check')}Sudah di ${pickWhere()}</em></div>
+    </div>` : `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
       <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
       <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>
     </div>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
@@ -2353,13 +2363,13 @@ function pickList() {
 // trains show under the video; the buttons stay at the bottom while it scrolls.
 function openVideo(id, ctx) {
   const t = T[id]; if (!t) return;
-  const on = ui.pick?.sel.has(id), m = $('#vmodal');
+  const on = ui.pick?.sel.has(id), had = ui.pick && pickHave().has(id), m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
     ${t.c ? cxHero(t.k, 'sm') :`<div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>`}
     ${muscleMap(t)}${t.d ? `<p>${esc(t.d)}</p>` : ''}
     ${ctx === 'swap' ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="swUse" data-id="${id}">${I('swap')} Ganti ke ini</button></div>`
-      : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
+      : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on || had ? ' disabled' : ''}>${had ? `${I('check')} Sudah di ${pickWhere()}` : on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
   </div>`;
   m.hidden = false;
 }
@@ -4278,13 +4288,15 @@ const A = {
   swScan: swapScan,
   vClose: closeVideo,
   pkAdd: el => {
-    const id = +el.dataset.id; ui.pick.sel.add(id); closeVideo();
+    const id = +el.dataset.id; if (pickHave().has(id)) return closeVideo();
+    ui.pick.sel.add(id); closeVideo();
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', 'true'); (b.closest('.pkrow') || b).classList.add('on') });
     if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
     $('#pkBtn').textContent = pickLabel(); toast(`${T[id].t} dipilih`);
   },
   pickToggle: el => {
-    const id = +el.dataset.id, s = ui.pick.sel; s.has(id) ? s.delete(id) : s.add(id);
+    const id = +el.dataset.id, s = ui.pick.sel; if (pickHave().has(id)) return;
+    s.has(id) ? s.delete(id) : s.add(id);
     // the same exercise can sit in the list and in Gemini's suggestions
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', s.has(id)); (b.closest('.pkrow') || b).classList.toggle('on', s.has(id)) });
     if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
@@ -4296,8 +4308,8 @@ const A = {
     $('#pkAi').innerHTML = pickAiHtml(); $('#pkList').innerHTML = pickList(); $('#pkBtn').textContent = pickLabel();
   },
   pickDone: () => {
-    const p = ui.pick; if (!p.sel.size) return toast('Pilih minimal satu latihan', 'err');
-    const ids = [...p.sel];
+    const p = ui.pick, have = pickHave(), ids = [...p.sel].filter(id => !have.has(id));
+    if (!ids.length) return toast('Pilih minimal satu latihan', 'err');
     const it = id => ({ id, ...planOf(id), ...p.rec.get(id) && { sets: p.rec.get(id).sets, reps: p.rec.get(id).reps } });
     if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push(it(id))) }
     else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id))));

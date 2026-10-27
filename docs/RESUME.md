@@ -54,6 +54,8 @@ tersinkron di semua perangkat.
 - **Pilih latihan**: peta otot (bisa pilih beberapa otot), preview video (popup dengan peta otot utama/pendukung,
   sama seperti di detail alat), dan **Rekomendasi Gemini**
   (latihan dari daftar alat gym beserta set × reps, sesuai program, otot pilihan, dan tujuan).
+  Alat yang sudah ada di program/workout diberi label **Sudah di program** / **Sudah di workout** dan tidak bisa
+  dipilih lagi (juga di popup preview), jadi tidak ada latihan dobel.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude.
