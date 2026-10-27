@@ -28,7 +28,8 @@ tersinkron di semua perangkat.
 - 56 alat dengan video YouTube (vertikal), deskripsi, otot utama & pendukung.
 - **Kardio** (kategori sendiri, bawaan aplikasi, tanpa video): Treadmill, Sepeda statis, Elliptical, Mesin dayung,
   Stair climber (id 9001–9005). Gambar 3D (`public/img/cardio-<k>.webp`, 600×800, dibuat dengan AI Figma, latar
-  warna rata per alat = `CARDIO_BG`, ikut di-cache service worker) di tempat thumbnail; Beranda = tiga gambar
+  transparan dengan bayangan sebagai alpha; latarnya gradient lembut warna alat `CARDIO_C` lewat CSS `.cxi`, seperti
+  kartu otot; ikut di-cache service worker) di tempat thumbnail; Beranda = tiga gambar
   dikipas; detail dan preview = gambar besar 3:4, Jenis/Saran 20–30 mnt/
   yang dicatat, peta otot (otot yang bekerja, hanya untuk gambar: tidak ikut filter otot, hitungan, atau ikon
   program). Muncul di chip **Kardio** (Tutorial dan Pilih latihan), kartu **Kardio** di Jelajahi Otot (Beranda), dan
@@ -250,7 +251,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 10. Detak jantung live dari jam Huawei (HR Data Broadcasts lewat Web Bluetooth), kalori dari detak jantung.
 11. Ganti latihan saat workout dengan rekomendasi Gemini (alasan: alat dipakai, rusak, sakit, variasi).
 12. Kategori Kardio: 5 alat bawaan, dicatat menit + kecepatan/incline atau level, kalori ACSM/MET.
-13. Gambar 3D untuk alat kardio (AI Figma), latar warna berbeda per alat.
+13. Gambar 3D untuk alat kardio (AI Figma), latar gradient lembut berwarna per alat.
 
 ## 8. Ide berikutnya
 

@@ -350,7 +350,8 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .pkai-row.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
 .aibtn[disabled]{opacity:.6}
 /* swapping an exercise mid-workout */
-/* cardio machines: a 3D picture where a video thumbnail would be */
+/* cardio machines: a 3D picture where a video thumbnail would be, on a soft gradient of its colour */
+.cxi{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 12%,white),color-mix(in srgb,var(--c) 34%,white))}
 .vt.cx img{left:0;top:0;width:100%;height:100%;object-fit:cover;transform:none}
 .vt.cx~.pm{display:none}
 /* the home tile: three of them fanned out */
@@ -360,7 +361,7 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .mill.cxm img:nth-child(2){z-index:1;top:10px}
 .mill.cxm img:nth-child(3){left:calc(50% + 9px);transform:rotate(9deg)}
 /* the width is set, not left to aspect-ratio (Safari on iOS) */
-.cx-hero{height:min(44vh,340px);width:calc(min(44vh,340px) * .75);max-width:100%;margin:18px auto 0;border-radius:28px;overflow:hidden;background:var(--bg);box-shadow:0 22px 40px -22px var(--bg)}
+.cx-hero{height:min(44vh,340px);width:calc(min(44vh,340px) * .75);max-width:100%;margin:18px auto 0;border-radius:28px;overflow:hidden;box-shadow:0 22px 40px -22px color-mix(in srgb,var(--c) 80%,transparent)}
 .cx-hero img{display:block;width:100%;height:100%;object-fit:cover}
 .cx-hero.sm{height:min(32vh,240px);width:calc(min(32vh,240px) * .75);margin:4px auto 0;border-radius:22px}
 .ed-cx{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#e11d48}
@@ -1238,9 +1239,9 @@ const count = k => CNT[k] || 0;
 // one is a stretch on the machine: r = minutes, w = speed in km/h on the treadmill or the machine's level on
 // the others, g = the treadmill's incline in %. Their muscles (wk: main, supporting) only colour the body map;
 // they stay out of the muscle filters, the counts and a program's icon.
-// Each has a 3D picture, img/cardio-<k>.webp (600×800), on one flat colour: that colour fills the box while
-// the picture loads, and colours the glow under the large one.
-const CARDIO_BG = { run: '#e7a64a', bike: '#64b5ee', ell: '#b79ef1', row: '#7dd3ab', stair: '#f57b7a' };
+// Each has a 3D picture, img/cardio-<k>.webp (600×800, transparent, its shadows kept as alpha), set on a soft
+// gradient of its own colour, the way the muscle tiles are.
+const CARDIO_C = { run: '#e7a64a', bike: '#64b5ee', ell: '#b79ef1', row: '#7dd3ab', stair: '#f57b7a' };
 // mets: MET by level 1–4, 5–8, 9–12, 13–16, 17+ (Compendium of Physical Activities: stationary cycling
 // 3,5–11 by watts, rowing ergometer 4,8–12, elliptical 5,0 moderate, stair-treadmill 9,0)
 const CARDIO = [
@@ -1257,10 +1258,10 @@ const CARDIO = [
 ].map(c => ({ ...c, m: 'cardio', y: 'cardio:' + c.k, p: [], s: [], c: true, wk: c.wk.map(muscleList) }));
 const CXM = Object.fromEntries(CARDIO.map(c => [c.id, c]));
 const CX = id => CXM[id] || null;
-const cxBg = k => CARDIO_BG[k] || CARDIO_BG.run;
-const cxImg = (k, lazy = true) => `<img src="img/cardio-${CARDIO_BG[k] ? k : 'run'}.webp" alt="" ${lazy ? 'loading="lazy" ' : ''}decoding="async" style="background:${cxBg(k)}">`;
+const cxK = k => CARDIO_C[k] ? k : 'run';
+const cxImg = (k, lazy = true) => `<img class="cxi" src="img/cardio-${cxK(k)}.webp" alt="" ${lazy ? 'loading="lazy" ' : ''}decoding="async" style="--c:${CARDIO_C[cxK(k)]}">`;
 // the large picture on a machine's page and in its preview
-const cxHero = (k, cls = '') => `<div class="cx-hero ${cls}" style="--bg:${cxBg(k)}">${cxImg(k, false)}</div>`;
+const cxHero = (k, cls = '') => `<div class="cx-hero ${cls}" style="--c:${CARDIO_C[cxK(k)]}">${cxImg(k, false)}</div>`;
 const cxTag = '<span class="tag" style="--c:#e11d48">Kardio</span>';
 // main and supporting muscles, for a machine of either kind
 const musOf = t => t.c ? t.wk : [t.p, t.s];
