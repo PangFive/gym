@@ -57,7 +57,8 @@ tersinkron di semua perangkat.
   Permintaan yang ditulis ("latihan perut hari ini") diutamakan dan dianggap sama dengan memilih otot di peta:
   Gemini hanya memilih alat untuk otot itu, boleh cuma 1–2 kalau alatnya sedikit (perut hanya punya Abs Crunches
   Machine). Gemini juga mengembalikan kode otot yang ia tangkap; alat yang tidak melatih otot itu dibuang di kode.
-  Tanpa permintaan dan tanpa otot, Gemini melengkapi program agar seimbang (4–6 latihan).
+  Sama untuk Tambah latihan saat workout. Tanpa permintaan dan tanpa otot, Gemini melengkapi program/workout agar
+  seimbang (4–6 latihan). Ganti latihan saat workout tidak memakai aturan ini.
   Alat yang sudah ada di program/workout diberi label **Sudah di program** / **Sudah di workout** dan tidak bisa
   dipilih lagi (juga di popup preview), jadi tidak ada latihan dobel.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
