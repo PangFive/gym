@@ -505,6 +505,16 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .edhead .ricon{background:#fff;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--c) 70%,black)}
 .edhead .eh-field{border-color:color-mix(in srgb,var(--c) 22%,transparent)}
 .edhead .eh-field:focus-within{border-color:var(--c)}
+.pmap{padding:14px 12px 12px;margin-bottom:14px}
+.pm-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0 4px 8px}
+.pm-h h3{margin:0;font-size:15px;font-weight:800}
+.pm-h small{font-size:12px;font-weight:600;color:var(--muted)}
+.pmap .bm-v{max-height:200px}
+.pm-k{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pm-c{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:#e8f0fd;color:#33425c}
+.pm-c b{font-weight:800;margin-right:5px}
+.pm-c.l4{background:var(--acc);color:#fff} .pm-c.l3{background:#6fa2f5;color:#fff} .pm-c.l2{background:#a2c2f8;color:#14233d}
+.pm-note{margin:10px 4px 0;font-size:12px;line-height:1.45;color:var(--muted)}
 .edhead .eh-field:focus-within svg.i,.edhead .eh-badge,.edhead .eh-link b{color:color-mix(in srgb,var(--c) 85%,black)}
 .eh-ic{position:relative;flex:none;border:0;background:transparent;padding:0;border-radius:22px}
 .eh-badge{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 4px 10px -4px rgba(24,32,47,.35)}
@@ -1048,9 +1058,11 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .wkn-f small{font-size:12px;font-weight:600;color:var(--muted)}
 .wkn-f b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
 .wkn-f b span{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px}
-.kc-sum{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.kc-sum{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .kc-sum h2{margin:0;font-size:16px;font-weight:800}
-.kc-sum small{font-size:13px;font-weight:600;color:var(--muted)}
+.kc-goal{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:0;border-radius:999px;background:rgba(18,163,114,.14);color:#0b7a55;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.kc-goal svg{width:16px;height:16px;flex:none}
+.kc-goal b{font-size:16px;font-weight:800}
 .bal{display:flex;align-items:center;gap:6px;margin-top:14px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.65)}
 .bal div{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
 .bal small{font-size:11.5px;font-weight:600;color:var(--muted)}
@@ -1994,9 +2006,32 @@ function vEdit(id) {
         <button class="eh-link" data-a="iconPick" data-id="${r.id}">Ikon ${r.icon && r.icon !== 'auto' || r.color ? 'dipilih sendiri' : 'otomatis dari otot utama'} · <b>Ubah</b></button>
       </div>
     </section>
+    ${programMap(r)}
     ${listTools('Latihan', r.items.length ? `${r.items.length} alat` : '', `data-a="pick" data-mode="edit" data-id="${r.id}"`, `data-rid="${r.id}"`)}
     ${r.items.map((it, i) => T[it.id] ? row(it, i) : '').join('') || '<div class="empty glass">Belum ada latihan di program ini.</div>'}
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
+}
+
+// The muscles a program trains, as sets: a set counts fully for a machine's main muscles and half for its
+// supporting ones. Darker on the map = more sets; the muscles it leaves out are named below.
+function programLoad(items) {
+  const m = {};
+  items.forEach(it => {
+    const t = T[it.id]; if (!t) return;
+    const n = +it.sets || 1, [p, s] = musOf(t).map(muscleList);
+    p.forEach(k => { m[k] = (m[k] || 0) + n });
+    s.forEach(k => { if (!p.includes(k)) m[k] = (m[k] || 0) + n / 2 });
+  });
+  return m;
+}
+function programMap(r) {
+  const m = programLoad(r.items), ks = Object.keys(m).sort((a, b) => m[b] - m[a]);
+  if (!ks.length) return '';
+  const top = m[ks[0]], lv = k => m[k] ? Math.max(1, Math.ceil(m[k] / top * 4)) : 0, none = MUSCLES.filter(x => !m[x.k]);
+  return `<section class="glass card pmap"><div class="pm-h"><h3>Otot yang dilatih</h3><small>makin gelap, makin banyak set</small></div>
+    ${bodyMap({ level: lv })}
+    <div class="pm-k">${ks.map(k => `<span class="pm-c l${lv(k)}"><b>${MI[k].n}</b>${fmt1(m[k])} set</span>`).join('')}</div>
+    <p class="pm-note">Otot pendukung dihitung ½ set.${none.length ? ` Belum kena: ${esc(none.map(x => x.n).join(', '))}.` : ''}</p></section>`;
 }
 
 function prevFor(id) { for (const h of S.history) { const it = h.items.find(i => i.id === id); if (it) return it.sets } return null }
@@ -3580,7 +3615,7 @@ function vMeals() {
   const full = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
   return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="profile" aria-label="Profil tubuh dan target">${I('user')}</button></header>
     ${mealWeek(key, today, goal)}
-    <section class="glass card kc"><div class="kc-sum"><h2>${label}</h2><small>target ${r0(goal)} kkal</small></div>
+    <section class="glass card kc"><div class="kc-sum"><h2>${label}</h2><button class="kc-goal" data-a="profile" aria-label="Target ${r0(goal)} kkal, ubah di profil">${I('target')}<span>Target <b>${r0(goal)}</b> kkal</span></button></div>
       <div class="kc-row">${kcalRing(t.kcal, goal, 128)}${macroBars(t, goal)}</div>
       ${balanceHtml(t.kcal)}
       ${key === today ? kcActions() : ''}</section>

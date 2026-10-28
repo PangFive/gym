@@ -62,6 +62,8 @@ tersinkron di semua perangkat.
   Alat yang sudah ada di program/workout diberi label **Sudah di program** / **Sudah di workout** dan tidak bisa
   dipilih lagi (juga di popup preview), jadi tidak ada latihan dobel.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
+- **Otot yang dilatih** di Edit Program: peta tubuh dan daftar set per otot dari latihan yang dipilih (otot utama
+  dihitung penuh, pendukung ½ set; makin gelap makin banyak set), plus otot yang belum kena.
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude, atau dari link/file bagikan. Isinya tampil
   dulu sebagai kartu program (seperti di Plan): centang yang mau diimport, **Lihat isi** membuka daftar latihannya.
@@ -118,7 +120,7 @@ tersinkron di semua perangkat.
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
 ### Kalori (AI Gemini)
-- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
+- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol Di halaman Kalori target harian tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan.
 - Setelah foto dipilih ada langkah **Keterangan (opsional)**: porsi, cara masak, atau yang tidak terlihat
