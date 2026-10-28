@@ -478,6 +478,21 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .rcard p{margin:0 0 12px;font-size:13px}
 .rc-bot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px}
 .stack{display:flex;padding-left:10px}
+/* import: the programs in it as Plan cards, each with a tick; the unticked ones fade */
+.rcard.imp{transition:opacity .2s,outline-color .2s;outline:2px solid transparent;outline-offset:-2px}
+.rcard.imp.on{outline-color:var(--acc)}
+.rcard.imp:not(.on){opacity:.6}
+.imp-ck{flex:none;width:44px;height:44px;margin:-8px -8px 0 0;border:0;background:transparent;display:grid;place-items:center;border-radius:50%}
+.imp-ck .ck{width:28px;height:28px}
+.rcard.imp.on .imp-ck .ck{background:var(--acc);border-color:var(--acc);color:#fff}
+.rcard .imp-n{display:flex;align-items:center;gap:6px;margin:-4px 0 10px;font-size:12.5px;font-weight:700;color:#0b7a55}
+.rcard .imp-n.warn{color:#b45309}
+.imp-n svg.i{width:15px;height:15px;flex:none}
+.vm-h>.imp-h{flex-direction:row;align-items:center;gap:10px}
+.imp-h>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.imp-h small{color:var(--muted);font-size:12.5px;font-weight:600}
+.imp-rows{margin-top:8px}
+.imp-rows .hx+.hx{border-top:1px solid rgba(24,32,47,.06)}
 .stack .vt{width:40px;height:52px;border-radius:12px;border:2px solid #fff;margin-left:-10px;box-shadow:0 4px 10px -4px rgba(24,32,47,.35)}
 .claude .cl-h{display:flex;gap:12px;align-items:center}
 .claude .cl-h b{display:block;font-size:16px} .claude .cl-h small{color:var(--muted);font-size:13px}
@@ -3102,8 +3117,8 @@ async function importText(txt) {
   }
   const list = Array.isArray(o) ? o : Array.isArray(o?.routines) ? o.routines : (o?.items ? [o] : null);
   if (!list) return toast('Tidak ada program di data ini', 'err');
-  let added = 0, dropped = 0;
-  const fresh = [];
+  let dropped = 0;
+  const progs = [];
   list.forEach(r => {
     const items = (r?.items || r?.exercises || []).map(x => {
       const it = Array.isArray(x) ? { id: x[0], sets: x[1], reps: x[2] } : (x || {});
@@ -3111,24 +3126,84 @@ async function importText(txt) {
       if (!t) { dropped++; return null }
       return { id: t.id, sets: clamp(parseInt(it.sets) || 3, 1, 10), reps: String(it.reps ?? '10').slice(0, 7) };
     }).filter(Boolean);
-    if (items.length) { const nr = { id: uid(), name: String(r.name || 'Program').slice(0, 40), items, ...(validIcon(r.icon) && r.icon !== 'auto' ? { icon: r.icon } : {}), ...(validColor(r.color) ? { color: r.color } : {}) }; S.routines.push(nr); fresh.push(nr); added++ }
+    if (items.length) progs.push({ id: uid(), name: String(r.name || 'Program').slice(0, 40), items, ...(validIcon(r.icon) && r.icon !== 'auto' ? { icon: r.icon } : {}), ...(validColor(r.color) ? { color: r.color } : {}) });
   });
-  if (!added) return toast('Tidak ada latihan yang dikenali', 'err');
-  let weekSet = false;
-  // An optional weekly plan: day names (senin … minggu, or English) to program names from the import.
-  if (o && !Array.isArray(o) && o.week && typeof o.week === 'object') {
-    const week = {};
-    Object.entries(o.week).forEach(([k, v]) => {
-      const key = String(k).trim().toLowerCase(), dow = DAY_ALIAS[key] ?? (/^d?[0-6]$/.test(key) ? +key.replace('d', '') : null);
-      if (dow == null) return;
-      const ids = [].concat(v || []).map(n => { const q = String(n).trim().toLowerCase(); return (fresh.find(r => r.name.toLowerCase() === q) || S.routines.find(r => r.name.toLowerCase() === q))?.id }).filter(Boolean);
-      if (ids.length) week['d' + dow] = ids;
-    });
-    const n = Object.keys(week).length;
-    if (n && await ask({ title: 'Pakai plan mingguan ini?', msg: `Import ini berisi jadwal untuk ${n} hari. Plan mingguanmu yang sekarang akan diganti.`, ok: 'Ganti plan', cancel: 'Program saja', tone: 'warn', icon: 'calendar' })) { S.week = week; weekSet = true }
-  }
-  save(); closeSheet(); go(weekSet ? 'plan' : 'plan/program');
-  toast(`${added} program ditambahkan${dropped ? ` · ${dropped} latihan tak dikenal dilewati` : ''}`);
+  if (!progs.length) return toast('Tidak ada latihan yang dikenali', 'err');
+  // An optional weekly plan: day names (senin … minggu, or English) to program names, matched when it is applied.
+  const week = {};
+  if (o && !Array.isArray(o) && o.week && typeof o.week === 'object') Object.entries(o.week).forEach(([k, v]) => {
+    const key = String(k).trim().toLowerCase(), dow = DAY_ALIAS[key] ?? (/^d?[0-6]$/.test(key) ? +key.replace('d', '') : null);
+    const names = [].concat(v || []).map(n => String(n).trim().toLowerCase()).filter(Boolean);
+    if (dow != null && names.length) week[dow] = names;
+  });
+  // A program that is already here (same name, same exercises) starts unticked; one that only shares the name is pointed out.
+  const key = r => r.items.map(i => `${i.id}:${i.sets}:${i.reps}`).join(',');
+  imp = { from: String(o?.from || '').slice(0, 40), dropped, week: Object.keys(week).length ? week : null, useWeek: true,
+    list: progs.map(r => { const twin = S.routines.find(x => (x.name || '').toLowerCase() === r.name.toLowerCase()), same = !!twin && key(twin) === key(r); return { r, on: !same, same, twin: !!twin && !same } }) };
+  impSheet();
+}
+// ---- what an import holds, shown first as program cards: the user ticks which go in, can look inside
+// each one, and decides whether its weekly plan replaces theirs.
+let imp = null;
+// the plan's days that point at a program going in now, or at one already here
+function impWeek() {
+  const on = imp.list.filter(c => c.on).map(c => c.r), out = {};
+  Object.entries(imp.week || {}).forEach(([d, names]) => {
+    const ids = names.map(q => (on.find(r => r.name.toLowerCase() === q) || S.routines.find(r => (r.name || '').toLowerCase() === q))?.id).filter(Boolean);
+    if (ids.length) out['d' + d] = ids;
+  });
+  return out;
+}
+const impDays = r => DOW.filter(d => (imp.week?.[d] || []).includes(r.name.toLowerCase())).map(d => DAYS[(d + 6) % 7]);
+function impCard(c, i) {
+  const r = c.r, ts = r.items.slice(0, 4).map(x => T[x.id]).filter(Boolean), days = impDays(r);
+  return `<article class="rcard glass imp${c.on ? ' on' : ''}" id="imp${i}">
+    <div class="rc-top"><div class="rc-id">${rIcon(r, 'lg')}<div><h3>${rName(r)}</h3><p class="muted">${r.items.length} latihan · ±${estMin(r.items)} menit</p></div></div>
+      <button class="imp-ck" data-a="impToggle" data-ix="${i}" aria-pressed="${c.on}" aria-label="Import ${rName(r)}"><i class="ck">${I('check')}</i></button></div>
+    ${days.length ? `<p class="days">${I('calendar')} ${days.join(' · ')}</p>` : ''}
+    ${c.same ? `<p class="imp-n">${I('check')} Sudah ada di programmu</p>` : c.twin ? `<p class="imp-n warn">${I('alert')} Nama sama dengan programmu, isinya beda</p>` : ''}
+    ${routineMuscles(r).length ? `<div class="tags">${routineMuscles(r).map(mTag).join('')}</div>` : ''}
+    <div class="rc-bot"><div class="stack">${ts.map(t => pic(t.y)).join('')}</div>
+      <button class="btn soft sm" data-a="impPrev" data-ix="${i}">Lihat isi</button></div>
+  </article>`;
+}
+function impWk() {
+  const days = Object.keys(impWeek()).length;
+  return sRow({ icon: 'calendar', c: '#14b8a6', title: `Pakai jadwal mingguan${days ? ` (${days} hari)` : ''}`, sub: days ? 'Plan mingguanmu yang sekarang akan diganti' : 'Tidak ada hari untuk program yang dipilih',
+    right: `<button class="sw" role="switch" aria-checked="${imp.useWeek && days > 0}" data-a="impWeekSw" aria-label="Pakai jadwal mingguan"${days ? '' : ' disabled'}></button>` });
+}
+const impBtn = () => { const n = imp.list.filter(c => c.on).length; return n ? `${I('download')} Import ${n} program` : 'Pilih program' };
+function impSheet() {
+  const n = imp.list.length;
+  sheet(`<h2 class="sh">Pilih program</h2>
+    <p class="scope" style="margin-top:-8px">${imp.from ? `Dari ${esc(imp.from)} · ` : ''}${n} program. Centang yang ingin diimport, ketuk <b>Lihat isi</b> untuk melihat latihannya.${imp.dropped ? ` ${imp.dropped} latihan tidak dikenali dan dilewati.` : ''}</p>
+    ${imp.list.map(impCard).join('')}
+    ${imp.week ? `<div class="sgroup" id="impWk">${impWk()}</div>` : ''}
+    <div class="sheet-foot"><button class="btn pri block" data-a="impGo" id="impBtn"${imp.list.some(c => c.on) ? '' : ' disabled'}>${impBtn()}</button></div>`);
+}
+const drawImp = i => {
+  const el = $('#imp' + i); if (el) el.outerHTML = impCard(imp.list[i], i);
+  if ($('#impWk')) $('#impWk').innerHTML = impWk();
+  const b = $('#impBtn'); b.innerHTML = impBtn(); b.disabled = !imp.list.some(c => c.on); fitThumbs();
+};
+// a program's exercises in the small popup over the sheet
+function impPreview(i) {
+  const c = imp.list[i], r = c.r;
+  const m = $('#vmodal');
+  m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
+    <div class="vm-h"><div class="imp-h">${rIcon(r)}<div><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></div></div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
+    ${routineMuscles(r).length ? `<div class="tags">${routineMuscles(r).map(mTag).join('')}</div>` : ''}
+    <div class="imp-rows">${r.items.map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${planText(it.id, it.sets, it.reps)}</small></div></div>` }).join('')}</div>
+    <div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn ${c.on ? 'soft' : 'pri'} sm" data-a="impPick" data-ix="${i}">${c.on ? `${I('x')} Jangan import` : `${I('check')} Import ini`}</button></div>
+  </div>`;
+  m.hidden = false; fitThumbs();
+}
+function impGo() {
+  const sel = imp?.list.filter(c => c.on); if (!sel?.length) return toast('Pilih minimal satu program', 'err');
+  const week = imp.useWeek ? impWeek() : {}, weekSet = Object.keys(week).length > 0;
+  sel.forEach(c => S.routines.push(c.r)); if (weekSet) S.week = week;
+  imp = null; save(); closeSheet(); go(weekSet ? 'plan' : 'plan/program');
+  toast(`${sel.length} program ditambahkan${weekSet ? ' · jadwal mingguan diganti' : ''}`);
 }
 function download(name, text) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -4005,11 +4080,9 @@ async function takePendingImport() {
   try {
     sessionStorage.removeItem(PENDING_IMPORT);
     let o; try { o = JSON.parse(txt) } catch { return toast('Link program tidak valid', 'err') }
-    const names = asList(o.routines).map(r => r && r.name).filter(Boolean);
-    if (!names.length) return toast('Link ini tidak berisi program', 'err');
-    const ok = await ask({ title: `Import ${names.length} program?`, tone: 'info', icon: 'download', ok: 'Import',
-      msg: `${o.from ? `Dari ${o.from}: ` : ''}${names.join(', ')}. Program ditambahkan ke akunmu; yang sudah ada tetap.` });
-    if (ok) await importText(txt);
+    if (!asList(o.routines).some(r => r && r.name)) return toast('Link ini tidak berisi program', 'err');
+    // the program cards to choose from are the confirmation
+    await importText(txt);
   } finally { importing = false }
 }
 
@@ -4398,6 +4471,11 @@ const A = {
   },
   import: openImport,
   doImport: () => importText($('#impTxt').value),
+  impToggle: el => { const i = +el.dataset.ix, c = imp?.list[i]; if (!c) return; c.on = !c.on; drawImp(i) },
+  impPrev: el => impPreview(+el.dataset.ix),
+  impPick: el => { const i = +el.dataset.ix, c = imp?.list[i]; if (!c) return; c.on = !c.on; closeVideo(); drawImp(i) },
+  impWeekSw: el => { imp.useWeek = !imp.useWeek; el.setAttribute('aria-checked', String(imp.useWeek)) },
+  impGo,
   exportBk: () => download(`why-backup-${dayKey(new Date())}.json`, JSON.stringify({ why_backup: 2, exported: new Date().toISOString(), data: { settings: S.settings, routines: S.routines, week: S.week, history: S.history, meals: S.meals, weights: S.weights } }, null, 1)),
   copyClaude,
   install,

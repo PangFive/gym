@@ -58,7 +58,11 @@ tersinkron di semua perangkat.
   dipilih lagi (juga di popup preview), jadi tidak ada latihan dobel.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
-- **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude.
+- **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude, atau dari link/file bagikan. Isinya tampil
+  dulu sebagai kartu program (seperti di Plan): centang yang mau diimport, **Lihat isi** membuka daftar latihannya.
+  Program yang sama persis (nama + isi) dengan punyamu tidak dicentang ("Sudah ada di programmu"); nama sama tapi
+  isi beda diberi peringatan. Jadwal mingguan dari import dipakai lewat sakelar, hanya untuk program yang dipilih
+  (atau program milikmu yang namanya sama).
 
 ### Workout
 - **Fokus set**: satu latihan terbuka, satu set aktif; kg (±2,5) dan reps (±1) lewat tombol −/+ (angka tetap bisa diketik), "Terakhir 50 kg × 10 · Pakai" dari sesi sebelumnya
