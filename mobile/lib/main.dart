@@ -27,6 +27,11 @@ const googleWebClientId =
 
 const appColor = Color(0xFFD6E8FB);
 
+/// The Huawei watch link, which MainActivity.kt will run on Wear Engine. The page
+/// sends the workout state (watchState() in public/index.html) and gets
+/// back what was tapped on the watch: {type: 'setDone'} or {type: 'skipRest'}.
+const watchChannel = MethodChannel('wegym/watch');
+
 /// Asks Android for the camera (see MainActivity.kt); true when allowed.
 Future<bool> cameraAllowed() async =>
     await const MethodChannel('wegym/camera').invokeMethod<bool>('request') ?? false;
@@ -96,6 +101,9 @@ class _WebShellState extends State<WebShell> {
         }
       });
     }
+    watchChannel.setMethodCallHandler((call) async {
+      if (call.method == 'event') await web.runJavaScript('watchEvent(${jsonEncode(call.arguments)})');
+    });
     await web.loadRequest(Uri.parse(home));
     setState(() => ready = true);
   }
@@ -114,12 +122,21 @@ class _WebShellState extends State<WebShell> {
         'saveFile' => await saveFile('${args[0]}', '${args[1]}'),
         'share' => await share(Map<String, dynamic>.from(args[0] as Map)),
         'wakeLock' => await WakelockPlus.toggle(enable: args[0] == true).then((_) => true),
+        'watch' => await toWatch(args[0]),
         _ => null,
       };
     } catch (e) {
       result = {'error': '$e'};
     }
     await web.runJavaScript('nativeReply(${m['id']}, ${jsonEncode(result)})');
+  }
+
+  Future<bool> toWatch(Object? state) async {
+    try {
+      return await watchChannel.invokeMethod<bool>('state', state) ?? false;
+    } on MissingPluginException {
+      return false; // no watch link in this build yet
+    }
   }
 
   Future<Map<String, String>> googleSignIn() async {

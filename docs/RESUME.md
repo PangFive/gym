@@ -159,6 +159,19 @@ tersinkron di semua perangkat.
   dari jaringan (maks 4 detik, tanpa cache HTTP); kalau lambat, salinan tersimpan dipakai dulu, versi baru
   tetap diunduh di belakang, lalu muncul tombol **Versi baru tersedia · Muat ulang**.
 
+### Aplikasi Android (`mobile/`)
+- APK Flutter yang membuka situs di WebView. Perubahan web langsung terlihat tanpa build ulang.
+- Halaman mengenali aplikasi dari user agent `WegymApp/` dan meminta lewat kanal `WegymNative` (`native()`):
+  login Google native (token diserahkan ke Firebase), bagikan, simpan ekspor, layar tetap menyala.
+- Tombol Kembali menutup popup teratas (`closeTop()`), baru pindah halaman.
+- Link luar (YouTube, AI Studio) terbuka di aplikasinya sendiri.
+- Login Google butuh SHA-1 kunci rilis terdaftar di aplikasi Android proyek Firebase why-gym.
+- Detak jantung lewat Web Bluetooth belum jalan di APK: WebView Android tidak punya Web Bluetooth.
+- **Jam Huawei GT 6 (disiapkan):**
+  - Halaman mengirim set berikutnya dan sisa istirahat (`watchState()`) setiap ada perubahan.
+  - Halaman menerima dari jam `setDone` / `skipRest` (`watchEvent()`).
+  - Penghubung ke jam (Wear Engine di `MainActivity.kt`) dan aplikasi jamnya menunggu akun Huawei Developer dan izin Wear Engine.
+
 ---
 
 ## 2. Isi repo
@@ -168,6 +181,7 @@ tersinkron di semua perangkat.
 | `public/index.html` | Seluruh aplikasi |
 | `public/sw.js` | Service worker (offline, ganti cache lama openGym) |
 | `public/manifest.json`, `public/icons/` | Manifest PWA dan ikon |
+| `mobile/` | Aplikasi Android (Flutter); cara build dan kunci rilis di `mobile/README.md` |
 | `database.rules.json` | Aturan keamanan Realtime Database |
 | `.github/workflows/pages.yml` | Deploy ke GitHub Pages |
 | `docs/RESUME.md` | Dokumen ini |
@@ -269,6 +283,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 11. Ganti latihan saat workout dengan rekomendasi Gemini (alasan: alat dipakai, rusak, sakit, variasi).
 12. Kategori Kardio: 5 alat bawaan, dicatat menit + kecepatan/incline atau level, kalori ACSM/MET.
 13. Gambar 3D untuk alat kardio (AI Figma), latar gradient lembut berwarna per alat.
+14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
 
 ## 8. Ide berikutnya
 

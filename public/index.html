@@ -1193,6 +1193,30 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
+// the Android app (mobile/) opens this page in a WebView, marks its user agent and answers through WegymNative
+const IN_APP = /WegymApp\//.test(navigator.userAgent) && !!window.WegymNative;
+const nativeWait = {}; let nativeId = 0;
+const native = (name, ...args) => new Promise(ok => { const id = ++nativeId; nativeWait[id] = ok; WegymNative.postMessage(JSON.stringify({ id, name, args })) });
+function nativeReply(id, value) { nativeWait[id]?.(value); delete nativeWait[id] }
+// tells the watch about a change once the current work is done (save() can run while the page loads)
+const watchSoon = () => { if (IN_APP) setTimeout(watchSync) };
+if (IN_APP) {
+  // the WebView has no Web Share or Screen Wake Lock, so the app does both
+  navigator.share = d => native('share', { title: d?.title || '', text: d?.text || '', url: d?.url || '' });
+  const held = new Set();
+  const release = s => {
+    if (s.released) return; s.released = true; held.delete(s);
+    if (!held.size) native('wakeLock', false);
+    s.dispatchEvent(new Event('release'));
+  };
+  const wakeLock = { request: async () => {
+    const s = new EventTarget(); s.type = 'screen'; s.released = false; s.release = async () => release(s);
+    held.add(s); await native('wakeLock', true); return s;
+  } };
+  Object.defineProperty(navigator, 'wakeLock', { value: wakeLock, configurable: true });
+  // like the real API, a lock ends when the page is hidden
+  document.addEventListener('visibilitychange', () => { if (document.hidden) [...held].forEach(release) });
+}
 // The machines and their tutorial videos live in Firebase (/app/tutorials), where admins replace
 // them by importing JSON. This copy of the gym's original list is only the fallback until that
 // has happened. id = tutorial id, t = title, m = the gym's own category, y = YouTube video id,
@@ -1500,7 +1524,7 @@ function snap(st) {
 const canonSynced = sy => sy && Object.fromEntries(Object.entries(sy).map(([k, v]) => [k, typeof v === 'string' ? (v && canon(JSON.parse(v))) : Object.fromEntries(Object.entries(v || {}).map(([id, x]) => [id, canon(JSON.parse(x))]))]));
 function cacheSave() { if (fb.user) try { localStorage.setItem(CACHE(fb.user.uid), JSON.stringify({ S, synced })) } catch {} }
 function cacheLoad(id) { try { const c = JSON.parse(localStorage.getItem(CACHE(id))); return c && c.S ? { S: normalize(c.S), synced: canonSynced(c.synced) || null } : null } catch { return null } }
-function save() { cacheSave(); clearTimeout(pushT); pushT = setTimeout(push, 400) }
+function save() { cacheSave(); clearTimeout(pushT); pushT = setTimeout(push, 400); watchSoon() }
 const userRef = (path = '') => fb.mod.ref(fb.db, `users/${fb.user.uid}${path ? '/' + path : ''}`);
 function pending() {
   if (!synced) return false;
@@ -2891,10 +2915,38 @@ function startRest(sec = S.settings.rest, ei = -1) {
   el.hidden = true; void el.offsetWidth; el.hidden = false;   // replay the pop-in
   document.body.classList.add('resting');
   restTimer = setInterval(drawRest, 200); drawRest();
+  watchSoon();
 }
 function stopRest() {
   if (rest) { cancelSound(); clearTimeout(rest.hideT) }
   rest = null; clearInterval(restTimer); $('#rest').hidden = true; document.body.classList.remove('resting');
+  watchSoon();
+}
+
+// The Huawei watch app gets the set to do and the rest left through the Android app, and can finish
+// that set or skip the rest. The watch counts the rest down itself from the seconds it is sent.
+function watchState() {
+  const a = S.active; if (!a) return { on: false };
+  const ei = openEx(), it = a.items[ei], fi = it ? nextSet(ei) : -1, s = it?.sets[fi];
+  return {
+    on: true, name: a.name, done: doneCount(), total: a.items.reduce((n, x) => n + x.sets.length, 0),
+    ex: it ? T[it.id].t : '', set: fi + 1, sets: it ? it.sets.length : 0, what: s ? setText(it.id, s) : '',
+    rest: rest && !rest.over ? Math.ceil((rest.end - Date.now()) / 1000) : 0,
+  };
+}
+const nextSet = ei => { const fi = focusSet(ei), sets = S.active.items[ei].sets; return sets[fi] && !sets[fi].done ? fi : sets.findIndex(s => !s.done) };
+let watchSent = '';
+function watchSync() {
+  if (!IN_APP) return;
+  const st = JSON.stringify(watchState()); if (st === watchSent) return;
+  watchSent = st; native('watch', JSON.parse(st));
+}
+function watchEvent(e) {
+  if (e?.type === 'setDone' && S.active) {
+    const ei = openEx(), fi = ei < 0 ? -1 : nextSet(ei);
+    if (fi >= 0) A.setDone({ dataset: { ex: ei, ix: fi } });
+  } else if (e?.type === 'skipRest') stopRest();
+  watchSync();
 }
 function restNext() {
   if (!S.active) return '';
@@ -4337,28 +4389,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.addEventListener('message', e => { if (e.data?.type === 'page-updated') $('#upd').hidden = false });
 }
 let installEvt = null;
-// the Android app (mobile/) opens this page in a WebView, marks its user agent and answers through WegymNative
-const IN_APP = /WegymApp\//.test(navigator.userAgent) && !!window.WegymNative;
-const nativeWait = {}; let nativeId = 0;
-const native = (name, ...args) => new Promise(ok => { const id = ++nativeId; nativeWait[id] = ok; WegymNative.postMessage(JSON.stringify({ id, name, args })) });
-function nativeReply(id, value) { nativeWait[id]?.(value); delete nativeWait[id] }
-if (IN_APP) {
-  // the WebView has no Web Share or Screen Wake Lock, so the app does both
-  navigator.share = d => native('share', { title: d?.title || '', text: d?.text || '', url: d?.url || '' });
-  const held = new Set();
-  const release = s => {
-    if (s.released) return; s.released = true; held.delete(s);
-    if (!held.size) native('wakeLock', false);
-    s.dispatchEvent(new Event('release'));
-  };
-  const wakeLock = { request: async () => {
-    const s = new EventTarget(); s.type = 'screen'; s.released = false; s.release = async () => release(s);
-    held.add(s); await native('wakeLock', true); return s;
-  } };
-  Object.defineProperty(navigator, 'wakeLock', { value: wakeLock, configurable: true });
-  // like the real API, a lock ends when the page is hidden
-  document.addEventListener('visibilitychange', () => { if (document.hidden) [...held].forEach(release) });
-}
 const standalone = () => IN_APP || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const INSTALL_HIDE = 'why_install_hidden';
