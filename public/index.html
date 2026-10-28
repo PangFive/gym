@@ -505,16 +505,22 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .edhead .ricon{background:#fff;box-shadow:0 8px 18px -12px color-mix(in srgb,var(--c) 70%,black)}
 .edhead .eh-field{border-color:color-mix(in srgb,var(--c) 22%,transparent)}
 .edhead .eh-field:focus-within{border-color:var(--c)}
-.pmap{padding:14px 12px 12px;margin-bottom:14px}
-.pm-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0 4px 8px}
-.pm-h h3{margin:0;font-size:15px;font-weight:800}
-.pm-h small{font-size:12px;font-weight:600;color:var(--muted)}
-.pmap .bm-v{max-height:200px}
-.pm-k{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.pm-c{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:#e8f0fd;color:#33425c}
-.pm-c b{font-weight:800;margin-right:5px}
+.pm-open{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin-bottom:14px;padding:10px 14px 10px 10px;border-radius:20px;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.pm-open:active{transform:scale(.99)}
+.pm-ic{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:13px;background:#e8f0fd;color:var(--acc)}
+.pm-ic svg{width:20px;height:20px}
+.pm-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pm-t small{font-size:12px;font-weight:600;color:var(--muted)}
+.pm-t b{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm-open>svg{width:18px;height:18px;flex:none;color:var(--muted)}
+.pm-map{background:#f7f9fc;border-radius:16px;padding:10px 6px 6px}
+.pm-map .bm-v{max-height:210px}
+.pm-k{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.pm-c{display:inline-flex;gap:6px;font-size:13px;font-weight:600;padding:6px 11px;border-radius:999px;background:#e8f0fd;color:#33425c}
+.pm-c b{font-weight:700;opacity:.8}
 .pm-c.l4{background:var(--acc);color:#fff} .pm-c.l3{background:#6fa2f5;color:#fff} .pm-c.l2{background:#a2c2f8;color:#14233d}
-.pm-note{margin:10px 4px 0;font-size:12px;line-height:1.45;color:var(--muted)}
+.pm-note{margin:12px 2px 0;font-size:13px;line-height:1.5;color:var(--muted)}
+.pm-note b{display:block;font-size:12px;color:var(--ink);margin-bottom:2px}
 .edhead .eh-field:focus-within svg.i,.edhead .eh-badge,.edhead .eh-link b{color:color-mix(in srgb,var(--c) 85%,black)}
 .eh-ic{position:relative;flex:none;border:0;background:transparent;padding:0;border-radius:22px}
 .eh-badge{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 4px 10px -4px rgba(24,32,47,.35)}
@@ -2012,26 +2018,38 @@ function vEdit(id) {
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
 }
 
-// The muscles a program trains, as sets: a set counts fully for a machine's main muscles and half for its
-// supporting ones. Darker on the map = more sets; the muscles it leaves out are named below.
+// The muscles a program trains: sets for each machine's main muscles, and the muscles it only supports.
+// On the map a supporting muscle weighs half a set, so a muscle that is only helped stays light.
 function programLoad(items) {
-  const m = {};
+  const main = {}, help = {};
   items.forEach(it => {
     const t = T[it.id]; if (!t) return;
     const n = +it.sets || 1, [p, s] = musOf(t).map(muscleList);
-    p.forEach(k => { m[k] = (m[k] || 0) + n });
-    s.forEach(k => { if (!p.includes(k)) m[k] = (m[k] || 0) + n / 2 });
+    p.forEach(k => { main[k] = (main[k] || 0) + n });
+    s.forEach(k => { if (!p.includes(k)) help[k] = (help[k] || 0) + n });
   });
-  return m;
+  return { main, help };
 }
+// a row under the program's name; the map itself opens in a popup
 function programMap(r) {
-  const m = programLoad(r.items), ks = Object.keys(m).sort((a, b) => m[b] - m[a]);
+  const { main } = programLoad(r.items), ks = Object.keys(main).sort((a, b) => main[b] - main[a]);
   if (!ks.length) return '';
-  const top = m[ks[0]], lv = k => m[k] ? Math.max(1, Math.ceil(m[k] / top * 4)) : 0, none = MUSCLES.filter(x => !m[x.k]);
-  return `<section class="glass card pmap"><div class="pm-h"><h3>Otot yang dilatih</h3><small>makin gelap, makin banyak set</small></div>
-    ${bodyMap({ level: lv })}
-    <div class="pm-k">${ks.map(k => `<span class="pm-c l${lv(k)}"><b>${MI[k].n}</b>${fmt1(m[k])} set</span>`).join('')}</div>
-    <p class="pm-note">Otot pendukung dihitung ½ set.${none.length ? ` Belum kena: ${esc(none.map(x => x.n).join(', '))}.` : ''}</p></section>`;
+  return `<button class="glass pm-open" data-a="musclePop" data-id="${r.id}">
+    <span class="pm-ic">${I('body')}</span><span class="pm-t"><small>Otot</small><b>${esc(ks.slice(0, 3).map(k => MI[k].n).join(', '))}${ks.length > 3 ? ` +${ks.length - 3}` : ''}</b></span>${I('chev')}</button>`;
+}
+function musclePop(r) {
+  const { main, help } = programLoad(r.items), w = k => (main[k] || 0) + (help[k] || 0) / 2;
+  const ks = Object.keys(main).sort((a, b) => main[b] - main[a]), hs = Object.keys(help).filter(k => !main[k]).sort((a, b) => help[b] - help[a]);
+  const top = Math.max(...MUSCLES.map(m => w(m.k))), lv = k => w(k) ? Math.max(1, Math.ceil(w(k) / top * 4)) : 0;
+  const none = MUSCLES.filter(m => !w(m.k)).map(m => m.n), sets = r.items.reduce((a, it) => a + (+it.sets || 0), 0);
+  const m = $('#vmodal');
+  m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm" role="dialog" aria-label="Otot ${rName(r)}">
+    <div class="vm-h"><div><b>${rName(r)}</b><small>${r.items.length} latihan · ${sets} set</small></div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
+    <div class="pm-map">${bodyMap({ level: lv })}</div>
+    <div class="pm-k">${ks.map(k => `<span class="pm-c l${lv(k)}">${MI[k].n}<b>${main[k]} set</b></span>`).join('')}${hs.map(k => `<span class="pm-c l${lv(k)}">${MI[k].n}<b>pendukung</b></span>`).join('')}</div>
+    ${none.length ? `<p class="pm-note"><b>Belum dilatih</b>${esc(none.join(', '))}</p>` : ''}
+    <div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button></div></div>`;
+  m.hidden = false;
 }
 
 function prevFor(id) { for (const h of S.history) { const it = h.items.find(i => i.id === id); if (it) return it.sets } return null }
@@ -4413,6 +4431,7 @@ const A = {
   swUse: el => swapTo(+el.dataset.id),
   swScan: swapScan,
   vClose: closeVideo,
+  musclePop: el => { const r = findR(el.dataset.id); if (r) musclePop(r) },
   pkAdd: el => {
     const id = +el.dataset.id; if (pickHave().has(id)) return closeVideo();
     ui.pick.sel.add(id); closeVideo();
