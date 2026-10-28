@@ -120,9 +120,10 @@ tersinkron di semua perangkat.
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
 ### Kalori (AI Gemini)
-- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol Di halaman Kalori target harian tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
+- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
-  rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan.
+  rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan. Di halaman Kalori target harian
+  tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
 - Setelah foto dipilih ada langkah **Keterangan (opsional)**: porsi, cara masak, atau yang tidak terlihat
   di foto; dikirim bersama foto dan diutamakan AI bila berbeda dengan tebakannya. **Ganti foto** memilih ulang.
 - Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** dengan API key milik
