@@ -2415,7 +2415,7 @@ const pkAiAsk = (label, icon = 'sparkles') => `<div class="pkai-q"><textarea id=
 function pickAiHtml() {
   const a = ui.pick?.ai, ms = ui.pick?.ms.size ? [...ui.pick.ms].map(k => MI[k].n).join(', ') : '';
   if (!a) return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
-    <small class="pkai-for">${ms ? `Untuk otot: ${esc(ms)}` : 'Pilih otot di peta, atau biarkan Gemini melengkapi programmu.'}</small>${pkAiAsk('Minta rekomendasi')}</div>`;
+    <small class="pkai-for">${ms ? `Untuk otot: ${esc(ms)}` : 'Pilih otot di peta atau tulis permintaanmu, mis. latihan perut. Kosongkan untuk melengkapi programmu.'}</small>${pkAiAsk('Minta rekomendasi')}</div>`;
   if (a.busy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang memilih latihan…</span></div>`;
   if (a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pkAi">${I('refresh')} Coba lagi</button></div>`;
   const all = a.items.every(it => ui.pick.sel.has(it.id));
@@ -2431,22 +2431,36 @@ async function askExercises() {
   const p = ui.pick;
   if (!aiConf().key) { p.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return $('#pkAi').innerHTML = pickAiHtml() }
   const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
-  const prompt = `Kamu pelatih gym. Pilih 4 sampai 6 latihan dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
+  // A request that names muscles ("latihan perut hari ini") counts like muscles picked on the map: the gym may
+  // have only one machine for them, and then one machine is the answer, not a balanced program around it.
+  const q = (p.aiQ || '').trim(), want = [...p.ms];
+  const prompt = `Kamu pelatih gym. Pilih latihan dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
 ${r ? `Program: "${r.name}"` : 'Workout yang sedang berjalan'}. Sudah berisi: ${have.length ? have.map(id => T[id]?.t).filter(Boolean).join(', ') : 'belum ada'}.
-${p.ms.size ? `Otot yang ingin dilatih: ${[...p.ms].map(k => MI[k].n).join(', ')}.` : 'Lengkapi program agar otot yang dilatih seimbang.'}
+${q ? `PERMINTAAN PENGGUNA (paling penting, ikuti selama aman): ${q}
+` : ''}${want.length ? `Otot yang ingin dilatih: ${mNames(want)}.` : q ? 'Kalau permintaan menyebut otot atau bagian tubuh, latih hanya otot itu. Kalau tidak, lengkapi program agar otot yang dilatih seimbang.' : 'Lengkapi program agar otot yang dilatih seimbang.'}
 ${aiWho()}
-${p.aiQ && p.aiQ.trim() ? `Permintaan pengguna (utamakan ini selama masih aman dan alatnya ada di daftar): ${p.aiQ.trim()}
-` : ''}Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
+${want.length || q ? 'Pilih paling banyak 6 latihan yang otot utama atau pendukungnya adalah otot yang diminta. Kalau alat untuk otot itu di daftar hanya sedikit, pilih yang ada saja (boleh 1 atau 2) dan sebutkan di summary. Jangan menambah latihan untuk otot lain yang tidak diminta.' : 'Pilih 4 sampai 6 latihan.'}
+Jangan pilih latihan yang sudah ada di program. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
 DAFTAR ALAT (id|nama|otot):
 ${aiMachines()}
-Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
+KODE OTOT: ${MUSCLES.map(m => `${m.k}=${m.n}`).join(', ')}
+Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
   try {
     const t = await gemini([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
-    const seen = new Set(have), items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
-      .filter(x => T[x.id] && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
-    if (!items.length) throw new Error('Gemini tidak menemukan latihan yang cocok. Coba pilih otot lain.');
-    p.ai = { items, summary: String(j.summary || '').slice(0, 200) };
+    // the muscles asked for, from the map and as Gemini read the request; a machine for none of them is dropped
+    const aim = new Set([...want, ...(q ? muscleList(j.muscles) : [])]), hits = id => !aim.size || musOf(T[id]).flatMap(muscleList).some(k => aim.has(k));
+    const seen = new Set(have), off = asList(j.items).some(x => T[+x.id] && !hits(+x.id));
+    const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
+      .filter(x => T[x.id] && hits(x.id) && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
+    const ms = aim.size && mNames([...aim]);
+    if (!items.length) {
+      const all = TUTORIALS.filter(t => hits(t.id));
+      throw new Error(!ms ? 'Gemini tidak menemukan latihan yang cocok. Coba pilih otot lain.' : !all.length ? `Di gym belum ada alat untuk ${ms}.`
+        : all.every(t => seen.has(t.id)) ? `Semua alat untuk ${ms} sudah ada di ${pickWhere()}.` : 'Gemini tidak menemukan latihan yang cocok. Coba lagi.');
+    }
+    // Gemini's sentence described the machines it chose; once some are dropped it no longer fits
+    p.ai = { items, summary: off ? `Hanya latihan untuk ${ms}. Alat untuk otot lain tidak ditampilkan.` : String(j.summary || '').slice(0, 200) };
     items.forEach(x => p.rec.set(x.id, x));
   } catch (x) { p.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
   if ($('#pkAi')) $('#pkAi').innerHTML = pickAiHtml();
