@@ -3277,6 +3277,7 @@ function impGo() {
   toast(`${sel.length} program ditambahkan${weekSet ? ' · jadwal mingguan diganti' : ''}`);
 }
 function download(name, text) {
+  if (IN_APP) return native('saveFile', name, text);
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
   const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -4277,7 +4278,16 @@ async function claimAdmin(btn) {
 
 async function signInGoogle() {
   if (!fb.mod) return fieldErr(null, 'Masih menyiapkan koneksi. Coba lagi sebentar.');
-  const { GoogleAuthProvider, signInWithPopup, signInWithRedirect } = fb.mod;
+  const { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signInWithCredential } = fb.mod;
+  // Google blocks its sign-in page inside a WebView, so the Android app signs in natively and hands over the token
+  if (IN_APP) {
+    try {
+      const r = await native('googleSignIn');
+      if (r?.idToken) return await signInWithCredential(fb.auth, GoogleAuthProvider.credential(r.idToken));
+      if (r?.error) fieldErr(null, r.error);
+    } catch (e) { authFail(e) }
+    return;
+  }
   const p = new GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
   try { await signInWithPopup(fb.auth, p) }
   catch (e) {
@@ -4327,7 +4337,29 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.addEventListener('message', e => { if (e.data?.type === 'page-updated') $('#upd').hidden = false });
 }
 let installEvt = null;
-const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+// the Android app (mobile/) opens this page in a WebView, marks its user agent and answers through WegymNative
+const IN_APP = /WegymApp\//.test(navigator.userAgent) && !!window.WegymNative;
+const nativeWait = {}; let nativeId = 0;
+const native = (name, ...args) => new Promise(ok => { const id = ++nativeId; nativeWait[id] = ok; WegymNative.postMessage(JSON.stringify({ id, name, args })) });
+function nativeReply(id, value) { nativeWait[id]?.(value); delete nativeWait[id] }
+if (IN_APP) {
+  // the WebView has no Web Share or Screen Wake Lock, so the app does both
+  navigator.share = d => native('share', { title: d?.title || '', text: d?.text || '', url: d?.url || '' });
+  const held = new Set();
+  const release = s => {
+    if (s.released) return; s.released = true; held.delete(s);
+    if (!held.size) native('wakeLock', false);
+    s.dispatchEvent(new Event('release'));
+  };
+  const wakeLock = { request: async () => {
+    const s = new EventTarget(); s.type = 'screen'; s.released = false; s.release = async () => release(s);
+    held.add(s); await native('wakeLock', true); return s;
+  } };
+  Object.defineProperty(navigator, 'wakeLock', { value: wakeLock, configurable: true });
+  // like the real API, a lock ends when the page is hidden
+  document.addEventListener('visibilitychange', () => { if (document.hidden) [...held].forEach(release) });
+}
+const standalone = () => IN_APP || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const INSTALL_HIDE = 'why_install_hidden';
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (phase === 'app' && route().page === 'home') softRender() });
@@ -4883,8 +4915,13 @@ document.addEventListener('change', e => {
   if (e.target.id !== 'impFile' || !e.target.files[0]) return;
   e.target.files[0].text().then(importText);
 });
+// closes the topmost dialog, popup or sheet; the Android app calls it for the back button
+function closeTop() {
+  if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet(); else return false;
+  return true;
+}
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet() }
+  if (e.key === 'Escape') closeTop();
   // The muscles on the body map are SVG paths, which do not click on Enter/Space by themselves.
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A.muscle(e.target) }
 });
