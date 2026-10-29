@@ -2042,30 +2042,32 @@ function vEdit(id) {
     <div class="row2 mt"><button class="btn danger" data-a="delRoutine" data-id="${r.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="start" data-id="${r.id}">${I('playf')} Mulai</button></div>`;
 }
 
-// The muscles a program trains: sets for each machine's main muscles, and the muscles it only supports.
-// On the map a supporting muscle weighs half a set, so a muscle that is only helped stays light.
+// a program holds a number of sets, a running workout the sets themselves
+const setCount = it => Array.isArray(it.sets) ? it.sets.length : +it.sets || 0;
+// The muscles a program (or the running workout) trains: sets for each machine's main muscles, and the
+// muscles it only supports. On the map a supporting muscle weighs half a set, so a muscle that is only helped stays light.
 function programLoad(items) {
   const main = {}, help = {};
   items.forEach(it => {
     const t = T[it.id]; if (!t) return;
-    const n = +it.sets || 1, [p, s] = musOf(t).map(muscleList);
+    const n = setCount(it) || 1, [p, s] = musOf(t).map(muscleList);
     p.forEach(k => { main[k] = (main[k] || 0) + n });
     s.forEach(k => { if (!p.includes(k)) help[k] = (help[k] || 0) + n });
   });
   return { main, help };
 }
-// a row under the program's name; the map itself opens in a popup
-function programMap(r) {
+// a row under the program's name (and above a running workout's exercises); the map itself opens in a popup
+function programMap(r, id = r.id) {
   const { main } = programLoad(r.items), ks = Object.keys(main).sort((a, b) => main[b] - main[a]);
   if (!ks.length) return '';
-  return `<button class="glass pm-open" data-a="musclePop" data-id="${r.id}">
+  return `<button class="glass pm-open" data-a="musclePop" data-id="${id}">
     <span class="pm-ic">${I('body')}</span><span class="pm-t"><small>Otot</small><b>${esc(ks.slice(0, 3).map(k => MI[k].n).join(', '))}${ks.length > 3 ? ` +${ks.length - 3}` : ''}</b></span>${I('chev')}</button>`;
 }
 function musclePop(r) {
   const { main, help } = programLoad(r.items), w = k => (main[k] || 0) + (help[k] || 0) / 2;
   const ks = Object.keys(main).sort((a, b) => main[b] - main[a]), hs = Object.keys(help).filter(k => !main[k]).sort((a, b) => help[b] - help[a]);
   const top = Math.max(...MUSCLES.map(m => w(m.k))), lv = k => w(k) ? Math.max(1, Math.ceil(w(k) / top * 4)) : 0;
-  const none = MUSCLES.filter(m => !w(m.k)).map(m => m.n), sets = r.items.reduce((a, it) => a + (+it.sets || 0), 0);
+  const none = MUSCLES.filter(m => !w(m.k)).map(m => m.n), sets = r.items.reduce((a, it) => a + setCount(it), 0);
   const m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm" role="dialog" aria-label="Otot ${rName(r)}">
     <div class="vm-h"><div><b>${rName(r)}</b><small>${r.items.length} latihan · ${sets} set</small></div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
@@ -2192,6 +2194,7 @@ function vWorkout() {
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
     <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div></div>
+    ${programMap(a, 'active')}
     ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
     ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan atau scan alatnya.</div>'}
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
@@ -4493,7 +4496,7 @@ const A = {
   swUse: el => swapTo(+el.dataset.id),
   swScan: swapScan,
   vClose: closeVideo,
-  musclePop: el => { const r = findR(el.dataset.id); if (r) musclePop(r) },
+  musclePop: el => { const r = el.dataset.id === 'active' ? S.active : findR(el.dataset.id); if (r) musclePop(r) },
   pkAdd: el => {
     const id = +el.dataset.id; if (pickHave().has(id)) return closeVideo();
     ui.pick.sel.add(id); closeVideo();
