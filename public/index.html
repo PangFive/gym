@@ -569,6 +569,12 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wsum{display:grid;grid-template-columns:repeat(3,1fr);padding:14px 8px;margin-bottom:14px;text-align:center}
 .wsum small{display:block;color:var(--muted);font-size:12px;font-weight:600}
 .wsum b{font-size:19px;font-weight:800}
+.mus-pill{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:38px;padding:6px 10px 6px 12px;border:0;border-radius:999px;background:var(--acc-soft);color:var(--acc);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.mus-pill:active{transform:scale(.97)}
+.mus-pill span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mus-pill svg{flex:none;width:15px;height:15px}
+.wsum .mus-pill{grid-column:1/-1;justify-self:center;margin-top:12px}
+.h-mus{margin:-4px 0 14px}
 /* the heart rate cell: tap to link a watch, then the live beat, coloured by zone */
 .wsum .ws-hr{display:block;width:100%;min-width:0;margin:-6px 0;padding:6px 4px;border:0;border-radius:14px;background:none;color:inherit;font:inherit}
 .wsum .ws-hr:active{background:rgba(24,32,47,.05)}
@@ -2056,13 +2062,19 @@ function programLoad(items) {
   });
   return { main, help };
 }
-// a row under the program's name (and above a running workout's exercises); the map itself opens in a popup
-function programMap(r, id = r.id) {
-  const { main } = programLoad(r.items), ks = Object.keys(main).sort((a, b) => main[b] - main[a]);
-  if (!ks.length) return '';
-  return `<button class="glass pm-open" data-a="musclePop" data-id="${id}">
-    <span class="pm-ic">${I('body')}</span><span class="pm-t"><small>Otot</small><b>${esc(ks.slice(0, 3).map(k => MI[k].n).join(', '))}${ks.length > 3 ? ` +${ks.length - 3}` : ''}</b></span>${I('chev')}</button>`;
+// the three muscles with the most sets, and how many more there are
+function musNames(items) {
+  const { main } = programLoad(items), ks = Object.keys(main).sort((a, b) => main[b] - main[a]);
+  return ks.length ? ks.slice(0, 3).map(k => MI[k].n).join(', ') + (ks.length > 3 ? ` +${ks.length - 3}` : '') : '';
 }
+// a row under the program's name; the map itself opens in a popup
+function programMap(r) {
+  const names = musNames(r.items); if (!names) return '';
+  return `<button class="glass pm-open" data-a="musclePop" data-id="${r.id}">
+    <span class="pm-ic">${I('body')}</span><span class="pm-t"><small>Otot</small><b>${esc(names)}</b></span>${I('chev')}</button>`;
+}
+// the same popup from a small button, in a running workout ('active') and a past one ('h:<id>')
+const musPill = (items, id) => { const names = musNames(items); return names ? `<button class="mus-pill" data-a="musclePop" data-id="${id}">${I('body')}<span>Otot: ${esc(names)}</span>${I('chev')}</button>` : '' };
 function musclePop(r) {
   const { main, help } = programLoad(r.items), w = k => (main[k] || 0) + (help[k] || 0) / 2;
   const ks = Object.keys(main).sort((a, b) => main[b] - main[a]), hs = Object.keys(help).filter(k => !main[k]).sort((a, b) => help[b] - help[a]);
@@ -2193,8 +2205,7 @@ function vWorkout() {
       <div class="wt"><b>${esc(a.name)}</b><small id="elapsed">0:00</small></div>
       <button class="btn pri sm" data-a="finish">Selesai</button>
       <div class="wprog" role="progressbar" aria-label="Set selesai" aria-valuemin="0" aria-valuemax="100"><i id="wsBar" style="width:${setPct()}%"></i></div></header>
-    <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div></div>
-    ${programMap(a, 'active')}
+    <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div>${musPill(a.items, 'active')}</div>
     ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
     ${wxCards() || '<div class="empty glass">Belum ada latihan. Tambahkan atau scan alatnya.</div>'}
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
@@ -2751,6 +2762,7 @@ function openHist(id) {
   sheet(`<h2 class="sh">${esc(h.name)}</h2>
     <p class="muted" style="margin:-8px 2px 14px;font-size:14px">${d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
     <div class="stats3"><div><small>Durasi</small><b>${h.dur} mnt</b></div><div><small>Set</small><b>${h.sets}</b></div><div><small>Volume</small><b>${fmt(h.vol)} kg</b></div></div>
+    <div class="h-mus">${musPill(h.items, 'h:' + h.id)}</div>
     ${burnLine(h, true)}${hrBlock(h)}
     ${h.items.filter(it => T[it.id]).map(it => { const t = T[it.id]; return `<div class="hx">${pic(t.y)}<div><b>${esc(t.t)}</b><small>${it.sets.map(s => setText(it.id, s)).join(' · ')}</small></div></div>` }).join('')}
     <div class="row2 mt"><button class="btn danger" data-a="histDel" data-id="${h.id}">${I('trash')} Hapus</button><button class="btn pri" data-a="histAgain" data-id="${h.id}">${I('playf')} Ulangi</button></div>`);
@@ -4496,7 +4508,10 @@ const A = {
   swUse: el => swapTo(+el.dataset.id),
   swScan: swapScan,
   vClose: closeVideo,
-  musclePop: el => { const r = el.dataset.id === 'active' ? S.active : findR(el.dataset.id); if (r) musclePop(r) },
+  musclePop: el => {
+    const id = el.dataset.id, r = id === 'active' ? S.active : id.startsWith('h:') ? S.history.find(h => String(h.id) === id.slice(2)) : findR(id);
+    if (r) musclePop(r);
+  },
   pkAdd: el => {
     const id = +el.dataset.id; if (pickHave().has(id)) return closeVideo();
     ui.pick.sel.add(id); closeVideo();

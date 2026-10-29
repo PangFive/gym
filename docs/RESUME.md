@@ -64,8 +64,8 @@ tersinkron di semua perangkat.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Otot** di Edit Program: satu baris di bawah nama program (3 otot utama terbanyak). Diketuk membuka popup
   peta tubuh (warna makin tua = makin banyak set; otot pendukung berbobot ½), set per otot utama, otot yang hanya
-  jadi pendukung, dan otot yang belum dilatih. Baris yang sama ada di workout berjalan, di atas daftar latihan,
-  dan ikut berubah saat latihan atau set ditambah.
+  jadi pendukung, dan otot yang belum dilatih. Popup yang sama dibuka dari tombol kecil **Otot: …** di kartu
+  Set selesai · Volume · Detak jantung saat workout berjalan, dan di detail riwayat workout (Statistik).
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude, atau dari link/file bagikan. Isinya tampil
   dulu sebagai kartu program (seperti di Plan): centang yang mau diimport, **Lihat isi** membuka daftar latihannya.
