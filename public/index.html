@@ -1104,6 +1104,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .wspark .a{fill:rgba(18,163,114,.1)}.wspark .l{fill:none;stroke:#12a372;stroke-width:2;vector-effect:non-scaling-stroke}.wspark circle{fill:#0b8a5e}
 .wc-note{margin:10px 0 0;font-size:13px;color:var(--muted);font-weight:600}
 .pseg{margin:0;background:rgba(24,32,47,.05)}
+.aiseg{margin:0 0 14px}
 .pf .unit{position:relative}
 .pf .unit em{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-size:14px;font-weight:700;color:var(--muted);pointer-events:none}
 .pf .unit input{padding-right:40px}
@@ -2488,32 +2489,32 @@ function openMachinePop(id) {
 }
 function closeVideo() { const m = $('#vmodal'); if (m.hidden) return; m.hidden = true; m.innerHTML = '' }
 
-// The user and the gym's machines as the Gemini prompts describe them.
+// The user and the gym's machines as the AI prompts describe them.
 function aiWho() {
   const st = S.settings, e = energy(), age = st.birth ? new Date().getFullYear() - st.birth : 0;
   const goal = !e ? 'tidak diketahui' : !e.dir ? 'mempertahankan berat' : e.dir < 0 ? 'turun berat badan' : 'naik berat badan / tambah massa otot';
   return `Pengguna: ${st.sex ? (st.sex === 'male' ? 'pria' : 'wanita') : '-'}${age ? `, ${age} tahun` : ''}${nowWeight() ? `, ${nowWeight()} kg` : ''}; tujuan: ${goal}.`;
 }
 const mNames = ks => ks.map(k => MI[k].n).join(', ');
-// the map's muscle keys, so Gemini can say which muscles a written request asks for
+// the map's muscle keys, so the AI can say which muscles a written request asks for
 const aiMuscleCodes = () => `KODE OTOT: ${MUSCLES.map(m => `${m.k}=${m.n}`).join(', ')}`;
 // trains any of these muscles, main or supporting (cardio by the muscles it works); no muscles: anything does
 const trainsAny = (t, aim) => !aim.size || musOf(t).flatMap(muscleList).some(k => aim.has(k));
 const aiMachines = (skip = new Set(), list = TUTORIALS) => list.filter(t => !skip.has(t.id)).map(t => { const [p, s] = musOf(t); return `${t.id}|${t.t}|utama: ${mNames(p)}|pendukung: ${mNames(s) || '-'}` }).join('\n');
 
-// ---- exercise suggestions from Gemini: it sees the program (or workout) so far, the muscles chosen
+// ---- exercise suggestions from the AI: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
-// The user's own request for Gemini ("fokus dada atas, tanpa barbel"), kept while the sheet is open.
+// The user's own request for the AI ("fokus dada atas, tanpa barbel"), kept while the sheet is open.
 const pkAiAsk = (label, icon = 'sparkles') => `<div class="pkai-q"><textarea id="pkAiQ" data-i="pkAiQ" rows="2" maxlength="200" placeholder="Tambah permintaan (opsional), mis. fokus dada atas, maksimal 45 menit, tanpa barbel">${esc(ui.pick.aiQ || '')}</textarea>
     <button class="aibtn pri" data-a="pkAi">${I(icon)} ${label}</button></div>`;
 function pickAiHtml() {
   const a = ui.pick?.ai, ms = ui.pick?.ms.size ? [...ui.pick.ms].map(k => MI[k].n).join(', ') : '';
-  if (!a) return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
+  if (!a) return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi ${aiName()}</b></div>
     <small class="pkai-for">${ms ? `Untuk otot: ${esc(ms)}` : 'Pilih otot di peta atau tulis permintaanmu, mis. latihan perut. Kosongkan untuk melengkapi programmu.'}</small>${pkAiAsk('Minta rekomendasi')}</div>`;
-  if (a.busy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang memilih latihan…</span></div>`;
+  if (a.busy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang memilih latihan…</span></div>`;
   if (a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pkAi">${I('refresh')} Coba lagi</button></div>`;
   const all = a.items.every(it => ui.pick.sel.has(it.id));
-  return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>
+  return `<div class="aiadv ok pkai"><div class="aa-h">${I('sparkles')}<b>Rekomendasi ${aiName()}</b></div>
     ${a.summary ? `<p>${esc(a.summary)}</p>` : ''}
     ${a.items.map(it => { const t = T[it.id], on = ui.pick.sel.has(it.id); return `<div class="pkai-row${on ? ' on' : ''}">
       <button class="pk-v" data-a="pkPrev" data-id="${it.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
@@ -2523,7 +2524,7 @@ function pickAiHtml() {
 }
 async function askExercises() {
   const p = ui.pick;
-  if (!aiConf().key) { p.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return $('#pkAi').innerHTML = pickAiHtml() }
+  if (!aiConf().key) { p.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau Claude di Pengaturan.' }; return $('#pkAi').innerHTML = pickAiHtml() }
   const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
   // A request that names muscles ("latihan perut hari ini") counts like muscles picked on the map: the gym may
   // have only one machine for them, and then one machine is the answer, not a balanced program around it.
@@ -2541,8 +2542,8 @@ ${aiMuscleCodes()}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
   try {
-    const t = await gemini([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
-    // the muscles asked for, from the map and as Gemini read the request; a machine for none of them is dropped
+    const t = await askAi([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
+    // the muscles asked for, from the map and as the AI read the request; a machine for none of them is dropped
     const aim = new Set([...want, ...(q ? muscleList(j.muscles) : [])]), hits = id => trainsAny(T[id], aim);
     const seen = new Set(have), off = asList(j.items).some(x => T[+x.id] && !hits(+x.id));
     const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
@@ -2550,18 +2551,18 @@ Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode ot
     const ms = aim.size && mNames([...aim]);
     if (!items.length) {
       const all = TUTORIALS.filter(t => hits(t.id));
-      throw new Error(!ms ? 'Gemini tidak menemukan latihan yang cocok. Coba pilih otot lain.' : !all.length ? `Di gym belum ada alat untuk ${ms}.`
-        : all.every(t => seen.has(t.id)) ? `Semua alat untuk ${ms} sudah ada di ${where}.` : 'Gemini tidak menemukan latihan yang cocok. Coba lagi.');
+      throw new Error(!ms ? `${aiName()} tidak menemukan latihan yang cocok. Coba pilih otot lain.` : !all.length ? `Di gym belum ada alat untuk ${ms}.`
+        : all.every(t => seen.has(t.id)) ? `Semua alat untuk ${ms} sudah ada di ${where}.` : `${aiName()} tidak menemukan latihan yang cocok. Coba lagi.`);
     }
-    // Gemini's sentence described the machines it chose; once some are dropped it no longer fits
+    // The AI's sentence described the machines it chose; once some are dropped it no longer fits
     p.ai = { items, summary: off ? `Hanya latihan untuk ${ms}. Alat untuk otot lain tidak ditampilkan.` : String(j.summary || '').slice(0, 200) };
     items.forEach(x => p.rec.set(x.id, x));
-  } catch (x) { p.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
+  } catch (x) { p.ai = { err: x instanceof SyntaxError ? `Jawaban ${aiName()} tidak bisa dibaca. Coba lagi.` : x.message } }
   if ($('#pkAi')) $('#pkAi').innerHTML = pickAiHtml();
 }
 // ---- swapping an exercise mid-workout: the machine is taken or broken, it hurts, or the user wants
-// something else. Gemini picks up to three machines from the gym's list for the same muscles with the
-// reason in mind; below it, the machines that share a main muscle, without Gemini (no key, offline).
+// something else. The AI picks up to three machines from the gym's list for the same muscles with the
+// reason in mind; below it, the machines that share a main muscle, without the AI (no key, offline).
 // A swap changes today's workout only: done sets stay with the old machine, the rest move to the new one.
 const SW_WHY = [['busy', 'Alat sedang dipakai'], ['broken', 'Alat rusak'], ['pain', 'Terasa sakit'], ['vary', 'Mau variasi']];
 function swItem() {
@@ -2579,19 +2580,19 @@ function swapSheet() {
   sheet(`<h2 class="sh">Ganti latihan</h2>${swapTop()}<div id="swChk">${swapCheckHtml()}</div><div id="swAi">${swapAiHtml()}</div><div id="swList">${swapList()}</div>
     <p class="mhint sw-note">Hanya workout hari ini yang berubah. Programmu tetap.</p>`);
 }
-// A machine the user sees free: scan its QR and Gemini says whether it can take over (without a key, only
+// A machine the user sees free: scan its QR and the AI says whether it can take over (without a key, only
 // which muscles it trains next to the old one's).
 const SW_FIT = { cocok: ['ok', 'Cocok jadi pengganti'], bisa: ['mid', 'Bisa, dengan catatan'], tidak: ['no', 'Kurang cocok'] };
 function swapCheckHtml() {
   const w = ui.swap, c = w.check, cur = swItem(), key = !!aiConf().key;
-  if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, Gemini menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
+  if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, ${aiName()} menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
   const t = T[c.id], same = c.id === cur.it.id, inW = !same && S.active.items.some(x => x.id === c.id);
   const [tp] = musOf(t), [cp] = musOf(cur.t), share = tp.filter(k => cp.includes(k));
   const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(tp) || 'lain'}, bukan ${mNames(cp) || 'otot'} seperti ${cur.t.t}.`;
   let v;
   if (same) v = `<p class="swk-v no">Ini alat yang mau diganti. Scan alat yang lain.</p>`;
   else if (inW) v = `<p class="swk-v mid">Alat ini sudah ada di workout hari ini.</p>`;
-  else if (c.busy) v = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menilai alat ini…</span></div>`;
+  else if (c.busy) v = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang menilai alat ini…</span></div>`;
   else if (c.fit) { const [cls, label] = SW_FIT[c.fit]; v = `<div class="swk-v ${cls}"><b>${label}</b>${c.reason ? `<span>${esc(c.reason)}</span>` : ''}${c.tip ? `<small>Tip: ${esc(c.tip)}</small>` : ''}</div>` }
   else v = `<div class="swk-v ${share.length ? 'ok' : 'no'}"><span>${esc(local)}</span>${c.err ? `<small>${esc(c.err)}</small>` : ''}</div>`;
   const use = !same && !inW && !c.busy;
@@ -2616,9 +2617,9 @@ fit: "cocok" = pengganti yang baik; "bisa" = bisa dipakai dengan catatan; "tidak
 Balas HANYA JSON: {"fit": "cocok" | "bisa" | "tidak", "reason": "1 kalimat bahasa Indonesia, maksimal 20 kata", "tip": "saran beban atau teknik maksimal 10 kata, atau kosong"}`;
   c.busy = true; delete c.err; drawCheck();
   try {
-    const r = await gemini([{ text: prompt }]), a = r.indexOf('{'), b = r.lastIndexOf('}'), j = JSON.parse(r.slice(a, b + 1));
+    const r = await askAi([{ text: prompt }]), a = r.indexOf('{'), b = r.lastIndexOf('}'), j = JSON.parse(r.slice(a, b + 1));
     c.fit = SW_FIT[j.fit] ? j.fit : 'bisa'; c.reason = String(j.reason || '').slice(0, 200); c.tip = String(j.tip || '').slice(0, 80);
-  } catch (e) { c.err = e instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca.' : e.message }
+  } catch (e) { c.err = e instanceof SyntaxError ? `Jawaban ${aiName()} tidak bisa dibaca.` : e.message }
   c.busy = false;
   if (ui.swap === w && w.check === c) drawCheck();
 }
@@ -2638,11 +2639,11 @@ const swRow = (id, sub, pri) => { const t = T[id]; return `<div class="sw-row">
     <button class="aibtn${pri ? ' pri' : ''} sw-go" data-a="swUse" data-id="${id}" aria-label="Ganti ke ${esc(t.t)}">Pakai</button></div>` };
 function swapAiHtml() {
   const w = ui.swap, a = w.ai, busy = !!a?.busy;
-  const head = `<div class="aa-h">${I('sparkles')}<b>Rekomendasi Gemini</b></div>`;
-  if (!aiConf().key) return `<div class="aiadv ok sw-ai">${head}<p>Hubungkan Gemini di Pengaturan untuk saran pengganti. Alat untuk otot yang sama ada di bawah.</p>
+  const head = `<div class="aa-h">${I('sparkles')}<b>Rekomendasi ${aiName()}</b></div>`;
+  if (!aiConf().key) return `<div class="aiadv ok sw-ai">${head}<p>Hubungkan Gemini atau Claude di Pengaturan untuk saran pengganti. Alat untuk otot yang sama ada di bawah.</p>
     <div class="aa-b"><button class="aibtn" data-a="settings">${I('sliders')} Buka Pengaturan</button></div></div>`;
   let res = '';
-  if (busy) res = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang mencari pengganti…</span></div>`;
+  if (busy) res = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang mencari pengganti…</span></div>`;
   else if (a?.err) res = `<p class="sw-err" role="alert">${esc(a.err)}</p>`;
   else if (a) res = `${a.summary ? `<p class="sw-sum">${esc(a.summary)}</p>` : ''}${a.items.map(x => swRow(x.id, [x.reason, x.tip].filter(Boolean).join(' · '), true)).join('')}`;
   return `<div class="aiadv ok sw-ai">${head}
@@ -2654,7 +2655,7 @@ function swapAiHtml() {
       <button class="aibtn pri" data-a="swAsk"${busy ? ' disabled' : ''}>${I(a?.items ? 'refresh' : 'sparkles')} ${a?.items ? 'Minta pilihan lain' : 'Minta rekomendasi'}</button></div></div>`;
 }
 // Machines with the same main muscle (by how much they share), or the same category when it has no tags;
-// the ones Gemini already suggests are left out.
+// the ones the AI already suggests are left out.
 function swapList() {
   const { t } = swItem(), have = new Set([...S.active.items.map(x => x.id), ...(ui.swap.ai?.items || []).map(x => x.id)]);
   const hit = c => c.p.filter(k => t.p.includes(k)).length * 2 + [...c.p, ...c.s].filter(k => trains(t, k)).length;
@@ -2690,12 +2691,12 @@ ${aiMachines(skip, t.c ? CARDIO : TUTORIALS)}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia${w.why === 'pain' ? ', ingatkan untuk berhenti bila nyeri tajam' : ''}", "items": [{"id": angka id dari daftar, "reason": "alasan maksimal 8 kata", "tip": "maksimal 10 kata atau kosong"}]}`;
   w.ai = { busy: true }; drawSwap();
   try {
-    const x = await gemini([{ text: prompt }]), a = x.indexOf('{'), b = x.lastIndexOf('}'), j = JSON.parse(x.slice(a, b + 1));
+    const x = await askAi([{ text: prompt }]), a = x.indexOf('{'), b = x.lastIndexOf('}'), j = JSON.parse(x.slice(a, b + 1));
     const seen = new Set(skip), items = asList(j.items).map(y => ({ id: +y.id, reason: String(y.reason || '').slice(0, 80), tip: String(y.tip || '').slice(0, 80) }))
       .filter(y => T[y.id] && !seen.has(y.id) && seen.add(y.id)).slice(0, 4);
-    if (!items.length) throw new Error('Gemini tidak menemukan pengganti. Coba alasan lain, atau pilih dari daftar di bawah.');
+    if (!items.length) throw new Error(`${aiName()} tidak menemukan pengganti. Coba alasan lain, atau pilih dari daftar di bawah.`);
     w.ai = { items, summary: String(j.summary || '').slice(0, 200) };
-  } catch (e) { w.ai = { err: e instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : e.message } }
+  } catch (e) { w.ai = { err: e instanceof SyntaxError ? `Jawaban ${aiName()} tidak bisa dibaca. Coba lagi.` : e.message } }
   if (ui.swap === w) drawSwap();
 }
 function swapTo(id) {
@@ -2860,7 +2861,7 @@ function openSettings() {
 
     <h3 class="sh2">Perangkat ini</h3>
     <div class="sgroup">
-      ${link('sparkles', '#2f7cf6', 'Gemini (AI kalori)', 'aiSetup', aiConf().key ? 'Terhubung · key tersimpan di perangkat ini' : 'Belum terhubung · ketuk untuk memasang API key')}
+      ${link('sparkles', '#2f7cf6', 'AI (kalori & latihan)', 'aiSetup', aiConf().key ? `${aiName()} terhubung · key tersimpan di perangkat ini` : 'Belum terhubung · ketuk untuk memasang key Gemini atau Claude')}
       ${standalone() ? '' : link('download', '#14b8a6', `Pasang ${esc(APP.appName)} di layar utama`, 'install', 'Buka seperti aplikasi dan tetap jalan offline')}
     </div>
 
@@ -3452,15 +3453,29 @@ function onUser(user) {
   });
 }
 // ---------- calories ----------
-// A photo (or a typed description) goes straight from the phone to Google Gemini with the user's own
-// API key, kept on this device only (why_ai). Gemini answers with JSON; the user checks and edits
-// it, and the meal is saved to users/<uid>/meals. Photos are never stored.
+// A photo (or a typed description) goes straight from the phone to Google Gemini or Anthropic Claude
+// with the user's own API key, kept on this device only (why_ai). The AI answers with JSON; the user
+// checks and edits it, and the meal is saved to users/<uid>/meals. Photos are never stored.
 const MEAL_SLOTS = [['breakfast', 'Sarapan'], ['lunch', 'Makan siang'], ['dinner', 'Makan malam'], ['snack', 'Camilan']];
 const AI_KEY = 'why_ai';
 // gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
 // thinking answers in a couple of seconds.
-const AI_MODEL = 'gemini-3.5-flash';
-const aiConf = () => { try { const c = JSON.parse(localStorage.getItem(AI_KEY)) || {}; return { key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? AI_MODEL : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || AI_MODEL } } catch { return { key: '', model: AI_MODEL, models: [], ms: {}, rec: AI_MODEL } } };
+const AI_MODEL = 'gemini-3.5-flash', CLAUDE_MODEL = 'claude-opus-5-5';
+const AI_PROV = {
+  gemini: { name: 'Gemini', model: AI_MODEL, site: 'AI Studio', who: 'Google Gemini', free: true,
+    steps: ['Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>', 'Masuk dengan akun Google, lalu ketuk <b>Create API key</b>', 'Ketuk ikon salin di samping key, lalu tempel di bawah'] },
+  claude: { name: 'Claude', model: CLAUDE_MODEL, site: 'Claude Console', who: 'Anthropic Claude',
+    steps: ['Buka <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener">platform.claude.com/settings/keys</a>', 'Masuk, isi saldo di <b>Billing</b>, lalu ketuk <b>Create Key</b>', 'Salin key yang muncul, lalu tempel di bawah'] },
+};
+const aiStore = () => { try { return JSON.parse(localStorage.getItem(AI_KEY)) || {} } catch { return {} } };
+// Gemini's settings sit at the top level (as before Claude came), Claude's under .claude
+function aiConfOf(prov, s = aiStore()) {
+  const c = (prov === 'claude' ? s.claude : s) || {}, def = AI_PROV[prov].model;
+  return { prov, key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? def : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || def };
+}
+// the provider saved last
+const aiConf = () => { const s = aiStore(); return aiConfOf(s.use === 'claude' || (!s.key && s.claude?.key) ? 'claude' : 'gemini', s) };
+const aiName = () => AI_PROV[aiConf().prov].name;
 // Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
 // so Gemini itself decides whether it is valid.
 const cleanKey = v => String(v || '').replace(/[^\w.-]+/g, '');
@@ -3611,15 +3626,15 @@ function profRefresh() {
     ${aiAdviceHtml()}
   </div>`;
 }
-// ---- target advice from Gemini: the same profile plus the last two weeks of intake and weight
+// ---- target advice from the AI: the same profile plus the last two weeks of intake and weight
 function aiAdviceHtml() {
   const a = ui.prof.ai;
-  if (ui.prof.aiBusy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menghitung saran…</span></div>`;
+  if (ui.prof.aiBusy) return `<div class="aiadv"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang menghitung saran…</span></div>`;
   if (a && a.err) return `<div class="aiadv err"><span>${esc(a.err)}</span><button class="aibtn" data-a="pAsk">${I('refresh')} Coba lagi</button></div>`;
-  if (a) return `<div class="aiadv ok"><div class="aa-h">${I('sparkles')}<b>Saran Gemini: ${r0(a.kcal)} kkal/hari</b></div>
+  if (a) return `<div class="aiadv ok"><div class="aa-h">${I('sparkles')}<b>Saran ${aiName()}: ${r0(a.kcal)} kkal/hari</b></div>
     ${a.protein ? `<small>Protein sekitar ${r0(a.protein)} g/hari</small>` : ''}<p>${esc(a.reason)}</p>
     <div class="aa-b"><button class="aibtn" data-a="pAsk">${I('refresh')} Tanya lagi</button><button class="aibtn pri" data-a="pUseAi">Pakai ${r0(a.kcal)} kkal</button></div></div>`;
-  return `<button class="aibtn ask" data-a="pAsk">${I('sparkles')} Tanya Gemini rekomendasinya</button>`;
+  return `<button class="aibtn ask" data-a="pAsk">${I('sparkles')} Tanya ${aiName()} rekomendasinya</button>`;
 }
 function recentStats() {
   const days = Array.from({ length: 14 }, (_, i) => dayKey(new Date(Date.now() - (i + 1) * 864e5)));
@@ -3631,7 +3646,7 @@ function recentStats() {
 async function askTargetAdvice() {
   const { o, err } = profDraft();
   if (err) { $('#pfErr').textContent = err; return }
-  if (!aiConf().key) { ui.prof.ai = { err: 'Gemini belum terhubung. Pasang API key di Pengaturan → Gemini (AI kalori).' }; return profRefresh() }
+  if (!aiConf().key) { ui.prof.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau Claude di Pengaturan.' }; return profRefresh() }
   const e = energy(o, o.kg), act = ACTS.find(a => a[0] === o.act) || ACTS[1], r = recentStats();
   const goal = !o.goalW || !e.dir ? 'mempertahankan berat' : `${e.dir < 0 ? 'turun' : 'naik'} ke ${o.goalW} kg, ${o.pace} kg per minggu`;
   const prompt = `Kamu ahli gizi olahraga. Rekomendasikan target kalori harian yang aman dan realistis untuk orang ini.
@@ -3644,11 +3659,11 @@ Kalau data 14 hari menunjukkan TDEE sebenarnya berbeda dari rumus, sesuaikan. Ja
 Balas HANYA JSON: {"kcal": angka bulat, "protein": gram per hari, "reason": "alasan singkat maksimal 2 kalimat dalam bahasa Indonesia"}`;
   ui.prof.aiBusy = true; ui.prof.ai = null; profRefresh();
   try {
-    const t = await gemini([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}');
+    const t = await askAi([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}');
     const j = JSON.parse(t.slice(a, b + 1)), kcal = clamp(Math.round((+j.kcal || 0) / 10) * 10, 1000, 5000);
-    if (!(+j.kcal > 0)) throw new Error('Jawaban Gemini tidak berisi angka kalori. Coba lagi.');
+    if (!(+j.kcal > 0)) throw new Error(`Jawaban ${aiName()} tidak berisi angka kalori. Coba lagi.`);
     ui.prof.ai = { kcal, protein: +j.protein || 0, reason: String(j.reason || '').slice(0, 300) };
-  } catch (x) { ui.prof.ai = { err: x instanceof SyntaxError ? 'Jawaban Gemini tidak bisa dibaca. Coba lagi.' : x.message } }
+  } catch (x) { ui.prof.ai = { err: x instanceof SyntaxError ? `Jawaban ${aiName()} tidak bisa dibaca. Coba lagi.` : x.message } }
   ui.prof.aiBusy = false;
   if ($('#pfPrev')) profRefresh();
 }
@@ -3708,32 +3723,33 @@ function vMeals() {
     ${slots || `<div class="meal-empty glass"><span class="ic">${I('apple')}</span><b>${key === today ? 'Belum ada makanan hari ini' : 'Tidak ada catatan'}</b><p>${key === today ? 'Foto piringmu sebelum makan, AI menghitung kalori dan makronya.' : 'Tidak ada makanan yang dicatat di hari ini.'}</p></div>`}
     ${weightCard()}`;
 }
-// ---- Gemini
-function openAiSetup(then) {
-  ui.aiThen = then || null;
-  const c = aiConf();
-  sheet(`<h2 class="sh">Hubungkan Gemini</h2>
-    <p class="scope" style="margin-top:-8px">AI yang menghitung kalori dari foto. Butuh API key Gemini milikmu sendiri (gratis).</p>
-    <ol class="steps-ai">
-      <li>Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
-      <li>Masuk dengan akun Google, lalu ketuk <b>Create API key</b></li>
-      <li>Ketuk ikon salin di samping key, lalu tempel di bawah</li>
-    </ol>
-    <label class="fld"><span>API key Gemini</span><input id="aiKey" data-i="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
+// ---- the AI: Gemini or Claude, picked on top of the sheet (swap redraws only the sheet's body)
+function openAiSetup(then, prov = aiConf().prov, swap) {
+  if (!swap) ui.aiThen = then || null;
+  ui.aiProv = prov;
+  const c = aiConfOf(prov), p = AI_PROV[prov];
+  const html = `<h2 class="sh">Hubungkan AI</h2>
+    <p class="scope" style="margin-top:-8px">AI yang menghitung kalori dari foto. Butuh API key ${p.name} milikmu sendiri (${p.free ? 'gratis' : 'berbayar sesuai pemakaian'}).</p>
+    <div class="seg pseg aiseg" role="radiogroup" aria-label="AI">${Object.entries(AI_PROV).map(([k, v]) => `<button role="radio" aria-checked="${k === prov}" class="${k === prov ? 'on' : ''}" data-a="aiProv" data-k="${k}">${v.name}</button>`).join('')}</div>
+    <ol class="steps-ai">${p.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+    <label class="fld"><span>API key ${p.name}</span><input id="aiKey" data-i="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
     <div class="fld"><span id="aiMl">Model</span><input type="hidden" id="aiModel" value="${esc(c.model)}">
       <div class="mlist" id="aiModels" role="radiogroup" aria-labelledby="aiMl">${modelOpts(c.models.length ? c.models : [c.model], c.model, c.rec, c.ms, !c.models.length)}</div>
       <small class="fhint" id="aiMs" role="status">${c.models.length ? `${c.models.length} model bisa dipakai dengan key ini.` : 'Pilihan model muncul setelah key ditempel.'}</small></div>
-    <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke Google Gemini untuk dianalisis dan tidak disimpan di mana pun.</p>
+    <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke ${p.who} untuk dianalisis dan tidak disimpan di aplikasi.</p>
     <p class="ferr" id="aiErr" role="alert"></p>
-    <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`);
+    <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`;
+  if (swap) $('#sheet .sheet-body').innerHTML = html; else sheet(html);
   aiMsFor = ''; ui.aiModels = c.models; ui.aiMs = c.ms; ui.aiRec = c.rec;
-  if (c.key) loadAiModels();
+  // every Claude test call is billed, so a list saved with the key is not tested again
+  if (c.key && (prov === 'gemini' || !c.models.length)) loadAiModels();
 }
 // The models a key can use, best for meal photos first: the recommended one, then Flash (newest
 // first), Flash Lite, Pro. Speech, image, live, embedding and robotics models are left out.
 const AI_SKIP = /tts|image|live|embed|robotics|computer|transcribe|audio|banana|customtools|omni|argon|nano/;
-// gemini-3.5-flash-lite → "Gemini 3.5 Flash Lite"; preview / latest become a small tag
-const modelName = n => n.replace(/-(preview|latest)$/, '').replace(/^gemini-/, 'Gemini ').split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+// gemini-3.5-flash-lite → "Gemini 3.5 Flash Lite", claude-opus-5-5 → "Claude Opus 5.5"; preview / latest become a small tag
+const modelName = n => /^claude-/.test(n) ? n.replace(/-(\d+)-(\d+)$/, ' $1.$2').split(/[- ]/).map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+  : n.replace(/-(preview|latest)$/, '').replace(/^gemini-/, 'Gemini ').split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
 const modelOpts = (list, cur, rec = AI_MODEL, ms = {}, off) => list.map(n => {
   const t = ms[n], lv = !t ? 0 : t < 2500 ? 3 : t < 5000 ? 2 : 1, on = n === cur;
   const tag = /preview/.test(n) ? 'Preview' : /latest/.test(n) ? 'Latest' : '';
@@ -3756,39 +3772,60 @@ async function geminiModels(key) {
     .map(m => String(m.name || '').replace(/^models\//, '')).filter(n => /^gemini-/.test(n) && !AI_SKIP.test(n))
     .sort((a, b) => rank(a) - rank(b) || /latest|preview/.test(a) - /latest|preview/.test(b) || ver(b) - ver(a) || a.localeCompare(b));
 }
+// Anthropic lists only models the key can use; the newest of each family (Opus, Sonnet, Haiku, Fable)
+// that reads photos is offered, the recommended one first.
+async function claudeModels(key) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
+  let res, j;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/models?limit=100', { headers: claudeHeaders(key), signal: ctl.signal });
+    j = await res.json().catch(() => ({}));
+  } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'Daftar model tidak termuat. Coba lagi.' : 'Tidak bisa menghubungi Claude. Periksa koneksi internet.') }
+  finally { clearTimeout(timer) }
+  if (!res.ok) throw new Error(claudeError(res.status, j));
+  const fam = m => m.line || (String(m.id).match(/^claude-([a-z]+)/) || [])[1], newest = {};
+  asList(j.data).filter(m => /^claude-/.test(m.id) && m.capabilities?.image_input?.supported !== false && !m.deprecated_at)
+    .forEach(m => { const f = fam(m); if (f && (!newest[f] || m.created_at > newest[f].created_at)) newest[f] = m });
+  const rank = n => n === CLAUDE_MODEL ? 0 : /sonnet/.test(n) ? 1 : /haiku/.test(n) ? 2 : 3;
+  return Object.values(newest).map(m => m.id).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+}
 // Google lists models a key cannot really use (retired for new users, or thinking for over a
 // minute), so each one gets a tiny test call and only those that answer in time are offered.
-async function probeModel(key, model) {
+// A refusal for the whole key (wrong key, no credit, no quota) comes back as the reason.
+async function probeModel(prov, key, model) {
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000), t0 = performance.now();
-  try { const [res] = await geminiCall(key, model, [{ text: 'Balas hanya: OK' }], false, ctl.signal); return res.ok ? performance.now() - t0 : 0 }
-  catch { return 0 } finally { clearTimeout(timer) }
+  try {
+    const [res, j] = await (prov === 'claude' ? claudeCall : geminiCall)(key, model, [{ text: 'Balas hanya: OK' }], false, ctl.signal);
+    return res.ok ? [performance.now() - t0] : [0, [400, 401, 403, 429].includes(res.status) ? (prov === 'claude' ? claudeError : geminiError)(res.status, j) : ''];
+  } catch { return [0] } finally { clearTimeout(timer) }
 }
 let aiMsFor = '', aiMsT = 0;
 async function loadAiModels(force) {
-  const key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), box = $('#aiModels'), msg = $('#aiMs');
-  if (!sel || key.length < 20 || (!force && key === aiMsFor)) return;
+  const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), box = $('#aiModels'), msg = $('#aiMs');
+  if (!sel || key.length < 20 || (!force && prov + key === aiMsFor)) return;
   const say = (t, spin) => { msg.innerHTML = (spin ? '<span class="spin" aria-hidden="true"></span>' : '') + esc(t) };
-  aiMsFor = key; say('Memuat daftar model…', 1);
-  const stale = () => cleanKey($('#aiKey')?.value) !== key || !sel.isConnected;
+  aiMsFor = prov + key; say('Memuat daftar model…', 1);
+  const stale = () => cleanKey($('#aiKey')?.value) !== key || ui.aiProv !== prov || !sel.isConnected;
   try {
-    const all = await geminiModels(key);
+    const all = await (prov === 'claude' ? claudeModels : geminiModels)(key);
     if (stale()) return;
-    if (!all.length) throw new Error('Key ini tidak punya model Gemini yang cocok.');
-    let done = 0;
+    if (!all.length) throw new Error(`Key ini tidak punya model ${p.name} yang cocok.`);
+    let done = 0, why = '';
     say(`Mengetes ${all.length} model…`, 1);
     const ms = Object.fromEntries(await Promise.all(all.map(async n => {
-      const t = await probeModel(key, n);
+      const [t, e] = await probeModel(prov, key, n);
+      why ||= e;
       if (!stale()) say(`Mengetes model… ${++done}/${all.length}`, 1);
       return [n, t];
     })));
     if (stale()) return;
     const list = all.filter(n => ms[n]);
-    if (!list.length) throw new Error('Belum ada model yang menjawab. Server Gemini mungkin sibuk; coba lagi sebentar lagi.');
-    const rec = ms[AI_MODEL] ? AI_MODEL : list[0], cur = list.includes(sel.value) ? sel.value : rec;
+    if (!list.length) throw new Error(why || `Belum ada model yang menjawab. Server ${p.name} mungkin sibuk; coba lagi sebentar lagi.`);
+    const rec = ms[p.model] ? p.model : list[0], cur = list.includes(sel.value) ? sel.value : rec;
     sel.value = cur; box.innerHTML = modelOpts(list, cur, rec, ms);
     Object.assign(ui, { aiModels: list, aiMs: Object.fromEntries(list.map(n => [n, Math.round(ms[n])])), aiRec: rec });
     say(`${list.length} dari ${all.length} model menjawab dan bisa dipakai.`);
-  } catch (e) { if (aiMsFor === key) { aiMsFor = ''; say(e.message) } }
+  } catch (e) { if (aiMsFor === prov + key) { aiMsFor = ''; say(e.message) } }
 }
 function geminiError(status, j) {
   const m = j?.error?.message || '', st = j?.error?.status || '';
@@ -3831,6 +3868,59 @@ async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs =
   if (!res.ok) throw new Error(geminiError(res.status, j));
   return (j.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('');
 }
+// ---- Claude, called straight from the phone like Gemini; the browser has to say so in a header
+const claudeHeaders = key => ({ 'x-api-key': key, 'anthropic-version': '2026-10-21', 'anthropic-dangerous-direct-browser-access': 'true' });
+function claudeError(status, j) {
+  const m = j?.error?.message || '';
+  if (status === 401) return 'API key tidak valid. Periksa lagi key-nya.';
+  if (/credit balance/i.test(m)) return 'Saldo Claude habis. Isi saldo di platform.claude.com → Billing.';
+  if (status === 403) return 'API key ini tidak punya akses ke model ini.';
+  if (status === 404) return `Model tidak ditemukan. Coba model ${modelName(CLAUDE_MODEL)}.`;
+  if (status === 429) return 'Batas pemakaian Claude tercapai. Coba lagi sebentar lagi.';
+  if (status >= 500) return 'Server Claude sedang sibuk. Coba lagi sebentar lagi.';
+  return 'Claude gagal (' + (m || status) + ').';
+}
+// Gemini-style parts (text, inline_data) as Claude content, the photo before the words.
+// Answers stay short (low effort); when a model declines (stop_reason refusal) the API may hand the
+// request to another model by itself (fallbacks, not offered on Haiku).
+const CLAUDE_BACKUP = ['claude-sonnet-5-5', 'claude-haiku-5-5'];
+async function claudeCall(key, model, parts, json, signal) {
+  const content = [...parts.filter(x => x.inline_data).map(x => ({ type: 'image', source: { type: 'base64', media_type: x.inline_data.mime_type, data: x.inline_data.data } })),
+    ...parts.filter(x => x.text).map(x => ({ type: 'text', text: x.text }))];
+  const call = async extras => {
+    const body = { model, max_tokens: json ? 16000 : 1024, messages: [{ role: 'user', content }] };
+    if (json) body.system = 'Balas hanya dengan satu objek JSON yang valid, tanpa teks lain.';
+    const fb = extras && !/haiku/.test(model);
+    if (extras) body.output_config = { effort: 'low' };
+    if (fb) body.fallbacks = 'default';
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal, body: JSON.stringify(body),
+      headers: { ...claudeHeaders(key), 'Content-Type': 'application/json', ...(fb ? { 'anthropic-beta': 'server-side-fallback-2026-07-01' } : {}) }
+    });
+    return [r, await r.json().catch(() => ({}))];
+  };
+  const out = await call(true);
+  // a model without effort levels or fallbacks refuses them; ask again without
+  return out[0].status === 400 && /effort|fallback/i.test(out[1]?.error?.message || '') ? call(false) : out;
+}
+async function claude(parts, { key, model }, json = true, timeoutMs = 90000) {
+  if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
+  let res, j;
+  try {
+    for (const m of [model, ...CLAUDE_BACKUP.filter(b => b !== model)]) {
+      [res, j] = await claudeCall(key, m, parts, json, ctl.signal);
+      if (res.status !== 429 && res.status < 500) break;
+    }
+  } catch (e) {
+    throw new Error(e && e.name === 'AbortError' ? `Claude tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau pilih model yang lebih cepat.` : `Tidak bisa menghubungi Claude. Periksa koneksi internet. (${e && e.message || e})`);
+  } finally { clearTimeout(timer) }
+  if (!res.ok) throw new Error(claudeError(res.status, j));
+  if (j.stop_reason === 'refusal') throw new Error('Claude tidak mau menjawab permintaan ini. Coba foto atau kata-kata lain.');
+  return asList(j.content).filter(b => b.type === 'text').map(b => b.text).join('');
+}
+// the AI saved in Pengaturan, or the one being tested there
+const askAi = (parts, conf = aiConf(), json = true, timeoutMs = 90000) => (conf.prov === 'claude' ? claude : gemini)(parts, conf, json, timeoutMs);
 const MEAL_PROMPT = `Kamu ahli gizi. Perkirakan makanan dan minuman pada foto atau deskripsi untuk porsi yang terlihat/disebut.
 Balas HANYA dengan JSON berbentuk:
 {"name": "nama hidangan singkat dalam bahasa Indonesia",
@@ -3867,13 +3957,13 @@ function openPhotoNote(dataUrl, src) {
 }
 async function analyzeMeal({ dataUrl, text }) {
   sheet(`<h2 class="sh">Menganalisis…</h2>${dataUrl ? `<img class="mprev" src="${dataUrl}" alt="Foto makanan">${text ? `<p class="mnote">${esc(text)}</p>` : ''}` : `<p class="scope">${esc(text)}</p>`}
-    <div class="analyzing"><span class="spin" aria-hidden="true"></span><span role="status">Gemini sedang menghitung kalori</span></div>`);
+    <div class="analyzing"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang menghitung kalori</span></div>`);
   try {
     const parts = [{ text: MEAL_PROMPT + (!text ? '' : dataUrl
       ? `\nKeterangan dari pengguna tentang foto ini (pakai untuk porsi, cara masak, dan yang tidak terlihat; utamakan bila berbeda dengan tebakanmu): ${text}`
       : `\nDeskripsi: ${text}`) }];
     if (dataUrl) parts.push({ inline_data: { mime_type: 'image/jpeg', data: dataUrl.split(',')[1] } });
-    const r = parseMeal(await gemini(parts));
+    const r = parseMeal(await askAi(parts));
     if (!r.items.length) throw new Error(r.note || 'AI tidak mengenali makanan di foto ini.');
     const day = ui.mealDay && ui.mealDay !== dayKey(new Date()) ? new Date(ui.mealDay + 'T12:00:00') : new Date();
     ui.meal = { id: null, date: day.toISOString(), slot: slotNow(), portion: 1, ...r, img: dataUrl || '' };
@@ -4521,7 +4611,7 @@ const A = {
   pickToggle: el => {
     const id = +el.dataset.id, s = ui.pick.sel; if (pickHave().has(id)) return;
     s.has(id) ? s.delete(id) : s.add(id);
-    // the same exercise can sit in the list and in Gemini's suggestions
+    // the same exercise can sit in the list and in the AI's suggestions
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', s.has(id)); (b.closest('.pkrow') || b).classList.toggle('on', s.has(id)) });
     if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
     $('#pkBtn').textContent = pickLabel();
@@ -4722,16 +4812,19 @@ const A = {
     S.meals = S.meals.filter(x => x.id !== m.id); save(); closeSheet(); render(); toast('Makanan dihapus');
   },
   aiSetup: () => openAiSetup(),
+  aiProv: el => { if (el.dataset.k !== ui.aiProv) openAiSetup(null, el.dataset.k, true) },
   aiSave: async el => {
-    const key = cleanKey($('#aiKey').value), err = $('#aiErr');
-    if (key.length < 20) { err.textContent = 'Key terlalu pendek. Salin ulang seluruh key dari AI Studio.'; return }
+    const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey').value), err = $('#aiErr');
+    if (key.length < 20) { err.textContent = `Key terlalu pendek. Salin ulang seluruh key dari ${p.site}.`; return }
     busy(el, true); err.textContent = '';
     try {
-      if (key !== aiMsFor) await loadAiModels(true);
-      const model = $('#aiModel').value || AI_MODEL;
-      await gemini([{ text: 'Balas hanya: OK' }], { key, model }, false, 30000);
-      localStorage.setItem(AI_KEY, JSON.stringify(key === aiMsFor ? { key, model, models: ui.aiModels, ms: ui.aiMs, rec: ui.aiRec } : { key, model }));
-      const then = ui.aiThen; closeSheet(); toast('Gemini terhubung'); render();
+      if (prov + key !== aiMsFor) await loadAiModels(true);
+      const model = $('#aiModel').value || p.model;
+      await askAi([{ text: 'Balas hanya: OK' }], { prov, key, model }, false, 30000);
+      // the provider saved last is the one in use; the other one's key stays for switching back
+      const s = aiStore(), c = prov + key === aiMsFor ? { key, model, models: ui.aiModels, ms: ui.aiMs, rec: ui.aiRec } : { key, model };
+      localStorage.setItem(AI_KEY, JSON.stringify(prov === 'claude' ? { ...s, use: 'claude', claude: c } : { ...c, use: 'gemini', claude: s.claude }));
+      const then = ui.aiThen; closeSheet(); toast(`${p.name} terhubung`); render();
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
       else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
       else if (then === 'text') setTimeout(() => A.mealText(), 300);
@@ -4741,7 +4834,13 @@ const A = {
     $('#aiModel').value = el.dataset.m;
     document.querySelectorAll('#aiModels .mopt').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
   },
-  aiForget: async () => { if (!(await ask({ title: 'Hapus API key?', msg: 'Fitur foto kalori berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return; localStorage.removeItem(AI_KEY); closeSheet(); toast('API key dihapus'); render() },
+  aiForget: async () => {
+    const prov = ui.aiProv, other = prov === 'claude' ? 'gemini' : 'claude', s = aiStore(), keep = aiConfOf(other, s).key;
+    if (!(await ask({ title: `Hapus API key ${AI_PROV[prov].name}?`, msg: keep ? `${AI_PROV[other].name} dipakai sebagai gantinya.` : 'Fitur AI berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return;
+    if (keep) localStorage.setItem(AI_KEY, JSON.stringify({ ...(prov === 'claude' ? { ...s, claude: undefined } : { claude: s.claude }), use: other }));
+    else localStorage.removeItem(AI_KEY);
+    closeSheet(); toast('API key dihapus'); render();
+  },
   profile: openProfile,
   pSet: el => {
     const k = el.dataset.k, v = el.dataset.v;
@@ -4754,7 +4853,7 @@ const A = {
   pUseAi: () => {
     ui.prof.auto = false; ui.prof.kcal = ui.prof.ai.kcal;
     document.querySelectorAll('[data-a=pSet][data-k=auto]').forEach(b => { const on = b.dataset.v === '0'; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
-    profRefresh(); toast('Target diisi dari saran Gemini. Ketuk Simpan profil.');
+    profRefresh(); toast(`Target diisi dari saran ${aiName()}. Ketuk Simpan profil.`);
   },
   pKcal: el => { ui.prof.kcal = clamp((ui.prof.kcal || 2000) + +el.dataset.d, 1000, 5000); profRefresh() },
   pSave: () => {

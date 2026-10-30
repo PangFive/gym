@@ -121,17 +121,23 @@ tersinkron di semua perangkat.
   Kalori pada menit yang terukur pakai rumus **Keytel 2005** (jenis kelamin, umur, berat; minimal 1 MET),
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
-### Kalori (AI Gemini)
+### Kalori (AI Gemini atau Claude)
 - Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan. Di halaman Kalori target harian
   tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
 - Setelah foto dipilih ada langkah **Keterangan (opsional)**: porsi, cara masak, atau yang tidak terlihat
   di foto; dikirim bersama foto dan diutamakan AI bila berbeda dengan tebakannya. **Ganti foto** memilih ulang.
-- Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** dengan API key milik
-  pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → Gemini). Hasil: nama hidangan,
+- Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** atau **Anthropic Claude**
+  dengan API key milik pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → AI). Hasil: nama hidangan,
   rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi
   ¼×–4×, waktu makan) sebelum disimpan. Foto tidak disimpan.
+- **Pilihan AI** di lembar Hubungkan AI: Gemini (key gratis dari AI Studio) atau Claude (key berbayar dari
+  platform.claude.com, isi saldo dulu). Yang terakhir disimpan yang dipakai untuk semua fitur AI (kalori, rekomendasi
+  latihan, ganti alat, saran target); key yang lain tetap tersimpan untuk pindah lagi. Claude: model terbaru tiap keluarga
+  (Opus 5.5 disarankan, Sonnet, Haiku, Fable) dites sekali saat key ditempel lalu disimpan, karena tiap tes ditagih;
+  effort `low`, foto dikirim sebelum teks, `fallbacks: "default"` (beta) bila model menolak; Haiku tanpa fallback.
+  Saldo habis tampil sebagai "Saldo Claude habis".
 - **Profil tubuh** (jenis kelamin, tahun lahir, tinggi, berat, target berat, aktivitas, kecepatan
   0,25–1 kg/minggu), seperti onboarding MyFitnessPal / Lose It. BMR dengan rumus Mifflin–St Jeor
   × faktor aktivitas = TDEE; target harian = TDEE ± kecepatan × 7.700 / 7 kkal, minimal 1.500 (pria)
@@ -285,6 +291,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 12. Kategori Kardio: 5 alat bawaan, dicatat menit + kecepatan/incline atau level, kalori ACSM/MET.
 13. Gambar 3D untuk alat kardio (AI Figma), latar gradient lembut berwarna per alat.
 14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
+15. Claude sebagai pilihan AI di samping Gemini.
 
 ## 8. Ide berikutnya
 
