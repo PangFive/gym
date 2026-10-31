@@ -755,7 +755,7 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 #toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 #toast .ti{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;flex:none}
 #toast .ti svg.i{width:16px;height:16px;stroke-width:2.6}
-#dialog{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:24px}
+#dialog{position:fixed;inset:0;z-index:76;display:grid;place-items:center;padding:24px}
 #vmodal{position:fixed;inset:0;z-index:72;display:grid;place-items:center;padding:16px}
 #vmodal .scrim{z-index:0}
 /* ambient light: the video's picture, blurred, glowing around the player (popup and detail sheet) */
@@ -2451,10 +2451,11 @@ function openStartPick() {
 // The picker filters by any number of muscles: an exercise shows when it trains one of them, and
 // the ones that hit more of the chosen muscles (as a main muscle first) come first.
 const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : trains(t, k) ? 1 : 0), 0);
-// What the program (or the running workout) already holds: those rows say so and can still be picked,
-// since one machine can have several functions.
+// What the program (or the running workout) already holds: those rows say so and can still be picked
+// after a yes, since one machine can have several functions.
 const pickHave = () => { const p = ui.pick, r = p?.mode === 'edit' ? findR(p.rid) : null; return new Set((r ? r.items : p?.mode === 'workout' ? S.active?.items || [] : []).map(it => it.id)) };
 const pickWhere = () => ui.pick?.mode === 'workout' ? 'workout' : 'program';
+const askAgain = (t, where) => ask({ title: `Tambah ${t.t} lagi?`, msg: `Alat ini sudah ada di ${where}.`, ok: 'Tambah lagi', tone: 'info', icon: 'plus' });
 function pickList() {
   const p = ui.pick, q = p.q.trim().toLowerCase(), have = pickHave();
   const xs = p.cx ? CARDIO.filter(t => matches(t, 'all', q))
@@ -4169,8 +4170,8 @@ function stopScan() {
 function scanAsk(t) {
   const have = (findR(scan.rid)?.items || []).some(it => it.id === t.id);
   scan.pending = t;
-  $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? 'Sudah ada di program' : 'Tambahkan ke program?'}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
-    <div class="sa-b"><button class="btn soft" data-a="scanSkip">${have ? 'Scan lagi' : 'Batal'}</button>
+  $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? 'Sudah ada di program. Tambah lagi?' : 'Tambahkan ke program?'}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
+    <div class="sa-b"><button class="btn soft" data-a="scanSkip">Batal</button>
       <button class="btn pri" data-a="scanAdd">${I('plus')} ${have ? 'Tambah lagi' : 'Tambahkan'}</button></div>`;
   $('#scanAsk').hidden = false; $('#scan').classList.add('asking');
 }
@@ -4547,9 +4548,10 @@ const A = {
   open: el => openDetail(+el.dataset.id),
   play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
   addTo: el => openAddTo(+el.dataset.id),
-  addToR: el => {
-    const r = S.routines.find(x => x.id === el.dataset.rid); if (!r) return;
-    r.items.push({ id: +el.dataset.id, ...planOf(+el.dataset.id) }); save(); closeSheet();
+  addToR: async el => {
+    const r = S.routines.find(x => x.id === el.dataset.rid), id = +el.dataset.id; if (!r) return;
+    if (r.items.some(it => it.id === id) && !(await askAgain(T[id], r.name || 'program ini'))) return;
+    r.items.push({ id, ...planOf(id) }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
   newWith: el => { closeSheet(); newDraft([{ id: +el.dataset.id, ...planOf(+el.dataset.id) }]) },
@@ -4601,15 +4603,17 @@ const A = {
     const id = el.dataset.id, r = id === 'active' ? S.active : id.startsWith('h:') ? S.history.find(h => String(h.id) === id.slice(2)) : findR(id);
     if (r) musclePop(r);
   },
-  pkAdd: el => {
+  pkAdd: async el => {
     const id = +el.dataset.id;
+    if (pickHave().has(id) && !(await askAgain(T[id], pickWhere()))) return;
     ui.pick.sel.add(id); closeVideo();
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', 'true'); (b.closest('.pkrow') || b).classList.add('on') });
     if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
     $('#pkBtn').textContent = pickLabel(); toast(`${T[id].t} dipilih`);
   },
-  pickToggle: el => {
+  pickToggle: async el => {
     const id = +el.dataset.id, s = ui.pick.sel;
+    if (!s.has(id) && pickHave().has(id) && !(await askAgain(T[id], pickWhere()))) return;
     s.has(id) ? s.delete(id) : s.add(id);
     // the same exercise can sit in the list and in the AI's suggestions
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', s.has(id)); (b.closest('.pkrow') || b).classList.toggle('on', s.has(id)) });
@@ -4892,11 +4896,14 @@ const A = {
   },
   // from a machine's detail during a workout: add it and open it there; data-open goes to the one
   // already in the workout instead, the unfinished one first
-  wxAddId: el => {
+  wxAddId: async el => {
     const id = +el.dataset.id; if (!S.active || !T[id]) return;
     const its = S.active.items, mine = its.filter(it => it.id === id);
     let it = el.dataset.open && (mine.find(x => x.sets.some(s => !s.done)) || mine[0]);
-    if (!it) { it = newActiveItem({ id, ...planOf(id) }, its); its.push(it); save(); toast(`${T[id].t} ditambahkan ke workout`) }
+    if (!it) {
+      if (mine.length && !(await askAgain(T[id], 'workout'))) return;
+      it = newActiveItem({ id, ...planOf(id) }, its); its.push(it); save(); toast(`${T[id].t} ditambahkan ke workout`);
+    }
     const i = its.indexOf(it);
     closeVideo(); closeSheet(); wxState().open = i; go('workout');
     setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);

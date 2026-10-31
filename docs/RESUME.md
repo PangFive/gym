@@ -60,7 +60,8 @@ tersinkron di semua perangkat.
   Sama untuk Tambah latihan saat workout. Tanpa permintaan dan tanpa otot, Gemini melengkapi program/workout agar
   seimbang (4–6 latihan). Ganti latihan saat workout tidak memakai aturan ini.
   Alat yang sudah ada di program/workout diberi label **Sudah di program** / **Sudah di workout** tapi tetap bisa
-  dipilih lagi, karena satu alat bisa punya beberapa fungsi (juga dari detail alat, scan QR, dan Tambah ke program).
+  dipilih lagi setelah popup konfirmasi **Tambah lagi**, karena satu alat bisa punya beberapa fungsi (juga dari detail
+  alat dan Tambah ke program; di scan QR ke program panel scan itu sendiri yang bertanya).
   Saran AI tetap tidak mengulang alat yang sudah ada. Di workout, pemakaian kedua sebuah alat mengikuti bebannya
   sendiri: angka **Terakhir** diambil dari workout terakhir yang memakai alat itu dua kali.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
