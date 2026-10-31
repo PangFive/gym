@@ -58,11 +58,11 @@ button{font:inherit;cursor:pointer}
 html{-webkit-text-size-adjust:100%}
 body{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(47,124,246,.55);outline-offset:2px}
-.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.step button,.pkrow,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
-.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.step button:active,.pkrow:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
+.btn,.chip,.qtile,.mtile,.wcard,.hcard,.icon-btn,.fab,.step button,.pkrow,.mini,.spick,.resume,.seg button,.gseg button,.list button,.nb{transition:transform .14s ease,background-color .2s,box-shadow .2s,color .2s}
+.btn:active,.chip:active,.qtile:active,.mtile:active,.wcard:active,.hcard:active,.icon-btn:active,.fab:active,.step button:active,.pkrow:active,.mini:active,.spick:active,.resume:active,.seg button:active,.gseg button:active{transform:scale(.96)}
 .list button:active{background:rgba(24,32,47,.05)}
 .nb:active{transform:scale(.92)}
-.big,.kv b,.wsum b,.bal b,.hd b,.stats3 b,.bw small{font-variant-numeric:tabular-nums}
+.big,.kv b,.wside b,.bal b,.hd b,.stats3 b,.bw small{font-variant-numeric:tabular-nums}
 #app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 16px 122px}
 .glass{background:var(--glass);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1px solid var(--edge);box-shadow:var(--shadow);border-radius:var(--r)}
 svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -202,9 +202,16 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .whero .char i{width:214px;height:214px;left:34px;top:10px}
 .whero .char img{height:354px;left:16px;top:0}
 .whero .char.wanita img{height:354px;left:40px;top:0}
-.whero.end{height:176px;margin-bottom:-30px;overflow:hidden}
-.whr{position:absolute;z-index:1;right:16px;top:144px;display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.76);border:1px solid var(--edge);box-shadow:0 10px 22px -14px rgba(52,72,120,.5);font-size:13px;font-weight:700}
-.whr svg.i{width:15px;height:15px;fill:#e5533a;stroke:none}
+.whero.end{height:226px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent)}
+/* the small button that opens the muscle popup, on the edge of the disc: it breathes and sends out rings */
+.mus-ic{position:absolute;z-index:2;left:204px;top:20px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:none;display:grid;place-items:center;color:#fff}
+.mus-ic i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--grad);box-shadow:0 8px 16px -6px rgba(37,99,235,.8);animation:musBeat 2.4s ease-in-out infinite}
+.mus-ic svg.i{width:19px;height:19px}
+.mus-ic::before,.mus-ic::after{content:'';position:absolute;inset:5px;border-radius:50%;border:2px solid var(--acc);opacity:0;pointer-events:none;animation:musRing 2.4s ease-out infinite}
+.mus-ic::after{animation-delay:.8s}
+.mus-ic:active i{transform:scale(.92)}
+@keyframes musBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes musRing{0%{transform:scale(1);opacity:.6}70%,100%{transform:scale(1.75);opacity:0}}
 /* Statistik: the total beside the person, the range over their waist */
 .shero{position:relative;height:206px;margin:-8px -16px 0;padding:14px 20px 0;overflow-x:clip}
 .shero~*{position:relative;z-index:1}
@@ -325,29 +332,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .playbig{position:absolute;inset:0;margin:auto;width:66px;height:66px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:var(--acc);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 .playbig svg.i{width:26px;height:26px;margin-left:3px}
-.dt{font-size:18px;font-weight:800;margin:2px 44px 12px;text-align:center;line-height:1.25}
-.panel:has(.dtm){background:linear-gradient(155deg,#cfe3fb 0%,#e4ebfb 40%,#fbe6da 76%,#f8d3c0 100%)}
-.panel:has(.dtm) .sheet-foot{background:linear-gradient(rgba(248,222,208,0),rgba(248,222,208,.92) 34%)}
-.dtm{position:relative;overflow:hidden;margin-bottom:14px;border-radius:28px;background:var(--warm);box-shadow:var(--shadow)}
-.dtm .video{width:100%;height:262px;aspect-ratio:auto;margin:0;border-radius:0;box-shadow:none}
-.dtm.on .video{height:min(56vh,480px)}
-.dtm .cx-hero{margin:0}
-.dtm .playbig{inset:auto auto 14px 14px;margin:0;width:52px;height:52px}
-.seg.dtabs{margin:0 0 14px;background:rgba(255,255,255,.66);border:1px solid var(--edge)}
-.dtiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
-.dtiles div{padding:14px;border-radius:20px;background:rgba(255,255,255,.68);border:1px solid var(--edge)}
-.dtiles small{font-size:12.5px;font-weight:600;color:var(--muted)}
-.dtiles b{display:block;margin-top:4px;font-size:21px;font-weight:800;line-height:1.2}
-.dtp .desc{color:#3f4a5c;font-size:14px;line-height:1.5;margin:0 4px 12px}
-.dtp .ytlink{justify-content:space-between;min-height:52px;margin:0;padding:0 16px;border-radius:18px;background:rgba(255,255,255,.68);border:1px solid var(--edge);color:var(--acc-2);font-size:14px}
-.dt-h{margin:16px 4px 8px;font-size:15px;font-weight:700}
-.dt-more{overflow:hidden;border-radius:20px;background:rgba(255,255,255,.66);border:1px solid var(--edge)}
-.dt-more button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;padding:0 16px;border:0;background:none;color:var(--ink);font:inherit;font-size:14.5px;font-weight:700;text-align:left}
-.dt-more button+button{border-top:1px solid rgba(24,32,47,.08)}
-.dt-more svg.i{width:16px;height:16px}
-.dt-go{grid-template-columns:2fr 3fr}
-.dt-go .btn{min-height:58px;font-size:15.5px}
-.dt-go .btn.soft{color:var(--acc-2)}
+.dt{font-size:22px;font-weight:800;margin:16px 2px 12px;letter-spacing:-.02em;line-height:1.25}
 .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats3 div{background:#fff;border-radius:16px;padding:10px 12px;border:1px solid rgba(24,32,47,.05)}
 .stats3 small{display:block;color:var(--muted);font-size:11.5px;font-weight:600}
@@ -369,6 +354,9 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .row2 > .btn{white-space:nowrap}
 .ytlink{display:flex;justify-content:center;align-items:center;gap:6px;margin:14px 0 4px;color:var(--muted);font-size:13px;text-decoration:none;font-weight:700}
 .ytlink svg.i{width:16px;height:16px}
+.mini{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;background:transparent;border-radius:16px;text-align:left;color:var(--ink)}
+.mini .vt{width:42px;height:56px;border-radius:12px}
+.mini b{font-size:14px;font-weight:700;flex:1}
 .list{display:flex;flex-direction:column;background:#fff;border-radius:18px;overflow:hidden;border:1px solid rgba(24,32,47,.06)}
 .list button{display:flex;align-items:center;gap:12px;padding:15px 16px;border:0;background:transparent;font-weight:700;font-size:14.5px;color:var(--ink);text-align:left;border-bottom:1px solid rgba(24,32,47,.06)}
 .list button:last-child{border-bottom:0}
@@ -647,23 +635,18 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wt{text-align:center;min-width:0;flex:1}
 .wt b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wt small{color:var(--acc);font-weight:800;font-variant-numeric:tabular-nums;font-size:13px}
-.wsum{display:grid;grid-template-columns:repeat(3,1fr);padding:12px 8px;margin-bottom:14px;text-align:center;border-radius:24px}
-.wsum small{display:block;color:var(--muted);font-size:12px;font-weight:600}
-.wsum b{font-size:19px;font-weight:800}
-.mus-pill{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:38px;padding:6px 10px 6px 12px;border:0;border-radius:999px;background:var(--acc-soft);color:var(--acc);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
-.mus-pill:active{transform:scale(.97)}
-.mus-pill span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mus-pill svg{flex:none;width:15px;height:15px}
-.wsum .mus-pill{grid-column:1/-1;justify-self:center;margin-top:12px}
+.wside{position:absolute;z-index:1;right:16px;top:8px;width:124px;display:grid;gap:8px;text-align:right}
+.wside small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.wside b{font-size:20px;font-weight:800}
 /* the heart rate cell: tap to link a watch, then the live beat, coloured by zone */
-.wsum .ws-hr{display:block;width:100%;min-width:0;margin:-6px 0;padding:6px 4px;border:0;border-radius:14px;background:none;color:inherit;font:inherit}
-.wsum .ws-hr:active{background:rgba(24,32,47,.05)}
-.wsum .ws-hr small{display:flex;align-items:center;justify-content:center;gap:4px}
+.wside .ws-hr{display:block;width:100%;min-width:0;margin:0;padding:0;border:0;border-radius:10px;background:none;color:inherit;font:inherit;text-align:right}
+.wside .ws-hr:active{background:rgba(24,32,47,.05)}
+.wside .ws-hr small{display:flex;align-items:center;justify-content:flex-end;gap:4px}
 .ws-hr small span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ws-hr small svg.i{flex:none;width:13px;height:13px;color:#e11d48;stroke-width:2.4}
 .ws-hr.live small{color:var(--zt,var(--muted))}
 .ws-hr.live small svg.i{fill:currentColor;color:#e11d48;animation:hrBeat var(--bt,1s) ease-in-out infinite}
-.wsum .ws-hr b small{display:inline;margin-left:3px;font-size:12px;font-weight:700;color:var(--muted)}
+.wside .ws-hr b small{display:inline;margin-left:3px;font-size:12px;font-weight:700;color:var(--muted)}
 .ws-hr.off b,.ws-hr.wait b,.ws-hr.again b{display:block;font-size:15px;line-height:23px;color:var(--acc)}
 .ws-hr.lost b{color:var(--faint)}
 @keyframes hrBeat{0%,55%,100%{transform:scale(1)}14%{transform:scale(1.28)}28%{transform:scale(1.06)}}
@@ -694,18 +677,31 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .hrb-h span{margin-left:auto;padding-left:8px;color:#be123c;font-size:12px;white-space:nowrap}
 .hr-sp{display:block;width:100%;height:40px;margin-top:4px}
 .wx{padding:16px;margin-bottom:12px;border-radius:28px;scroll-margin-top:16px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
-.wx-h{display:flex;align-items:flex-start;gap:8px}
+.wx-h{display:flex;align-items:center;gap:12px}
+.wx-h .vt{width:42px;height:56px;border-radius:12px;cursor:pointer}
+.wx-v{position:relative;flex:none;padding:0;border:0;background:transparent;border-radius:12px;transition:transform .14s ease}
+.wx-v .vt{display:block}
+.wx-v:active{transform:scale(.94)}
+.wx-v .pm{position:absolute;z-index:2;right:-6px;bottom:-6px;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center;box-shadow:0 3px 8px -3px rgba(24,32,47,.5)}
+.wx-v .pm svg.i{width:12px;height:12px;fill:currentColor;stroke:none;margin-left:1px}
+.wx-v.hint::after{content:'';position:absolute;z-index:1;inset:0;border-radius:12px;pointer-events:none;animation:vPulse 1.6s ease-out .5s 3}
+.wx-v.hint .pm{animation:pmBeat 1.6s ease-in-out .5s 3}
+@keyframes vPulse{0%{box-shadow:0 0 0 0 rgba(47,124,246,.6)}100%{box-shadow:0 0 0 11px rgba(47,124,246,0)}}
+@keyframes pmBeat{0%,100%{transform:scale(1)}35%{transform:scale(1.22)}}
 /* the thumbnail opens the video: a play badge, and a soft pulse the first time the card opens */
 /* folded exercises: rows in one bright list (no glass, so the page colour does not muddy it) */
 .wx-list{margin-bottom:12px;border-radius:22px;overflow:hidden;background:rgba(255,255,255,.9);border:1px solid #fff;box-shadow:0 10px 24px -18px rgba(52,72,120,.4)}
-.wx-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px 10px 10px;border:0;background:transparent;text-align:left;color:var(--ink);scroll-margin-top:96px}
+.wx-row{display:flex;align-items:center;gap:12px;padding-left:12px;scroll-margin-top:96px}
 .wx-row+.wx-row{border-top:1px solid rgba(24,32,47,.07)}
-.wx-row:active{background:rgba(24,32,47,.04)}
-.wx-row.done b{color:var(--muted)}
-.wx-row .vt{width:34px;height:44px;border-radius:10px;flex:none}
-.wx-row>span:not(.vt):not(.wx-n){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.wx-row b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wx-row small{color:var(--muted);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.wx-row .vt{width:34px;height:44px;border-radius:10px}
+.wx-row .wx-v .pm{right:-5px;bottom:-5px;width:20px;height:20px}
+.wx-row .wx-v .pm svg.i{width:10px;height:10px}
+.wx-rb{flex:1;min-width:0;display:flex;align-items:center;gap:12px;min-height:64px;padding:10px 12px 10px 2px;border:0;background:transparent;text-align:left;color:var(--ink);font:inherit}
+.wx-rb:active{background:rgba(24,32,47,.04)}
+.wx-row.done .wx-rb b{color:var(--muted)}
+.wx-rb>span:not(.wx-n){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.wx-rb b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-rb small{color:var(--muted);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .wx-n{flex:none;min-width:40px;height:28px;padding:0 9px;border-radius:999px;display:grid;place-items:center;background:rgba(24,32,47,.06);color:var(--muted);font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
 .wx-n.ok{background:#dcf4e8;color:#0b7a55}
 .wx-n svg.i{width:16px;height:16px;stroke-width:2.8}
@@ -740,9 +736,9 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .tb{display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:0 14px 0 11px;border:0;border-radius:999px;background:rgba(255,255,255,.78);color:var(--acc-2);font-size:13.5px;font-weight:800;box-shadow:0 6px 16px -12px rgba(52,72,120,.55);transition:transform .14s ease,background-color .2s}
 .tb svg.i{width:17px;height:17px;stroke-width:2.4}
 .tb:active{transform:scale(.95);background:#fff}
-.wx-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left}
+.wx-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .wx-t small{font-size:12.5px;font-weight:600;color:var(--muted)}
-.wx-t b{font-size:23px;line-height:1.2;font-weight:800;letter-spacing:-.01em}
+.wx-t b{font-size:19px;line-height:1.22;font-weight:800;letter-spacing:-.01em}
 .tl{display:flex;align-items:center;gap:8px;margin-top:6px}
 .tl>b{flex:1;min-width:0;font-size:13px;font-weight:700}
 .tl-b{display:flex;gap:6px;min-width:0}
@@ -822,6 +818,7 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .amb{position:relative;width:fit-content;max-width:100%;margin:0 auto}
 .amb>.video,.amb>.vm-vid{position:relative;z-index:1}
 /* the cards under a video sit above its glow, not in it */
+.amb~.stats3,.amb~.dmap{position:relative;z-index:1}
 .amb-glow{position:absolute;left:-16px;top:-12px;width:calc(100% + 32px);height:calc(100% + 24px);object-fit:cover;border-radius:32px;filter:blur(26px) saturate(2.4) brightness(1.3);opacity:.72;z-index:0;pointer-events:none}
 .vm{position:relative;z-index:1;width:min(360px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;border-radius:26px;padding:14px;box-shadow:0 30px 60px -20px rgba(24,32,47,.55);animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
 .vm-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:2px 2px 10px}
@@ -839,6 +836,8 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .vm-b .btn[disabled]{opacity:.65}
 .vm-b .btn.soft{background:#eef1f6}
 /* the short detail after a scan during a workout: a small button row, not the big pair */
+.dt-amb{margin-top:18px}
+.dt-amb .video{margin:0;box-shadow:none}
 .dt-b{display:flex;justify-content:flex-end;gap:8px;margin:2px 0 4px}
 .dt-b .btn{min-height:42px;padding:8px 16px;font-size:14px}
 .dt-b .btn svg.i{width:17px;height:17px}
@@ -2120,8 +2119,8 @@ function programMap(r, id = r.id) {
   return `<button class="glass pm-open" data-a="musclePop" data-id="${id}">
     <span class="pm-ic">${I('body')}</span><span class="pm-t"><small>Otot</small><b>${esc(names)}</b></span>${I('chev')}</button>`;
 }
-// the same popup from a small button in a running workout ('active')
-const musPill = (items, id) => { const names = musNames(items); return names ? `<button class="mus-pill" data-a="musclePop" data-id="${id}">${I('body')}<span>Otot: ${esc(names)}</span>${I('chev')}</button>` : '' };
+// the same popup from a small animated button during a workout
+const musIcon = items => { const names = musNames(items); return names ? `<button class="mus-ic" data-a="musclePop" data-id="active" aria-label="Otot yang dilatih: ${esc(names)}"><i>${I('body')}</i></button>` : '' };
 function musclePop(r) {
   const { main, help } = programLoad(r.items), w = k => (main[k] || 0) + (help[k] || 0) / 2;
   const ks = Object.keys(main).sort((a, b) => main[b] - main[a]), hs = Object.keys(help).filter(k => !main[k]).sort((a, b) => help[b] - help[a]);
@@ -2192,11 +2191,14 @@ function cardioEst(id, s) {
 function wxCard(it, ei) {
   const t = T[it.id]; if (!t) return '';
   const n = it.sets.length, done = it.sets.filter(s => s.done).length;
-  if (ei !== openEx()) return `<button class="wx-row${done === n ? ' done' : ''}" id="wx${ei}" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
-      <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button>`;
+  if (ei !== openEx()) return `<div class="wx-row${done === n ? ' done' : ''}" id="wx${ei}"><button class="wx-v" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+      <button class="wx-rb" data-a="wxOpen" data-ex="${ei}" aria-expanded="false"><span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
+      <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button></div>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id, usesIn(S.active.items.slice(0, ei), it.id)), p = prev && (prev[fi] || prev[prev.length - 1]);
   const c = CX(it.id), unit = c ? 'Bagian' : 'Set';
   const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
+  // the thumbnail pulses the first time this card opens, not on every redraw
+  const w = wxState(), hint = !(w.hinted ||= new Set()).has(it.id); w.hinted.add(it.id);
   const step = (x, si) => `<button class="tl-s${x.done ? ' ok' : ''}${si === fi ? ' sel' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="${unit} ${si + 1}: ${setText(it.id, x)}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}"><i></i></button>`;
   const stepper = (k, label, unit, d) => `<div class="fs-r"><label for="f${k}${ei}">${label}${unit ? ` (${unit})` : ''}</label><div class="fs-s">
       <button data-a="wxStep" data-k="${k}" data-d="-${d}" data-ex="${ei}" data-ix="${fi}" aria-label="Kurangi ${label.toLowerCase()}">−</button>
@@ -2206,7 +2208,8 @@ function wxCard(it, ei) {
   const fields = !s ? '' : !c ? stepper('w', 'Beban', 'kg', 2.5) + stepper('r', 'Reps', '', 1)
     : stepper('r', 'Durasi', 'menit', 1) + (c.k === 'run' ? stepper('w', 'Kecepatan', 'km/j', .5) + stepper('g', 'Incline', '%', .5) : stepper('w', 'Level', '', 1));
   return `<section class="wx glass on" id="wx${ei}">
-      <div class="wx-h"><button class="wx-t" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}"><small>Latihan ${ei + 1} dari ${S.active.items.length}${mus}</small><b>${esc(t.t)}</b></button>
+      <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
+        <div class="wx-t"><small>Latihan ${ei + 1} dari ${S.active.items.length}${mus}</small><b>${esc(t.t)}</b></div>
         ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl"><b>${s ? (c && n === 1 ? 'Kardio' : `${unit} ${fi + 1} dari ${n}`) : c ? 'Selesai' : `Semua ${n} set selesai`}</b>
         <span class="tl-b">${it.sets.map(step).join('')}</span><button class="tl-add" data-a="setAdd" data-ex="${ei}" aria-label="Tambah ${unit.toLowerCase()}">${I('plus')}</button></div>
@@ -2240,9 +2243,9 @@ function vWorkout() {
   return `<header class="bar-top wbar"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kecilkan">${I('down')}</button>
       <div class="wt"><b>${esc(a.name)}</b><small id="elapsed">0:00</small></div>
       <button class="btn soft sm" data-a="finish">Selesai</button></header>
-    <section class="whero${cur ? '' : ' end'}">${charPic(S.settings.body === 'female' ? 'wanita' : 'kabel')}<div class="whr" id="whHr"${hrLive() ? '' : ' hidden'}>${hrLive() ? `${I('heart')}<b>${hr.bpm}</b> bpm` : ''}</div></section>
+    <section class="whero${cur ? '' : ' end'}">${charPic(S.settings.body === 'female' ? 'wanita' : 'kabel')}${musIcon(a.items)}
+      <div class="wside"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div></div></section>
     ${cur}
-    <div class="wsum glass"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div>${musPill(a.items, 'active')}</div>
     ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
     ${wxCards() || (a.items.length ? '' : '<div class="empty glass">Belum ada latihan. Tambahkan atau scan alatnya.</div>')}
     <button class="btn ghost block mt" style="color:#d9443b" data-a="cancelWorkout">Batalkan workout</button>`;
@@ -2415,29 +2418,25 @@ const ambGlow = y => { const hq = esc(thumb(y, 'hq')); return `<img class="amb-g
 // The body with the machine's main muscles dark and the supporting ones light, front and back.
 const muscleMap = t => { const [p, s] = musOf(t); return `<div class="dmap"><div class="dmap-k"><span><i style="background:var(--acc)"></i>Utama</span>${s.length ? `<span><i style="background:#a2c2f8"></i>Pendukung: ${s.map(k => MI[k].n).join(', ')}</span>` : ''}</div>
       ${bodyMap({ level: k => p.includes(k) ? 4 : s.includes(k) ? 2 : 0 })}</div>` };
-// Under the picture one tab at a time: the numbers, the muscle map, how it is done.
-function dtTabs(t, tiles) {
-  const tab = ([k, n], i) => `<button role="tab" aria-selected="${!i}" class="${i ? '' : 'on'}" data-a="dtTab" data-k="${k}">${n}</button>`;
-  const desc = esc(t.d || 'Belum ada keterangan untuk alat ini.');
-  return `<div class="seg pseg dtabs" role="tablist" aria-label="Isi detail">${[['info', t.c ? 'Info' : 'Video'], ['otot', 'Otot'], ['cara', 'Cara']].map(tab).join('')}</div>
-    <div class="dtp" data-p="info"><div class="dtiles">${tiles.map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join('')}</div><p class="desc">${desc}</p></div>
-    <div class="dtp" data-p="otot" hidden>${muscleMap(t)}</div>
-    <div class="dtp" data-p="cara" hidden><p class="desc">${desc}</p>
-      ${t.c ? '' : `<a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">Buka di YouTube ${I('ext')}</a>`}</div>`;
-}
 // a cardio machine has no video: its picture large, and what gets written down on it
-const cardioTop = t => `<h2 class="dt">${esc(t.t)}</h2><div class="dtm">${cxHero(t.k)}</div>
-    ${dtTabs(t, [['Saran', '20–30 mnt'], ['Dicatat', t.k === 'run' ? 'km/j, incline' : 'Level']])}`;
-const detailTop = t => { const last = prevFor(t.id)?.[0]; return t.c ? cardioTop(t) : `<h2 class="dt">${esc(t.t)}</h2>
-    <div class="dtm"><div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
-    ${dtTabs(t, [['Saran', APP.suggestion], ['Terakhir', last ? setText(t.id, last) : 'Belum ada']])}` };
+const cardioTop = t => `${cxHero(t.k)}
+    <h2 class="dt">${esc(t.t)}</h2>
+    <div class="stats3"><div><small>Jenis</small><b>Kardio</b></div><div><small>Saran</small><b>20–30 mnt</b></div><div><small>Dicatat</small><b>${t.k === 'run' ? 'km/j, incline' : 'Level'}</b></div></div>
+    ${muscleMap(t)}
+    ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
+const detailTop = t => t.c ? cardioTop(t) : `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
+    <h2 class="dt">${esc(t.t)}</h2>
+    <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
+    ${muscleMap(t)}
+    ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
 function openDetail(id) {
   const t = T[id]; if (!t) return;
   const similar = (t.c ? CARDIO : TUTORIALS).filter(x => x.id !== t.id && (t.c || x.p[0] === t.p[0])).slice(0, 4);
   sheet(`${detailTop(t)}
-    ${similar.length ? `<h3 class="dt-h">${t.c ? 'Kardio' : MI[t.p[0]].n} lainnya</h3><div class="dt-more">${similar.map(x => `<button data-a="open" data-id="${x.id}">${esc(x.t)}${I('chev')}</button>`).join('')}</div>` : ''}
-    <div class="sheet-foot"><div class="row2 dt-go"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
-      : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${I('plus')} Tambah ke workout</button>`}</div></div>`);
+    <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
+      : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${I('plus')} Tambah ke workout</button>`}</div>
+    ${t.c ? '' : `<a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`}
+    ${similar.length ? `<h3 class="sh2">${t.c ? 'Kardio' : MI[t.p[0]].n} lainnya</h3>${similar.map(x => `<button class="mini" data-a="open" data-id="${x.id}">${pic(x.y)}<b>${esc(x.t)}</b>${I('chev')}</button>`).join('')}` : ''}`);
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function openAddTo(id) {
@@ -3201,8 +3200,6 @@ function hrDraw() {
   }
   const r = $('#restHr');
   if (r) { r.hidden = !live; if (live) r.innerHTML = `${I('heart')}<b>${hr.bpm}</b>` }
-  const wh = $('#whHr');
-  if (wh) { wh.hidden = !live; if (live) wh.innerHTML = `${I('heart')}<b>${hr.bpm}</b> bpm` }
   if ($('#hrs')) { const ic = $('#hrsIc'); ic.classList.toggle('live', live); ic.style.setProperty('--bt', (live ? 60 / hr.bpm : 1).toFixed(2) + 's'); $('#hrsTop').innerHTML = hrTop(); $('#hrs').innerHTML = hrStats() }
 }
 function hrHelp() {
@@ -4554,12 +4551,7 @@ const A = {
     if ($('#pkMap')) refreshPick(true);
   },
   open: el => openDetail(+el.dataset.id),
-  dtTab: el => {
-    const box = el.closest('.sheet-body');
-    box.querySelectorAll('.dtabs button').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-selected', on) });
-    box.querySelectorAll('.dtp').forEach(p => { p.hidden = p.dataset.p !== el.dataset.k });
-  },
-  play: el => { el.closest('.dtm')?.classList.add('on'); (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
+  play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
   addTo: el => openAddTo(+el.dataset.id),
   addToR: async el => {
     const r = S.routines.find(x => x.id === el.dataset.rid), id = +el.dataset.id; if (!r) return;

@@ -67,8 +67,7 @@ tersinkron di semua perangkat.
 - **Ikon program** otomatis dari otot utama latihannya (atau pilih sendiri: 15 otot, 8 ikon, 9 warna).
 - **Otot** di Edit Program: satu baris di bawah nama program (3 otot utama terbanyak). Diketuk membuka popup
   peta tubuh (warna makin tua = makin banyak set; otot pendukung berbobot ½), set per otot utama, otot yang hanya
-  jadi pendukung, dan otot yang belum dilatih. Baris yang sama ada di detail riwayat workout (Statistik). Saat workout berjalan, popup-nya dibuka dari tombol kecil **Otot: …** di kartu
-  Set selesai · Volume · Detak jantung.
+  jadi pendukung, dan otot yang belum dilatih. Baris yang sama ada di detail riwayat workout (Statistik). Saat workout berjalan, popup-nya dibuka dari ikon kecil beranimasi di tepi lingkaran karakter.
 - **Bagikan program** lewat link, menu share HP, atau file `.json`; penerima tinggal membuka link.
 - **Import** program (dan plan mingguan) dari JSON, misalnya buatan Claude, atau dari link/file bagikan. Isinya tampil
   dulu sebagai kartu program (seperti di Plan): centang yang mau diimport, **Lihat isi** membuka daftar latihannya.
@@ -100,7 +99,8 @@ tersinkron di semua perangkat.
   lalu kartu kaca minggu ini yang menimpa karakter (badannya tampak samar lewat blur): tanggal dalam bulatan (penuh = selesai,
   putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
 - **Halaman workout** mengikuti desain: karakter, kartu set yang menimpa karakter (nama, batang set yang bisa diketuk, + tambah set,
-  stepper Beban/Reps berbentuk tile, Terakhir, Set selesai), kartu ringkasan, lalu daftar latihan lain. Chip bpm muncul saat jam terhubung.
+  stepper Beban/Reps berbentuk tile, Terakhir, Set selesai), lalu daftar latihan lain. Set selesai, Volume, dan Detak jantung tampil tanpa kartu di samping kanan karakter.
+  Kartu dan tiap baris daftar punya thumbnail dengan tanda putar untuk membuka video tutorial.
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
   MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
@@ -302,7 +302,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
 15. Claude sebagai pilihan AI di samping Gemini.
 16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Plus Jakarta Sans, tombol navigasi bulat,
-    gauge kalori, tab Video/Otot/Cara di detail alat, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
+    gauge kalori, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
 
 ## 8. Ide berikutnya
 
