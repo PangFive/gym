@@ -21,7 +21,8 @@ const PAGE = new URL('./index.html', self.registration.scope).href;
 const ASSETS = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png',
   './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo.svg',
   ...['run', 'bike', 'ell', 'row', 'stair'].map(k => `./img/cardio-${k}.webp`),
-  ...['pria', 'wanita', 'kabel'].map(k => `./img/char-${k}.webp`)];
+  ...['m', 'f'].flatMap(g => ['push', 'pull', 'legs', 'core', 'cardio', 'rest', 'eat'].map(k => `./img/char-${g}-${k}.webp`)),
+  ...['breakfast', 'lunch', 'dinner', 'snack'].map(k => `./img/meal-${k}.webp`)];
 
 self.addEventListener('install', e => {
   // cache: 'reload' skips the browser's HTTP cache, which could still hold the previous files

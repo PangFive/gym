@@ -95,6 +95,8 @@ tersinkron di semua perangkat.
   dengan yang diganti tidak bisa dipakai. Alat lain yang sudah ada di workout boleh dipakai setelah popup konfirmasi
   (label **Sudah di workout**, di bawah daftar); rekomendasi AI tetap memilih alat yang belum ada.
   Menutup kamera tanpa scan mengembalikan sheet seperti semula.
+- **Karakter mengikuti latihan** (`workOf()`, gambar `public/img/char-<m|f>-<jenis>.webp`): jenis dengan set terbanyak di otot utama, yaitu dorong, tarik,
+  kaki, perut, atau kardio; `rest` untuk hari istirahat dan setelah selesai. Saat workout mengikuti latihan yang sedang terbuka; di Statistik mengikuti rentang yang dipilih.
 - **Hero Beranda**: program hari ini + tombol Mulai di samping karakter orang (mengikuti figur Pria/Wanita di Pengaturan),
   lalu kartu kaca minggu ini yang menimpa karakter (badannya tampak samar lewat blur): tanggal dalam bulatan (penuh = selesai,
   putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
@@ -153,6 +155,8 @@ tersinkron di semua perangkat.
   / 1.200 (wanita). Bisa juga diatur sendiri. Protein 1,8 g/kg berat, lemak 25%, sisanya karbo.
 - **Defisit / surplus** hari ini (masuk − pembakaran) di halaman Kalori dan kartu Beranda. Warnanya ikut
   target harian: oranye selama masih di bawah 90% target (defisit besar), hijau di 90–105% target, merah di atas 105%.
+- **Halaman Kalori**: karakter memegang makanan di samping sisa kalori, lalu kartu tiap waktu makan dengan gambar makanannya. Hari ini semua kartu
+  tampil dan tombol + menambah makanan ke waktu makan itu; hari lain hanya yang ada isinya.
 - **Berat badan**: catat harian, progres dari berat awal ke target, grafik 30 catatan terakhir,
   perkiraan tanggal tercapai.
 

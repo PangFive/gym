@@ -173,13 +173,12 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 /* the person on Home, the workout page, Statistik and sign-in: a cut-out in front of a warm disc */
 .char{position:absolute;inset:0;pointer-events:none;user-select:none}
 .char i{position:absolute;border-radius:50%;background:var(--warm)}
-.char img{position:absolute;display:block}
+.char img{position:absolute;display:block;object-fit:contain}
 /* Home: today's program beside the person, the week over their legs */
 .hhero{position:relative;min-height:288px;margin:-10px -16px -44px;padding:22px 16px 56px;overflow-x:clip}
 .hhero~*{position:relative;z-index:1}
 .hhero .char i{width:262px;height:262px;right:-22px;top:18px}
-.hhero .char img{height:429px;right:-2px;top:-4px}
-.hhero .char.wanita img{height:427px;right:-4px;top:2px}
+.hhero .char img{width:240px;height:429px;right:-2px;top:-4px;object-position:100% 100%}
 .hh-t{position:relative;width:calc(100% - 226px);min-width:150px}
 .hh-t>small{font-size:13px;font-weight:600;color:var(--muted)}
 .hh-t h1{margin:6px 0 4px;font-size:38px;line-height:1.04;letter-spacing:-.02em;overflow-wrap:anywhere}
@@ -191,7 +190,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .hh-t .tag::before{display:none}
 .hh-t .btn{margin-top:14px;min-height:48px;padding:0 22px 0 18px;font-size:15.5px;font-weight:800}
 .hh-t .hh-n{margin-top:10px}
-@media (max-width:380px){.hhero .char i{width:230px;height:230px;right:-52px;top:34px}.hhero .char img,.hhero .char.wanita img{height:372px;right:-14px;top:30px}}
+@media (max-width:380px){.hhero .char i{width:230px;height:230px;right:-52px;top:34px}.hhero .char img{width:208px;height:372px;right:-14px;top:30px}}
 .hweek{padding:12px 10px;margin-bottom:12px;border-radius:24px;background:rgba(255,255,255,.72)}
 /* the workout page: the exercise now, the summary card over the person's waist */
 .bar-top.wbar{position:relative;top:auto;z-index:2;margin:-4px 0 0;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -200,9 +199,8 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .whero{position:relative;height:214px;margin:0 -16px;overflow-x:clip}
 .whero~*{position:relative;z-index:1}
 .whero .char i{width:214px;height:214px;left:34px;top:10px}
-.whero .char img{height:354px;left:16px;top:0}
-.whero .char.wanita img{height:354px;left:40px;top:0}
-@media (max-width:380px){.whero .char img{height:320px;left:8px}.whero .char.wanita img{height:320px;left:24px}.whero .char i{width:196px;height:196px;left:16px}.mus-ic{left:172px}}
+.whero .char img{width:236px;height:354px;left:12px;top:0;object-position:100% 100%;transform:scaleX(-1)}
+@media (max-width:380px){.whero .char img{width:214px;height:320px;left:6px}.whero .char i{width:196px;height:196px;left:16px}.mus-ic{left:172px}}
 .whero.end{height:226px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent)}
 /* the small button that opens the muscle popup, on the edge of the disc: it breathes and sends out rings */
 .mus-ic{position:absolute;z-index:2;left:204px;top:20px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:none;display:grid;place-items:center;color:#fff}
@@ -217,8 +215,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .shero{position:relative;height:206px;margin:-8px -16px 0;padding:14px 20px 0;overflow-x:clip}
 .shero~*{position:relative;z-index:1}
 .shero .char i{width:174px;height:174px;right:0;top:16px}
-.shero .char img{height:290px;right:10px;top:8px}
-.shero .char.wanita img{height:290px;right:10px;top:8px}
+.shero .char img{width:172px;height:290px;right:6px;top:8px;object-position:100% 100%}
 .sh-t{position:relative;width:calc(100% - 150px)}
 .sh-t h1{margin:0 0 34px;font-size:32px;line-height:1.1;letter-spacing:-.02em}
 .sh-t>small{font-size:13px;font-weight:600;color:var(--muted)}
@@ -640,14 +637,18 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wside small{display:block;color:var(--muted);font-size:12px;font-weight:600}
 .wside b{font-size:20px;font-weight:800}
 /* the heart rate cell: tap to link a watch, then the live beat, coloured by zone */
-.wside .ws-hr{display:block;width:100%;min-width:0;margin:0;padding:0;border:0;border-radius:10px;background:none;color:inherit;font:inherit;text-align:right}
-.wside .ws-hr:active{background:rgba(24,32,47,.05)}
-.wside .ws-hr small{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.wside>div:last-child{justify-self:end}
+.wside .ws-hr{display:inline-flex;align-items:center;gap:6px;min-height:40px;margin:0;padding:0 14px;border:1px solid var(--edge);border-radius:999px;background:rgba(255,255,255,.76);box-shadow:0 10px 22px -14px rgba(52,72,120,.5);color:var(--ink);font:inherit;font-size:14px;font-weight:700}
+.wside .ws-hr:active{background:#fff}
+.wside .ws-hr small{display:flex}
+.wside .ws-hr small span{display:none}
+.wside .ws-hr small svg.i{width:16px;height:16px;fill:#e5533a;color:#e5533a}
+.wside .ws-hr b{font-size:14px;font-weight:700;line-height:1.2}
 .ws-hr small span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ws-hr small svg.i{flex:none;width:13px;height:13px;color:#e11d48;stroke-width:2.4}
 .ws-hr.live small{color:var(--zt,var(--muted))}
 .ws-hr.live small svg.i{fill:currentColor;color:#e11d48;animation:hrBeat var(--bt,1s) ease-in-out infinite}
-.wside .ws-hr b small{display:inline;margin-left:3px;font-size:12px;font-weight:700;color:var(--muted)}
+.wside .ws-hr b small{display:inline;margin-left:4px;font-size:14px;font-weight:700;color:var(--ink)}
 .ws-hr.off b,.ws-hr.wait b,.ws-hr.again b{display:block;font-size:15px;line-height:23px;color:var(--acc)}
 .ws-hr.lost b{color:var(--faint)}
 @keyframes hrBeat{0%,55%,100%{transform:scale(1)}14%{transform:scale(1.28)}28%{transform:scale(1.06)}}
@@ -1192,16 +1193,23 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .wlog input{width:130px;border:0;border-bottom:2px solid rgba(11,148,102,.3);background:transparent;text-align:center;font:inherit;font-size:40px;font-weight:800;color:var(--ink);outline:none;padding:4px 0}
 .wlog input:focus{border-color:#0b8a5e}
 .wlog em{font-style:normal;font-size:16px;font-weight:700;color:var(--muted)}
-.meal-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 22px;border-radius:22px;margin:4px 0 12px}
-.meal-empty .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(18,163,114,.12);color:#0b8a5e;margin-bottom:6px}
-.meal-empty .ic svg.i{width:28px;height:28px}
-.meal-empty b{font-size:16px;font-weight:800}
-.meal-empty p{margin:0;font-size:14px;color:var(--muted);line-height:1.5;max-width:270px}
-.slot-h{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 10px}
-.slot-h h2{margin:0;font-size:16px;font-weight:800}
-.slot-h small{color:var(--muted);font-weight:700;font-size:13px}
-.meal{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-bottom:8px;border-radius:18px;text-align:left;color:var(--ink)}
-.meal .mi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;background:rgba(18,163,114,.12);color:#0b8a5e}
+/* calories: the person with a meal beside what is left; each meal of the day under its picture */
+.khero{position:relative;height:196px;margin:0 -16px -26px;padding:14px 20px 0;overflow-x:clip}
+.khero~*{position:relative;z-index:1}
+.khero .char i{width:196px;height:196px;right:-8px;top:2px;background:linear-gradient(150deg,#d4f5e3,#3ecb98)}
+.khero .char img{width:200px;height:336px;right:6px;top:-14px;object-position:100% 100%}
+.kh-t{position:relative;width:calc(100% - 190px);padding-top:8px}
+.kh-t>small{font-size:13px;font-weight:600;color:var(--muted)}
+.kh-t .big{margin:0;font-size:44px;line-height:1.05;letter-spacing:-.02em}
+.kh-t p{margin:2px 0 8px;font-size:14px;font-weight:600;color:var(--muted)}
+.khero+.wkn{background:rgba(255,255,255,.76)}
+.slotc{padding:10px 12px;margin-bottom:10px;border-radius:22px}
+.slotc-h{display:flex;align-items:center;gap:12px}
+.slotc-h img{flex:none;width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(52,72,120,.22))}
+.slotc-h span{flex:1;min-width:0}
+.slotc-h h2{margin:0;font-size:15.5px;font-weight:800}
+.slotc-h small{font-size:12.5px;font-weight:600;color:var(--muted)}
+.meal{display:flex;align-items:center;gap:12px;width:100%;margin-top:8px;padding:10px 4px 2px;border:0;border-top:1px solid rgba(24,32,47,.07);background:none;text-align:left;color:var(--ink);font:inherit}
 .meal .mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .meal .mt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .meal .mt small{color:var(--muted);font-size:12.5px}
@@ -1731,13 +1739,20 @@ function buildNav() {
 
 // ---------- views ----------
 const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
-// the figure chosen in Pengaturan (the same one as the muscle maps)
-const bodyChar = () => S.settings.body === 'female' ? 'wanita' : 'pria';
-const charPic = kind => `<span class="char ${kind}" aria-hidden="true"><i></i><img src="img/char-${kind}.webp" alt="" decoding="async"></span>`;
+// The picture follows the work: the kind with the most sets on its main muscles, in the figure chosen in
+// Pengaturan (the same one as the muscle maps).
+const WORK = { chest: 'push', deltoids: 'push', triceps: 'push', trapezius: 'pull', 'upper-back': 'pull', 'lower-back': 'pull', biceps: 'pull', forearm: 'pull',
+  abs: 'core', obliques: 'core', gluteal: 'legs', quadriceps: 'legs', hamstring: 'legs', adductors: 'legs', calves: 'legs' };
+function workOf(items) {
+  const n = {};
+  items.forEach(it => { const t = T[it.id]; if (t) (t.c ? ['cardio'] : t.p.map(k => WORK[k])).forEach(w => { if (w) n[w] = (n[w] || 0) + (setCount(it) || 1) }) });
+  return Object.keys(n).sort((a, b) => n[b] - n[a])[0] || 'push';
+}
+const charPic = (work, fig = S.settings.body === 'female' ? 'f' : 'm') => `<span class="char" aria-hidden="true"><i></i><img src="img/char-${fig}-${work}.webp" alt="" decoding="async"></span>`;
 const LOGO = 'icons/icon-192.png?v=2';   // ?v= busts browser caches when the logo changes
 function vLogin() {
   const up = ui.authMode === 'up', open = ui.authOpen;
-  return `<section class="lhero${open ? ' sm' : ''}">${charPic('pria')}
+  return `<section class="lhero${open ? ' sm' : ''}">${charPic('push', 'm')}
       <div class="brand">${esc(APP.appName)}</div>
       <h1>Latih Pintar,<br>Tetap <em>Kuat</em></h1>
     </section>
@@ -1819,22 +1834,22 @@ function weekStrip() {
 function todayHero() {
   const now = new Date(), rs = dayRoutines(now.getDay()), nxt = nextPlanned();
   const logged = S.history.filter(h => dayKey(h.date) === dayKey(now));
-  const hero = (title, sub, extra = '') => `<section class="hhero">${charPic(bodyChar())}<div class="hh-t">
+  const hero = (work, title, sub, extra = '') => `<section class="hhero">${charPic(work)}<div class="hh-t">
       <small>${now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}</small>
       <h1${title.length > 16 ? ' class="s"' : title.length > 10 ? ' class="m"' : ''}>${esc(title)}</h1>
       <p>${sub}</p>${extra}</div></section>`;
   let top;
-  if (S.active) top = hero(S.active.name, '<span id="resumeT">Sedang berjalan</span>', `<button class="btn pri" data-a="go" data-to="workout">${I('playf')} Lanjutkan</button>`);
-  else if (logged.length) top = hero('Selesai hari ini', `${esc(logged[0].name)} · ${logged[0].dur} mnt · ${logged[0].sets} set`,
+  if (S.active) top = hero(workOf(S.active.items), S.active.name, '<span id="resumeT">Sedang berjalan</span>', `<button class="btn pri" data-a="go" data-to="workout">${I('playf')} Lanjutkan</button>`);
+  else if (logged.length) top = hero('rest', 'Selesai hari ini', `${esc(logged[0].name)} · ${logged[0].dur} mnt · ${logged[0].sets} set`,
     nxt ? `<p class="hh-n">Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}</p>` : '');
   else if (rs.length) {
     const items = rs.flatMap(r => r.items);
-    top = hero(dayName(rs), `${items.length} latihan · ±${estMin(items)} menit`,
+    top = hero(workOf(items), dayName(rs), `${items.length} latihan · ±${estMin(items)} menit`,
       `<div class="tags">${[...new Set(rs.flatMap(routineMuscles))].slice(0, 3).map(mTag).join('')}</div>
        <button class="btn pri" data-a="startDay">${I('playf')} Mulai</button>`);
-  } else if (Object.keys(S.week).length) top = hero('Hari istirahat', nxt ? `Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}` : 'Pulihkan otot dan cukupkan tidur.',
+  } else if (Object.keys(S.week).length) top = hero('rest', 'Hari istirahat', nxt ? `Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}` : 'Pulihkan otot dan cukupkan tidur.',
     `<button class="btn soft" data-a="startPick">${I('playf')} Tetap latihan</button>`);
-  else top = hero('Belum ada plan', 'Tentukan program untuk tiap hari.', `<button class="btn pri" data-a="go" data-to="plan">${I('calendar')} Atur plan</button>`);
+  else top = hero('rest', 'Belum ada plan', 'Tentukan program untuk tiap hari.', `<button class="btn pri" data-a="go" data-to="plan">${I('calendar')} Atur plan</button>`);
   return `${top}<section class="glass hweek">${weekStrip()}</section>`;
 }
 
@@ -2250,7 +2265,7 @@ function vWorkout() {
   return `<header class="bar-top wbar"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kecilkan">${I('down')}</button>
       <div class="wt"><b>${esc(a.name)}</b><small id="elapsed">0:00</small></div>
       <button class="btn soft sm" data-a="finish">Selesai</button></header>
-    <section class="whero${cur ? '' : ' end'}">${charPic(S.settings.body === 'female' ? 'wanita' : 'kabel')}${musIcon(a.items)}
+    <section class="whero${cur ? '' : ' end'}">${charPic(workOf(cur ? [a.items[oe]] : a.items))}${musIcon(a.items)}
       <div class="wside"><div><small>Set selesai</small><b id="wsDone">${doneCount()}</b></div><div><small>Volume</small><b id="wsVol">${fmt(activeVol())} kg</b></div><div>${hrCell()}</div></div></section>
     ${cur}
     ${listTools('Latihan', a.items.length ? `${a.items.filter(it => it.sets.every(x => x.done)).length}/${a.items.length} selesai` : '', 'data-a="pick" data-mode="workout"', '')}
@@ -2362,7 +2377,7 @@ function vStats() {
   const R = [{ v: w.n, max: S.settings.goal, c: '#2f7cf6', n: 'Workout', t: `${w.n}/${S.settings.goal}` },
              { v: w.sets, max: S.settings.goal * 18, c: '#f2785c', n: 'Set', t: `${w.sets}/${S.settings.goal * 18}` },
              { v: w.min, max: S.settings.goal * 50, c: '#14b8a6', n: 'Menit', t: `${w.min}/${S.settings.goal * 50}` }];
-  return `<section class="shero">${charPic(bodyChar())}<div class="sh-t"><h1>Statistik</h1>
+  return `<section class="shero">${charPic(workOf(S.history.filter(h => new Date(h.date) >= ser.from).flatMap(h => h.items)))}<div class="sh-t"><h1>Statistik</h1>
       <small>Volume ${ser.title}</small><div class="big">${fmt(tot)}</div><p>kilogram diangkat</p></div></section>
     <div class="seg glass">${[['week', 'Minggu'], ['month', 'Bulan'], ['year', 'Tahun']].map(([k, n]) => `<button class="${ui.range === k ? 'on' : ''}" data-a="range" data-k="${k}">${n}</button>`).join('')}</div>
     <section class="glass schart">${volBars(ser.vals, ser.labels)}
@@ -2385,7 +2400,7 @@ function sheet(html) {
   fitThumbs();
 }
 function closeSheet() {
-  closeVideo();
+  closeVideo(); ui.mealSlot = null;
   const s = $('#sheet');
   if (!s.classList.contains('open')) return;
   s.classList.remove('open'); s.classList.add('closing'); document.body.classList.remove('noscroll');
@@ -3720,21 +3735,26 @@ function vMeals() {
   const d = new Date(key + 'T12:00:00');
   const label = key === today ? 'Hari ini' : d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
   const meals = dayMeals(key);
+  // today every meal of the day has its card to fill; a past day shows what was eaten
   const slots = MEAL_SLOTS.map(([k, n]) => {
-    const ms = meals.filter(m => m.slot === k); if (!ms.length) return '';
+    const ms = meals.filter(m => m.slot === k); if (!ms.length && key !== today) return '';
     const sum = ms.reduce((a, m) => a + mealTotals(m).kcal, 0);
-    return `<div class="slot-h"><h2>${n}</h2><small>${r0(sum)} kkal</small></div>` + ms.map(m => { const x = mealTotals(m);
-      return `<button class="meal glass" data-a="mealOpen" data-id="${m.id}"><span class="mi">${I('apple')}</span><span class="mt"><b>${esc(m.name)}</b><small>P ${r0(x.p)} · K ${r0(x.c)} · L ${r0(x.f)} g · ${new Date(m.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small></span><span class="kk">${r0(x.kcal)}<small>kkal</small></span></button>` }).join('');
+    return `<section class="slotc glass"><div class="slotc-h"><img src="img/meal-${k}.webp" alt="" loading="lazy"><span><h2>${n}</h2><small>${ms.length ? `${r0(sum)} kkal` : 'Belum dicatat'}</small></span>
+      ${key === today ? `<button class="icon-btn sm" data-a="mealAdd" data-k="${k}" aria-label="Tambah ${n.toLowerCase()}">${I('plus')}</button>` : ''}</div>
+      ${ms.map(m => { const x = mealTotals(m);
+        return `<button class="meal" data-a="mealOpen" data-id="${m.id}"><span class="mt"><b>${esc(m.name)}</b><small>P ${r0(x.p)} · K ${r0(x.c)} · L ${r0(x.f)} g · ${new Date(m.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</small></span><span class="kk">${r0(x.kcal)}<small>kkal</small></span></button>` }).join('')}</section>`;
   }).join('');
+  const left = goal - t.kcal;
   const full = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
-  return `<header class="bar-top glass"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="profile" aria-label="Profil tubuh dan target">${I('user')}</button></header>
+  return `<header class="bar-top wbar"><button class="icon-btn" data-a="go" data-to="home" aria-label="Kembali">${I('back')}</button><span class="tt"><b>Kalori</b><small>${key === today ? 'Hari ini, ' + full.split(', ')[1] : full}</small></span><button class="icon-btn" data-a="profile" aria-label="Profil tubuh dan target">${I('user')}</button></header>
+    <section class="khero">${charPic('eat')}<div class="kh-t"><small>${left >= 0 ? 'Sisa' : 'Lebih'}</small><div class="big">${r0(Math.abs(left))}</div><p>kkal dari target ${r0(goal)}</p>${balanceBadge(t.kcal)}</div></section>
     ${mealWeek(key, today, goal)}
     <section class="glass card kc"><div class="kc-sum"><h2>${label}</h2><button class="kc-goal" data-a="profile" aria-label="Target ${r0(goal)} kkal, ubah di profil">${I('target')}<span>Target <b>${r0(goal)}</b> kkal</span></button></div>
       ${kcalGauge(t.kcal, goal)}${macroBars(t, goal)}
       ${balanceHtml(t.kcal)}
       ${key === today ? kcActions() : ''}</section>
+    ${slots || '<div class="empty glass">Tidak ada makanan yang dicatat di hari ini.</div>'}
     ${energy() ? '' : profileCta()}
-    ${slots || `<div class="meal-empty glass"><span class="ic">${I('apple')}</span><b>${key === today ? 'Belum ada makanan hari ini' : 'Tidak ada catatan'}</b><p>${key === today ? 'Foto piringmu sebelum makan, AI menghitung kalori dan makronya.' : 'Tidak ada makanan yang dicatat di hari ini.'}</p></div>`}
     ${weightCard()}`;
 }
 // ---- the AI: Gemini or Claude, picked on top of the sheet (swap redraws only the sheet's body)
@@ -3980,7 +4000,7 @@ async function analyzeMeal({ dataUrl, text }) {
     const r = parseMeal(await askAi(parts));
     if (!r.items.length) throw new Error(r.note || 'AI tidak mengenali makanan di foto ini.');
     const day = ui.mealDay && ui.mealDay !== dayKey(new Date()) ? new Date(ui.mealDay + 'T12:00:00') : new Date();
-    ui.meal = { id: null, date: day.toISOString(), slot: slotNow(), portion: 1, ...r, img: dataUrl || '' };
+    ui.meal = { id: null, date: day.toISOString(), slot: ui.mealSlot || slotNow(), portion: 1, ...r, img: dataUrl || '' };
     openMealReview();
   } catch (e) {
     sheet(`<h2 class="sh">Gagal menganalisis</h2><p class="scope" style="margin-top:-8px">${esc(e.message)}</p>
@@ -4798,6 +4818,8 @@ const A = {
   },
   share: el => openShare(el.dataset.id || null),
   // calories
+  // from a meal's card: the same choices as the calorie card, and the meal lands in that slot
+  mealAdd: el => { ui.mealSlot = el.dataset.k; sheet(`<h2 class="sh">Tambah ${MEAL_SLOTS.find(x => x[0] === el.dataset.k)[1].toLowerCase()}</h2>${kcActions()}`) },
   mealCam: () => { if (!needKey('cam')) $('#mealCam').click() },
   mealGal: () => { if (!needKey('gal')) $('#mealGal').click() },
   mealText: () => {
@@ -4808,7 +4830,7 @@ const A = {
     setTimeout(() => $('#mealTxt')?.focus(), 350);
   },
   mealPhotoGo: () => { const p = ui.mealPhoto; if (!p) return; analyzeMeal({ dataUrl: p.dataUrl, text: ($('#mealNote')?.value || '').trim().slice(0, 300) }) },
-  mealRetake: () => { const p = ui.mealPhoto; closeSheet(); setTimeout(() => $('#' + (p?.src || 'mealCam')).click(), 250) },
+  mealRetake: () => { const p = ui.mealPhoto, k = ui.mealSlot; closeSheet(); ui.mealSlot = k; setTimeout(() => $('#' + (p?.src || 'mealCam')).click(), 250) },
   mealTextGo: () => { const t = $('#mealTxt').value.trim(); if (!t) return toast('Tulis dulu makanannya', 'err'); analyzeMeal({ text: t.slice(0, 500) }) },
   mealOpen: el => { const m = S.meals.find(x => x.id === el.dataset.id); if (!m) return; ui.meal = JSON.parse(JSON.stringify(m)); ui.meal.img = ''; openMealReview() },
   mealDayAt: el => { ui.mealDay = el.dataset.k; render() },
