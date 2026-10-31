@@ -202,6 +202,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .whero .char i{width:214px;height:214px;left:34px;top:10px}
 .whero .char img{height:354px;left:16px;top:0}
 .whero .char.wanita img{height:354px;left:40px;top:0}
+@media (max-width:380px){.whero .char img{height:320px;left:8px}.whero .char.wanita img{height:320px;left:24px}.whero .char i{width:196px;height:196px;left:16px}.mus-ic{left:172px}}
 .whero.end{height:226px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent)}
 /* the small button that opens the muscle popup, on the edge of the disc: it breathes and sends out rings */
 .mus-ic{position:absolute;z-index:2;left:204px;top:20px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:none;display:grid;place-items:center;color:#fff}
@@ -635,7 +636,7 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wt{text-align:center;min-width:0;flex:1}
 .wt b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wt small{color:var(--acc);font-weight:800;font-variant-numeric:tabular-nums;font-size:13px}
-.wside{position:absolute;z-index:1;right:16px;top:8px;width:124px;display:grid;gap:8px;text-align:right}
+.wside{position:absolute;z-index:1;right:16px;top:0;bottom:0;width:124px;display:grid;align-content:center;gap:10px;text-align:right}
 .wside small{display:block;color:var(--muted);font-size:12px;font-weight:600}
 .wside b{font-size:20px;font-weight:800}
 /* the heart rate cell: tap to link a watch, then the live beat, coloured by zone */
