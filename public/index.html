@@ -189,7 +189,17 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .hh-t .tag{padding:5px 10px;background:rgba(255,255,255,.72);color:var(--acc-2)}
 .hh-t .tag::before{display:none}
 .hh-t .btn{margin-top:14px;min-height:48px;padding:0 22px 0 18px;font-size:15.5px;font-weight:800}
-.hh-t .hh-n{margin-top:10px}
+.hh-d{margin-top:8px;padding:12px;border-radius:24px}
+.hh-t h1.hh-ok{display:inline-flex;align-items:center;gap:5px;margin:0;padding:5px 11px 5px 8px;border-radius:999px;background:rgba(220,244,232,.9);color:#0b6b4a;font-size:12.5px;line-height:1.2;font-weight:800;letter-spacing:0;overflow-wrap:normal}
+.hh-ok svg.i{flex:none;width:15px;height:15px;stroke-width:3}
+.hh-b{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;margin-top:6px;font-size:50px;line-height:1;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hh-b span{font-size:17px;font-weight:700;letter-spacing:0;color:var(--muted)}
+.hh-d p{margin-top:4px;font-size:13px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hh-nx{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:5px;width:100%;min-height:46px;margin-top:10px;padding:5px 8px 6px 12px;border:0;border-radius:14px;background:rgba(255,255,255,.62);color:var(--ink);font:inherit;font-size:13.5px;line-height:1.25;text-align:left;transition:transform .14s ease}
+.hh-nx:active{transform:scale(.97)}
+.hh-nx span{font-size:12px;font-weight:600;color:var(--muted);text-transform:capitalize}
+.hh-nx b{grid-column:1;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hh-nx svg.i{grid-column:2;grid-row:1/3;width:15px;height:15px;color:var(--acc-2)}
 @media (max-width:380px){.hhero .char i{width:230px;height:230px;right:-52px;top:34px}.hhero .char img{width:208px;height:372px;right:-14px;top:30px}}
 .hweek{padding:12px 10px;margin-bottom:12px;border-radius:24px;background:rgba(255,255,255,.72)}
 /* the workout page: the exercise now, the summary card over the person's waist */
@@ -1062,7 +1072,9 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 @keyframes focusRing{from{transform:scale(1.6);opacity:0}30%{opacity:1}to{transform:scale(1);opacity:0}}
 /* calories */
 .kc{padding:14px 16px 16px;border-radius:28px;background:linear-gradient(150deg,#e7f9ef,#c7eeda);border-color:rgba(255,255,255,.85)}
-.kc .today-h>button{margin-left:auto;min-height:32px;padding:0;border:0;background:none;color:#06604a;font-size:13px}
+.kc .today-h>button{position:relative;margin-left:auto;min-height:32px;padding:0 12px;border-color:rgba(47,124,246,.28);background:#e7f0fe;color:var(--acc-2);font-size:13px;font-weight:800;transition:transform .14s ease}
+.kc .today-h>button::after{content:'';position:absolute;inset:-6px -2px}
+.kc .today-h>button:active{transform:scale(.95)}
 .kc .today-h{justify-content:flex-start;flex-wrap:wrap;margin-bottom:10px}
 .kc .ct{font-size:15.5px;font-weight:700}
 .kbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
@@ -1836,14 +1848,19 @@ function weekStrip() {
 function todayHero() {
   const now = new Date(), rs = dayRoutines(now.getDay()), nxt = nextPlanned();
   const logged = S.history.filter(h => dayKey(h.date) === dayKey(now));
+  const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
   const hero = (work, title, sub, extra = '') => `<section class="hhero">${charPic(work)}<div class="hh-t">
-      <small>${now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}</small>
+      <small>${date}</small>
       <h1${title.length > 16 ? ' class="s"' : title.length > 10 ? ' class="m"' : ''}>${esc(title)}</h1>
       <p>${sub}</p>${extra}</div></section>`;
   let top;
   if (S.active) top = hero(workOf(S.active.items), S.active.name, '<span id="resumeT">Sedang berjalan</span>', `<button class="btn pri" data-a="go" data-to="workout">${I('playf')} Lanjutkan</button>`);
-  else if (logged.length) top = hero('rest', 'Selesai hari ini', `${esc(logged[0].name)} · ${logged[0].dur} mnt · ${logged[0].sets} set`,
-    nxt ? `<p class="hh-n">Berikutnya: <b>${esc(nxt.name)}</b> · ${nxt.when}</p>` : '');
+  else if (logged.length) top = `<section class="hhero">${charPic('rest')}<div class="hh-t">
+      <small>${date}</small>
+      <div class="glass hh-d"><h1 class="hh-ok">${I('check')} Selesai hari ini</h1>
+        <div class="hh-b">${logged[0].dur}<span>menit</span></div>
+        <p>${logged[0].sets} set · ${esc(logged[0].name)}</p>
+        ${nxt ? `<button class="hh-nx" data-a="go" data-to="plan"><span>${nxt.when}</span><b>${esc(nxt.name)}</b>${I('chev')}</button>` : ''}</div></div></section>`;
   else if (rs.length) {
     const items = rs.flatMap(r => r.items);
     top = hero(workOf(items), dayName(rs), `${items.length} latihan · ±${estMin(items)} menit`,

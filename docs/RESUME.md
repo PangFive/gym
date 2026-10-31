@@ -99,7 +99,8 @@ tersinkron di semua perangkat.
   kaki, perut, atau kardio; `rest` untuk hari istirahat dan setelah selesai. Saat workout mengikuti latihan yang sedang terbuka; di Statistik mengikuti rentang yang dipilih.
 - **Hero Beranda**: program hari ini + tombol Mulai di samping karakter orang (mengikuti figur Pria/Wanita di Pengaturan),
   lalu kartu kaca minggu ini yang menimpa karakter (badannya tampak samar lewat blur): tanggal dalam bulatan (penuh = selesai,
-  putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
+  putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini (kartu kaca: durasi besar, jumlah set,
+  nama program, tombol program berikutnya yang membuka Plan), hari istirahat, belum ada plan.
 - **Halaman workout** mengikuti desain: karakter, kartu set yang menimpa karakter (nama, jalur set bernomor yang bisa diketuk, + tambah set, ikon hapus set,
   stepper Beban/Reps berbentuk tile, Terakhir, Set selesai), lalu daftar latihan lain. Set selesai, Volume, dan Detak jantung tampil tanpa kartu di samping kanan karakter.
   Kartu dan tiap baris daftar punya thumbnail dengan tanda putar untuk membuka video tutorial.
@@ -133,7 +134,7 @@ tersinkron di semua perangkat.
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
 ### Kalori (AI Gemini atau Claude)
-- Kartu **Kalori Hari Ini** di Beranda: gauge setengah lingkaran vs target (merah bila lewat), tile protein/karbo/lemak, tombol
+- Kartu **Kalori Hari Ini** di Beranda: tombol **Detail** ke halaman Kalori, gauge setengah lingkaran vs target (merah bila lewat), tile protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan. Di halaman Kalori target harian
   tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
