@@ -93,7 +93,9 @@ tersinkron di semua perangkat.
   **Scan alat lain** dari sheet yang sama: kamera terbuka dalam mode cek, QR alat yang kosong dibaca, lalu sheet kembali
   dengan kartu "Hasil scan" (peta otot alat itu + penilaian Gemini: Cocok / Bisa, dengan catatan / Kurang cocok,
   alasan, tip) dan tombol "Pakai alat ini" / "Scan lagi". Tanpa API key: hanya perbandingan otot utama. Alat yang sama
-  atau yang sudah ada di workout tidak bisa dipakai. Menutup kamera tanpa scan mengembalikan sheet seperti semula.
+  dengan yang diganti tidak bisa dipakai. Alat lain yang sudah ada di workout boleh dipakai setelah popup konfirmasi
+  (label **Sudah di workout**, di bawah daftar); rekomendasi AI tetap memilih alat yang belum ada.
+  Menutup kamera tanpa scan mengembalikan sheet seperti semula.
 - Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,

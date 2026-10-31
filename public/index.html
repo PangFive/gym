@@ -2567,6 +2567,7 @@ Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode ot
 // reason in mind; below it, the machines that share a main muscle, without the AI (no key, offline).
 // A swap changes today's workout only: done sets stay with the old machine, the rest move to the new one.
 const SW_WHY = [['busy', 'Alat sedang dipakai'], ['broken', 'Alat rusak'], ['pain', 'Terasa sakit'], ['vary', 'Mau variasi']];
+const inWorkout = id => S.active.items.some(x => x.id === id);
 function swItem() {
   const it = ui.swap?.it, i = S.active ? S.active.items.indexOf(it) : -1;
   return i < 0 || !T[it.id] ? null : { it, i, t: T[it.id], left: it.sets.filter(s => !s.done) };
@@ -2588,26 +2589,25 @@ const SW_FIT = { cocok: ['ok', 'Cocok jadi pengganti'], bisa: ['mid', 'Bisa, den
 function swapCheckHtml() {
   const w = ui.swap, c = w.check, cur = swItem(), key = !!aiConf().key;
   if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, ${aiName()} menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
-  const t = T[c.id], same = c.id === cur.it.id, inW = !same && S.active.items.some(x => x.id === c.id);
+  const t = T[c.id], same = c.id === cur.it.id, inW = !same && inWorkout(c.id);
   const [tp] = musOf(t), [cp] = musOf(cur.t), share = tp.filter(k => cp.includes(k));
   const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(tp) || 'lain'}, bukan ${mNames(cp) || 'otot'} seperti ${cur.t.t}.`;
   let v;
   if (same) v = `<p class="swk-v no">Ini alat yang mau diganti. Scan alat yang lain.</p>`;
-  else if (inW) v = `<p class="swk-v mid">Alat ini sudah ada di workout hari ini.</p>`;
   else if (c.busy) v = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang menilai alat ini…</span></div>`;
   else if (c.fit) { const [cls, label] = SW_FIT[c.fit]; v = `<div class="swk-v ${cls}"><b>${label}</b>${c.reason ? `<span>${esc(c.reason)}</span>` : ''}${c.tip ? `<small>Tip: ${esc(c.tip)}</small>` : ''}</div>` }
   else v = `<div class="swk-v ${share.length ? 'ok' : 'no'}"><span>${esc(local)}</span>${c.err ? `<small>${esc(c.err)}</small>` : ''}</div>`;
-  const use = !same && !inW && !c.busy;
+  const use = !same && !c.busy;
   return `<section class="swk" aria-live="polite"><small class="swk-k">Hasil scan</small>
     <div class="swk-m"><button class="pk-v" data-a="swPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button><div><b>${esc(t.t)}</b>${pTags(t)}</div></div>
-    ${muscleMap(t)}${v}
+    ${muscleMap(t)}${inW ? '<p class="swk-v mid">Alat ini sudah ada di workout hari ini.</p>' : ''}${v}
     <div class="swk-b"><button class="btn soft sm" data-a="swScan">${I('qr')} Scan lagi</button>${use ? `<button class="btn ${c.fit === 'tidak' ? 'soft' : 'pri'} sm" data-a="swUse" data-id="${t.id}">${I('swap')} Pakai alat ini</button>` : ''}</div></section>`;
 }
 const drawCheck = () => { const el = $('#swChk'); if (el && ui.swap && swItem()) el.innerHTML = swapCheckHtml() };
 async function checkSwap() {
   const w = ui.swap, c = w?.check, cur = swItem(); if (!cur || !c || c.busy || !T[c.id]) return;
   const { it, t, left } = cur, x = T[c.id], s = left[0], kg = num(s.w);
-  if (c.id === it.id || S.active.items.some(y => y.id === c.id) || !aiConf().key) return drawCheck();
+  if (c.id === it.id || !aiConf().key) return drawCheck();
   const why = SW_WHY.find(([k]) => k === w.why)?.[1], q = w.q.trim();
   const prompt = `Kamu pelatih gym. Pengguna sedang workout dan ingin mengganti ${t.t} (utama: ${mNames(t.p) || '-'}; pendukung: ${mNames(t.s) || '-'}). Sisa ${left.length} set × ${s.r || 10} reps${kg ? `, beban ${fmtW(kg)} kg` : ''}.
 Alasan: ${why || 'tidak disebut'}.${q ? `\nCatatan pengguna: ${q}` : ''}
@@ -2637,7 +2637,7 @@ function swapTop() {
 }
 const swRow = (id, sub, pri) => { const t = T[id]; return `<div class="sw-row">
     <button class="pk-v" data-a="swPrev" data-id="${id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
-    <span class="sw-t"><b>${esc(t.t)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span>
+    <span class="sw-t"><b>${esc(t.t)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}${inWorkout(id) ? '<em class="pk-has">Sudah di workout</em>' : ''}</span>
     <button class="aibtn${pri ? ' pri' : ''} sw-go" data-a="swUse" data-id="${id}" aria-label="Ganti ke ${esc(t.t)}">Pakai</button></div>` };
 function swapAiHtml() {
   const w = ui.swap, a = w.ai, busy = !!a?.busy;
@@ -2657,13 +2657,15 @@ function swapAiHtml() {
       <button class="aibtn pri" data-a="swAsk"${busy ? ' disabled' : ''}>${I(a?.items ? 'refresh' : 'sparkles')} ${a?.items ? 'Minta pilihan lain' : 'Minta rekomendasi'}</button></div></div>`;
 }
 // Machines with the same main muscle (by how much they share), or the same category when it has no tags;
-// the ones the AI already suggests are left out.
+// the one being replaced and the ones the AI already suggests are left out. A machine already in the
+// workout can take over too (one machine can have several functions), so those follow under the others.
 function swapList() {
-  const { t } = swItem(), have = new Set([...S.active.items.map(x => x.id), ...(ui.swap.ai?.items || []).map(x => x.id)]);
+  const { t } = swItem(), skip = new Set([t.id, ...(ui.swap.ai?.items || []).map(x => x.id)]);
   const hit = c => c.p.filter(k => t.p.includes(k)).length * 2 + [...c.p, ...c.s].filter(k => trains(t, k)).length;
-  if (t.c) { const cs = CARDIO.filter(c => !have.has(c.id)); return `<h3 class="sw-h">Alat kardio lain</h3>${cs.length ? `<div class="sw-list">${cs.map(c => swRow(c.id, mNames(c.wk[0]).replace(/, /g, ' · '), false)).join('')}</div>` : '<p class="mhint">Semua alat kardio sudah ada di workout ini.</p>'}` }
-  const list = TUTORIALS.filter(c => !have.has(c.id) && (t.p.length ? c.p.some(k => t.p.includes(k)) : c.m === t.m))
-    .sort((a, b) => hit(b) - hit(a) || a.t.localeCompare(b.t)).slice(0, 8);
+  if (t.c) { const cs = CARDIO.filter(c => !skip.has(c.id)).sort((a, b) => inWorkout(a.id) - inWorkout(b.id)); return `<h3 class="sw-h">Alat kardio lain</h3>${cs.length ? `<div class="sw-list">${cs.map(c => swRow(c.id, mNames(c.wk[0]).replace(/, /g, ' · '), false)).join('')}</div>` : '<p class="mhint">Tidak ada alat kardio lain.</p>'}` }
+  const all = TUTORIALS.filter(c => !skip.has(c.id) && (t.p.length ? c.p.some(k => t.p.includes(k)) : c.m === t.m))
+    .sort((a, b) => hit(b) - hit(a) || a.t.localeCompare(b.t));
+  const list = [...all.filter(c => !inWorkout(c.id)).slice(0, 8), ...all.filter(c => inWorkout(c.id))];
   return `<h3 class="sw-h">${t.p.length ? `Alat lain untuk ${esc(t.p.map(k => MI[k].n).join(' & '))}` : 'Alat lain di kategori ini'}</h3>
     ${list.length ? `<div class="sw-list">${list.map(c => swRow(c.id, mNames([...c.p, ...c.s]).replace(/, /g, ' · '), false)).join('')}</div>`
       : '<p class="mhint">Belum ada alat lain di daftar untuk otot ini.</p>'}`;
@@ -2704,7 +2706,7 @@ Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia${w.why === 'pain' ? ',
 function swapTo(id) {
   const cur = swItem(); if (!cur || !T[id] || !cur.left.length) return;
   const { it, i, left } = cur, a = S.active, w = wxState(), whole = left.length === it.sets.length;
-  const next = newActiveItem({ id, sets: left.length, reps: left[0].r });
+  const next = newActiveItem({ id, sets: left.length, reps: left[0].r }, a.items.slice(0, i));
   if (whole) {
     a.items[i] = next; delete w.at[i];
     w.touched.forEach(k => { if (k.startsWith(`${i}_`)) w.touched.delete(k) });
@@ -4596,7 +4598,11 @@ const A = {
   swWhy: el => { const w = ui.swap; if (!w || w.ai?.busy) return; w.why = el.dataset.k; askSwap(false) },
   swAsk: () => askSwap(!!ui.swap?.ai?.items),
   swPrev: el => openVideo(+el.dataset.id, 'swap'),
-  swUse: el => swapTo(+el.dataset.id),
+  swUse: async el => {
+    const id = +el.dataset.id;
+    if (inWorkout(id) && !(await ask({ title: `Ganti ke ${T[id].t}?`, msg: 'Alat ini sudah ada di workout.', ok: 'Ganti', tone: 'info', icon: 'swap' }))) return;
+    swapTo(id);
+  },
   swScan: swapScan,
   vClose: closeVideo,
   musclePop: el => {
