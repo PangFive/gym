@@ -97,9 +97,10 @@ tersinkron di semua perangkat.
   (label **Sudah di workout**, di bawah daftar); rekomendasi AI tetap memilih alat yang belum ada.
   Menutup kamera tanpa scan mengembalikan sheet seperti semula.
 - **Hero Beranda**: program hari ini + tombol Mulai di samping karakter orang (mengikuti figur Pria/Wanita di Pengaturan),
-  lalu kartu minggu ini: tanggal dalam bulatan (penuh = selesai, putus-putus = terlewat, cincin biru = hari ini). Keadaan lain:
-  workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
-- Saat workout, di atas kartu ringkasan: karakter dan latihan yang sedang berjalan (Latihan X dari Y, Set X dari Y).
+  lalu kartu kaca minggu ini yang menimpa karakter (badannya tampak samar lewat blur): tanggal dalam bulatan (penuh = selesai,
+  putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
+- **Halaman workout** mengikuti desain: karakter, kartu set yang menimpa karakter (nama, batang set yang bisa diketuk, + tambah set,
+  stepper Beban/Reps berbentuk tile, Terakhir, Set selesai), kartu ringkasan, lalu daftar latihan lain. Chip bpm muncul saat jam terhubung.
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
   MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
@@ -156,7 +157,7 @@ tersinkron di semua perangkat.
   perkiraan tanggal tercapai.
 
 ### Statistik
-- Total volume di samping karakter, di bawahnya pilihan rentang dan grafik. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
+- Total volume di samping karakter, pilihan rentang, grafik batang (tertinggi berwarna coral), tile target. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
   (peta panas + set efektif; otot pendukung dihitung ½ set), riwayat.
 
 ### Pengaturan
@@ -301,7 +302,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
 15. Claude sebagai pilihan AI di samping Gemini.
 16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Plus Jakarta Sans, tombol navigasi bulat,
-    gauge kalori, tab Otot/Saran/Cara di detail alat. Warna tetap terang bergradasi; peta otot tidak berubah.
+    gauge kalori, tab Video/Otot/Cara di detail alat, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
 
 ## 8. Ide berikutnya
 
