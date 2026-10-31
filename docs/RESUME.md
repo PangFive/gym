@@ -99,8 +99,8 @@ tersinkron di semua perangkat.
   kaki, perut, atau kardio; `rest` untuk hari istirahat dan setelah selesai. Saat workout mengikuti latihan yang sedang terbuka; di Statistik mengikuti rentang yang dipilih.
 - **Hero Beranda**: program hari ini + tombol Mulai di samping karakter orang (mengikuti figur Pria/Wanita di Pengaturan),
   lalu kartu kaca minggu ini yang menimpa karakter (badannya tampak samar lewat blur): tanggal dalam bulatan (penuh = selesai,
-  putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini (kartu kaca: durasi besar, jumlah set,
-  nama program, tombol program berikutnya yang membuka Plan), hari istirahat, belum ada plan.
+  putus-putus = terlewat, cincin biru = hari ini). Keadaan lain: workout berjalan, selesai hari ini (label centang, durasi besar, jumlah set,
+  nama program, pil program berikutnya yang membuka Plan), hari istirahat, belum ada plan.
 - **Halaman workout** mengikuti desain: karakter, kartu set yang menimpa karakter (nama, jalur set bernomor yang bisa diketuk, + tambah set, ikon hapus set,
   stepper Beban/Reps berbentuk tile, Terakhir, Set selesai), lalu daftar latihan lain. Set selesai, Volume, dan Detak jantung tampil tanpa kartu di samping kanan karakter.
   Kartu dan tiap baris daftar punya thumbnail dengan tanda putar untuk membuka video tutorial.
