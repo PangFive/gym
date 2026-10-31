@@ -677,7 +677,7 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .hrb-h b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
 .hrb-h span{margin-left:auto;padding-left:8px;color:#be123c;font-size:12px;white-space:nowrap}
 .hr-sp{display:block;width:100%;height:40px;margin-top:4px}
-.wx{padding:16px;margin-bottom:12px;border-radius:28px;scroll-margin-top:16px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
+.wx{padding:14px;margin-bottom:12px;border-radius:28px;scroll-margin-top:16px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
 .wx-h{display:flex;align-items:center;gap:12px}
 .wx-h .vt{width:42px;height:56px;border-radius:12px;cursor:pointer}
 .wx-v{position:relative;flex:none;padding:0;border:0;background:transparent;border-radius:12px;transition:transform .14s ease}
@@ -709,28 +709,27 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 /* the sets as a timeline: done (green), the one open (blue), still to do (grey) */
 .tl::-webkit-scrollbar{display:none}
 /* the set being done */
-.fs{margin-top:8px}
-.fs.was .fs-r{background:#e6f7ee}
-.fs-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.fs-r{padding:10px 8px;border-radius:18px;background:linear-gradient(150deg,#e4eefd,#f3f0f8);text-align:center}
+.fs{margin-top:6px}
+.fs.was .fs-r{background:#eafaf1;border-color:rgba(18,163,114,.18)}
+.fs-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fs-r{padding:6px;border-radius:16px;background:rgba(255,255,255,.72);border:1px solid rgba(47,124,246,.12);text-align:center}
 .fs-r:nth-child(3){grid-column:1/-1}
 .fs-r label{display:block;font-size:12px;font-weight:600;color:var(--muted)}
-.fs-s{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
-.fs-s button{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:#fff;color:var(--acc-2);font-size:20px;font-weight:700;line-height:1;display:grid;place-items:center;transition:transform .14s ease}
-.fs-s button:active{transform:scale(.92);background:#eef3fd}
-.fs-s input{flex:1;width:0;min-width:0;height:44px;padding:0;border:1px solid transparent;border-radius:12px;background:transparent;font:inherit;font-size:28px;font-weight:800;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums;outline:none}
+.fs-s{display:flex;align-items:center;justify-content:space-between;margin-top:2px}
+.fs-s button{position:relative;flex:none;width:34px;height:34px;padding:0;border:0;border-radius:11px;background:var(--acc-soft);color:var(--acc-2);font-size:18px;font-weight:700;line-height:1;display:grid;place-items:center;transition:transform .14s ease}
+.fs-s button::after{content:'';position:absolute;inset:-5px}
+.fs-s button:active{transform:scale(.92);background:rgba(47,124,246,.22)}
+.fs-s input{flex:1;width:0;min-width:0;height:34px;padding:0;border:1px solid transparent;border-radius:10px;background:transparent;font:inherit;font-size:22px;font-weight:800;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums;outline:none}
 .fs-s input:focus{background:#fff;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
-.fs-p{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;margin:10px 0 0;padding:0 14px;border:1px dashed rgba(24,32,47,.26);border-radius:14px;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;font-weight:600}
+.fs-p{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:38px;margin:8px 0 0;padding:0 12px;border:0;border-radius:12px;background:rgba(47,124,246,.07);color:var(--ink);font:inherit;font-size:13px;font-weight:600}
 .fs-p i{font-style:normal}
 .fs-p b{font-weight:800;font-variant-numeric:tabular-nums}
 .fs-p span{color:var(--acc-2);font-weight:800}
 .fs-p[disabled]{cursor:default}
-.fs-b{display:flex;align-items:center;gap:10px;margin-top:10px}
-.fs-b .fs-go{flex:1;min-height:56px;font-size:16.5px;font-weight:800}
-.fs-go.pri{box-shadow:0 12px 22px -10px rgba(37,99,235,.8)}
-.fs-go svg.i{width:20px;height:20px;stroke-width:3}
-.fs-b .fs-del{width:56px;height:56px;color:var(--muted);background:#f1f4fa;border:0}
-.fs-del svg.i{width:20px;height:20px}
+.fs-b{margin-top:8px}
+.fs-b .fs-go{width:100%;min-height:46px;font-size:15px;font-weight:800}
+.fs-go.pri{box-shadow:0 10px 18px -10px rgba(37,99,235,.8)}
+.fs-go svg.i{width:18px;height:18px;stroke-width:3}
 .ltools{display:flex;align-items:center;gap:8px;margin:4px 2px 10px}
 .ltools h2{flex:1;min-width:0;margin:0;font-size:17px;font-weight:800;display:flex;align-items:baseline;gap:8px}
 .ltools h2 small{color:var(--muted);font-size:13px;font-weight:700}
@@ -739,18 +738,22 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .tb:active{transform:scale(.95);background:#fff}
 .wx-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .wx-t small{font-size:12.5px;font-weight:600;color:var(--muted)}
-.wx-t b{font-size:19px;line-height:1.22;font-weight:800;letter-spacing:-.01em}
-.tl{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px 6px;margin-top:8px}
-.tl>b{flex:1 0 auto;font-size:14px;font-weight:700}
-.tl-b{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;min-width:0}
-.tl-s,.tl-add{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:none;display:grid;place-items:center}
-.tl-s i,.tl-add i{box-sizing:border-box;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:#3f4a5c;background:#fff;border:1.5px solid rgba(24,32,47,.16);transition:transform .14s ease}
-.tl-s i svg.i{width:19px;height:19px;stroke-width:3}
-.tl-s.ok i{background:var(--grad);border-color:transparent;color:#fff}
-.tl-s.sel i{border:2px solid var(--acc);color:var(--acc-2);box-shadow:0 0 0 4px var(--acc-soft)}
-.tl-s.ok.sel i{border-color:#fff;color:#fff}
-.tl-add i{background:var(--acc-soft);border:0;color:var(--acc-2)}
-.tl-add svg.i{width:19px;height:19px;stroke-width:2.6}
+.wx-t b{font-size:18px;line-height:1.22;font-weight:800;letter-spacing:-.01em}
+.tl{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:8px}
+.tl>b{flex:none;font-size:13.5px;font-weight:700}
+.tl-del{position:relative;flex:none;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--faint);display:grid;place-items:center}
+.tl-del::after{content:'';position:absolute;inset:-7px}
+.tl-del:active{background:rgba(24,32,47,.06)}
+.tl-del svg.i{width:16px;height:16px}
+.tl-b{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;padding:2px;border-radius:20px;background:rgba(47,124,246,.08)}
+.tl-s,.tl-add{position:relative;flex:none;width:38px;height:34px;padding:0;border:0;background:none;display:grid;place-items:center}
+.tl-s::after,.tl-add::after{content:'';position:absolute;inset:-5px 0}
+.tl-s i,.tl-add i{box-sizing:border-box;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted);transition:transform .14s ease,background-color .2s}
+.tl-s i svg.i{width:15px;height:15px;stroke-width:3.2}
+.tl-s.ok i{background:#dcf4e8;color:#0b7a55}
+.tl-s.sel i{background:var(--grad);color:#fff;box-shadow:0 6px 12px -6px rgba(37,99,235,.8)}
+.tl-add i{color:var(--acc-2)}
+.tl-add svg.i{width:17px;height:17px;stroke-width:2.6}
 .tl-s:active i,.tl-add:active i{transform:scale(.9)}
 .wx-all{margin:8px 0 0;padding:4px 4px 2px;color:var(--muted);font-size:13px;text-align:center}
 /* rest timer: a card that pops up when a set is done, with a ring counting down */
@@ -2216,13 +2219,13 @@ function wxCard(it, ei) {
         <div class="wx-t"><small>Latihan ${ei + 1} dari ${S.active.items.length}${mus}</small><b>${esc(t.t)}</b></div>
         ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl"><b>${s ? (c && n === 1 ? 'Kardio' : `${unit} ${fi + 1} dari ${n}`) : c ? 'Selesai' : `Semua ${n} set selesai`}</b>
+        ${s && n > 1 && !s.done ? `<button class="tl-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}" aria-label="Hapus ${unit.toLowerCase()} ${fi + 1}">${I('trash')}</button>` : ''}
         <span class="tl-b">${it.sets.map(step).join('')}<button class="tl-add" data-a="setAdd" data-ex="${ei}" aria-label="Tambah ${unit.toLowerCase()}"><i>${I('plus')}</i></button></span></div>
       ${s ? `<div class="fs${s.done ? ' was' : ''}">
         <div class="fs-g">${fields}</div>
         ${c ? `<p class="fs-x" id="fx${ei}">${cardioEst(it.id, s)}</p>` : ''}
         ${p ? `<button class="fs-p" data-a="wxPrev" data-ex="${ei}" data-ix="${fi}"${same ? ' disabled' : ''}><i>Terakhir <b>${setText(it.id, p)}</b></i>${same ? '' : '<span>Pakai</span>'}</button>` : ''}
-        <div class="fs-b">${n > 1 && !s.done ? `<button class="icon-btn fs-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}" aria-label="Hapus ${unit.toLowerCase()}">${I('trash')}</button>` : ''}
-          ${s.done ? `<button class="btn soft fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">Batalkan selesai</button>`
+        <div class="fs-b">${s.done ? `<button class="btn soft fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">Batalkan selesai</button>`
             : `<button class="btn pri fs-go" data-a="setDone" data-ex="${ei}" data-ix="${fi}">${I('check')} ${c && n === 1 ? 'Selesai' : `${unit} selesai`}</button>`}</div>
       </div>` : `<p class="wx-all">${c ? 'Ketuk bagian untuk mengubah, atau + untuk menambah bagian (interval).' : 'Ketuk set untuk mengubah, atau + untuk menambah set.'}</p>`}
     </section>`;
