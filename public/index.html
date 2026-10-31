@@ -2588,7 +2588,7 @@ function swapSheet() {
 const SW_FIT = { cocok: ['ok', 'Cocok jadi pengganti'], bisa: ['mid', 'Bisa, dengan catatan'], tidak: ['no', 'Kurang cocok'] };
 function swapCheckHtml() {
   const w = ui.swap, c = w.check, cur = swItem(), key = !!aiConf().key;
-  if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? 'Ada alat yang kosong? Scan QR-nya, ${aiName()} menilai cocok atau tidak.' : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
+  if (!c || !T[c.id]) return `<button class="sw-scan" data-a="swScan">${I('qr')}<span><b>Scan alat lain</b><small>${key ? `Ada alat yang kosong? Scan QR-nya, ${aiName()} menilai cocok atau tidak.` : 'Ada alat yang kosong? Scan QR-nya untuk melihat otot yang dilatih.'}</small></span>${I('chev')}</button>`;
   const t = T[c.id], same = c.id === cur.it.id, inW = !same && inWorkout(c.id);
   const [tp] = musOf(t), [cp] = musOf(cur.t), share = tp.filter(k => cp.includes(k));
   const local = share.length ? `Melatih ${mNames(share)} juga, sama seperti ${cur.t.t}.` : `Otot utamanya ${mNames(tp) || 'lain'}, bukan ${mNames(cp) || 'otot'} seperti ${cur.t.t}.`;
