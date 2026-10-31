@@ -428,10 +428,8 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .ck svg.i{width:15px;height:15px;stroke-width:2.6}
 .pkrow.on{background:var(--acc-soft)}
 .pkrow.on .ck{background:var(--acc);border-color:var(--acc);color:#fff}
-/* already in the program or workout: a label in place of the tick, and it cannot be picked again */
-.pkrow.has .pk-b>span{opacity:.62}
-.pk-has{flex:none;display:inline-flex;align-items:center;gap:4px;font-style:normal;font-size:12px;font-weight:800;color:#0b7a55;background:#e3f6ee;padding:5px 9px 5px 7px;border-radius:999px;white-space:nowrap}
-.pk-has svg.i{width:14px;height:14px;color:#0b7a55;stroke-width:2.8}
+/* already in the program or workout: a label under the name, and it can be picked again */
+.pk-has{align-self:flex-start;font-style:normal;font-size:11.5px;font-weight:800;color:#0b7a55;background:#e3f6ee;padding:3px 8px;border-radius:999px;white-space:nowrap}
 .sheet-foot{position:sticky;bottom:calc(-22px - env(safe-area-inset-bottom));margin:0 -18px -22px;padding:12px 18px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(rgba(249,250,255,0),rgba(249,250,255,.97) 28%)}
 .hx{display:flex;gap:12px;align-items:center;padding:8px 0}
 .hx .vt{width:42px;height:56px;border-radius:12px}
@@ -2090,9 +2088,13 @@ function musclePop(r) {
   m.hidden = false;
 }
 
-function prevFor(id) { for (const h of S.history) { const it = h.items.find(i => i.id === id); if (it) return it.sets } return null }
-function newActiveItem(it) {
-  const prev = prevFor(it.id), c = CX(it.id);
+// The last sets on a machine. One with several functions can sit in a workout twice, and each use
+// keeps its own numbers: the second use follows the last workout that used it twice.
+function prevFor(id, nth = 0) { for (const h of S.history) { const it = h.items.filter(i => i.id === id)[nth]; if (it) return it.sets } return null }
+const usesIn = (items, id) => items.filter(x => x.id === id).length;
+// before: the workout's exercises ahead of this one
+function newActiveItem(it, before = []) {
+  const prev = prevFor(it.id, usesIn(before, it.id)), c = CX(it.id);
   return { id: it.id, sets: Array.from({ length: clamp(+it.sets || (c ? 1 : 3), 1, 10) }, (_, i) => {
     const p = prev && (prev[i] || prev[prev.length - 1]);
     // cardio: minutes from the program, speed or level (and incline) from last time or a usual start
@@ -2144,7 +2146,7 @@ function wxCard(it, ei) {
   const n = it.sets.length, done = it.sets.filter(s => s.done).length;
   if (ei !== openEx()) return `<button class="wx-row${done === n ? ' done' : ''}" id="wx${ei}" data-a="wxOpen" data-ex="${ei}" aria-expanded="false">${pic(t.y)}<span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
       <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button>`;
-  const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id), p = prev && (prev[fi] || prev[prev.length - 1]);
+  const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id, usesIn(S.active.items.slice(0, ei), it.id)), p = prev && (prev[fi] || prev[prev.length - 1]);
   const c = CX(it.id), unit = c ? 'Bagian' : 'Set';
   const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
   const w = wxState(), prevDone = si => si > 0 && it.sets[si - 1].done;
@@ -2427,15 +2429,15 @@ function openDetail(id) {
   const t = T[id]; if (!t) return;
   const similar = (t.c ? CARDIO : TUTORIALS).filter(x => x.id !== t.id && (t.c || x.p[0] === t.p[0])).slice(0, 4);
   sheet(`${detailTop(t)}
-    ${S.active?.items.some(it => it.id === t.id) ? '' : `<div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
-      : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${I('plus')} Tambah ke workout</button>`}</div>`}
+    <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
+      : `<button class="btn pri" data-a="wxAddId" data-id="${t.id}">${I('plus')} Tambah ke workout</button>`}</div>
     ${t.c ? '' : `<a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`}
     ${similar.length ? `<h3 class="sh2">${t.c ? 'Kardio' : MI[t.p[0]].n} lainnya</h3>${similar.map(x => `<button class="mini" data-a="open" data-id="${x.id}">${pic(x.y)}<b>${esc(x.t)}</b>${I('chev')}</button>`).join('')}` : ''}`);
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function openAddTo(id) {
   sheet(`<h2 class="sh">Tambah ke program</h2><div class="list plist">
-    ${S.routines.map(r => { const has = r.items.some(it => it.id === id); return `<button data-a="addToR" data-rid="${r.id}" data-id="${id}"${has ? ' class="has"' : ''}>${rIcon(r)}<span><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>${has ? `<em>${I('check')}Sudah ada</em>` : `<i class="pl-add">${I('plus')}</i>`}</button>` }).join('')}
+    ${S.routines.map(r => { const has = r.items.some(it => it.id === id); return `<button data-a="addToR" data-rid="${r.id}" data-id="${id}">${rIcon(r)}<span><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>${has ? `<em>${I('check')}Sudah ada</em>` : ''}<i class="pl-add">${I('plus')}</i></button>` }).join('')}
     <button data-a="newWith" data-id="${id}"><span class="ricon pl-new">${I('plus')}</span><span><b>Program baru</b><small>Mulai dari latihan ini</small></span></button></div>`);
 }
 function openStartPick() {
@@ -2449,7 +2451,8 @@ function openStartPick() {
 // The picker filters by any number of muscles: an exercise shows when it trains one of them, and
 // the ones that hit more of the chosen muscles (as a main muscle first) come first.
 const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : trains(t, k) ? 1 : 0), 0);
-// What the program (or the running workout) already holds: those rows say so and cannot be picked again.
+// What the program (or the running workout) already holds: those rows say so and can still be picked,
+// since one machine can have several functions.
 const pickHave = () => { const p = ui.pick, r = p?.mode === 'edit' ? findR(p.rid) : null; return new Set((r ? r.items : p?.mode === 'workout' ? S.active?.items || [] : []).map(it => it.id)) };
 const pickWhere = () => ui.pick?.mode === 'workout' ? 'workout' : 'program';
 function pickList() {
@@ -2457,25 +2460,22 @@ function pickList() {
   const xs = p.cx ? CARDIO.filter(t => matches(t, 'all', q))
     : [...TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q)), ...(p.ms.size ? [] : CARDIO.filter(t => matches(t, 'all', q)))];
   if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
-  return xs.map(t => have.has(t.id) ? `<div class="pkrow has" id="pk${t.id}">
+  return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
       <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
-      <div class="pk-b"><span><b>${esc(t.t)}</b>${pTags(t)}</span><em class="pk-has">${I('check')}Sudah di ${pickWhere()}</em></div>
-    </div>` : `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
-      <button class="pk-v" data-a="pkPrev" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
-      <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}</span><i class="ck">${I('check')}</i></button>
+      <button class="pk-b" data-a="pickToggle" data-id="${t.id}" aria-pressed="${p.sel.has(t.id)}"><span><b>${esc(t.t)}</b>${pTags(t)}${have.has(t.id) ? `<em class="pk-has">Sudah di ${pickWhere()}</em>` : ''}</span><i class="ck">${I('check')}</i></button>
     </div>`).join('') || '<div class="empty">Tidak ada yang cocok.</div>';
 }
 // Video preview over the picker: a small popup, so the list keeps its place underneath. The muscles it
 // trains show under the video; the buttons stay at the bottom while it scrolls.
 function openVideo(id, ctx) {
   const t = T[id]; if (!t) return;
-  const on = ui.pick?.sel.has(id), had = ui.pick && pickHave().has(id), m = $('#vmodal');
+  const on = ui.pick?.sel.has(id), m = $('#vmodal');
   m.innerHTML = `<div class="scrim" data-a="vClose"></div><div class="vm">
     <div class="vm-h"><div><b>${esc(t.t)}</b>${pTags(t)}</div><button class="icon-btn sm" data-a="vClose" aria-label="Tutup">${I('x')}</button></div>
     ${t.c ? cxHero(t.k, 'sm') :`<div class="amb">${ambGlow(t.y)}<div class="vm-vid"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video ${esc(t.t)}"></iframe></div></div>`}
     ${muscleMap(t)}${t.d ? `<p>${esc(t.d)}</p>` : ''}
     ${ctx === 'swap' ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="swUse" data-id="${id}">${I('swap')} Ganti ke ini</button></div>`
-      : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on || had ? ' disabled' : ''}>${had ? `${I('check')} Sudah di ${pickWhere()}` : on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
+      : ui.pick ? `<div class="vm-b"><button class="btn soft sm" data-a="vClose">Tutup</button><button class="btn pri sm" data-a="pkAdd" data-id="${id}"${on ? ' disabled' : ''}>${on ? `${I('check')} Sudah dipilih` : `${I('plus')} Pilih`}</button></div>` : ''}
   </div>`;
   m.hidden = false;
 }
@@ -2484,7 +2484,8 @@ function openMachinePop(id) {
   const t = T[id]; if (!t || !S.active) return;
   const inW = S.active.items.some(it => it.id === id);
   sheet(`${detailTop(t)}
-    <div class="dt-b"><button class="btn soft sm" data-a="close">Tutup</button><button class="btn pri sm" data-a="wxAddId" data-id="${id}">${inW ? `${I('playf')} Buka di workout` : `${I('plus')} Tambah ke workout`}</button></div>`);
+    <div class="dt-b">${inW ? `<button class="btn soft sm" data-a="wxAddId" data-id="${id}">${I('plus')} Tambah lagi</button><button class="btn pri sm" data-a="wxAddId" data-id="${id}" data-open="1">${I('playf')} Buka di workout</button>`
+      : `<button class="btn soft sm" data-a="close">Tutup</button><button class="btn pri sm" data-a="wxAddId" data-id="${id}">${I('plus')} Tambah ke workout</button>`}</div>`);
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function closeVideo() { const m = $('#vmodal'); if (m.hidden) return; m.hidden = true; m.innerHTML = '' }
@@ -2896,7 +2897,7 @@ function summary(h) {
 // ---------- workout actions ----------
 async function startWorkout(items, name, rids = []) {
   if (S.active && !(await ask({ title: 'Ganti workout?', msg: `${S.active.name} masih berjalan. Memulai yang baru akan membuang set yang belum disimpan.`, ok: 'Ganti', cancel: 'Lanjutkan', tone: 'warn', icon: 'refresh' }))) return go('workout');
-  S.active = { name, rids, start: Date.now(), items: items.filter(it => T[it.id]).map(newActiveItem) };
+  S.active = { name, rids, start: Date.now(), items: items.filter(it => T[it.id]).map((it, i, all) => newActiveItem(it, all.slice(0, i))) };
   save(); go('workout');
 }
 async function finish() {
@@ -4170,7 +4171,7 @@ function scanAsk(t) {
   scan.pending = t;
   $('#scanAsk').innerHTML = `<div class="sa-top">${pic(t.y)}<div><small>${have ? 'Sudah ada di program' : 'Tambahkan ke program?'}</small><b>${esc(t.t)}</b>${pTags(t)}</div></div>
     <div class="sa-b"><button class="btn soft" data-a="scanSkip">${have ? 'Scan lagi' : 'Batal'}</button>
-      ${have ? `<button class="btn pri" data-a="scanClose">Selesai</button>` : `<button class="btn pri" data-a="scanAdd">${I('plus')} Tambahkan</button>`}</div>`;
+      <button class="btn pri" data-a="scanAdd">${I('plus')} ${have ? 'Tambah lagi' : 'Tambahkan'}</button></div>`;
   $('#scanAsk').hidden = false; $('#scan').classList.add('asking');
 }
 function scanResume(tip) {
@@ -4548,7 +4549,6 @@ const A = {
   addTo: el => openAddTo(+el.dataset.id),
   addToR: el => {
     const r = S.routines.find(x => x.id === el.dataset.rid); if (!r) return;
-    if (r.items.some(it => it.id === +el.dataset.id)) return toast(`Sudah ada di ${r.name || 'program ini'}`, 'info');
     r.items.push({ id: +el.dataset.id, ...planOf(+el.dataset.id) }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
@@ -4602,14 +4602,14 @@ const A = {
     if (r) musclePop(r);
   },
   pkAdd: el => {
-    const id = +el.dataset.id; if (pickHave().has(id)) return closeVideo();
+    const id = +el.dataset.id;
     ui.pick.sel.add(id); closeVideo();
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', 'true'); (b.closest('.pkrow') || b).classList.add('on') });
     if (ui.pick.ai?.items) $('#pkAi').innerHTML = pickAiHtml();
     $('#pkBtn').textContent = pickLabel(); toast(`${T[id].t} dipilih`);
   },
   pickToggle: el => {
-    const id = +el.dataset.id, s = ui.pick.sel; if (pickHave().has(id)) return;
+    const id = +el.dataset.id, s = ui.pick.sel;
     s.has(id) ? s.delete(id) : s.add(id);
     // the same exercise can sit in the list and in the AI's suggestions
     document.querySelectorAll(`[data-a=pickToggle][data-id="${id}"]`).forEach(b => { b.setAttribute('aria-pressed', s.has(id)); (b.closest('.pkrow') || b).classList.toggle('on', s.has(id)) });
@@ -4622,11 +4622,11 @@ const A = {
     $('#pkAi').innerHTML = pickAiHtml(); $('#pkList').innerHTML = pickList(); $('#pkBtn').textContent = pickLabel();
   },
   pickDone: () => {
-    const p = ui.pick, have = pickHave(), ids = [...p.sel].filter(id => !have.has(id));
+    const p = ui.pick, ids = [...p.sel];
     if (!ids.length) return toast('Pilih minimal satu latihan', 'err');
     const it = id => ({ id, ...planOf(id), ...p.rec.get(id) && { sets: p.rec.get(id).sets, reps: p.rec.get(id).reps } });
     if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push(it(id))) }
-    else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id))));
+    else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id), S.active.items)));
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
   },
   setDone: el => {
@@ -4659,7 +4659,7 @@ const A = {
     save(); updSum(); drawWx(ei);
   },
   wxPrev: el => {
-    const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si], prev = it && prevFor(it.id);
+    const ei = +el.dataset.ex, si = +el.dataset.ix, it = S.active.items[ei], s = it?.sets[si], prev = it && prevFor(it.id, usesIn(S.active.items.slice(0, ei), it.id));
     const p = prev && (prev[si] || prev[prev.length - 1]); if (!s || !p) return;
     s.w = fmtW(p.w); s.r = String(p.r); if (CX(it.id)?.k === 'run') s.g = fmtW(p.g || 0);
     wxState().touched.add(`${ei}_${si}`); save(); updSum(); drawWx(ei);
@@ -4884,19 +4884,20 @@ const A = {
     const t = scan.pending; if (!t) return;
     if (scan.rid) {
       const r = findR(scan.rid); if (!r) return stopScan();
-      if (!r.items.some(it => it.id === t.id)) {
-        const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
-        r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
-      }
+      const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
+      r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
       return scanResume(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
     }
     stopScan();
   },
-  // from a machine's detail during a workout: add it (once) and open it there
+  // from a machine's detail during a workout: add it and open it there; data-open goes to the one
+  // already in the workout instead, the unfinished one first
   wxAddId: el => {
     const id = +el.dataset.id; if (!S.active || !T[id]) return;
-    if (!S.active.items.some(it => it.id === id)) { S.active.items.push(newActiveItem({ id, ...planOf(id) })); save(); toast(`${T[id].t} ditambahkan ke workout`) }
-    const i = S.active.items.findIndex(it => it.id === id);
+    const its = S.active.items, mine = its.filter(it => it.id === id);
+    let it = el.dataset.open && (mine.find(x => x.sets.some(s => !s.done)) || mine[0]);
+    if (!it) { it = newActiveItem({ id, ...planOf(id) }, its); its.push(it); save(); toast(`${T[id].t} ditambahkan ke workout`) }
+    const i = its.indexOf(it);
     closeVideo(); closeSheet(); wxState().open = i; go('workout');
     setTimeout(() => $('#wx' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
   },
