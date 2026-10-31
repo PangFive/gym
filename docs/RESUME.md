@@ -96,7 +96,10 @@ tersinkron di semua perangkat.
   dengan yang diganti tidak bisa dipakai. Alat lain yang sudah ada di workout boleh dipakai setelah popup konfirmasi
   (label **Sudah di workout**, di bawah daftar); rekomendasi AI tetap memilih alat yang belum ada.
   Menutup kamera tanpa scan mengembalikan sheet seperti semula.
-- Kartu **Hari ini** di Beranda: program hari ini + tombol mulai, strip status minggu ini.
+- **Hero Beranda**: program hari ini + tombol Mulai di samping karakter orang (mengikuti figur Pria/Wanita di Pengaturan),
+  lalu kartu minggu ini: tanggal dalam bulatan (penuh = selesai, putus-putus = terlewat, cincin biru = hari ini). Keadaan lain:
+  workout berjalan, selesai hari ini, hari istirahat, belum ada plan.
+- Saat workout, di atas kartu ringkasan: karakter dan latihan yang sedang berjalan (Latihan X dari Y, Set X dari Y).
 - Ringkasan setelah selesai, riwayat lengkap.
 - **Perkiraan kalori terbakar** per workout (informasi saja, tidak mengubah target/defisit): MET × berat × jam,
   MET dari Compendium of Physical Activities (3,5 latihan beban 8–15 reps; 4,3 sirkuit sedang; 6,0 berat),
@@ -127,7 +130,7 @@ tersinkron di semua perangkat.
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
 ### Kalori (AI Gemini atau Claude)
-- Kartu **Kalori Hari Ini** di Beranda: ring kalori vs target, bar protein/karbo/lemak, tombol
+- Kartu **Kalori Hari Ini** di Beranda: gauge setengah lingkaran vs target (merah bila lewat), tile protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan. Di halaman Kalori target harian
   tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
@@ -153,7 +156,7 @@ tersinkron di semua perangkat.
   perkiraan tanggal tercapai.
 
 ### Statistik
-- Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
+- Total volume di samping karakter, di bawahnya pilihan rentang dan grafik. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
   (peta panas + set efektif; otot pendukung dihitung ½ set), riwayat.
 
 ### Pengaturan
@@ -297,6 +300,8 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 13. Gambar 3D untuk alat kardio (AI Figma), latar gradient lembut berwarna per alat.
 14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
 15. Claude sebagai pilihan AI di samping Gemini.
+16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Plus Jakarta Sans, tombol navigasi bulat,
+    gauge kalori, tab Otot/Saran/Cara di detail alat. Warna tetap terang bergradasi; peta otot tidak berubah.
 
 ## 8. Ide berikutnya
 

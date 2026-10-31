@@ -8,7 +8,7 @@
 //   the page itself         network first (4 s), else the saved copy while the network finishes in
 //                           the background; a newer page is saved and the open app offers a reload
 //   manifest                network first (it carries the app's name and icons)
-//   icons, cardio pictures  cache, refreshed in the background
+//   icons, pictures         cache, refreshed in the background
 //   Firebase SDK            cache first: the URLs carry a version and never change
 //   Google Fonts            cache, refreshed in the background
 //   jsQR (QR reader)        cache first: a pinned version
@@ -20,7 +20,8 @@ const SHELL = VERSION + '-shell', RUNTIME = VERSION + '-runtime', THUMBS = VERSI
 const PAGE = new URL('./index.html', self.registration.scope).href;
 const ASSETS = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png',
   './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo.svg',
-  ...['run', 'bike', 'ell', 'row', 'stair'].map(k => `./img/cardio-${k}.webp`)];
+  ...['run', 'bike', 'ell', 'row', 'stair'].map(k => `./img/cardio-${k}.webp`),
+  ...['pria', 'wanita', 'kabel'].map(k => `./img/char-${k}.webp`)];
 
 self.addEventListener('install', e => {
   // cache: 'reload' skips the browser's HTTP cache, which could still hold the previous files
