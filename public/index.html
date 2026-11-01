@@ -36,7 +36,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --acc:#2f7cf6; --acc-2:#2563eb; --acc-soft:rgba(47,124,246,.12);
@@ -44,7 +44,7 @@
   --coral:#f2785c; --ink:#18202f; --muted:#4a5468; --faint:#5e687b;
   --glass:rgba(255,255,255,.66); --glass-2:rgba(255,255,255,.82); --edge:rgba(255,255,255,.8);
   --shadow:0 14px 34px -16px rgba(52,72,120,.32); --r:26px;
-  font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-family:'Roboto',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -1479,6 +1479,7 @@ const ICONS = {
   bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/>',
   vibrate: '<rect x="8" y="3.5" width="8" height="17" rx="2"/><path d="M4.5 8.5v7M19.5 8.5v7"/>',
   tag: '<path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="8" cy="9" r="1.3"/>',
+  key: '<circle cx="8.5" cy="8.5" r="4"/><path d="M12 12l7.5 7.5M16 16l1.5-1.5M19 19l1.5-1.5"/>',
   body: '<circle cx="12" cy="4.5" r="2"/><path d="M8 8.5h8l-1.2 6H9.2zM10 14.5 9 21M14 14.5l1 6.5M8 8.5 5.5 13M16 8.5l2.5 4.5"/>',
   share: '<path d="M12 14.5V3.5M8 7.5l4-4 4 4"/><path d="M8.5 10.5H7A1.5 1.5 0 0 0 5.5 12v7A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5h-1.5"/>',
   barbell: '<path d="M2.5 12h19M5.5 8.5v7M8.5 6.5v11M15.5 6.5v11M18.5 8.5v7"/>',
@@ -2924,9 +2925,39 @@ function openSettings() {
 
     <h3 class="sh2">Akun</h3>
     <div class="sgroup">
+      ${link('key', '#2f7cf6', 'Ubah password', 'changePassword', hasPassword() ? 'Ganti password akun' : 'Tambah password untuk login dengan email')}
       ${link('user', '#64748b', 'Salin ID akun', 'copyUid', esc(u.uid || ''))}
       ${link('logout', '#dc2626', 'Keluar', 'logout', '', 'red')}
     </div>`);
+}
+function hasPassword() {
+  if (!fb.user) return false;
+  const providers = fb.user.providerData || [];
+  return providers.some(p => p.providerId === 'password');
+}
+function openChangePassword() {
+  const hasPw = hasPassword();
+  sheet(`<h2 class="sh">${hasPw ? 'Ubah' : 'Tambah'} Password</h2>
+    <p class="muted" style="margin:0 2px 14px;font-size:14px;line-height:1.5">${hasPw ? 'Ganti password akunmu.' : 'Tambahkan password supaya bisa login dengan email selain lewat Google.'}</p>
+    <form id="pwForm" style="display:flex;flex-direction:column;gap:12px">
+      ${hasPw ? `<div class="field">
+        <label for="oldPw" style="display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Password lama</label>
+        <input type="password" id="oldPw" name="oldPw" class="sin" placeholder="Password saat ini" autocomplete="current-password" required>
+      </div>` : ''}
+      <div class="field">
+        <label for="newPw" style="display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Password baru</label>
+        <input type="password" id="newPw" name="newPw" class="sin" placeholder="Minimal 6 karakter" autocomplete="new-password" required>
+      </div>
+      <div class="field">
+        <label for="confirmPw" style="display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">Konfirmasi password</label>
+        <input type="password" id="confirmPw" name="confirmPw" class="sin" placeholder="Ketik ulang password baru" autocomplete="new-password" required>
+      </div>
+      <p id="pwErr" class="err" style="margin:0;min-height:20px"></p>
+      <div class="row2">
+        <button type="button" class="btn soft" data-a="close">Batal</button>
+        <button type="submit" class="btn pri">Simpan</button>
+      </div>
+    </form>`);
 }
 function openImport() {
   sheet(`<h2 class="sh">Import</h2>
@@ -4820,6 +4851,7 @@ const A = {
   reload: () => location.reload(),
   toggle: el => { const k = el.dataset.k; S.settings[k] = !S.settings[k]; el.setAttribute('aria-checked', String(S.settings[k])); save() },
   copyUid: async () => { try { await navigator.clipboard.writeText(fb.user.uid); toast('ID akun disalin') } catch { toast(fb.user.uid, 'info') } },
+  changePassword: () => openChangePassword(),
   claimAdmin: el => claimAdmin(el),
   appSave: async el => {
     const v = appFields(ui.appDraft);
@@ -5097,6 +5129,64 @@ document.addEventListener('input', e => {
   else if (k === 'setName') { S.settings.name = el.value.trim().slice(0, 20) || 'Kamu'; save() }
 });
 document.addEventListener('submit', async e => {
+  if (e.target.id === 'pwForm') {
+    e.preventDefault();
+    const f = e.target, hasPw = hasPassword();
+    const oldPw = hasPw ? f.oldPw.value : '';
+    const newPw = f.newPw.value;
+    const confirmPw = f.confirmPw.value;
+    const errEl = $('#pwErr');
+
+    if (newPw.length < 6) {
+      errEl.textContent = 'Password baru minimal 6 karakter.';
+      return;
+    }
+    if (newPw !== confirmPw) {
+      errEl.textContent = 'Password baru dan konfirmasi tidak sama.';
+      return;
+    }
+    if (!fb.mod || !fb.user) {
+      errEl.textContent = 'Masih menyiapkan koneksi. Coba lagi sebentar.';
+      return;
+    }
+
+    const btn = f.querySelector('button[type=submit]');
+    busy(btn, true);
+    errEl.textContent = '';
+
+    try {
+      const { EmailAuthProvider, reauthenticateWithCredential, updatePassword, linkWithCredential } = fb.mod;
+
+      if (hasPw) {
+        // Akun sudah punya password: reauth dulu, baru update
+        const credential = EmailAuthProvider.credential(fb.user.email, oldPw);
+        await reauthenticateWithCredential(fb.user, credential);
+        await updatePassword(fb.user, newPw);
+        toast('Password berhasil diubah');
+      } else {
+        // Akun Google tanpa password: link credential baru
+        const credential = EmailAuthProvider.credential(fb.user.email, newPw);
+        await linkWithCredential(fb.user, credential);
+        toast('Password berhasil ditambahkan');
+      }
+      closeSheet();
+    } catch (err) {
+      console.warn('Change password error:', err);
+      const code = err.code || '';
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        errEl.textContent = 'Password lama salah.';
+      } else if (code === 'auth/requires-recent-login') {
+        errEl.textContent = 'Sesi sudah lama. Keluar dulu, login lagi, lalu coba ubah password.';
+      } else if (code === 'auth/provider-already-linked') {
+        errEl.textContent = 'Akun ini sudah punya password.';
+      } else {
+        errEl.textContent = err.message || 'Gagal mengubah password.';
+      }
+    } finally {
+      if (btn.isConnected) busy(btn, false);
+    }
+    return;
+  }
   if (e.target.id !== 'authForm') return;
   e.preventDefault();
   const f = e.target, up = ui.authMode === 'up', email = f.email.value.trim(), pw = f.password.value, name = up ? f.nick.value.trim() : '';
