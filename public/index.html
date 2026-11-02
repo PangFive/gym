@@ -2022,6 +2022,8 @@ function libHead() {
   const main = xs.filter(t => t.p.includes(ui.muscle)).length;
   return `<span>Latihan untuk <b>${MI[ui.muscle].n}</b> · ${xs.length}${main < xs.length ? ` (${main} utama)` : ''}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
 }
+// A filter tapped a second time is taken off again.
+const flip = (cur, k) => cur === k ? 'all' : k;
 function centerChip(row) {
   const on = row.querySelector('.chip.on');
   if (on) {
@@ -4808,8 +4810,8 @@ const A = {
   close: closeSheet,
   settings: openSettings,
   muscle: el => {
-    ui.muscle = el.dataset.k;
-    if (route().page !== 'library') return go('library');
+    if (route().page !== 'library') { ui.muscle = el.dataset.k; return go('library') }
+    ui.muscle = flip(ui.muscle, el.dataset.k);
     refreshLib();
   },
   body: el => {
@@ -4819,8 +4821,8 @@ const A = {
   },
   open: el => openDetail(+el.dataset.id),
   form: el => openForm(+el.dataset.id),
-  fmus: el => { ui.fmus = el.dataset.k; refreshForm() },
-  fe: el => { ui.fe = el.dataset.k; refreshForm() },
+  fmus: el => { ui.fmus = flip(ui.fmus, el.dataset.k); refreshForm() },
+  fe: el => { ui.fe = flip(ui.fe, el.dataset.k); refreshForm() },
   play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1${el.dataset.loop ? `&mute=1&loop=1&playlist=${encodeURIComponent(el.dataset.y)}` : ''}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
   addTo: el => openAddTo(+el.dataset.id),
   addToR: async el => {
