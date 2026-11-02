@@ -32,6 +32,15 @@
           }
         }
       },
+      "teknik": {
+        ".read": true,
+        ".write": "auth != null && root.child('app/admins/' + auth.uid).val() === true",
+        "items": {
+          "$id": {
+            ".validate": "newData.hasChildren(['id', 't', 'y', 'p'])"
+          }
+        }
+      },
       "admins": {
         "$uid": {
           ".read": "auth != null && auth.uid === $uid",

@@ -2033,9 +2033,9 @@ function refreshLib() {
   centerChip($('#libChips'));
 }
 // ---------- exercise technique ----------
-// Technique clips, from docs/teknik-katalog.json. j = koreksi (right against wrong), variasi or rangkaian, e = key in
+// Technique clips, the list until /app/teknik exists. j = koreksi (right against wrong), variasi or rangkaian, e = key in
 // EQUIP, y = YouTube id, ok / no = what the clip says to do and to avoid, p / s = main and supporting muscles.
-const FORM = [
+const FORM_BUILTIN = [
   {"id":1,"t":"Dumbbell Sumo Squat","j":"koreksi","e":"dumbbell","y":"C5kc7awZV6E","ok":["Turun sampai dumbbell sejajar pijakan", "Badan tetap tegak, lutut searah ujung kaki"],"no":["Berhenti di tengah, dumbbell masih jauh dari pijakan", "Gerakan pendek membuat glutes tidak terasa"],"p":["gluteal","adductors"],"s":["quadriceps","hamstring"]},
   {"id":273,"t":"Cable Triceps Pushdown","j":"koreksi","e":"cable","y":"gleUPbxsirE","ok":["Siku diam di samping badan", "Hanya lengan bawah yang bergerak sampai lengan lurus"],"no":["Siku ikut terangkat ke depan saat kembali ke atas", "Bahu mengambil alih, trisep jadi longgar"],"p":["triceps"],"s":[]},
   {"id":274,"t":"Seated Cable Row V-Grip","j":"koreksi","e":"cable","y":"Br_ZHOE5oIM","ok":["Pegang gagang V dengan grip netral, tarik ke perut, dada terbuka"],"no":["Punggung atas tegang semua, belikat tidak bekerja"],"p":["upper-back"],"s":["biceps","trapezius"]},
@@ -2148,7 +2148,8 @@ const FORM = [
   {"id":675,"t":"Barbell Row Form","j":"koreksi","e":"barbell","y":"VU8lyEczUUc","ok":["Punggung rata, tarik ke perut, cara terbaik untuk barbell row"],"no":[],"p":["upper-back"],"s":["biceps","lower-back"]},
   {"id":676,"t":"One-Arm Push-Up Form","j":"koreksi","e":"body","y":"hHy31P788nM","ok":["Tangan di bawah bahu, kaki melebar, badan lurus"],"no":["Badan berputar atau pinggul naik"],"p":["chest","triceps"],"s":["abs","deltoids"]}
 ];
-const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel'], ['machine', 'Mesin'], ['smith', 'Smith'], ['body', 'Beban tubuh'], ['kettlebell', 'Kettlebell'], ['band', 'Band']];
+let FORM = FORM_BUILTIN;
+const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel'], ['machine', 'Mesin'], ['smith', 'Smith'], ['body', 'Beban tubuh'], ['kettlebell', 'Kettlebell'], ['band', 'Band'], ['other', 'Lainnya']];
 const eqName = k => EQUIP.find(x => x[0] === k)?.[1] || k;
 const libTabs = tab => `<div class="seg glass lseg">${[['', 'Alat'], ['teknik', 'Teknik']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-a="go" data-to="library${k && '/' + k}">${n}</button>`).join('')}</div>`;
 const formCount = k => FORM.filter(t => trains(t, k)).length;
@@ -3070,6 +3071,7 @@ function adminSection() {
       <input id="apSug" class="sin" data-i="ap" data-k="suggestion" value="${esc(d.suggestion)}" maxlength="40" placeholder="Atau tulis sendiri, mis. 5 × 5" aria-label="Saran set × reps">
     </div></div>
     ${tutCard()}
+    ${formCard()}
     <div class="savebar" id="apBar" role="status" ${appDirty() ? '' : 'hidden'}><span>Ada perubahan yang belum disimpan</span>
       <button class="btn soft sm" data-a="apReset">Batal</button><button class="btn pri sm" data-a="appSave">Simpan</button></div>`;
 }
@@ -3682,6 +3684,7 @@ async function boot() {
   // The machines: last list seen from Firebase on this device, else the built-in one.
   try { const c = JSON.parse(localStorage.getItem(TUT_CACHE)); if (c && c.items) { setTutorials(Object.values(c.items)); tutMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
   if (!TUTORIALS.length) setTutorials(builtinList());
+  try { const c = JSON.parse(localStorage.getItem(FORM_CACHE)); if (c && c.items) { setForm(Object.values(c.items)); formMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
   // Someone was signed in here last time: open on this device's copy straight away.
   const last = localStorage.getItem(LAST), c = last && cacheLoad(last);
   if (c) { S = c.S; synced = c.synced; fromCache = true; fb.user = { uid: last, cached: true }; phase = 'app' }
@@ -3698,6 +3701,7 @@ async function boot() {
     d.onValue(d.ref(fb.db, '.info/connected'), s => setOnline(s.val() === true));
     d.onValue(d.ref(fb.db, 'app/meta/hasAdmin'), s => { fb.hasAdmin = s.val() === true; offerAdmin() }, () => {});
     d.onValue(d.ref(fb.db, 'app/tutorials'), s => applyTutorials(s.val()), () => {});
+    d.onValue(d.ref(fb.db, 'app/teknik'), s => applyForm(s.val()), () => {});
     au.getRedirectResult(fb.auth).catch(authFail);
     au.onAuthStateChanged(fb.auth, onUser);
   } catch (e) {
@@ -4689,6 +4693,93 @@ function tutCard() {
     </div>`;
 }
 
+// ---------- technique clips ----------
+// Stored at /app/teknik as { v, count, updatedAt, items: { <id>: { id, t, j, e, y, ok, no, p, s } } }.
+// Everyone reads it; admins replace it by importing JSON and export it again to edit. Firebase drops
+// empty lists, so ok, no and s can come back missing.
+const FORM_CACHE = 'why_teknik', FORM_J = ['koreksi', 'variasi', 'rangkaian'];
+let formMeta = { source: 'builtin', updatedAt: 0 };
+const cueList = v => (Array.isArray(v) ? v : v && typeof v === 'object' ? Object.values(v) : v ? [v] : []).map(x => String(x).trim().slice(0, 200)).filter(Boolean).slice(0, 8);
+function formItem(x) {
+  const id = +x?.id, t = String(x?.t ?? x?.title ?? '').trim(), y = ytId(x?.y ?? x?.youtube), p = muscleList(x?.p ?? x?.primary);
+  if (!id || !t || !y || !p.length) return null;
+  const e = String(x.e ?? x.equipment ?? ''), j = String(x.j ?? x.type ?? ''), sure = x.confidence !== 'rendah';
+  return { id, t: t.slice(0, 80), j: FORM_J.includes(j) ? j : 'koreksi', e: EQUIP.some(q => q[0] === e) ? e : 'other', y,
+    ok: sure ? cueList(x.ok) : [], no: sure ? cueList(x.no) : [], p, s: muscleList(x.s ?? x.secondary) };
+}
+const setForm = list => { FORM = list.map(formItem).filter(Boolean).sort((a, b) => a.id - b.id) };
+function applyForm(val) {
+  if (val && val.items) {
+    setForm(Object.values(val.items));
+    formMeta = { source: 'firebase', updatedAt: +val.updatedAt || 0 };
+    try { localStorage.setItem(FORM_CACHE, JSON.stringify({ items: val.items, updatedAt: val.updatedAt || 0 })) } catch {}
+  } else {
+    FORM = FORM_BUILTIN; formMeta = { source: 'builtin', updatedAt: 0 };
+    try { localStorage.removeItem(FORM_CACHE) } catch {}
+  }
+  softRender();
+}
+function parseForm(txt) {
+  txt = String(txt || '');
+  const a = txt.search(/[[{]/), b = Math.max(txt.lastIndexOf('}'), txt.lastIndexOf(']'));
+  let o; try { o = JSON.parse(txt.slice(a, b + 1)) } catch { throw new Error('Format JSON tidak valid') }
+  const raw = Array.isArray(o) ? o : Array.isArray(o?.items) ? o.items : o?.items && typeof o.items === 'object' ? Object.values(o.items) : null;
+  if (!raw) throw new Error('Tidak ada daftar video di JSON ini');
+  const seen = new Set(), list = [];
+  raw.forEach(x => { const f = formItem(x); if (f && !seen.has(f.id)) { seen.add(f.id); list.push(f) } });
+  return { list, skipped: raw.length - list.length };
+}
+const formKey = x => JSON.stringify([x.t, x.j, x.e, x.y, x.ok, x.no, x.p, x.s]);
+async function saveForm(list) {
+  const items = {};
+  list.forEach(x => { items[x.id] = x });
+  await fb.mod.set(fb.mod.ref(fb.db, 'app/teknik'), { v: 1, count: list.length, updatedAt: fb.mod.serverTimestamp(), items });
+}
+async function importForm(txt, btn) {
+  let parsed;
+  try { parsed = parseForm(txt) } catch (e) { return toast(e.message, 'err') }
+  const { list, skipped } = parsed;
+  if (!list.length) return toast('Tidak ada video yang lengkap (id, judul, video, otot) di JSON ini', 'err');
+  const now = new Map(FORM.map(x => [x.id, formKey(x)]));
+  const added = list.filter(x => !now.has(x.id)).length;
+  const changed = list.filter(x => now.has(x.id) && now.get(x.id) !== formKey(x)).length;
+  const removed = [...now.keys()].filter(id => !list.some(x => x.id === id)).length;
+  const ok = await ask({ title: `Simpan ${list.length} video?`, tone: 'warn', icon: 'upload', ok: 'Simpan ke Firebase',
+    msg: `${added} baru · ${changed} berubah · ${removed} dihapus${skipped ? ` · ${skipped} dilewati (tidak lengkap)` : ''}. Data teknik semua pengguna diganti dengan isi file ini.` });
+  if (!ok) return;
+  busy(btn, true);
+  try { await saveForm(list); closeSheet(); toast(`${list.length} video tersimpan di Firebase`) }
+  catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
+  finally { if (btn?.isConnected) busy(btn, false) }
+}
+function exportForm() {
+  const items = FORM.map(x => ({ id: x.id, title: x.t, type: x.j, equipment: x.e, youtube: x.y, ok: x.ok, no: x.no, primary: x.p, secondary: x.s }));
+  download(`why-teknik-${dayKey(new Date())}.json`, JSON.stringify({
+    why_teknik: 1, exported: new Date().toISOString(), count: items.length,
+    note: 'Edit lalu import lagi lewat Pengaturan → Data teknik. youtube boleh berisi id atau link; primary/secondary memakai kode di "muscles".',
+    types: FORM_J, equipment: Object.fromEntries(EQUIP), muscles: Object.fromEntries(MUSCLES.map(m => [m.k, m.n])),
+    items
+  }, null, 2));
+}
+function openFormImport() {
+  sheet(`<h2 class="sh">Import data teknik</h2>
+    <p class="scope" style="margin-top:-8px">Tempel JSON atau pilih file hasil <b>Export</b> dari sini. Semua data teknik diganti dengan isi file ini.</p>
+    <textarea id="formTxt" class="ta" placeholder='{"why_teknik":1,"items":[{"id":1,"title":"…","youtube":"…","primary":["gluteal"]}]}'></textarea>
+    <div class="row2"><label class="btn soft">${I('upload')} Pilih file<input type="file" id="formFile" accept=".json,application/json,text/plain" hidden></label><button class="btn pri" data-a="formImport">Import</button></div>`);
+}
+function formCard() {
+  const when = formMeta.updatedAt ? new Date(formMeta.updatedAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  const src = formMeta.source === 'firebase' ? `Di Firebase${when ? ' · diperbarui ' + when : ''}` : 'Data bawaan aplikasi, belum di Firebase';
+  const link = (icon, c, title, a, sub = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}"`, right: I('chev') });
+  return `<h3 class="sh2">Data teknik</h3>
+    <div class="sgroup">
+      ${sRow({ icon: 'video', c: '#f59e0b', title: `${FORM.length} video teknik`, sub: src })}
+      ${formMeta.source === 'firebase' ? '' : link('upload', '#2f7cf6', 'Simpan data bawaan ke Firebase', 'formPublish', 'Supaya bisa dikelola dari sini')}
+      ${link('upload', '#14b8a6', 'Import JSON', 'formOpen', 'Ganti semua data teknik dari file')}
+      ${link('download', '#8b5cf6', 'Export JSON', 'formExport', 'Unduh untuk diedit atau dicadangkan')}
+    </div>`;
+}
+
 // ---------- first admin ----------
 // While the app has no admin at all, whoever is signed in is offered the role. The database rules
 // let exactly one account take it (app/admins/<uid> plus the public app/meta/hasAdmin flag, in one
@@ -5215,6 +5306,15 @@ const A = {
   shareWeek: el => { ui.share.week = !ui.share.week; el.setAttribute('aria-checked', String(ui.share.week)) },
   shareNative, shareLink, shareFile,
   tutOpen: openTutImport,
+  formOpen: openFormImport,
+  formImport: el => importForm($('#formTxt').value, el),
+  formExport: exportForm,
+  formPublish: async el => {
+    busy(el, true);
+    try { await saveForm(FORM_BUILTIN); toast('Data teknik tersimpan di Firebase'); if ($('#adminSec')) $('#adminSec').innerHTML = adminSection() }
+    catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
+    finally { if (el?.isConnected) busy(el, false) }
+  },
   tutImport: el => importTutorials($('#tutTxt').value, el),
   tutExport: exportTutorials,
   tutPublish: async el => {
@@ -5413,6 +5513,9 @@ document.addEventListener('change', e => {
   }
   if (e.target.id === 'tutFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
+  }
+  if (e.target.id === 'formFile' && e.target.files[0]) {
+    return e.target.files[0].text().then(t => { $('#formTxt').value = t; importForm(t, document.querySelector('[data-a=formImport]')) });
   }
   if (e.target.id !== 'impFile' || !e.target.files[0]) return;
   e.target.files[0].text().then(importText);

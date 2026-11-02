@@ -30,7 +30,8 @@ tersinkron di semua perangkat.
 - Halaman Tutorial punya dua tab: **Alat** dan **Teknik** (`#/library/teknik`). Tab Teknik memakai Jelajahi Otot yang
   sama, chip otot dan chip alat hanya untuk yang punya video, lalu kartu video dua kolom.
 - Detail: video berulang tanpa suara dengan teks otomatis YouTube, kotak **Yang benar** dan **Yang salah**, peta otot.
-- 111 entri dari `docs/teknik-katalog.json`, disalin ke `FORM` (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
+- Data di Firebase `app/teknik`, dikelola admin di **Pengaturan → Data teknik** (Import, Export). Sebelum ada di Firebase memakai
+  `FORM_BUILTIN`. `docs/teknik-katalog.json` menyimpan hasil analisis lengkap dengan narasi. Kolom item (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
   poin benar dan salah, `p` / `s` otot utama dan pendukung).
 
 ### Tutorial alat
@@ -223,6 +224,7 @@ tersinkron di semua perangkat.
 
 | Path | Isi | Akses |
 |---|---|---|
+| `app/teknik` | Video teknik: `{ v, count, updatedAt, items: { <id>: { id, t, j, e, y, ok, no, p, s } } }` | baca: semua · tulis: admin |
 | `app/settings` | Pengaturan aplikasi: `appName`, `announcement`, `defaultRest`, `defaultGoal`, `suggestion` | baca: semua · tulis: admin |
 | `app/tutorials` | Data alat: `{ v, count, updatedAt, items: { <id>: { id, t, m, y, d, p, s } } }` | baca: semua · tulis: admin |
 | `app/admins/<uid>` | `true` untuk admin | akun pertama mengklaim sendiri; berikutnya lewat Console |
