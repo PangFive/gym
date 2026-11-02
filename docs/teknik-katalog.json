@@ -1,0 +1,2577 @@
+{
+ "note": "Hasil analisis 141 video playlist Treinos. same = klip kembar. Teks dari gambar dan narasi, belum diperiksa pelatih.",
+ "count": 111,
+ "items": [
+  {
+   "id": 1,
+   "title": "Dumbbell Sumo Squat",
+   "type": "koreksi",
+   "category": "glutes",
+   "equipment": "dumbbell",
+   "youtube": "C5kc7awZV6E",
+   "filename": "Treinos  (1).mp4",
+   "same": [],
+   "ok": [
+    "Turun sampai dumbbell sejajar pijakan"
+   ],
+   "no": [
+    "Berhenti di tengah, glutes tidak terasa"
+   ],
+   "primary": [
+    "gluteal",
+    "adductors"
+   ],
+   "secondary": [
+    "quadriceps",
+    "hamstring"
+   ],
+   "narration": "You're doing sumo squats wrong and that's why you don't feel your glutes. Save this and come back stronger. Yes, you can.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 273,
+   "title": "Cable Triceps Pushdown",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "cable",
+   "youtube": "gleUPbxsirE",
+   "filename": "Treinos  (273).mp4",
+   "same": [
+    365
+   ],
+   "ok": [
+    "Siku diam di samping badan, hanya lengan bawah bergerak"
+   ],
+   "no": [
+    "Siku terangkat ke depan saat kembali"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Are you making these triceps mistakes? Save Save this and come back stronger. Are you making these triceps mistakes? Save Save this and come back stronger. Are you making these triceps mistakes? Save Save this and come back stronger. Are you making these triceps mistakes? Save Save this and come back stronger. Are you making these triceps mistakes? Save Save this and come back stronger. Are you making these triceps mistakes? Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 274,
+   "title": "Seated Cable Row V-Grip",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "Br_ZHOE5oIM",
+   "filename": "Treinos  (274).mp4",
+   "same": [
+    284
+   ],
+   "ok": [
+    "Pegang gagang V dengan grip netral, tarik ke perut, dada terbuka"
+   ],
+   "no": [
+    "Punggung atas tegang semua, belikat tidak bekerja"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps",
+    "trapezius"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 275,
+   "title": "Back Extension",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "body",
+   "youtube": "y6ZOgFL-3eQ",
+   "filename": "Treinos  (275).mp4",
+   "same": [],
+   "ok": [
+    "Punggung netral untuk punggung bawah; condong dengan lutut sedikit menekuk untuk glutes dan paha belakang"
+   ],
+   "no": [
+    "Melengkung berlebihan menekan tulang belakang"
+   ],
+   "primary": [
+    "lower-back",
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "Overextending puts dangerous pressure on your spine. Avoid this position. Maintain a neutral spine to target your lower back safely and effectively. Hinge forward with a soft bend to emphasize glutes and hamstrings. Save emphasize glutes and hamstrings. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 276,
+   "title": "Seated Cable Row",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "_f_A_w1-T-o",
+   "filename": "Treinos  (276).mp4",
+   "same": [
+    373
+   ],
+   "ok": [
+    "Tarik dengan punggung, kabel tetap lurus"
+   ],
+   "no": [
+    "Tarikan yang membuat punggung tidak berkembang"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "This is why your back isn't growing from cable rows. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 277,
+   "title": "Leg Press Foot Position",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "ka6OwEvjKsQ",
+   "filename": "Treinos  (277).mp4",
+   "same": [
+    301
+   ],
+   "ok": [
+    "Posisi kaki menggeser fokus: paha belakang, paha dalam, keduanya, paha depan"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "hamstring",
+    "adductors"
+   ],
+   "secondary": [
+    "gluteal"
+   ],
+   "narration": "If you want real results, you need to do it like this. Hamstrings. it like this. Hamstrings. Inner thighs. Hamstrings and quads. Quads. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 278,
+   "title": "Barbell Bench Grip Width",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "barbell",
+   "youtube": "0hjapbEpu80",
+   "filename": "Treinos  (278).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan sedang, batang turun ke dada"
+   ],
+   "no": [
+    "Pegangan terlalu sempit atau terlalu lebar"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "Stop making these bench press mistakes if you want real gains. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 279,
+   "title": "Barbell Forearm Curls",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "3A4lauEw_6k",
+   "filename": "Treinos  (279).mp4",
+   "same": [],
+   "ok": [
+    "Beberapa variasi curl pergelangan untuk lengan bawah"
+   ],
+   "no": [],
+   "primary": [
+    "forearm"
+   ],
+   "secondary": [],
+   "narration": "If your forearms aren't growing, you're training them wrong. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 280,
+   "title": "Cable Forearm Curls",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "cable",
+   "youtube": "ndqcqdOUfGg",
+   "filename": "Treinos  (280).mp4",
+   "same": [
+    336
+   ],
+   "ok": [
+    "Variasi kabel untuk lengan bawah"
+   ],
+   "no": [],
+   "primary": [
+    "forearm"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 281,
+   "title": "Lat Pulldown Variations",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "BdacDqQf6dA",
+   "filename": "Treinos  (281).mp4",
+   "same": [
+    338
+   ],
+   "ok": [
+    "Lebar pegangan menggeser fokus punggung"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "This isn't just a pull, it's a sculpting move. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 282,
+   "title": "Smith Machine Leg Day",
+   "type": "rangkaian",
+   "category": "glutes",
+   "equipment": "smith",
+   "youtube": "2fKTw-RDcZc",
+   "filename": "Treinos  (282).mp4",
+   "same": [],
+   "ok": [
+    "Glute bridge, split squat, good morning, calf raise"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal",
+    "quadriceps",
+    "hamstring"
+   ],
+   "secondary": [
+    "calves"
+   ],
+   "narration": "Did you know the Smith machine isn't just for squats? Glute bridges. Bar on hips, thrust up. Split squats. Back foot up, steady with bar. Good mornings. Hinge, hamstring stretch. Calf raises. Bar on shoulders, rise and squeeze. Switch up your leg day.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 283,
+   "title": "Dumbbell Shoulder Basics",
+   "type": "rangkaian",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "VyT_H1WzuBk",
+   "filename": "Treinos  (283).mp4",
+   "same": [],
+   "ok": [
+    "Shrug dan raise dengan dumbbell"
+   ],
+   "no": [],
+   "primary": [
+    "trapezius",
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "If your shoulders aren't growing, this is probably why. Save this and come back stronger.",
+   "confidence": "rendah"
+  },
+  {
+   "id": 285,
+   "title": "Leg Extension Setup",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "6R2OBTIk0ps",
+   "filename": "Treinos  (285).mp4",
+   "same": [
+    349
+   ],
+   "ok": [
+    "Bantalan di atas pergelangan kaki, lutut sejajar poros mesin"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps"
+   ],
+   "secondary": [],
+   "narration": "Want to feel every rep deep in your quads? Let me show you how. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 286,
+   "title": "Dumbbell Calf Raise Stance",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "GvgDZrF5Caw",
+   "filename": "Treinos  (286).mp4",
+   "same": [],
+   "ok": [
+    "Arah ujung kaki menggeser fokus betis"
+   ],
+   "no": [],
+   "primary": [
+    "calves"
+   ],
+   "secondary": [],
+   "narration": "If your calves aren't growing, you're standing wrong. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 287,
+   "title": "Cable Glute Moves",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "cable",
+   "youtube": "74lfAT4sIAM",
+   "filename": "Treinos  (287).mp4",
+   "same": [
+    317,
+    673
+   ],
+   "ok": [
+    "Kickback dan gerakan samping dengan kabel"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "adductors"
+   ],
+   "narration": "Most people do cable kickbacks wrong. Are you one of them? Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 288,
+   "title": "Crunch Variations",
+   "type": "variasi",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "OcoAiQfHiNc",
+   "filename": "Treinos  (288).mp4",
+   "same": [
+    374
+   ],
+   "ok": [
+    "Perut bawah, samping, atas"
+   ],
+   "no": [],
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "obliques"
+   ],
+   "narration": "Want to train your core without leaving your room? Start here. This is the best way to start your morning. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 289,
+   "title": "Bench Dip",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "body",
+   "youtube": "ZXsyvYWXjwI",
+   "filename": "Treinos  (289).mp4",
+   "same": [
+    345
+   ],
+   "ok": [
+    "Badan dekat bangku, bahu tetap turun"
+   ],
+   "no": [
+    "Bench dip dengan posisi yang salah"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [
+    "deltoids",
+    "chest"
+   ],
+   "narration": "How many bench dips have I done wrong? Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 290,
+   "title": "Dumbbell Chest Fly",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "9LPIqBsDGUo",
+   "filename": "Treinos  (290).mp4",
+   "same": [
+    326
+   ],
+   "ok": [
+    "Siku sedikit menekuk, turun terkontrol"
+   ],
+   "no": [
+    "Lengan terlalu lurus"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "rendah"
+  },
+  {
+   "id": 291,
+   "title": "Bent-Over Dumbbell Focus",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "U8tYKKhN4NQ",
+   "filename": "Treinos  (291).mp4",
+   "same": [
+    368
+   ],
+   "ok": [
+    "Arah tarikan menggeser fokus: lats, trapezius, bahu belakang"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back",
+    "trapezius",
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "If you want your back to grow, start by doing this correctly. doing this correctly. Lats. Traps. Rear delts. Deltoids. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 292,
+   "title": "Push-Up Variations",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "rBJ9fcpmPfo",
+   "filename": "Treinos  (292).mp4",
+   "same": [],
+   "ok": [
+    "Posisi badan dan tangan menggeser fokus"
+   ],
+   "no": [],
+   "primary": [
+    "chest",
+    "deltoids",
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Ever wonder which muscle you're really targeting with push-ups? targeting with push-ups? Shoulders. Chest. Triceps. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 293,
+   "title": "Seated Dumbbell Press Setup",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "DRgg7Zp7GGk",
+   "filename": "Treinos  (293).mp4",
+   "same": [],
+   "ok": [
+    "Pergelangan lurus di atas siku, sandaran sedikit miring"
+   ],
+   "no": [
+    "Posisi yang disebut video berbahaya untuk bahu"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "This isn't just wrong, it's dangerous. Here's the correct way. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 294,
+   "title": "Full Dumbbell Circuit",
+   "type": "rangkaian",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "ZiSYr5rAKH4",
+   "filename": "Treinos  (294).mp4",
+   "same": [],
+   "ok": [
+    "Rangkaian seluruh badan dengan dumbbell"
+   ],
+   "no": [],
+   "primary": [
+    "deltoids",
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [
+    "upper-back",
+    "biceps"
+   ],
+   "narration": "Think lightweights can't build muscle? Think again. This full body workout hits hard. Think again. This full body workout hits hard. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 295,
+   "title": "Incline Barbell Press Setup",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "barbell",
+   "youtube": "TgGDIldTIko",
+   "filename": "Treinos  (295).mp4",
+   "same": [
+    304
+   ],
+   "ok": [
+    "Atur pegangan dan posisi batang sejajar dada"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "Watch this. Here's how to make your incline press perfect. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 296,
+   "title": "Overhead Dumbbell Triceps Extension",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "dbRdqk9fbXw",
+   "filename": "Treinos  (296).mp4",
+   "same": [],
+   "ok": [
+    "Siku rapat dekat kepala"
+   ],
+   "no": [
+    "Siku melebar ke samping"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Strong arms don't come from heavy weight. They come from correct form. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 297,
+   "title": "Biceps Curl Bench Variations",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "xlS6yINUiBY",
+   "filename": "Treinos  (297).mp4",
+   "same": [],
+   "ok": [
+    "Incline, preacher, duduk; 3 set 8-12 reps"
+   ],
+   "no": [],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Most people never see results, but these exercises change that. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 298,
+   "title": "Hip Thrust Foot Position",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "barbell",
+   "youtube": "BHFwM2-Wntg",
+   "filename": "Treinos  (298).mp4",
+   "same": [],
+   "ok": [
+    "Jarak kaki menggeser fokus: paha depan, paha belakang, glutes"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "quadriceps",
+    "hamstring"
+   ],
+   "narration": "Most people do hip thrusts wrong. Fix your foot position. Quads. your foot position. Quads. Hamstrings. Glutes. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 299,
+   "title": "Lat Pulldown Form",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "YzVpczUr1lQ",
+   "filename": "Treinos  (299).mp4",
+   "same": [
+    324
+   ],
+   "ok": [
+    "Ibu jari searah jari, tarik batang ke dada atas"
+   ],
+   "no": [
+    "Tangan yang menarik, bukan punggung"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Are you sure you're doing a lat pull down correctly? Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 300,
+   "title": "Triceps Mistakes Trio",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "gsCmwpBjyF8",
+   "filename": "Treinos  (300).mp4",
+   "same": [
+    342
+   ],
+   "ok": [
+    "Overhead extension, kickback, pushdown: lengan atas diam"
+   ],
+   "no": [
+    "Lengan atas ikut bergerak"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Are you making these triceps mistakes? Check this before your next rep. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 302,
+   "title": "Cable Face Pull",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "cable",
+   "youtube": "SRS3VbSR4gM",
+   "filename": "Treinos  (302).mp4",
+   "same": [
+    354
+   ],
+   "ok": [
+    "Tarik ke arah wajah untuk bahu belakang"
+   ],
+   "no": [
+    "Leher ikut tegang"
+   ],
+   "primary": [
+    "deltoids",
+    "trapezius"
+   ],
+   "secondary": [
+    "upper-back"
+   ],
+   "narration": "Want to build rear delts, not strain your neck? Watch this. Save this and come back stronger. There.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 303,
+   "title": "Dumbbell Shrug",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "BlCAFirjHj8",
+   "filename": "Treinos  (303).mp4",
+   "same": [],
+   "ok": [
+    "Bahu naik lurus ke atas"
+   ],
+   "no": [
+    "Dagu maju atau leher tegang"
+   ],
+   "primary": [
+    "trapezius"
+   ],
+   "secondary": [],
+   "narration": "Think you've been doing it right? You're close, but here's how to make it perfect. close, but here's how to make it perfect. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 305,
+   "title": "Machine Chest Fly",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "machine",
+   "youtube": "YJAqEayNqy0",
+   "filename": "Treinos  (305).mp4",
+   "same": [
+    327
+   ],
+   "ok": [
+    "Lengan membuka terkontrol, dada mengencang di tengah"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [],
+   "narration": "You're not doing it wrong, but you could be doing it better. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 306,
+   "title": "Seated Overhead Triceps Extension",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "tIFOYybwcaM",
+   "filename": "Treinos  (306).mp4",
+   "same": [
+    376
+   ],
+   "ok": [
+    "Lengan atas tegak dekat kepala"
+   ],
+   "no": [
+    "Lengan atas condong ke depan"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Doing overhead tricep extensions. Here's how to perfect your form. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 307,
+   "title": "Calf Raise Foot Direction",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "fQTDZMxLe04",
+   "filename": "Treinos  (307).mp4",
+   "same": [],
+   "ok": [
+    "Ujung kaki ke luar, lurus, ke dalam"
+   ],
+   "no": [],
+   "primary": [
+    "calves"
+   ],
+   "secondary": [],
+   "narration": "Stop wasting time. This is how you actually grow your calves. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 308,
+   "title": "Barbell Hip Thrust Form",
+   "type": "koreksi",
+   "category": "glutes",
+   "equipment": "barbell",
+   "youtube": "PpVKv8OCaqI",
+   "filename": "Treinos  (308).mp4",
+   "same": [],
+   "ok": [
+    "Kaki di depan lutut, dagu turun, panggul naik sejajar"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "Strong glutes come from perfect reps. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 309,
+   "title": "Smith Shoulder Press",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "smith",
+   "youtube": "Zhms47_fJ8g",
+   "filename": "Treinos  (309).mp4",
+   "same": [],
+   "ok": [
+    "Pergelangan lurus, punggung menempel"
+   ],
+   "no": [
+    "Punggung melengkung, pergelangan menekuk"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "The most common mistake in Smith shoulder press. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 310,
+   "title": "Parallel Dips",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "body",
+   "youtube": "97MFwvhtxio",
+   "filename": "Treinos  (310).mp4",
+   "same": [],
+   "ok": [
+    "Sudut badan menggeser fokus dada dan trisep"
+   ],
+   "no": [],
+   "primary": [
+    "triceps",
+    "chest"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 311,
+   "title": "Cable Crossover",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "cable",
+   "youtube": "l2c3BFbhCj0",
+   "filename": "Treinos  (311).mp4",
+   "same": [
+    398
+   ],
+   "ok": [
+    "Tarik menyilang ke arah bawah"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "Doing cable flies. Watch this before your next chest day. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 312,
+   "title": "Dumbbell Row",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "ImcsN6yL2mw",
+   "filename": "Treinos  (312).mp4",
+   "same": [],
+   "ok": [
+    "Tarik dengan punggung, bukan lengan"
+   ],
+   "no": [
+    "Lengan yang mengambil alih"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Rows are for your back, not your arms. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 313,
+   "title": "Barbell Deadlift",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "barbell",
+   "youtube": "Pdc2IQlUXLM",
+   "filename": "Treinos  (313).mp4",
+   "same": [],
+   "ok": [
+    "Kaki dekat batang, punggung lurus"
+   ],
+   "no": [
+    "Punggung membulat"
+   ],
+   "primary": [
+    "hamstring",
+    "gluteal",
+    "lower-back"
+   ],
+   "secondary": [
+    "trapezius"
+   ],
+   "narration": "If you want to master the deadlift with perfect form, watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 314,
+   "title": "Dumbbell Biceps Curl",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "fbWpfiJ3Djs",
+   "filename": "Treinos  (314).mp4",
+   "same": [
+    360,
+    393
+   ],
+   "ok": [
+    "Siku diam, bahu turun"
+   ],
+   "no": [
+    "Mengayun, siku maju"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "You think you're training biceps, but you're not. Watch this. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 315,
+   "title": "Shoulder Press Line",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "barbell",
+   "youtube": "_n1BsTd8lt8",
+   "filename": "Treinos  (315).mp4",
+   "same": [
+    677
+   ],
+   "ok": [
+    "Bahu turun, jalur lurus"
+   ],
+   "no": [
+    "Bahu terangkat"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "trapezius",
+    "triceps"
+   ],
+   "narration": "Most people make at least one of these three mistakes. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 316,
+   "title": "Leg Press",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "_SsM_nUNhYw",
+   "filename": "Treinos  (316).mp4",
+   "same": [],
+   "ok": [
+    "Telapak penuh di papan, panggul tetap menempel"
+   ],
+   "no": [
+    "Panggul terangkat di bawah"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "Want powerful legs? Avoid these leg press mistakes. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 318,
+   "title": "Barbell Bench Press Setup",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "barbell",
+   "youtube": "-VU89OvyIkU",
+   "filename": "Treinos  (318).mp4",
+   "same": [],
+   "ok": [
+    "Lima langkah persiapan bench press: pegangan, kaki, bahu, batang, jalur"
+   ],
+   "no": [
+    "Bokong terangkat"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "Think your bench press is perfect? Let's fix that in five steps. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 319,
+   "title": "EZ Skull Crusher",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "lIVJaV_5VRE",
+   "filename": "Treinos  (319).mp4",
+   "same": [],
+   "ok": [
+    "Lengan atas diam, turun ke dahi"
+   ],
+   "no": [
+    "Siku melebar"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "Do it this way and lying extensions become one of the best triceps builders. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 320,
+   "title": "Bench Angle and Chest Focus",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "nkScDBN4BdY",
+   "filename": "Treinos  (320).mp4",
+   "same": [
+    351
+   ],
+   "ok": [
+    "Sudut bangku mengubah pembagian dada atas dan bahu depan"
+   ],
+   "no": [],
+   "primary": [
+    "chest",
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "Think you're doing the bench press right? Watch this. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 321,
+   "title": "Smith Squat",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "smith",
+   "youtube": "RXi6s6UM3Us",
+   "filename": "Treinos  (321).mp4",
+   "same": [],
+   "ok": [
+    "Lebar kaki pas, lutut searah ujung kaki"
+   ],
+   "no": [
+    "Pegangan dan posisi kurang stabil"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "Think Smith machine squats don't work. You're just doing them wrong. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 322,
+   "title": "Concentration Curl",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "Nrd-unl2lr4",
+   "filename": "Treinos  (322).mp4",
+   "same": [],
+   "ok": [
+    "Posisi siku menentukan: siku diam, bahu turun"
+   ],
+   "no": [
+    "Siku bergeser, bahu ikut naik"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Your elbow position makes or breaks this exercise. Watch closely. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 323,
+   "title": "Quads vs Glutes Dumbbell",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "FOxGm5fPMFY",
+   "filename": "Treinos  (323).mp4",
+   "same": [],
+   "ok": [
+    "Badan tegak untuk paha depan, condong untuk glutes; 4 set 12 reps"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "Want to feel your quads burn and your glutes grow? Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 325,
+   "title": "Plank",
+   "type": "koreksi",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "N0a54YuR5pw",
+   "filename": "Treinos  (325).mp4",
+   "same": [],
+   "ok": [
+    "Siku di bawah bahu, badan lurus"
+   ],
+   "no": [
+    "Pinggang turun atau leher menekuk"
+   ],
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "Think you're doing planks right? Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 328,
+   "title": "Australian Pull-Up Grip",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "body",
+   "youtube": "fTaMfnCxg4U",
+   "filename": "Treinos  (328).mp4",
+   "same": [],
+   "ok": [
+    "Lebar pegangan menggeser fokus"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "You're not doing Australian pull-ups wrong, but you could do them better. wrong, but you could do them better. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 329,
+   "title": "One-Arm Dumbbell Row",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "xhfXk30uiv8",
+   "filename": "Treinos  (329).mp4",
+   "same": [],
+   "ok": [
+    "Tarik melengkung ke pinggul, siku rapat"
+   ],
+   "no": [
+    "Bahu berputar"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Your dumbbell rows aren't wrong, but they could be much better. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 330,
+   "title": "Dumbbell Leg Focus",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "0sPV9A6YHok",
+   "filename": "Treinos  (330).mp4",
+   "same": [],
+   "ok": [
+    "Goblet squat, hinge, sumo"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal",
+    "adductors"
+   ],
+   "secondary": [],
+   "narration": "Stop squatting the same way every time. Watch this. Quads. Watch this. Quads. Glutes. Inner thighs. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 331,
+   "title": "One-Arm Push-Up",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "7ccW55tITy0",
+   "filename": "Treinos  (331).mp4",
+   "same": [],
+   "ok": [
+    "Tangan di bawah bahu, kaki melebar, badan lurus"
+   ],
+   "no": [
+    "Badan berputar atau pinggul naik"
+   ],
+   "primary": [
+    "chest",
+    "triceps"
+   ],
+   "secondary": [
+    "abs",
+    "deltoids"
+   ],
+   "narration": "Most people can't do a clean one- arm push-up. Here's why. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 332,
+   "title": "Dumbbell Lateral Raise",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "g044A2Dy_C0",
+   "filename": "Treinos  (332).mp4",
+   "same": [],
+   "ok": [
+    "Naik sebatas bahu, bahu tidak mengangkat"
+   ],
+   "no": [
+    "Bahu terangkat, lengan terlalu tinggi"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "Most people do lateral raises like this, but here's the right way. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 333,
+   "title": "Goblet Squat Heel or Toe",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "dumbbell",
+   "youtube": "9Q72W_RpqJw",
+   "filename": "Treinos  (333).mp4",
+   "same": [],
+   "ok": [
+    "Bagian kaki yang ditinggikan menggeser fokus"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal",
+    "quadriceps"
+   ],
+   "secondary": [],
+   "narration": "Most people never learn the squat trick you just did. Toes you just did. Toes up, more glutes. Heels up, more quads. Toes up, more glutes. Heels up, more quads. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 334,
+   "title": "Lateral Raise Angle",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "d71C0jREers",
+   "filename": "Treinos  (334).mp4",
+   "same": [],
+   "ok": [
+    "Rasakan di bahu, sebatas tinggi bahu"
+   ],
+   "no": [
+    "Terasa di trapezius, bukan bahu"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "Feeling traps, not shoulders. You're doing it wrong. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 335,
+   "title": "Lat Pulldown Back Position",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "IKR8If8vCPM",
+   "filename": "Treinos  (335).mp4",
+   "same": [],
+   "ok": [
+    "Tarik batang ke dada atas"
+   ],
+   "no": [
+    "Menarik batang ke perut"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Don't pull the bar to your stomach. Bring it to your upper chest instead. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 337,
+   "title": "Rope Pushdown",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "cable",
+   "youtube": "2Vyal99HbVg",
+   "filename": "Treinos  (337).mp4",
+   "same": [],
+   "ok": [
+    "Tali dibuka di bawah, siku diam"
+   ],
+   "no": [
+    "Siku maju"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "You've seen this machine before, but are you using it right? Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 339,
+   "title": "Dumbbell Lunge",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "-JLlyOgJ0Ig",
+   "filename": "Treinos  (339).mp4",
+   "same": [],
+   "ok": [
+    "Lutut searah ujung kaki"
+   ],
+   "no": [
+    "Lutut masuk ke dalam"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "Lunges are powerful if you're doing them right. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 340,
+   "title": "Leg Press Depth",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "6OHTh_ag21A",
+   "filename": "Treinos  (340).mp4",
+   "same": [],
+   "ok": [
+    "Telapak rata, pinggang tetap menempel"
+   ],
+   "no": [
+    "Pinggang terlepas dari sandaran"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "These leg press mistakes are killing your gains. Let's fix them now. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 341,
+   "title": "Smith Squat Form",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "smith",
+   "youtube": "ZtWDkmN_GwY",
+   "filename": "Treinos  (341).mp4",
+   "same": [],
+   "ok": [
+    "Batang di bahu, turun terkontrol"
+   ],
+   "no": [
+    "Punggung melengkung"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "Most people think they're squatting right on the Smith machine, but they're not. right on the Smith machine, but they're not. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 343,
+   "title": "One-Arm Row Grip",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "fPS_84lu2kM",
+   "filename": "Treinos  (343).mp4",
+   "same": [],
+   "ok": [
+    "Pegang dumbbell di tengah agar lats terasa"
+   ],
+   "no": [
+    "Pegangan salah, lats tidak terasa"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "If you're not feeling your lats, you're probably making this mistake. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 344,
+   "title": "Barbell Bench Press",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "barbell",
+   "youtube": "46i_9ZProvI",
+   "filename": "Treinos  (344).mp4",
+   "same": [
+    350
+   ],
+   "ok": [
+    "Batang sejajar dada, bahu ke belakang"
+   ],
+   "no": [
+    "Bahu maju"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "Are you making these common bench press mistakes? Let's find out. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 346,
+   "title": "Push-Up Form",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "p-q8DSDQ0b8",
+   "filename": "Treinos  (346).mp4",
+   "same": [],
+   "ok": [
+    "Tangan, kaki, dan badan lurus"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "How many push-ups have you been doing wrong? Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 347,
+   "title": "Seated Press Back Angle",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "zUdLWJwbJAY",
+   "filename": "Treinos  (347).mp4",
+   "same": [],
+   "ok": [
+    "Sandaran sedikit miring"
+   ],
+   "no": [
+    "Punggung terlalu melengkung"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "You're strong. Now, let's make your shoulder press perfect. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 348,
+   "title": "Dumbbell Curl Strict",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "Zfl1nHhPltA",
+   "filename": "Treinos  (348).mp4",
+   "same": [],
+   "ok": [
+    "Hanya lengan yang bekerja"
+   ],
+   "no": [
+    "Punggung dan bahu ikut bekerja"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [
+    "forearm"
+   ],
+   "narration": "If your back and shoulders are working, you're doing curls wrong. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 352,
+   "title": "Lat Pulldown Women",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "HZY4Q_2_L68",
+   "filename": "Treinos  (352).mp4",
+   "same": [],
+   "ok": [
+    "Paha terkunci, dada naik"
+   ],
+   "no": [
+    "Grip salah"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Think you're doing lat pull downs, right? Think again. Here's what you're missing. right? Think again. Here's what you're missing. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 353,
+   "title": "Cable Lateral Raise",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "cable",
+   "youtube": "6rjyKKC_8dQ",
+   "filename": "Treinos  (353).mp4",
+   "same": [
+    402
+   ],
+   "ok": [
+    "Badan condong dari kabel"
+   ],
+   "no": [
+    "Badan tegak"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "The correct posture for full side delt activation. activation. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 355,
+   "title": "Dumbbell Shrug Form",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "dumbbell",
+   "youtube": "DRVl4L2DU_I",
+   "filename": "Treinos  (355).mp4",
+   "same": [],
+   "ok": [
+    "Bahu naik lurus"
+   ],
+   "no": [
+    "Leher tegang"
+   ],
+   "primary": [
+    "trapezius"
+   ],
+   "secondary": [],
+   "narration": "Think you've been doing it right? You're close. But here's how to make it perfect. close. But here's how to make it perfect. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 356,
+   "title": "Concentration Curl Range",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "Otg6beEckMc",
+   "filename": "Treinos  (356).mp4",
+   "same": [],
+   "ok": [
+    "Turun penuh sampai lengan lurus"
+   ],
+   "no": [
+    "Bahu ikut mengangkat"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Want bigger biceps? This is one of the most effective curls you can do. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 357,
+   "title": "Seated Forward Fold",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "eYqK6o0x9LA",
+   "filename": "Treinos  (357).mp4",
+   "same": [],
+   "ok": [
+    "Badan melipat perlahan"
+   ],
+   "no": [
+    "Lutut menekuk"
+   ],
+   "primary": [
+    "hamstring"
+   ],
+   "secondary": [
+    "lower-back"
+   ],
+   "narration": "You're close. Here's what perfect actually looks like. Save this and come back stronger.",
+   "confidence": "rendah"
+  },
+  {
+   "id": 358,
+   "title": "Shoulder Dumbbell Circuit",
+   "type": "rangkaian",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "dgqNPEx1dyM",
+   "filename": "Treinos  (358).mp4",
+   "same": [
+    396
+   ],
+   "ok": [
+    "Single-arm lateral raise, steering wheels, rear delt row, front row, around the world"
+   ],
+   "no": [],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "Each exercise hits a different part of your shoulders. Watch this. Single your shoulders. Watch this. Single arm lateral raise. Dumbbell Single arm lateral raise. Dumbbell steering wheels. Rear delt row. Dumbbell front row around the world. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 359,
+   "title": "Forearm Bench Variations",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "A1AGPDApXbw",
+   "filename": "Treinos  (359).mp4",
+   "same": [],
+   "ok": [
+    "Curl pergelangan telapak atas, telapak bawah, reverse curl"
+   ],
+   "no": [],
+   "primary": [
+    "forearm"
+   ],
+   "secondary": [],
+   "narration": "Most people train forearms wrong. Don't be one of them. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 361,
+   "title": "T-Bar Row",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "barbell",
+   "youtube": "Q42e6Fit1mA",
+   "filename": "Treinos  (361).mp4",
+   "same": [
+    375
+   ],
+   "ok": [
+    "Tarik lebih rendah agar lats bekerja"
+   ],
+   "no": [
+    "Menarik terlalu tinggi"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "You're rowing too high. That's not hitting your lats. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 362,
+   "title": "Heel Trick Squat",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "UirSbWmXtT8",
+   "filename": "Treinos  (362).mp4",
+   "same": [],
+   "ok": [
+    "Posisi tumit menentukan otot yang dilatih"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "This simple heel trick decides what your squad is really training. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 363,
+   "title": "Seated Press Bench Setup",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "ya1TtrWy2bA",
+   "filename": "Treinos  (363).mp4",
+   "same": [],
+   "ok": [
+    "Atur sudut sandaran, siku sedikit ke depan"
+   ],
+   "no": [],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "If you want real shoulder growth, you need to press like this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 364,
+   "title": "Bench Press Grip",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "barbell",
+   "youtube": "xsLACWDwDBE",
+   "filename": "Treinos  (364).mp4",
+   "same": [],
+   "ok": [
+    "Letakkan batang di pangkal telapak"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "Don't bench press again until you watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 366,
+   "title": "Concentration Curl Stretch",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "79aNKiWIX0M",
+   "filename": "Treinos  (366).mp4",
+   "same": [],
+   "ok": [
+    "Lengan lurus di bawah"
+   ],
+   "no": [
+    "Bahu mengangkat beban"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Want bigger biceps? This is one of the most effective curls you can do. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 367,
+   "title": "Hip Abduction Machine",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "machine",
+   "youtube": "fiSCE3U7IVA",
+   "filename": "Treinos  (367).mp4",
+   "same": [],
+   "ok": [
+    "Mesin untuk glutes; posisi badan menggeser fokus"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "This machine targets glutes like no squat ever could. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 369,
+   "title": "Straight-Bar Pushdown",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "cable",
+   "youtube": "HmFw6IZlOGo",
+   "filename": "Treinos  (369).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan kokoh, siku di samping"
+   ],
+   "no": [
+    "Punggung bungkuk"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "You're doing triceps pushd downs, but are you doing them right? downs, but are you doing them right? Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 370,
+   "title": "Dumbbell Hip Thrust",
+   "type": "koreksi",
+   "category": "glutes",
+   "equipment": "dumbbell",
+   "youtube": "5Ix2taEgzx8",
+   "filename": "Treinos  (370).mp4",
+   "same": [],
+   "ok": [
+    "Dagu turun, panggul naik sejajar"
+   ],
+   "no": [
+    "Punggung melengkung, beban pindah ke tulang belakang"
+   ],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "Stop arching your back. This move is for glutes, not your spine. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 371,
+   "title": "Cable Curl",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "cable",
+   "youtube": "zVSxbRQvbKo",
+   "filename": "Treinos  (371).mp4",
+   "same": [],
+   "ok": [
+    "Siku diam, berdiri tegak"
+   ],
+   "no": [
+    "Badan mengayun"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Not wrong, but this method hits your biceps much harder. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 372,
+   "title": "Barbell Squat",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "barbell",
+   "youtube": "WUvLIlYj_3E",
+   "filename": "Treinos  (372).mp4",
+   "same": [
+    383
+   ],
+   "ok": [
+    "Batang di atas tengah kaki, tumit menapak"
+   ],
+   "no": [
+    "Lutut masuk, tumit terangkat"
+   ],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [
+    "lower-back"
+   ],
+   "narration": "This is why your legs aren't growing from squats. Watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 377,
+   "title": "Pec Deck",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "machine",
+   "youtube": "Pm5lFJaloCU",
+   "filename": "Treinos  (377).mp4",
+   "same": [],
+   "ok": [
+    "Bahu menempel, siku sejajar bahu, pegangan rileks"
+   ],
+   "no": [
+    "Bahu maju, kepala maju"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [],
+   "narration": "Stop wasting time with bad chest fly form. Here's how to do it right. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 378,
+   "title": "Smith Bench Variations",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "smith",
+   "youtube": "jJpx8wKg8vU",
+   "filename": "Treinos  (378).mp4",
+   "same": [],
+   "ok": [
+    "Dada dalam, seluruh dada, trisep, dada atas, dada bawah"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "You're doing Smith bench press the same way every time. Watch this. Inner way every time. Watch this. Inner chest. Entire chest. Triceps. Upper chest. lower chest. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 379,
+   "title": "Ab Wheel Rollout",
+   "type": "koreksi",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "0C-3uZcgauY",
+   "filename": "Treinos  (379).mp4",
+   "same": [],
+   "ok": [
+    "Punggung rata"
+   ],
+   "no": [
+    "Pinggang melengkung"
+   ],
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "Most people do ab roll outs wrong. Here's how to perfect them. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 380,
+   "title": "Cable Pullover",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "atXpk1eQ3Vo",
+   "filename": "Treinos  (380).mp4",
+   "same": [],
+   "ok": [
+    "Tarik dengan punggung, lengan hampir lurus"
+   ],
+   "no": [
+    "Menarik dengan lengan"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "Stop pulling with your arms. It's a back exercise, not a triceps one. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 381,
+   "title": "Machine Chest Fly Grip",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "machine",
+   "youtube": "441upzchDPI",
+   "filename": "Treinos  (381).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan rileks"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 382,
+   "title": "Seated Cable Row Setup",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "DNWgNMi1dEQ",
+   "filename": "Treinos  (382).mp4",
+   "same": [],
+   "ok": [
+    "Telapak menapak, dada terbuka"
+   ],
+   "no": [
+    "Menarik dengan lengan, bukan punggung"
+   ],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Stop pulling with your arms. Seated rows are for your back, not your biceps. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 384,
+   "title": "Dumbbell Romanian Deadlift",
+   "type": "koreksi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "4BYHygaViVU",
+   "filename": "Treinos  (384).mp4",
+   "same": [],
+   "ok": [
+    "Setup untuk glutes: pinggul mundur, punggung lurus, dumbbell dekat kaki"
+   ],
+   "no": [],
+   "primary": [
+    "hamstring",
+    "gluteal"
+   ],
+   "secondary": [
+    "lower-back"
+   ],
+   "narration": "You want glutes. This is how I set up for a perfect Romanian deadlift. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 385,
+   "title": "Cable Fly Angles",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "cable",
+   "youtube": "jUuALJKMggI",
+   "filename": "Treinos  (385).mp4",
+   "same": [],
+   "ok": [
+    "Sudut kabel menggeser fokus dada"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [],
+   "narration": "Hold on. See this cable angle? It changes everything. Save this and come back stronger. Yes, you can.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 386,
+   "title": "Calf Raise Stance",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "lWJoYlkW1rM",
+   "filename": "Treinos  (386).mp4",
+   "same": [],
+   "ok": [
+    "Ujung kaki ke luar, lurus, ke dalam"
+   ],
+   "no": [],
+   "primary": [
+    "calves"
+   ],
+   "secondary": [],
+   "narration": "Most people do calf raises wrong. Let's fix that. Save this and come back stronger. Yes, you can.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 387,
+   "title": "Seated Dumbbell Press Wrist",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "60_ox3rruP4",
+   "filename": "Treinos  (387).mp4",
+   "same": [],
+   "ok": [
+    "Pergelangan lurus di atas siku"
+   ],
+   "no": [
+    "Pergelangan menekuk"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "Here's how to perfect your shoulder press. Watch this. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 388,
+   "title": "Wall Abs Routine",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "a2Qf48JOUMc",
+   "filename": "Treinos  (388).mp4",
+   "same": [],
+   "ok": [
+    "Latihan perut memakai dinding; 3x20"
+   ],
+   "no": [],
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "obliques"
+   ],
+   "narration": "No gym, no problem. This wall trick targets your core like crazy. Before your next ab workout, watch this. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 389,
+   "title": "Dumbbell Chest Routine",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "aTq8B4kNdlM",
+   "filename": "Treinos  (389).mp4",
+   "same": [],
+   "ok": [
+    "Cara mengangkat dumbbell ke bangku dan rangkaian dada"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 390,
+   "title": "EZ Preacher Curl",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "DHoMi531G1k",
+   "filename": "Treinos  (390).mp4",
+   "same": [],
+   "ok": [
+    "Lengan turun terkontrol"
+   ],
+   "no": [
+    "Bahu maju"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Think you're doing preacher curls, right? Watch closely. Save this and come back stronger. There.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 391,
+   "title": "Dumbbell Press Elbow Angle",
+   "type": "variasi",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "M5Pse11LeAA",
+   "filename": "Treinos  (391).mp4",
+   "same": [],
+   "ok": [
+    "Close grip, narrow grip, slightly tucked; high elbows zona bahaya"
+   ],
+   "no": [],
+   "primary": [
+    "chest",
+    "triceps",
+    "deltoids"
+   ],
+   "secondary": [],
+   "narration": "Your dumbbell grip changes everything. Watch this. Close grip. Narrow grip. Slightly tucked. High elbows. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 392,
+   "title": "Lat Pulldown Full Setup",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "VwprzanAImU",
+   "filename": "Treinos  (392).mp4",
+   "same": [],
+   "ok": [
+    "Paha terkunci, ibu jari searah, dada naik"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "Most people do this wrong. Don't be one of them. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 394,
+   "title": "Hack Squat Foot Position",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "machine",
+   "youtube": "yiBfnyLEEJ4",
+   "filename": "Treinos  (394).mp4",
+   "same": [],
+   "ok": [
+    "Posisi kaki menggeser fokus"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal",
+    "quadriceps",
+    "adductors"
+   ],
+   "secondary": [],
+   "narration": "Want to build glutes, quads, and inner thighs? Here's how with hack squats. Glutes, thighs? Here's how with hack squats. Glutes, quads, inner thighs. Save this and come back stronger. Yes, you can.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 395,
+   "title": "EZ Curl Grips",
+   "type": "variasi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "v7sMeYOqJ5k",
+   "filename": "Treinos  (395).mp4",
+   "same": [],
+   "ok": [
+    "Close, neutral, reverse grip"
+   ],
+   "no": [],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [
+    "forearm"
+   ],
+   "narration": "Every grip changes your bicep shape. Let me show you how. Close grip. Neutral grip. Reverse grip. Save this and come back stronger. Yes, you can.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 397,
+   "title": "Glutes vs Inner Thighs",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "dumbbell",
+   "youtube": "arzZkLAHaiM",
+   "filename": "Treinos  (397).mp4",
+   "same": [],
+   "ok": [
+    "Hinge untuk glutes, sumo untuk paha dalam"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal",
+    "adductors"
+   ],
+   "secondary": [],
+   "narration": "One small trick decides if you hit glutes or inner thighs. Watch closely. Save this and come back stronger. Yes, you can.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 399,
+   "title": "Push Day Routine",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "6BuwPupJ4dI",
+   "filename": "Treinos  (399).mp4",
+   "same": [],
+   "ok": [
+    "Incline dumbbell press, lateral raise dengan kelingking sedikit lebih tinggi, pushdown"
+   ],
+   "no": [],
+   "primary": [
+    "chest",
+    "deltoids",
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "This is the perfect push day routine. Start with incline dumbbell press. It hits your Start with incline dumbbell press. It hits your upper chest and forces both sides to carry hits your upper chest and forces both sides to carry their weight. Lateral raises sides to carry their weight. Lateral raises give you that superhero width. Keep the motion raises give you that superhero width. Keep the motion clean. Pinky is slightly higher for Keep the motion clean. Pinky is slightly higher for pure isolation. Now to finish, higher for pure isolation. Now to finish, do push downs. It gives you maximum finish, do push downs. It gives you maximum triceps tension without stressing maximum triceps tension without stressing your wrist.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 400,
+   "title": "Dumbbell Shoulder Press",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "dumbbell",
+   "youtube": "egVoViRA7d0",
+   "filename": "Treinos  (400).mp4",
+   "same": [],
+   "ok": [
+    "Bahu tetap turun, fokus di bahu"
+   ],
+   "no": [
+    "Mengangkat bahu memindahkan kerja ke trapezius"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "triceps"
+   ],
+   "narration": "Shoulder press mistake. Don't do this. Avoid this common shoulder press mistake. Avoid this common shoulder press mistake. Shrugging your shoulders shifts the work to mistake. Shrugging your shoulders shifts the work to your traps. Keep your shoulders the work to your traps. Keep your shoulders down and focus on your delts for a safer, shoulders down and focus on your delts for a safer, more effective lift.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 401,
+   "title": "Grip Variations Cable Row",
+   "type": "variasi",
+   "category": "shoulders",
+   "equipment": "cable",
+   "youtube": "-8hVg2EW8Mc",
+   "filename": "Treinos  (401).mp4",
+   "same": [],
+   "ok": [
+    "Ganti pegangan, ganti otot yang kerja"
+   ],
+   "no": [],
+   "primary": [
+    "deltoids",
+    "upper-back"
+   ],
+   "secondary": [],
+   "narration": "Change your grip, change your gains. Here's how it works. Save this and come back stronger. Yes, you",
+   "confidence": "sedang"
+  },
+  {
+   "id": 668,
+   "title": "Push-Up Shoulder Fix",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "11C6Jjc8Z9c",
+   "filename": "Treinos  (668).mp4",
+   "same": [],
+   "ok": [
+    "Posisi belikat dan pinggang untuk push-up"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids",
+    "trapezius"
+   ],
+   "narration": "I've done hundreds of push-ups wrong. Now I finally know how to fix it. Save this and come back stronger. Okay.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 669,
+   "title": "Pull-Up Focus",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "body",
+   "youtube": "omPchaVL6bI",
+   "filename": "Treinos  (669).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan menentukan: lats, trapezius, bisep"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back",
+    "trapezius",
+    "biceps"
+   ],
+   "secondary": [],
+   "narration": "Pull-ups can hit lats, traps, or biceps depending on grip. Watch this. Lats. depending on grip. Watch this. Lats. Traps. Biceps. Save this and come back stronger.",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 670,
+   "title": "Dumbbell Triceps Kickback",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "L_6KKSwJ7ww",
+   "filename": "Treinos  (670).mp4",
+   "same": [],
+   "ok": [
+    "Lengan atas diam, lengan bawah lurus ke belakang"
+   ],
+   "no": [
+    "Lengan atas ikut bergerak"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "90% of people do kickbacks wrong. Watch closely. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 671,
+   "title": "Lat Pulldown Grip Setup",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "mTn63LuWuvQ",
+   "filename": "Treinos  (671).mp4",
+   "same": [
+    672
+   ],
+   "ok": [
+    "Paha terkunci, pegangan kokoh"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 674,
+   "title": "Seated Core Circuit",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "r6L5dQ2Hv9U",
+   "filename": "Treinos  (674).mp4",
+   "same": [],
+   "ok": [
+    "Rangkaian perut duduk; 3x12"
+   ],
+   "no": [],
+   "primary": [
+    "abs",
+    "obliques"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 675,
+   "title": "Barbell Row Form",
+   "type": "koreksi",
+   "category": "back",
+   "equipment": "barbell",
+   "youtube": "VU8lyEczUUc",
+   "filename": "Treinos  (675).mp4",
+   "same": [],
+   "ok": [
+    "Punggung rata, tarik ke perut, cara terbaik untuk barbell row"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps",
+    "lower-back"
+   ],
+   "narration": "You're not wrong, but here's the best way to barbell row for gains. Save this and come back stronger.",
+   "confidence": "sedang"
+  },
+  {
+   "id": 676,
+   "title": "One-Arm Push-Up Form",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "hHy31P788nM",
+   "filename": "Treinos  (676).mp4",
+   "same": [],
+   "ok": [
+    "Tangan di bawah bahu, kaki melebar, badan lurus"
+   ],
+   "no": [
+    "Badan berputar atau pinggul naik"
+   ],
+   "primary": [
+    "chest",
+    "triceps"
+   ],
+   "secondary": [
+    "abs",
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  }
+ ]
+}
