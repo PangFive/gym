@@ -1253,6 +1253,27 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .steps-ai{margin:6px 0 14px;padding-left:22px;line-height:1.75;font-size:14.5px;color:#3d4658}
 .steps-ai a{color:var(--acc);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* technique clips */
+.lseg{margin:-6px 0 14px}
+.fchips{margin-bottom:0;padding-bottom:12px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fcard{display:flex;flex-direction:column;min-width:0;padding:8px 8px 12px;border-radius:24px;text-align:left;color:var(--ink);transition:transform .14s ease}
+.fcard:active{transform:scale(.98)}
+.fv{position:relative;display:block;aspect-ratio:9/14;margin-bottom:9px;border-radius:17px;overflow:hidden;background:#101624}
+.fv .vt{position:absolute;inset:0}
+.fv .pm{z-index:1;position:absolute;right:9px;bottom:9px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--acc);display:grid;place-items:center}
+.fv .pm svg.i{width:14px;height:14px}
+.fcard b{padding:0 4px;font-size:14.5px;line-height:1.25;font-weight:800}
+.fcard small{margin-top:3px;padding:0 4px;font-size:12.5px;line-height:1.3;font-weight:600;color:var(--muted)}
+.ftags{margin:-4px 2px 14px}
+.fcmp{display:grid;gap:10px;margin-bottom:16px}
+.fcmp section{padding:13px 15px 14px;border-radius:18px}
+.fcmp h3{display:flex;align-items:center;gap:6px;margin:0 0 7px;font-size:14px;font-weight:800}
+.fcmp h3 svg.i{flex:none;width:16px;height:16px;stroke-width:3}
+.fcmp ul{margin:0;padding-left:18px;color:var(--ink);font-size:14px;line-height:1.45}
+.fcmp li+li{margin-top:4px}
+.fok{background:#dcf4e8;color:#0b6b4a}
+.fno{background:#fde8e4;color:#b3321c}
 </style>
 </head>
 <body>
@@ -1703,7 +1724,7 @@ function setOnline(on) {
   else offT = setTimeout(() => { if (!fb.online) $('#offline').hidden = phase !== 'app' }, 3000);
 }
 
-const ui = { muscle: 'all', q: '', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
+const ui = { muscle: 'all', q: '', fmus: 'all', fe: 'all', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
 let lastRoute = '';
 
 // ---------- router ----------
@@ -1726,7 +1747,7 @@ function render() {
     nav.hidden = true; document.body.classList.add('navless', 'pre'); $('#offline').hidden = true; lastRoute = ''; return;
   }
   let html;
-  if (page === 'library') html = vLibrary();
+  if (page === 'library') html = arg === 'teknik' ? vForm() : vLibrary();
   else if (page === 'plan') html = vPlan(arg);
   else if (page === 'stats') html = vStats();
   else if (page === 'workout' && S.active) html = vWorkout();
@@ -1995,20 +2016,94 @@ function libHead() {
   const main = xs.filter(t => t.p.includes(ui.muscle)).length;
   return `<span>Latihan untuk <b>${MI[ui.muscle].n}</b> · ${xs.length}${main < xs.length ? ` (${main} utama)` : ''}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
 }
-function refreshLib() {
-  $('#libMap').innerHTML = libMap();
-  $('#libChips').innerHTML = chips(ui.muscle, 'muscle');
-  $('#libHead').innerHTML = libHead();
-  $('#libList').innerHTML = libList();
-  const on = $('#libChips .chip.on'), row = $('#libChips');
+function centerChip(row) {
+  const on = row.querySelector('.chip.on');
   if (on) {
     const a = on.getBoundingClientRect(), b = row.getBoundingClientRect();
     row.scrollLeft += (a.left + a.width / 2) - (b.left + b.width / 2);
   }
 }
+function refreshLib() {
+  $('#libMap').innerHTML = libMap();
+  $('#libChips').innerHTML = chips(ui.muscle, 'muscle');
+  $('#libHead').innerHTML = libHead();
+  $('#libList').innerHTML = libList();
+  centerChip($('#libChips'));
+}
+// ---------- exercise technique ----------
+// Clips that set the right way of doing an exercise against the wrong way. e = key in EQUIP, y = YouTube id,
+// ok / no = what the clip says to do and to avoid, p / s = main and supporting muscles.
+const FORM = [
+  { id: 1, t: 'Dumbbell Sumo Squat', e: 'dumbbell', y: 'C5kc7awZV6E',
+    d: 'Squat kaki lebar di atas dua step untuk glutes dan paha dalam.',
+    ok: ['Turun sampai dumbbell sejajar pijakan', 'Badan tetap tegak, lutut searah ujung kaki'],
+    no: ['Berhenti di tengah, dumbbell masih jauh dari pijakan', 'Gerakan pendek membuat glutes tidak terasa'],
+    p: ['gluteal', 'adductors'], s: ['quadriceps', 'hamstring'] },
+  { id: 273, t: 'Cable Triceps Pushdown', e: 'cable', y: 'gleUPbxsirE',
+    d: 'Tekan pegangan kabel ke bawah dengan siku diam di samping badan.',
+    ok: ['Siku diam di samping badan', 'Hanya lengan bawah yang bergerak sampai lengan lurus'],
+    no: ['Siku ikut terangkat ke depan saat kembali ke atas', 'Bahu mengambil alih, trisep jadi longgar'],
+    p: ['triceps'], s: [] }
+];
+const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel'], ['machine', 'Mesin'], ['smith', 'Smith'], ['body', 'Beban tubuh'], ['kettlebell', 'Kettlebell'], ['band', 'Band']];
+const eqName = k => EQUIP.find(x => x[0] === k)?.[1] || k;
+const libTabs = tab => `<div class="seg glass lseg">${[['', 'Alat'], ['teknik', 'Teknik']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-a="go" data-to="library${k && '/' + k}">${n}</button>`).join('')}</div>`;
+const formCount = k => FORM.filter(t => trains(t, k)).length;
+const formChip = (act, sel, k, label, n) => `<button class="chip ${sel === k ? 'on' : ''}" data-a="${act}" data-k="${k}">${label} <small>${n}</small></button>`;
+// Only what has clips, so a chip never leads to an empty list.
+const fmChips = () => formChip('fmus', ui.fmus, 'all', 'Semua', FORM.length) + MUSCLES.filter(m => formCount(m.k)).map(m => formChip('fmus', ui.fmus, m.k, m.n, formCount(m.k))).join('');
+const feChips = () => formChip('fe', ui.fe, 'all', 'Semua alat', FORM.length) + EQUIP.map(([k, n]) => [k, n, FORM.filter(t => t.e === k).length]).filter(x => x[2]).map(([k, n, c]) => formChip('fe', ui.fe, k, n, c)).join('');
+// A muscle with clips is tinted; a selected one takes the accent.
+const formMap = () => bodyMap({ tap: true, act: 'fmus', sel: ui.fmus === 'all' ? null : ui.fmus, level: k => ui.fmus === 'all' && formCount(k) ? 1 : 0 });
+const formHits = () => FORM.filter(t => (ui.fmus === 'all' || trains(t, ui.fmus)) && (ui.fe === 'all' || t.e === ui.fe)).sort((a, b) => b.p.includes(ui.fmus) - a.p.includes(ui.fmus));
+function formHead() {
+  const n = formHits().length;
+  return ui.fmus === 'all' ? `<span>Semua video · <b>${n}</b></span>` : `<span>Video untuk <b>${MI[ui.fmus].n}</b> · ${n}</span><button data-a="fmus" data-k="all">Hapus pilihan</button>`;
+}
+function formList() {
+  const xs = formHits();
+  if (!xs.length) return `<div class="empty glass">Tidak ada video yang cocok.</div>`;
+  return `<div class="fgrid">${xs.map(t => `<button class="fcard glass" data-a="form" data-id="${t.id}">
+      <span class="fv">${pic(t.y)}<span class="pm">${I('playf')}</span></span>
+      <b>${esc(t.t)}</b><small>${MI[t.p[0]].n} · ${eqName(t.e)}</small></button>`).join('')}</div>`;
+}
+const refreshForm = () => {
+  $('#formMap').innerHTML = formMap();
+  $('#fmChips').innerHTML = fmChips();
+  $('#feChips').innerHTML = feChips();
+  $('#formHead').innerHTML = formHead();
+  $('#formList').innerHTML = formList();
+  centerChip($('#fmChips'));
+};
+function vForm() {
+  return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${FORM.length} video benar dan salah</div></div>
+      ${headActs()}</header>
+    ${libTabs('teknik')}
+    <section class="glass card explore">
+      <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
+      <div id="formMap">${formMap()}</div>
+      <p class="hint">Ketuk otot untuk melihat video tekniknya</p>
+      <div class="chips" id="fmChips">${fmChips()}</div>
+    </section>
+    <div class="chips fchips" id="feChips">${feChips()}</div>
+    <div class="lhead" id="formHead">${formHead()}</div>
+    <div id="formList">${formList()}</div>`;
+}
+function openForm(id) {
+  const t = FORM.find(x => x.id === id); if (!t) return;
+  const cue = (cls, ic, title, xs) => `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`;
+  sheet(`${vidTop(t.y, 'data-loop="1"')}
+    <h2 class="dt">${esc(t.t)}</h2>
+    <div class="tags ftags">${mTag(t.p[0])}<span class="tag" style="--c:#64748b">${eqName(t.e)}</span></div>
+    <div class="fcmp">${cue('fok', 'check', 'Yang benar', t.ok)}${cue('fno', 'x', 'Yang salah', t.no)}</div>
+    ${muscleMap(t)}
+    <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`);
+  $('#sheet .sheet-body').scrollTop = 0;
+}
 function vLibrary() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div>
       ${headActs()}</header>
+    ${libTabs('')}
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="libMap">${libMap()}</div>
@@ -2467,7 +2562,8 @@ const cardioTop = t => `${cxHero(t.k)}
     <div class="stats3"><div><small>Jenis</small><b>Kardio</b></div><div><small>Saran</small><b>20–30 mnt</b></div><div><small>Dicatat</small><b>${t.k === 'run' ? 'km/j, incline' : 'Level'}</b></div></div>
     ${muscleMap(t)}
     ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
-const detailTop = t => t.c ? cardioTop(t) : `<div class="amb dt-amb">${ambGlow(t.y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(t.y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(t.y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${t.y}" aria-label="Putar video">${I('playf')}</button></div></div>
+const vidTop = (y, attrs = '') => `<div class="amb dt-amb">${ambGlow(y)}<div class="video" id="vid"><span class="vt tall"><img src="${thumb(y, 'oar')}" alt="" crossorigin="anonymous" onerror="this.onerror=null;this.src='${thumb(y, 'hq')}'" onload="if(this.naturalWidth<=120)this.parentNode.classList.add('none')"></span><button class="playbig" data-a="play" data-y="${y}" ${attrs} aria-label="Putar video">${I('playf')}</button></div></div>`;
+const detailTop = t => t.c ? cardioTop(t) : `${vidTop(t.y)}
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="stats3"><div><small>Otot utama</small><b>${t.p.map(k => MI[k].n).join(', ')}</b></div><div><small>Saran</small><b>${esc(APP.suggestion)}</b></div><div><small>Istirahat</small><b>${S.settings.rest} dtk</b></div></div>
     ${muscleMap(t)}
@@ -4628,7 +4724,10 @@ const A = {
     if ($('#pkMap')) refreshPick(true);
   },
   open: el => openDetail(+el.dataset.id),
-  play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
+  form: el => openForm(+el.dataset.id),
+  fmus: el => { ui.fmus = el.dataset.k; refreshForm() },
+  fe: el => { ui.fe = el.dataset.k; refreshForm() },
+  play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1${el.dataset.loop ? `&mute=1&loop=1&playlist=${encodeURIComponent(el.dataset.y)}` : ''}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
   addTo: el => openAddTo(+el.dataset.id),
   addToR: async el => {
     const r = S.routines.find(x => x.id === el.dataset.rid), id = +el.dataset.id; if (!r) return;
