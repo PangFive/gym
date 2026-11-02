@@ -26,11 +26,11 @@ tersinkron di semua perangkat.
   mengembalikan objek dengan kunci terurut; tanpa itu set kardio (`g`) selalu terlihat berubah dan dikirim ulang.
 - Data lama dari browser (sebelum ada akun) ikut pindah ke akun saat login pertama.
 
-### Teknik latihan (prototipe di branch `teknik-koreksi`)
+### Teknik latihan
 - Halaman Tutorial punya dua tab: **Alat** dan **Teknik** (`#/library/teknik`). Tab Teknik memakai Jelajahi Otot yang
   sama, chip otot dan chip alat hanya untuk yang punya video, lalu kartu video dua kolom.
 - Detail: video berulang tanpa suara dengan teks otomatis YouTube, kotak **Yang benar** dan **Yang salah**, peta otot.
-- Data sementara di `FORM` (`id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
+- 111 entri dari `docs/teknik-katalog.json`, disalin ke `FORM` (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
   poin benar dan salah, `p` / `s` otot utama dan pendukung).
 
 ### Tutorial alat
