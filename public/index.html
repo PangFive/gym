@@ -1254,7 +1254,10 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .steps-ai a{color:var(--acc);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* technique clips */
-.lseg{margin:-6px 0 14px}
+.lseg{margin:-6px 0 14px;padding:3px}
+.lseg button{position:relative;min-height:34px;padding:4px 8px;font-size:14px}
+.lseg button::after{content:'';position:absolute;inset:-5px 0}
+.frow{margin-bottom:14px}
 .fchips{margin-bottom:0;padding-bottom:12px}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fcard{display:flex;flex-direction:column;min-width:0;padding:8px 8px 12px;border-radius:24px;text-align:left;color:var(--ink);transition:transform .14s ease}
@@ -1396,6 +1399,7 @@ function setTutorials(list) {
   for (const k in CNT) delete CNT[k];
   TUTORIALS.forEach(t => { T[t.id] = t; [...t.p, ...t.s].forEach(k => { CNT[k] = (CNT[k] || 0) + 1 }) });
   CARDIO.forEach(c => { T[c.id] = c });
+  formToT();
 }
 const count = k => CNT[k] || 0;
 
@@ -2033,122 +2037,15 @@ function refreshLib() {
   centerChip($('#libChips'));
 }
 // ---------- exercise technique ----------
-// Technique clips, the list until /app/teknik exists. j = koreksi (right against wrong), variasi or rangkaian, e = key in
-// EQUIP, y = YouTube id, ok / no = what the clip says to do and to avoid, p / s = main and supporting muscles.
-const FORM_BUILTIN = [
-  {"id":1,"t":"Dumbbell Sumo Squat","j":"koreksi","e":"dumbbell","y":"C5kc7awZV6E","ok":["Turun sampai dumbbell sejajar pijakan", "Badan tetap tegak, lutut searah ujung kaki"],"no":["Berhenti di tengah, dumbbell masih jauh dari pijakan", "Gerakan pendek membuat glutes tidak terasa"],"p":["gluteal","adductors"],"s":["quadriceps","hamstring"]},
-  {"id":273,"t":"Cable Triceps Pushdown","j":"koreksi","e":"cable","y":"gleUPbxsirE","ok":["Siku diam di samping badan", "Hanya lengan bawah yang bergerak sampai lengan lurus"],"no":["Siku ikut terangkat ke depan saat kembali ke atas", "Bahu mengambil alih, trisep jadi longgar"],"p":["triceps"],"s":[]},
-  {"id":274,"t":"Seated Cable Row V-Grip","j":"koreksi","e":"cable","y":"Br_ZHOE5oIM","ok":["Pegang gagang V dengan grip netral, tarik ke perut, dada terbuka"],"no":["Punggung atas tegang semua, belikat tidak bekerja"],"p":["upper-back"],"s":["biceps","trapezius"]},
-  {"id":275,"t":"Back Extension","j":"koreksi","e":"body","y":"y6ZOgFL-3eQ","ok":["Punggung netral untuk punggung bawah; condong dengan lutut sedikit menekuk untuk glutes dan paha belakang"],"no":["Melengkung berlebihan menekan tulang belakang"],"p":["lower-back","gluteal"],"s":["hamstring"]},
-  {"id":276,"t":"Seated Cable Row","j":"koreksi","e":"cable","y":"_f_A_w1-T-o","ok":["Tarik dengan punggung, kabel tetap lurus"],"no":["Tarikan yang membuat punggung tidak berkembang"],"p":["upper-back"],"s":["biceps"]},
-  {"id":277,"t":"Leg Press Foot Position","j":"variasi","e":"machine","y":"ka6OwEvjKsQ","ok":["Posisi kaki menggeser fokus: paha belakang, paha dalam, keduanya, paha depan"],"no":[],"p":["quadriceps","hamstring","adductors"],"s":["gluteal"]},
-  {"id":278,"t":"Barbell Bench Grip Width","j":"koreksi","e":"barbell","y":"0hjapbEpu80","ok":["Pegangan sedang, batang turun ke dada"],"no":["Pegangan terlalu sempit atau terlalu lebar"],"p":["chest"],"s":["triceps","deltoids"]},
-  {"id":279,"t":"Barbell Forearm Curls","j":"variasi","e":"barbell","y":"3A4lauEw_6k","ok":["Beberapa variasi curl pergelangan untuk lengan bawah"],"no":[],"p":["forearm"],"s":[]},
-  {"id":280,"t":"Cable Forearm Curls","j":"variasi","e":"cable","y":"ndqcqdOUfGg","ok":["Variasi kabel untuk lengan bawah"],"no":[],"p":["forearm"],"s":["biceps"]},
-  {"id":281,"t":"Lat Pulldown Variations","j":"variasi","e":"cable","y":"BdacDqQf6dA","ok":["Lebar pegangan menggeser fokus punggung"],"no":[],"p":["upper-back"],"s":["biceps"]},
-  {"id":282,"t":"Smith Machine Leg Day","j":"rangkaian","e":"smith","y":"2fKTw-RDcZc","ok":["Glute bridge, split squat, good morning, calf raise"],"no":[],"p":["gluteal","quadriceps","hamstring"],"s":["calves"]},
-  {"id":283,"t":"Dumbbell Shoulder Basics","j":"rangkaian","e":"dumbbell","y":"VyT_H1WzuBk","ok":[],"no":[],"p":["trapezius","deltoids"],"s":[]},
-  {"id":285,"t":"Leg Extension Setup","j":"koreksi","e":"machine","y":"6R2OBTIk0ps","ok":["Bantalan di atas pergelangan kaki, lutut sejajar poros mesin"],"no":[],"p":["quadriceps"],"s":[]},
-  {"id":286,"t":"Dumbbell Calf Raise Stance","j":"variasi","e":"dumbbell","y":"GvgDZrF5Caw","ok":["Arah ujung kaki menggeser fokus betis"],"no":[],"p":["calves"],"s":[]},
-  {"id":287,"t":"Cable Glute Moves","j":"variasi","e":"cable","y":"74lfAT4sIAM","ok":["Kickback dan gerakan samping dengan kabel"],"no":[],"p":["gluteal"],"s":["adductors"]},
-  {"id":288,"t":"Crunch Variations","j":"variasi","e":"body","y":"OcoAiQfHiNc","ok":["Perut bawah, samping, atas"],"no":[],"p":["abs"],"s":["obliques"]},
-  {"id":289,"t":"Bench Dip","j":"koreksi","e":"body","y":"ZXsyvYWXjwI","ok":["Badan dekat bangku, bahu tetap turun"],"no":["Bench dip dengan posisi yang salah"],"p":["triceps"],"s":["deltoids","chest"]},
-  {"id":290,"t":"Dumbbell Chest Fly","j":"koreksi","e":"dumbbell","y":"9LPIqBsDGUo","ok":[],"no":[],"p":["chest"],"s":["deltoids"]},
-  {"id":291,"t":"Bent-Over Dumbbell Focus","j":"variasi","e":"dumbbell","y":"U8tYKKhN4NQ","ok":["Arah tarikan menggeser fokus: lats, trapezius, bahu belakang"],"no":[],"p":["upper-back","trapezius","deltoids"],"s":[]},
-  {"id":292,"t":"Push-Up Variations","j":"variasi","e":"body","y":"rBJ9fcpmPfo","ok":["Posisi badan dan tangan menggeser fokus"],"no":[],"p":["chest","deltoids","triceps"],"s":[]},
-  {"id":293,"t":"Seated Dumbbell Press Setup","j":"koreksi","e":"dumbbell","y":"DRgg7Zp7GGk","ok":["Pergelangan lurus di atas siku, sandaran sedikit miring"],"no":["Posisi yang disebut video berbahaya untuk bahu"],"p":["deltoids"],"s":["triceps"]},
-  {"id":294,"t":"Full Dumbbell Circuit","j":"rangkaian","e":"dumbbell","y":"ZiSYr5rAKH4","ok":["Rangkaian seluruh badan dengan dumbbell"],"no":[],"p":["deltoids","quadriceps","gluteal"],"s":["upper-back","biceps"]},
-  {"id":295,"t":"Incline Barbell Press Setup","j":"koreksi","e":"barbell","y":"TgGDIldTIko","ok":["Atur pegangan dan posisi batang sejajar dada"],"no":[],"p":["chest"],"s":["triceps","deltoids"]},
-  {"id":296,"t":"Overhead Dumbbell Triceps Extension","j":"koreksi","e":"dumbbell","y":"dbRdqk9fbXw","ok":["Siku rapat dekat kepala"],"no":["Siku melebar ke samping"],"p":["triceps"],"s":[]},
-  {"id":297,"t":"Biceps Curl Bench Variations","j":"variasi","e":"dumbbell","y":"xlS6yINUiBY","ok":["Incline, preacher, duduk; 3 set 8-12 reps"],"no":[],"p":["biceps"],"s":[]},
-  {"id":298,"t":"Hip Thrust Foot Position","j":"variasi","e":"barbell","y":"BHFwM2-Wntg","ok":["Jarak kaki menggeser fokus: paha depan, paha belakang, glutes"],"no":[],"p":["gluteal"],"s":["quadriceps","hamstring"]},
-  {"id":299,"t":"Lat Pulldown Form","j":"koreksi","e":"cable","y":"YzVpczUr1lQ","ok":["Ibu jari searah jari, tarik batang ke dada atas"],"no":["Tangan yang menarik, bukan punggung"],"p":["upper-back"],"s":["biceps"]},
-  {"id":300,"t":"Triceps Mistakes Trio","j":"koreksi","e":"dumbbell","y":"gsCmwpBjyF8","ok":["Overhead extension, kickback, pushdown: lengan atas diam"],"no":["Lengan atas ikut bergerak"],"p":["triceps"],"s":[]},
-  {"id":302,"t":"Cable Face Pull","j":"koreksi","e":"cable","y":"SRS3VbSR4gM","ok":["Tarik ke arah wajah untuk bahu belakang"],"no":["Leher ikut tegang"],"p":["deltoids","trapezius"],"s":["upper-back"]},
-  {"id":303,"t":"Dumbbell Shrug","j":"koreksi","e":"dumbbell","y":"BlCAFirjHj8","ok":["Bahu naik lurus ke atas"],"no":["Dagu maju atau leher tegang"],"p":["trapezius"],"s":[]},
-  {"id":305,"t":"Machine Chest Fly","j":"variasi","e":"machine","y":"YJAqEayNqy0","ok":["Lengan membuka terkontrol, dada mengencang di tengah"],"no":[],"p":["chest"],"s":[]},
-  {"id":306,"t":"Seated Overhead Triceps Extension","j":"koreksi","e":"dumbbell","y":"tIFOYybwcaM","ok":["Lengan atas tegak dekat kepala"],"no":["Lengan atas condong ke depan"],"p":["triceps"],"s":[]},
-  {"id":307,"t":"Calf Raise Foot Direction","j":"variasi","e":"body","y":"fQTDZMxLe04","ok":["Ujung kaki ke luar, lurus, ke dalam"],"no":[],"p":["calves"],"s":[]},
-  {"id":308,"t":"Barbell Hip Thrust Form","j":"koreksi","e":"barbell","y":"PpVKv8OCaqI","ok":["Kaki di depan lutut, dagu turun, panggul naik sejajar"],"no":[],"p":["gluteal"],"s":["hamstring"]},
-  {"id":309,"t":"Smith Shoulder Press","j":"koreksi","e":"smith","y":"Zhms47_fJ8g","ok":["Pergelangan lurus, punggung menempel"],"no":["Punggung melengkung, pergelangan menekuk"],"p":["deltoids"],"s":["triceps"]},
-  {"id":310,"t":"Parallel Dips","j":"variasi","e":"body","y":"97MFwvhtxio","ok":["Sudut badan menggeser fokus dada dan trisep"],"no":[],"p":["triceps","chest"],"s":["deltoids"]},
-  {"id":311,"t":"Cable Crossover","j":"variasi","e":"cable","y":"l2c3BFbhCj0","ok":["Tarik menyilang ke arah bawah"],"no":[],"p":["chest"],"s":["deltoids"]},
-  {"id":312,"t":"Dumbbell Row","j":"koreksi","e":"dumbbell","y":"ImcsN6yL2mw","ok":["Tarik dengan punggung, bukan lengan"],"no":["Lengan yang mengambil alih"],"p":["upper-back"],"s":["biceps"]},
-  {"id":313,"t":"Barbell Deadlift","j":"koreksi","e":"barbell","y":"Pdc2IQlUXLM","ok":["Kaki dekat batang, punggung lurus"],"no":["Punggung membulat"],"p":["hamstring","gluteal","lower-back"],"s":["trapezius"]},
-  {"id":314,"t":"Dumbbell Biceps Curl","j":"koreksi","e":"dumbbell","y":"fbWpfiJ3Djs","ok":["Siku diam, bahu turun"],"no":["Mengayun, siku maju"],"p":["biceps"],"s":[]},
-  {"id":315,"t":"Shoulder Press Line","j":"koreksi","e":"barbell","y":"_n1BsTd8lt8","ok":["Bahu turun, jalur lurus"],"no":["Bahu terangkat"],"p":["deltoids"],"s":["trapezius","triceps"]},
-  {"id":316,"t":"Leg Press","j":"koreksi","e":"machine","y":"_SsM_nUNhYw","ok":["Telapak penuh di papan, panggul tetap menempel"],"no":["Panggul terangkat di bawah"],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":318,"t":"Barbell Bench Press Setup","j":"koreksi","e":"barbell","y":"-VU89OvyIkU","ok":["Lima langkah persiapan bench press: pegangan, kaki, bahu, batang, jalur"],"no":["Bokong terangkat"],"p":["chest"],"s":["triceps","deltoids"]},
-  {"id":319,"t":"EZ Skull Crusher","j":"koreksi","e":"barbell","y":"lIVJaV_5VRE","ok":["Lengan atas diam, turun ke dahi"],"no":["Siku melebar"],"p":["triceps"],"s":[]},
-  {"id":320,"t":"Bench Angle and Chest Focus","j":"variasi","e":"dumbbell","y":"nkScDBN4BdY","ok":["Sudut bangku mengubah pembagian dada atas dan bahu depan"],"no":[],"p":["chest","deltoids"],"s":[]},
-  {"id":321,"t":"Smith Squat","j":"koreksi","e":"smith","y":"RXi6s6UM3Us","ok":["Lebar kaki pas, lutut searah ujung kaki"],"no":["Pegangan dan posisi kurang stabil"],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":322,"t":"Concentration Curl","j":"koreksi","e":"dumbbell","y":"Nrd-unl2lr4","ok":["Posisi siku menentukan: siku diam, bahu turun"],"no":["Siku bergeser, bahu ikut naik"],"p":["biceps"],"s":[]},
-  {"id":323,"t":"Quads vs Glutes Dumbbell","j":"variasi","e":"dumbbell","y":"FOxGm5fPMFY","ok":["Badan tegak untuk paha depan, condong untuk glutes; 4 set 12 reps"],"no":[],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":325,"t":"Plank","j":"koreksi","e":"body","y":"N0a54YuR5pw","ok":["Siku di bawah bahu, badan lurus"],"no":["Pinggang turun atau leher menekuk"],"p":["abs"],"s":["deltoids"]},
-  {"id":328,"t":"Australian Pull-Up Grip","j":"variasi","e":"body","y":"fTaMfnCxg4U","ok":["Lebar pegangan menggeser fokus"],"no":[],"p":["upper-back"],"s":["biceps"]},
-  {"id":329,"t":"One-Arm Dumbbell Row","j":"koreksi","e":"dumbbell","y":"xhfXk30uiv8","ok":["Tarik melengkung ke pinggul, siku rapat"],"no":["Bahu berputar"],"p":["upper-back"],"s":["biceps"]},
-  {"id":330,"t":"Dumbbell Leg Focus","j":"variasi","e":"dumbbell","y":"0sPV9A6YHok","ok":["Goblet squat, hinge, sumo"],"no":[],"p":["quadriceps","gluteal","adductors"],"s":[]},
-  {"id":331,"t":"One-Arm Push-Up","j":"koreksi","e":"body","y":"7ccW55tITy0","ok":["Tangan di bawah bahu, kaki melebar, badan lurus"],"no":["Badan berputar atau pinggul naik"],"p":["chest","triceps"],"s":["abs","deltoids"]},
-  {"id":332,"t":"Dumbbell Lateral Raise","j":"koreksi","e":"dumbbell","y":"g044A2Dy_C0","ok":["Naik sebatas bahu, bahu tidak mengangkat"],"no":["Bahu terangkat, lengan terlalu tinggi"],"p":["deltoids"],"s":[]},
-  {"id":333,"t":"Goblet Squat Heel or Toe","j":"variasi","e":"dumbbell","y":"9Q72W_RpqJw","ok":["Bagian kaki yang ditinggikan menggeser fokus"],"no":[],"p":["gluteal","quadriceps"],"s":[]},
-  {"id":334,"t":"Lateral Raise Angle","j":"koreksi","e":"dumbbell","y":"d71C0jREers","ok":["Rasakan di bahu, sebatas tinggi bahu"],"no":["Terasa di trapezius, bukan bahu"],"p":["deltoids"],"s":[]},
-  {"id":335,"t":"Lat Pulldown Back Position","j":"koreksi","e":"cable","y":"IKR8If8vCPM","ok":["Tarik batang ke dada atas"],"no":["Menarik batang ke perut"],"p":["upper-back"],"s":["biceps"]},
-  {"id":337,"t":"Rope Pushdown","j":"koreksi","e":"cable","y":"2Vyal99HbVg","ok":["Tali dibuka di bawah, siku diam"],"no":["Siku maju"],"p":["triceps"],"s":[]},
-  {"id":339,"t":"Dumbbell Lunge","j":"koreksi","e":"dumbbell","y":"-JLlyOgJ0Ig","ok":["Lutut searah ujung kaki"],"no":["Lutut masuk ke dalam"],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":340,"t":"Leg Press Depth","j":"koreksi","e":"machine","y":"6OHTh_ag21A","ok":["Telapak rata, pinggang tetap menempel"],"no":["Pinggang terlepas dari sandaran"],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":341,"t":"Smith Squat Form","j":"koreksi","e":"smith","y":"ZtWDkmN_GwY","ok":["Batang di bahu, turun terkontrol"],"no":["Punggung melengkung"],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":343,"t":"One-Arm Row Grip","j":"koreksi","e":"dumbbell","y":"fPS_84lu2kM","ok":["Pegang dumbbell di tengah agar lats terasa"],"no":["Pegangan salah, lats tidak terasa"],"p":["upper-back"],"s":["biceps"]},
-  {"id":344,"t":"Barbell Bench Press","j":"koreksi","e":"barbell","y":"46i_9ZProvI","ok":["Batang sejajar dada, bahu ke belakang"],"no":["Bahu maju"],"p":["chest"],"s":["triceps","deltoids"]},
-  {"id":346,"t":"Push-Up Form","j":"koreksi","e":"body","y":"p-q8DSDQ0b8","ok":["Tangan, kaki, dan badan lurus"],"no":[],"p":["chest"],"s":["triceps"]},
-  {"id":347,"t":"Seated Press Back Angle","j":"koreksi","e":"dumbbell","y":"zUdLWJwbJAY","ok":["Sandaran sedikit miring"],"no":["Punggung terlalu melengkung"],"p":["deltoids"],"s":["triceps"]},
-  {"id":348,"t":"Dumbbell Curl Strict","j":"koreksi","e":"dumbbell","y":"Zfl1nHhPltA","ok":["Hanya lengan yang bekerja"],"no":["Punggung dan bahu ikut bekerja"],"p":["biceps"],"s":["forearm"]},
-  {"id":352,"t":"Lat Pulldown Women","j":"koreksi","e":"cable","y":"HZY4Q_2_L68","ok":["Paha terkunci, dada naik"],"no":["Grip salah"],"p":["upper-back"],"s":["biceps"]},
-  {"id":353,"t":"Cable Lateral Raise","j":"koreksi","e":"cable","y":"6rjyKKC_8dQ","ok":["Badan condong dari kabel"],"no":["Badan tegak"],"p":["deltoids"],"s":[]},
-  {"id":355,"t":"Dumbbell Shrug Form","j":"koreksi","e":"dumbbell","y":"DRVl4L2DU_I","ok":["Bahu naik lurus"],"no":["Leher tegang"],"p":["trapezius"],"s":[]},
-  {"id":356,"t":"Concentration Curl Range","j":"koreksi","e":"dumbbell","y":"Otg6beEckMc","ok":["Turun penuh sampai lengan lurus"],"no":["Bahu ikut mengangkat"],"p":["biceps"],"s":[]},
-  {"id":357,"t":"Seated Forward Fold","j":"koreksi","e":"body","y":"eYqK6o0x9LA","ok":[],"no":[],"p":["hamstring"],"s":["lower-back"]},
-  {"id":358,"t":"Shoulder Dumbbell Circuit","j":"rangkaian","e":"dumbbell","y":"dgqNPEx1dyM","ok":["Single-arm lateral raise, steering wheels, rear delt row, front row, around the world"],"no":[],"p":["deltoids"],"s":[]},
-  {"id":359,"t":"Forearm Bench Variations","j":"variasi","e":"barbell","y":"A1AGPDApXbw","ok":["Curl pergelangan telapak atas, telapak bawah, reverse curl"],"no":[],"p":["forearm"],"s":[]},
-  {"id":361,"t":"T-Bar Row","j":"koreksi","e":"barbell","y":"Q42e6Fit1mA","ok":["Tarik lebih rendah agar lats bekerja"],"no":["Menarik terlalu tinggi"],"p":["upper-back"],"s":["biceps"]},
-  {"id":362,"t":"Heel Trick Squat","j":"variasi","e":"body","y":"UirSbWmXtT8","ok":["Posisi tumit menentukan otot yang dilatih"],"no":[],"p":["quadriceps","gluteal"],"s":[]},
-  {"id":363,"t":"Seated Press Bench Setup","j":"koreksi","e":"dumbbell","y":"ya1TtrWy2bA","ok":["Atur sudut sandaran, siku sedikit ke depan"],"no":[],"p":["deltoids"],"s":["triceps"]},
-  {"id":364,"t":"Bench Press Grip","j":"koreksi","e":"barbell","y":"xsLACWDwDBE","ok":["Letakkan batang di pangkal telapak"],"no":[],"p":["chest"],"s":["triceps"]},
-  {"id":366,"t":"Concentration Curl Stretch","j":"koreksi","e":"dumbbell","y":"79aNKiWIX0M","ok":["Lengan lurus di bawah"],"no":["Bahu mengangkat beban"],"p":["biceps"],"s":[]},
-  {"id":367,"t":"Hip Abduction Machine","j":"variasi","e":"machine","y":"fiSCE3U7IVA","ok":["Mesin untuk glutes; posisi badan menggeser fokus"],"no":[],"p":["gluteal"],"s":[]},
-  {"id":369,"t":"Straight-Bar Pushdown","j":"koreksi","e":"cable","y":"HmFw6IZlOGo","ok":["Pegangan kokoh, siku di samping"],"no":["Punggung bungkuk"],"p":["triceps"],"s":[]},
-  {"id":370,"t":"Dumbbell Hip Thrust","j":"koreksi","e":"dumbbell","y":"5Ix2taEgzx8","ok":["Dagu turun, panggul naik sejajar"],"no":["Punggung melengkung, beban pindah ke tulang belakang"],"p":["gluteal"],"s":["hamstring"]},
-  {"id":371,"t":"Cable Curl","j":"koreksi","e":"cable","y":"zVSxbRQvbKo","ok":["Siku diam, berdiri tegak"],"no":["Badan mengayun"],"p":["biceps"],"s":[]},
-  {"id":372,"t":"Barbell Squat","j":"koreksi","e":"barbell","y":"WUvLIlYj_3E","ok":["Batang di atas tengah kaki, tumit menapak"],"no":["Lutut masuk, tumit terangkat"],"p":["quadriceps","gluteal"],"s":["lower-back"]},
-  {"id":377,"t":"Pec Deck","j":"koreksi","e":"machine","y":"Pm5lFJaloCU","ok":["Bahu menempel, siku sejajar bahu, pegangan rileks"],"no":["Bahu maju, kepala maju"],"p":["chest"],"s":[]},
-  {"id":378,"t":"Smith Bench Variations","j":"variasi","e":"smith","y":"jJpx8wKg8vU","ok":["Dada dalam, seluruh dada, trisep, dada atas, dada bawah"],"no":[],"p":["chest"],"s":["triceps"]},
-  {"id":379,"t":"Ab Wheel Rollout","j":"koreksi","e":"body","y":"0C-3uZcgauY","ok":["Punggung rata"],"no":["Pinggang melengkung"],"p":["abs"],"s":["deltoids"]},
-  {"id":380,"t":"Cable Pullover","j":"koreksi","e":"cable","y":"atXpk1eQ3Vo","ok":["Tarik dengan punggung, lengan hampir lurus"],"no":["Menarik dengan lengan"],"p":["upper-back"],"s":["triceps"]},
-  {"id":381,"t":"Machine Chest Fly Grip","j":"variasi","e":"machine","y":"441upzchDPI","ok":["Pegangan rileks"],"no":[],"p":["chest"],"s":[]},
-  {"id":382,"t":"Seated Cable Row Setup","j":"koreksi","e":"cable","y":"DNWgNMi1dEQ","ok":["Telapak menapak, dada terbuka"],"no":["Menarik dengan lengan, bukan punggung"],"p":["upper-back"],"s":["biceps"]},
-  {"id":384,"t":"Dumbbell Romanian Deadlift","j":"koreksi","e":"dumbbell","y":"4BYHygaViVU","ok":["Setup untuk glutes: pinggul mundur, punggung lurus, dumbbell dekat kaki"],"no":[],"p":["hamstring","gluteal"],"s":["lower-back"]},
-  {"id":385,"t":"Cable Fly Angles","j":"variasi","e":"cable","y":"jUuALJKMggI","ok":["Sudut kabel menggeser fokus dada"],"no":[],"p":["chest"],"s":[]},
-  {"id":386,"t":"Calf Raise Stance","j":"variasi","e":"body","y":"lWJoYlkW1rM","ok":["Ujung kaki ke luar, lurus, ke dalam"],"no":[],"p":["calves"],"s":[]},
-  {"id":387,"t":"Seated Dumbbell Press Wrist","j":"koreksi","e":"dumbbell","y":"60_ox3rruP4","ok":["Pergelangan lurus di atas siku"],"no":["Pergelangan menekuk"],"p":["deltoids"],"s":["triceps"]},
-  {"id":388,"t":"Wall Abs Routine","j":"rangkaian","e":"body","y":"a2Qf48JOUMc","ok":["Latihan perut memakai dinding; 3x20"],"no":[],"p":["abs"],"s":["obliques"]},
-  {"id":389,"t":"Dumbbell Chest Routine","j":"rangkaian","e":"dumbbell","y":"aTq8B4kNdlM","ok":["Cara mengangkat dumbbell ke bangku dan rangkaian dada"],"no":[],"p":["chest"],"s":["triceps"]},
-  {"id":390,"t":"EZ Preacher Curl","j":"koreksi","e":"barbell","y":"DHoMi531G1k","ok":["Lengan turun terkontrol"],"no":["Bahu maju"],"p":["biceps"],"s":[]},
-  {"id":391,"t":"Dumbbell Press Elbow Angle","j":"variasi","e":"dumbbell","y":"M5Pse11LeAA","ok":["Close grip, narrow grip, slightly tucked; high elbows zona bahaya"],"no":[],"p":["chest","triceps","deltoids"],"s":[]},
-  {"id":392,"t":"Lat Pulldown Full Setup","j":"koreksi","e":"cable","y":"VwprzanAImU","ok":["Paha terkunci, ibu jari searah, dada naik"],"no":[],"p":["upper-back"],"s":["biceps"]},
-  {"id":394,"t":"Hack Squat Foot Position","j":"variasi","e":"machine","y":"yiBfnyLEEJ4","ok":["Posisi kaki menggeser fokus"],"no":[],"p":["gluteal","quadriceps","adductors"],"s":[]},
-  {"id":395,"t":"EZ Curl Grips","j":"variasi","e":"barbell","y":"v7sMeYOqJ5k","ok":["Close, neutral, reverse grip"],"no":[],"p":["biceps"],"s":["forearm"]},
-  {"id":397,"t":"Glutes vs Inner Thighs","j":"variasi","e":"dumbbell","y":"arzZkLAHaiM","ok":["Hinge untuk glutes, sumo untuk paha dalam"],"no":[],"p":["gluteal","adductors"],"s":[]},
-  {"id":399,"t":"Push Day Routine","j":"rangkaian","e":"dumbbell","y":"6BuwPupJ4dI","ok":["Incline dumbbell press, lateral raise dengan kelingking sedikit lebih tinggi, pushdown"],"no":[],"p":["chest","deltoids","triceps"],"s":[]},
-  {"id":400,"t":"Dumbbell Shoulder Press","j":"koreksi","e":"dumbbell","y":"egVoViRA7d0","ok":["Bahu tetap turun, fokus di bahu"],"no":["Mengangkat bahu memindahkan kerja ke trapezius"],"p":["deltoids"],"s":["triceps"]},
-  {"id":401,"t":"Grip Variations Cable Row","j":"variasi","e":"cable","y":"-8hVg2EW8Mc","ok":["Ganti pegangan, ganti otot yang kerja"],"no":[],"p":["deltoids","upper-back"],"s":[]},
-  {"id":668,"t":"Push-Up Shoulder Fix","j":"koreksi","e":"body","y":"11C6Jjc8Z9c","ok":["Posisi belikat dan pinggang untuk push-up"],"no":[],"p":["chest"],"s":["deltoids","trapezius"]},
-  {"id":669,"t":"Pull-Up Focus","j":"variasi","e":"body","y":"omPchaVL6bI","ok":["Pegangan menentukan: lats, trapezius, bisep"],"no":[],"p":["upper-back","trapezius","biceps"],"s":[]},
-  {"id":670,"t":"Dumbbell Triceps Kickback","j":"koreksi","e":"dumbbell","y":"L_6KKSwJ7ww","ok":["Lengan atas diam, lengan bawah lurus ke belakang"],"no":["Lengan atas ikut bergerak"],"p":["triceps"],"s":[]},
-  {"id":671,"t":"Lat Pulldown Grip Setup","j":"koreksi","e":"cable","y":"mTn63LuWuvQ","ok":["Paha terkunci, pegangan kokoh"],"no":[],"p":["upper-back"],"s":["biceps"]},
-  {"id":674,"t":"Seated Core Circuit","j":"rangkaian","e":"body","y":"r6L5dQ2Hv9U","ok":["Rangkaian perut duduk; 3x12"],"no":[],"p":["abs","obliques"],"s":[]},
-  {"id":675,"t":"Barbell Row Form","j":"koreksi","e":"barbell","y":"VU8lyEczUUc","ok":["Punggung rata, tarik ke perut, cara terbaik untuk barbell row"],"no":[],"p":["upper-back"],"s":["biceps","lower-back"]},
-  {"id":676,"t":"One-Arm Push-Up Form","j":"koreksi","e":"body","y":"hHy31P788nM","ok":["Tangan di bawah bahu, kaki melebar, badan lurus"],"no":["Badan berputar atau pinggul naik"],"p":["chest","triceps"],"s":["abs","deltoids"]}
-];
-let FORM = FORM_BUILTIN;
+// Technique clips, from /app/teknik (see "technique clips" further down). j = koreksi (right against wrong), variasi or
+// rangkaian, e = key in EQUIP, y = YouTube id, ok / no = what the clip says to do and to avoid, p / s = main and supporting muscles.
+let FORM = [];
+// Programs and workouts find an exercise in T by id, so each clip also sits there, above the range of the gym's machines.
+const FORM_BASE = 100000;
+function formToT() {
+  for (const k in T) if (+k >= FORM_BASE) delete T[k];
+  FORM.forEach(t => { const id = FORM_BASE + t.id; T[id] = { id, f: t.id, t: t.t, m: 'other', y: t.y, d: '', p: t.p, s: t.s } });
+}
 const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel'], ['machine', 'Mesin'], ['smith', 'Smith'], ['body', 'Beban tubuh'], ['kettlebell', 'Kettlebell'], ['band', 'Band'], ['other', 'Lainnya']];
 const eqName = k => EQUIP.find(x => x[0] === k)?.[1] || k;
 const libTabs = tab => `<div class="seg glass lseg">${[['', 'Alat'], ['teknik', 'Teknik']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-a="go" data-to="library${k && '/' + k}">${n}</button>`).join('')}</div>`;
@@ -2166,7 +2063,7 @@ function formHead() {
 }
 function formList() {
   const xs = formHits();
-  if (!xs.length) return `<div class="empty glass">Tidak ada video yang cocok.</div>`;
+  if (!xs.length) return `<div class="empty glass">${FORM.length ? 'Tidak ada video yang cocok.' : 'Belum ada video teknik.'}</div>`;
   return `<div class="fgrid">${xs.map(t => `<button class="fcard glass" data-a="form" data-id="${t.id}">
       <span class="fv">${pic(t.y)}<span class="pm">${I('playf')}</span></span>
       <b>${esc(t.t)}</b><small>${MI[t.p[0]].n} · ${eqName(t.e)}</small></button>`).join('')}</div>`;
@@ -2195,10 +2092,13 @@ function vForm() {
 }
 function openForm(id) {
   const t = FORM.find(x => x.id === id); if (!t) return;
+  const tid = FORM_BASE + t.id;
   const cue = (cls, ic, title, xs) => `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`;
   sheet(`${vidTop(t.y, 'data-loop="1"')}
     <h2 class="dt">${esc(t.t)}</h2>
     <div class="tags ftags">${mTag(t.p[0])}<span class="tag" style="--c:#64748b">${eqName(t.e)}</span></div>
+    <div class="row2 frow"><button class="btn soft" data-a="addTo" data-id="${tid}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${tid}">${I('playf')} Latih Ini</button>`
+      : `<button class="btn pri" data-a="wxAddId" data-id="${tid}">${I('plus')} Tambah ke workout</button>`}</div>
     ${t.ok.length || t.no.length ? `<div class="fcmp">${t.ok.length ? cue('fok', 'check', t.j === 'koreksi' ? 'Yang benar' : 'Intinya', t.ok) : ''}${t.no.length ? cue('fno', 'x', 'Yang salah', t.no) : ''}</div>` : ''}
     ${muscleMap(t)}
     <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`);
@@ -2674,6 +2574,7 @@ const detailTop = t => t.c ? cardioTop(t) : `${vidTop(t.y)}
     ${t.d ? `<p class="desc">${esc(t.d)}</p>` : ''}`;
 function openDetail(id) {
   const t = T[id]; if (!t) return;
+  if (t.f) return openForm(t.f);
   const similar = (t.c ? CARDIO : TUTORIALS).filter(x => x.id !== t.id && (t.c || x.p[0] === t.p[0])).slice(0, 4);
   sheet(`${detailTop(t)}
     <div class="row2"><button class="btn soft" data-a="addTo" data-id="${t.id}">${I('plus')} Program</button>${!S.active ? `<button class="btn pri" data-a="quick" data-id="${t.id}">${I('playf')} Latih Ini</button>`
@@ -3684,7 +3585,7 @@ async function boot() {
   // The machines: last list seen from Firebase on this device, else the built-in one.
   try { const c = JSON.parse(localStorage.getItem(TUT_CACHE)); if (c && c.items) { setTutorials(Object.values(c.items)); tutMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
   if (!TUTORIALS.length) setTutorials(builtinList());
-  try { const c = JSON.parse(localStorage.getItem(FORM_CACHE)); if (c && c.items) { setForm(Object.values(c.items)); formMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
+  try { const c = JSON.parse(localStorage.getItem(FORM_CACHE)); if (c && c.items) { setForm(Object.values(c.items)); formMeta = { updatedAt: c.updatedAt || 0 } } } catch {}
   // Someone was signed in here last time: open on this device's copy straight away.
   const last = localStorage.getItem(LAST), c = last && cacheLoad(last);
   if (c) { S = c.S; synced = c.synced; fromCache = true; fb.user = { uid: last, cached: true }; phase = 'app' }
@@ -4698,7 +4599,7 @@ function tutCard() {
 // Everyone reads it; admins replace it by importing JSON and export it again to edit. Firebase drops
 // empty lists, so ok, no and s can come back missing.
 const FORM_CACHE = 'why_teknik', FORM_J = ['koreksi', 'variasi', 'rangkaian'];
-let formMeta = { source: 'builtin', updatedAt: 0 };
+let formMeta = { updatedAt: 0 };
 const cueList = v => (Array.isArray(v) ? v : v && typeof v === 'object' ? Object.values(v) : v ? [v] : []).map(x => String(x).trim().slice(0, 200)).filter(Boolean).slice(0, 8);
 function formItem(x) {
   const id = +x?.id, t = String(x?.t ?? x?.title ?? '').trim(), y = ytId(x?.y ?? x?.youtube), p = muscleList(x?.p ?? x?.primary);
@@ -4707,14 +4608,14 @@ function formItem(x) {
   return { id, t: t.slice(0, 80), j: FORM_J.includes(j) ? j : 'koreksi', e: EQUIP.some(q => q[0] === e) ? e : 'other', y,
     ok: sure ? cueList(x.ok) : [], no: sure ? cueList(x.no) : [], p, s: muscleList(x.s ?? x.secondary) };
 }
-const setForm = list => { FORM = list.map(formItem).filter(Boolean).sort((a, b) => a.id - b.id) };
+const setForm = list => { FORM = list.map(formItem).filter(Boolean).sort((a, b) => a.id - b.id); formToT() };
 function applyForm(val) {
   if (val && val.items) {
     setForm(Object.values(val.items));
-    formMeta = { source: 'firebase', updatedAt: +val.updatedAt || 0 };
+    formMeta = { updatedAt: +val.updatedAt || 0 };
     try { localStorage.setItem(FORM_CACHE, JSON.stringify({ items: val.items, updatedAt: val.updatedAt || 0 })) } catch {}
   } else {
-    FORM = FORM_BUILTIN; formMeta = { source: 'builtin', updatedAt: 0 };
+    setForm([]); formMeta = { updatedAt: 0 };
     try { localStorage.removeItem(FORM_CACHE) } catch {}
   }
   softRender();
@@ -4769,12 +4670,11 @@ function openFormImport() {
 }
 function formCard() {
   const when = formMeta.updatedAt ? new Date(formMeta.updatedAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
-  const src = formMeta.source === 'firebase' ? `Di Firebase${when ? ' · diperbarui ' + when : ''}` : 'Data bawaan aplikasi, belum di Firebase';
+  const src = FORM.length ? `Di Firebase${when ? ' · diperbarui ' + when : ''}` : 'Belum ada data';
   const link = (icon, c, title, a, sub = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}"`, right: I('chev') });
   return `<h3 class="sh2">Data teknik</h3>
     <div class="sgroup">
       ${sRow({ icon: 'video', c: '#f59e0b', title: `${FORM.length} video teknik`, sub: src })}
-      ${formMeta.source === 'firebase' ? '' : link('upload', '#2f7cf6', 'Simpan data bawaan ke Firebase', 'formPublish', 'Supaya bisa dikelola dari sini')}
       ${link('upload', '#14b8a6', 'Import JSON', 'formOpen', 'Ganti semua data teknik dari file')}
       ${link('download', '#8b5cf6', 'Export JSON', 'formExport', 'Unduh untuk diedit atau dicadangkan')}
     </div>`;
@@ -5309,12 +5209,6 @@ const A = {
   formOpen: openFormImport,
   formImport: el => importForm($('#formTxt').value, el),
   formExport: exportForm,
-  formPublish: async el => {
-    busy(el, true);
-    try { await saveForm(FORM_BUILTIN); toast('Data teknik tersimpan di Firebase'); if ($('#adminSec')) $('#adminSec').innerHTML = adminSection() }
-    catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
-    finally { if (el?.isConnected) busy(el, false) }
-  },
   tutImport: el => importTutorials($('#tutTxt').value, el),
   tutExport: exportTutorials,
   tutPublish: async el => {

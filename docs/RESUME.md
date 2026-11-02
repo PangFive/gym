@@ -29,9 +29,10 @@ tersinkron di semua perangkat.
 ### Teknik latihan
 - Halaman Tutorial punya dua tab: **Alat** dan **Teknik** (`#/library/teknik`). Tab Teknik memakai Jelajahi Otot yang
   sama, chip otot dan chip alat hanya untuk yang punya video, lalu kartu video dua kolom.
+- Dari detail, video bisa masuk **Program**, **Latih Ini**, atau **Tambah ke workout**; di program id-nya 100000 + id klip.
 - Detail: video berulang tanpa suara dengan teks otomatis YouTube, kotak **Yang benar** dan **Yang salah**, peta otot.
-- Data di Firebase `app/teknik`, dikelola admin di **Pengaturan → Data teknik** (Import, Export). Sebelum ada di Firebase memakai
-  `FORM_BUILTIN`. `docs/teknik-katalog.json` menyimpan hasil analisis lengkap dengan narasi. Kolom item (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
+- Data di Firebase `app/teknik`, dikelola admin di **Pengaturan → Data teknik** (Import, Export).
+  `docs/teknik-katalog.json` menyimpan hasil analisis lengkap dengan narasi. Kolom item (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
   poin benar dan salah, `p` / `s` otot utama dan pendukung).
 
 ### Tutorial alat
