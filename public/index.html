@@ -55,6 +55,7 @@ body{color:var(--ink);background:#e7eefb;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(155deg,#cfe3fb 0%,#e4ebfb 40%,#fbe6da 76%,#f8d3c0 100%)}
 body.noscroll{overflow:hidden}
 button{font:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
 html{-webkit-text-size-adjust:100%}
 body{touch-action:manipulation}
 :focus-visible{outline:3px solid rgba(47,124,246,.55);outline-offset:2px}
@@ -387,7 +388,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px;border-bottom:1px solid rgba(24,32,47,.06)}
 .field>span{font-weight:700;font-size:14.5px}
 .field input{width:150px;min-height:44px;border:1px solid rgba(24,32,47,.1);background:#fff;border-radius:12px;padding:9px 12px;font:inherit;font-size:16px;font-weight:700;text-align:right;outline:none}
-.ta{width:100%;min-height:170px;border-radius:16px;border:1px solid rgba(24,32,47,.1);padding:12px;font:16px/1.5 ui-monospace,Consolas,monospace;margin:10px 0 12px;resize:vertical;background:#fff;outline:none}
+.ta{width:100%;min-height:170px;border-radius:16px;border:1px solid rgba(24,32,47,.1);padding:12px;font:inherit;font-size:16px;line-height:1.5;margin:10px 0 12px;resize:vertical;background:#fff;outline:none}
 .foot{text-align:center;color:var(--faint);font-size:12.5px;margin:18px 0 0}
 .spick{display:flex;align-items:center;gap:12px;width:100%;padding:14px 14px 14px 16px;margin-bottom:10px;border:1px solid rgba(24,32,47,.06);background:#fff;border-radius:20px;text-align:left;color:var(--ink)}
 .spick div{flex:1;display:flex;flex-direction:column;gap:3px}
@@ -519,7 +520,7 @@ div.pkrow{padding:6px 8px 6px 6px;gap:6px}
 .done-b{width:84px;height:84px;margin:14px auto 6px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;box-shadow:0 18px 34px -14px rgba(37,99,235,.85),0 0 0 10px rgba(47,124,246,.1),0 0 0 22px rgba(47,124,246,.05);animation:pop .4s cubic-bezier(.2,.9,.3,1.3)}
 .done-b svg.i{width:40px;height:40px;stroke-width:2.6}
 .done-s{text-align:center;color:var(--muted);font-size:14.5px;margin:-6px 0 18px}
-.code{font:12px/1.5 ui-monospace,Consolas,monospace;background:#fff;border:1px solid rgba(24,32,47,.08);border-radius:14px;padding:12px;white-space:pre-wrap;word-break:break-word;color:#3d4658;margin:8px 0 0}
+.code{font:inherit;font-size:12px;line-height:1.5;background:#fff;border:1px solid rgba(24,32,47,.08);border-radius:14px;padding:12px;white-space:pre-wrap;word-break:break-word;color:#3d4658;margin:8px 0 0}
 
 /* plan */
 .rcard{padding:16px;margin-bottom:12px}
@@ -927,7 +928,7 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .mo-rec{flex:none;font-size:11.5px;font-weight:800;color:var(--acc-2);background:var(--acc-soft);padding:5px 9px;border-radius:999px}
 .mo-tag{font-size:11px;font-weight:700;color:var(--faint);border:1px solid rgba(24,32,47,.12);padding:1px 6px;border-radius:6px}
 .fld input[aria-invalid="true"]{border-color:#e5392d;box-shadow:0 0 0 3px rgba(229,57,45,.12)}
-.fld .ta{margin:0;min-height:88px;font-family:inherit}
+.fld .ta{margin:0;min-height:88px}
 .ferr{margin:0 4px 12px;color:#c2410c;font-size:13.5px;font-weight:600;line-height:1.45}
 .ferr:empty{display:none}
 .linkbtn{display:block;margin:10px auto 0;border:0;background:transparent;color:var(--acc);font-weight:700;font-size:14px;padding:10px 12px;min-height:44px}
@@ -4875,7 +4876,7 @@ const A = {
   mealText: () => {
     if (needKey('text')) return;
     sheet(`<h2 class="sh">Tulis makanan</h2><p class="scope" style="margin-top:-8px">Sebutkan makanan dan porsinya, AI yang menghitung.</p>
-      <textarea id="mealTxt" class="ta" style="min-height:110px;font-family:inherit" placeholder="Contoh: nasi padang rendang + sayur nangka, es teh manis"></textarea>
+      <textarea id="mealTxt" class="ta" style="min-height:110px" placeholder="Contoh: nasi padang rendang + sayur nangka, es teh manis"></textarea>
       <button class="btn pri block" data-a="mealTextGo">${I('sparkles')} Hitung kalori</button>`);
     setTimeout(() => $('#mealTxt')?.focus(), 350);
   },

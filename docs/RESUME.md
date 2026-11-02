@@ -306,7 +306,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 13. Gambar 3D untuk alat kardio (AI Figma), latar gradient lembut berwarna per alat.
 14. Aplikasi Android (Flutter WebView) dan sambungan workout untuk jam Huawei: catat set dan timer istirahat.
 15. Claude sebagai pilihan AI di samping Gemini.
-16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Plus Jakarta Sans, tombol navigasi bulat,
+16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Roboto di semua teks, tombol navigasi bulat,
     gauge kalori, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
 
 ## 8. Ide berikutnya
