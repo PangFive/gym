@@ -1257,6 +1257,7 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .lseg{margin:-6px 0 14px;padding:3px}
 .lseg button{position:relative;min-height:34px;padding:4px 8px;font-size:14px}
 .lseg button::after{content:'';position:absolute;inset:-5px 0}
+.pkseg{margin:-4px 0 12px}
 .frow{margin-bottom:14px}
 .fchips{margin-bottom:0;padding-bottom:12px}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -2606,9 +2607,13 @@ const pickHits = (t, ms) => [...ms].reduce((n, k) => n + (t.p.includes(k) ? 2 : 
 const pickHave = () => { const p = ui.pick, r = p?.mode === 'edit' ? findR(p.rid) : null; return new Set((r ? r.items : p?.mode === 'workout' ? S.active?.items || [] : []).map(it => it.id)) };
 const pickWhere = () => ui.pick?.mode === 'workout' ? 'workout' : 'program';
 const askAgain = (t, where) => ask({ title: `Tambah ${t.t} lagi?`, msg: `Alat ini sudah ada di ${where}.`, ok: 'Tambah lagi', tone: 'info', icon: 'plus' });
+// The technique clips as exercises, the way programs and workouts know them (see formToT).
+const formT = () => FORM.map(f => T[FORM_BASE + f.id]).filter(Boolean);
+const pickTabs = () => `${[['alat', 'Alat'], ['teknik', 'Teknik']].map(([k, n]) => `<button class="${ui.pick.tab === k ? 'on' : ''}" data-a="pkTab" data-k="${k}" aria-pressed="${ui.pick.tab === k}">${n}</button>`).join('')}`;
 function pickList() {
   const p = ui.pick, q = p.q.trim().toLowerCase(), have = pickHave();
-  const xs = p.cx ? CARDIO.filter(t => matches(t, 'all', q))
+  const xs = p.tab === 'teknik' ? formT().filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q))
+    : p.cx ? CARDIO.filter(t => matches(t, 'all', q))
     : [...TUTORIALS.filter(t => (!p.ms.size || [...p.ms].some(k => trains(t, k))) && matches(t, 'all', q)), ...(p.ms.size ? [] : CARDIO.filter(t => matches(t, 'all', q)))];
   if (p.ms.size) xs.sort((a, b) => pickHits(b, p.ms) - pickHits(a, p.ms));
   return xs.map(t => `<div class="pkrow ${p.sel.has(t.id) ? 'on' : ''}" id="pk${t.id}">
@@ -2875,10 +2880,10 @@ function swapTo(id) {
 }
 function pickChips() {
   const ms = ui.pick.ms;
-  const cx = ui.pick.cx, all = !ms.size && !cx;
-  return `<button class="chip ${all ? 'on' : ''}" data-a="pmuscle" data-k="all" aria-pressed="${all}">Semua <small>${TUTORIALS.length + CARDIO.length}</small></button>` +
-    `<button class="chip ${cx ? 'on' : ''}" data-a="pcardio" aria-pressed="${cx}">Kardio <small>${CARDIO.length}</small></button>` +
-    MUSCLES.map(m => `<button class="chip ${ms.has(m.k) ? 'on' : ''}" data-a="pmuscle" data-k="${m.k}" aria-pressed="${ms.has(m.k)}">${m.n} <small>${count(m.k)}</small></button>`).join('');
+  const cx = ui.pick.cx, all = !ms.size && !cx, tk = ui.pick.tab === 'teknik', n = tk ? formCount : count;
+  return `<button class="chip ${all ? 'on' : ''}" data-a="pmuscle" data-k="all" aria-pressed="${all}">Semua <small>${tk ? FORM.length : TUTORIALS.length + CARDIO.length}</small></button>` +
+    (tk ? '' : `<button class="chip ${cx ? 'on' : ''}" data-a="pcardio" aria-pressed="${cx}">Kardio <small>${CARDIO.length}</small></button>`) +
+    MUSCLES.filter(m => !tk || n(m.k)).map(m => `<button class="chip ${ms.has(m.k) ? 'on' : ''}" data-a="pmuscle" data-k="${m.k}" aria-pressed="${ms.has(m.k)}">${m.n} <small>${n(m.k)}</small></button>`).join('');
 }
 function pickHead() {
   const ms = ui.pick.ms;
@@ -2891,6 +2896,9 @@ function refreshPick(keepScroll) {
   $('#pkMap').innerHTML = p.map ? bodyMap({ tap: true, sel: p.ms, act: 'pmuscle', level: () => p.ms.size ? 0 : 1 }) : '';
   $('#pkMapBtn').innerHTML = p.map ? `${I('up')} Sembunyikan peta otot` : `${I('body')} Tampilkan peta otot`;
   $('#pkHead').innerHTML = pickHead();
+  $('#pkTabs').innerHTML = pickTabs();
+  // the AI suggests gym machines, so it stays on the Alat side
+  $('#pkAi').hidden = p.tab === 'teknik';
   if (!p.ai) $('#pkAi').innerHTML = pickAiHtml();
   $('#pkChips').innerHTML = pickChips();
   if (!keepScroll) $('#pkList').innerHTML = pickList();
@@ -2898,8 +2906,9 @@ function refreshPick(keepScroll) {
 const pickLabel = () => ui.pick.sel.size ? `Tambah ${ui.pick.sel.size} latihan` : 'Pilih latihan';
 function openPicker(mode, rid) {
   closeVideo();
-  ui.pick = { mode, rid, sel: new Set(), ms: new Set(), cx: false, q: '', map: true, ai: null, rec: new Map() };
+  ui.pick = { mode, rid, tab: 'alat', sel: new Set(), ms: new Set(), cx: false, q: '', map: true, ai: null, rec: new Map() };
   sheet(`<h2 class="sh">Pilih latihan</h2>
+    <div class="seg glass lseg pkseg" id="pkTabs"></div>
     <label class="search">${I('search')}<input data-i="pq" type="search" placeholder="Cari…" autocomplete="off"></label>
     <div id="pkAi">${pickAiHtml()}</div>
     <section class="pkexp"><div class="pkexp-h"><b>Jelajahi otot</b>${genderSeg()}</div>
@@ -4867,6 +4876,7 @@ const A = {
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
   pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; ui.pick.cx = false; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
   pcardio: () => { const p = ui.pick; p.cx = !p.cx; p.ms.clear(); refreshPick() },
+  pkTab: el => { const p = ui.pick; if (p.tab === el.dataset.k) return; p.tab = el.dataset.k; p.cx = false; refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
   pkPrev: el => openVideo(+el.dataset.id),
   wxSwap: el => openSwap(+el.dataset.ex),
