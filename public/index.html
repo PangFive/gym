@@ -1321,10 +1321,10 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .bd-v{display:flex;flex-direction:column;align-items:flex-end}
 .bd-v b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
 .bd-v b small{font-size:12px;color:var(--muted);margin-left:3px;font-weight:700}
-.bd-mh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
-.bd-mh .sh2{margin:16px 2px 10px}
+.bd-mh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 14px}
+.bd-mh .sh2{margin:0 2px}
 .bd-mh .aibtn{flex:none}
-.bd-ai{display:block;margin:0 0 12px}
+.bd-ai{display:block;margin:0 0 14px}
 .bd-ai p{margin:0 0 6px;font-weight:700}
 .bd-ai ul{margin:0;padding-left:18px;line-height:1.5}
 .bd-note{margin:-4px 4px 14px;font-size:12.5px;line-height:1.45;color:var(--muted)}
@@ -3942,6 +3942,7 @@ function saveWeight(kg) {
 // feet; without one these are the usual formula estimates:
 //   BMI = kg / m²                                  body fat % (Deurenberg 1991) = 1.2 × BMI + 0.23 × age − 10.8 × male − 5.4
 //   body water (Watson 1980): male 2.447 − 0.09156 × age + 0.1074 × cm + 0.3362 × kg, female −2.097 + 0.1069 × cm + 0.2466 × kg
+//   (water at most 73 % of fat-free mass)
 //   fat-free mass = kg − fat; bone ≈ 5.2 % of it; muscle = fat-free mass − bone; protein = muscle − water
 //   BMR (Mifflin–St Jeor) = 10 × kg + 6.25 × cm − 5 × age + 5 (male) / − 161 (female)
 //   obesity degree = kg / standard weight − 1, standard weight male (cm − 80) × 0.7, female (cm − 70) × 0.6
@@ -3959,7 +3960,8 @@ function bodyOf(w, st = S.settings) {
   if (h && age && sex) {
     const male = sex === 'male';
     v.fat = clamp(1.2 * v.bmi + .23 * age - 10.8 * male - 5.4, 3, 60); v.fatKg = kg * v.fat / 100; v.ffm = kg - v.fatKg;
-    v.waterKg = male ? 2.447 - .09156 * age + .1074 * h + .3362 * kg : -2.097 + .1069 * h + .2466 * kg; v.water = v.waterKg / kg * 100;
+    // lean tissue is about 73 % water, so Watson's estimate is capped there for very lean bodies
+    v.waterKg = Math.min(male ? 2.447 - .09156 * age + .1074 * h + .3362 * kg : -2.097 + .1069 * h + .2466 * kg, v.ffm * .73); v.water = v.waterKg / kg * 100;
     v.bone = v.ffm * .052; v.musKg = v.ffm - v.bone; v.mus = v.musKg / kg * 100; v.prot = (v.musKg - v.waterKg) / kg * 100;
     v.bmr = 10 * kg + 6.25 * h - 5 * age + (male ? 5 : -161);
   }

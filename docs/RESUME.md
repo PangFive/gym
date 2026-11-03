@@ -173,7 +173,7 @@ tersinkron di semua perangkat.
 - **Detail tubuh & riwayat** (dari kartu Berat badan): status BMI dengan batas dalam kg sesuai tinggi, selisih dari catatan
   sebelumnya, terbaik 30 hari, daftar komposisi dengan status (Rendah/Sehat/Tinggi), riwayat semua catatan berat, geser antar
   catatan, hapus (dengan konfirmasi), dan **Analisis AI** opsional. Hanya berat yang dicatat; sisanya rumus tanpa AI:
-  BMI, lemak (Deurenberg), air (Watson), berat tanpa lemak, tulang ≈ 5,2 % FFM, otot = FFM − tulang, protein = otot − air,
+  BMI, lemak (Deurenberg), air (Watson, paling banyak 73 % berat tanpa lemak), berat tanpa lemak, tulang ≈ 5,2 % FFM, otot = FFM − tulang, protein = otot − air,
   BMR (Mifflin–St Jeor), derajat obesitas (berat standar pria (cm − 80) × 0,7, wanita (cm − 70) × 0,6). Otot rangka,
   lemak visceral, dan usia tubuh tidak ditampilkan karena butuh timbangan pintar.
 
