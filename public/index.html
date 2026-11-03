@@ -1278,8 +1278,8 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .fcmp li+li{margin-top:4px}
 .fok{background:#dcf4e8;color:#0b6b4a}
 .fno{background:#fde8e4;color:#b3321c}
-.explore .chip,.fchips .chip{position:relative;min-height:34px;padding:5px 13px;font-size:13.5px}
-.explore .chip::after,.fchips .chip::after{content:'';position:absolute;inset:-5px 0}
+.chips .chip{position:relative;min-height:34px;padding:5px 13px;font-size:13.5px}
+.chips .chip::after{content:'';position:absolute;inset:-5px 0}
 </style>
 </head>
 <body>
@@ -2685,16 +2685,17 @@ async function askExercises() {
   const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
   // A request that names muscles ("latihan perut hari ini") counts like muscles picked on the map: the gym may
   // have only one machine for them, and then one machine is the answer, not a balanced program around it.
-  const q = (p.aiQ || '').trim(), want = [...p.ms], where = pickWhere();
-  const prompt = `Kamu pelatih gym. Pilih latihan dari DAFTAR ALAT di bawah (hanya alat ini yang ada di gym).
+  const q = (p.aiQ || '').trim(), want = [...p.ms], where = pickWhere(), tk = p.tab === 'teknik', pool = tk ? formT() : TUTORIALS;
+  const src = tk ? 'DAFTAR LATIHAN TEKNIK' : 'DAFTAR ALAT';
+  const prompt = `Kamu pelatih gym. Pilih latihan dari ${src} di bawah (${tk ? 'hanya latihan ini yang boleh dipilih, tiap latihan punya video cara yang benar' : 'hanya alat ini yang ada di gym'}).
 ${r ? `Program: "${r.name}"` : 'Workout yang sedang berjalan'}. Sudah berisi: ${have.length ? have.map(id => T[id]?.t).filter(Boolean).join(', ') : 'belum ada'}.
 ${q ? `PERMINTAAN PENGGUNA (paling penting, ikuti selama aman): ${q}
 ` : ''}${want.length ? `Otot yang ingin dilatih: ${mNames(want)}.` : q ? `Kalau permintaan menyebut otot atau bagian tubuh, latih hanya otot itu. Kalau tidak, lengkapi ${where} agar otot yang dilatih seimbang.` : `Lengkapi ${where} agar otot yang dilatih seimbang.`}
 ${aiWho()}
 ${want.length || q ? 'Pilih paling banyak 6 latihan yang otot utama atau pendukungnya adalah otot yang diminta. Kalau alat untuk otot itu di daftar hanya sedikit, pilih yang ada saja (boleh 1 atau 2) dan sebutkan di summary. Jangan menambah latihan untuk otot lain yang tidak diminta.' : 'Pilih 4 sampai 6 latihan.'}
 Jangan pilih latihan yang sudah ada di ${where}. Urutkan dari latihan besar/compound ke isolasi. Beri set dan reps yang cocok dengan tujuannya.
-DAFTAR ALAT (id|nama|otot):
-${aiMachines()}
+${src} (id|nama|otot):
+${aiMachines(undefined, pool)}
 ${aiMuscleCodes()}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
@@ -2704,11 +2705,11 @@ Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode ot
     const aim = new Set([...want, ...(q ? muscleList(j.muscles) : [])]), hits = id => trainsAny(T[id], aim);
     const seen = new Set(have), off = asList(j.items).some(x => T[+x.id] && !hits(+x.id));
     const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
-      .filter(x => T[x.id] && hits(x.id) && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
+      .filter(x => T[x.id] && pool.some(t => t.id === x.id) && hits(x.id) && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
     const ms = aim.size && mNames([...aim]);
     if (!items.length) {
-      const all = TUTORIALS.filter(t => hits(t.id));
-      throw new Error(!ms ? `${aiName()} tidak menemukan latihan yang cocok. Coba pilih otot lain.` : !all.length ? `Di gym belum ada alat untuk ${ms}.`
+      const all = pool.filter(t => hits(t.id));
+      throw new Error(!ms ? `${aiName()} tidak menemukan latihan yang cocok. Coba pilih otot lain.` : !all.length ? (tk ? `Belum ada video teknik untuk ${ms}.` : `Di gym belum ada alat untuk ${ms}.`)
         : all.every(t => seen.has(t.id)) ? `Semua alat untuk ${ms} sudah ada di ${where}.` : `${aiName()} tidak menemukan latihan yang cocok. Coba lagi.`);
     }
     // The AI's sentence described the machines it chose; once some are dropped it no longer fits
@@ -2897,8 +2898,6 @@ function refreshPick(keepScroll) {
   $('#pkMapBtn').innerHTML = p.map ? `${I('up')} Sembunyikan peta otot` : `${I('body')} Tampilkan peta otot`;
   $('#pkHead').innerHTML = pickHead();
   $('#pkTabs').innerHTML = pickTabs();
-  // the AI suggests gym machines, so it stays on the Alat side
-  $('#pkAi').hidden = p.tab === 'teknik';
   if (!p.ai) $('#pkAi').innerHTML = pickAiHtml();
   $('#pkChips').innerHTML = pickChips();
   if (!keepScroll) $('#pkList').innerHTML = pickList();
@@ -4876,7 +4875,7 @@ const A = {
   pick: el => openPicker(el.dataset.mode, el.dataset.id),
   pmuscle: el => { const k = el.dataset.k, ms = ui.pick.ms; ui.pick.cx = false; if (k === 'all') ms.clear(); else ms.has(k) ? ms.delete(k) : ms.add(k); refreshPick() },
   pcardio: () => { const p = ui.pick; p.cx = !p.cx; p.ms.clear(); refreshPick() },
-  pkTab: el => { const p = ui.pick; if (p.tab === el.dataset.k) return; p.tab = el.dataset.k; p.cx = false; refreshPick() },
+  pkTab: el => { const p = ui.pick; if (p.tab === el.dataset.k) return; p.tab = el.dataset.k; p.cx = false; if (!p.ai?.busy) p.ai = null; refreshPick() },
   pkMap: () => { ui.pick.map = !ui.pick.map; refreshPick(true) },
   pkPrev: el => openVideo(+el.dataset.id),
   wxSwap: el => openSwap(+el.dataset.ex),
