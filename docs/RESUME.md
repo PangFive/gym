@@ -170,6 +170,12 @@ tersinkron di semua perangkat.
   tampil dan tombol + menambah makanan ke waktu makan itu; hari lain hanya yang ada isinya.
 - **Berat badan**: catat harian, progres dari berat awal ke target, grafik 30 catatan terakhir,
   perkiraan tanggal tercapai.
+- **Detail tubuh & riwayat** (dari kartu Berat badan): status BMI dengan batas dalam kg sesuai tinggi, selisih dari catatan
+  sebelumnya, terbaik 30 hari, daftar komposisi dengan status (Rendah/Sehat/Tinggi), riwayat semua catatan berat, geser antar
+  catatan, hapus (dengan konfirmasi), dan **Analisis AI** opsional. Hanya berat yang dicatat; sisanya rumus tanpa AI:
+  BMI, lemak (Deurenberg), air (Watson), berat tanpa lemak, tulang ≈ 5,2 % FFM, otot = FFM − tulang, protein = otot − air,
+  BMR (Mifflin–St Jeor), derajat obesitas (berat standar pria (cm − 80) × 0,7, wanita (cm − 70) × 0,6). Otot rangka,
+  lemak visceral, dan usia tubuh tidak ditampilkan karena butuh timbangan pintar.
 
 ### Statistik
 - Total volume di samping karakter, pilihan rentang, grafik batang (tertinggi berwarna coral), tile target. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
