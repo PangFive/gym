@@ -3925,14 +3925,14 @@ function openWeightLog() {
   sheet(`<h2 class="sh">Catat berat badan</h2>
     <p class="scope" style="margin-top:-8px">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })} · timbang di pagi hari setelah bangun agar konsisten.</p>
     <div class="wlog"><button class="icon-btn" data-a="wD" data-d="-1" aria-label="Kurangi 0,1 kg">−</button>
-      <label><input id="wIn" inputmode="decimal" value="${fmt1(ui.wkg)}" aria-label="Berat dalam kg"><em>kg</em></label>
+      <label><input id="wIn" inputmode="decimal" value="${fmtN(ui.wkg, 2)}" aria-label="Berat dalam kg"><em>kg</em></label>
       <button class="icon-btn" data-a="wD" data-d="1" aria-label="Tambah 0,1 kg">+</button></div>
     <p class="ferr" id="wErr" role="alert"></p>
     <button class="btn pri block" data-a="wSave">Simpan</button>`);
 }
 function saveWeight(kg) {
   const id = dayKey(new Date());
-  S.weights = S.weights.filter(w => w.id !== id); S.weights.push({ id, date: new Date().toISOString(), kg: Math.round(kg * 10) / 10 });
+  S.weights = S.weights.filter(w => w.id !== id); S.weights.push({ id, date: new Date().toISOString(), kg: Math.round(kg * 100) / 100 });
   S.weights.sort((x, y) => y.date.localeCompare(x.date));
   if (!S.settings.startW) { S.settings.startW = S.weights[0].kg; S.settings.startD = id }
 }
@@ -3944,9 +3944,9 @@ function saveWeight(kg) {
 //   body water (Watson 1980): male 2.447 − 0.09156 × age + 0.1074 × cm + 0.3362 × kg, female −2.097 + 0.1069 × cm + 0.2466 × kg
 //   (water at most 73 % of fat-free mass)
 //   fat-free mass = kg − fat; bone ≈ 5.2 % of it; muscle = fat-free mass − bone; protein = muscle − water
-//   BMR (Mifflin–St Jeor) = 10 × kg + 6.25 × cm − 5 × age + 5 (male) / − 161 (female)
+//   BMR (Ganpule 2007, what smart scales use) = (0.0481 × kg + 0.0234 × cm − 0.0138 × age − 0.4235 male / 0.9708 female) × 1000 / 4.186 kcal
 //   obesity degree = kg / standard weight − 1, standard weight male (cm − 80) × 0.7, female (cm − 70) × 0.6
-const BODY_M = [['kg', 'Berat badan', 'kg', 1], ['bmi', 'BMI', '', 1], ['fat', 'Lemak tubuh', '%', 1], ['fatKg', 'Berat lemak', 'kg', 1],
+const BODY_M = [['kg', 'Berat badan', 'kg', 2], ['bmi', 'BMI', '', 1], ['fat', 'Lemak tubuh', '%', 1], ['fatKg', 'Berat lemak', 'kg', 1],
   ['mus', 'Otot', '%', 1], ['musKg', 'Berat otot', 'kg', 1], ['water', 'Air', '%', 1], ['waterKg', 'Berat air', 'kg', 1],
   ['bone', 'Massa tulang', 'kg', 1], ['bmr', 'Metabolisme basal', 'kkal', 0], ['prot', 'Protein', '%', 1], ['obese', 'Derajat obesitas', '%', 1],
   ['ffm', 'Berat tanpa lemak', 'kg', 1]];
@@ -3955,7 +3955,7 @@ function bodyOf(w, st = S.settings) {
   const kg = w.kg, h = +st.height || 0, sex = st.sex, age = st.birth ? new Date(w.date).getFullYear() - st.birth : 0, v = { kg };
   if (h) {
     v.bmi = kg / (h / 100) ** 2;
-    if (sex) v.obese = (kg / ((h - (sex === 'male' ? 80 : 70)) * (sex === 'male' ? .7 : .6)) - 1) * 100;
+    if (sex) v.obese = (kg / stdWeight(h, sex) - 1) * 100;
   }
   if (h && age && sex) {
     const male = sex === 'male';
@@ -3963,22 +3963,32 @@ function bodyOf(w, st = S.settings) {
     // lean tissue is about 73 % water, so Watson's estimate is capped there for very lean bodies
     v.waterKg = Math.min(male ? 2.447 - .09156 * age + .1074 * h + .3362 * kg : -2.097 + .1069 * h + .2466 * kg, v.ffm * .73); v.water = v.waterKg / kg * 100;
     v.bone = v.ffm * .052; v.musKg = v.ffm - v.bone; v.mus = v.musKg / kg * 100; v.prot = (v.musKg - v.waterKg) / kg * 100;
-    v.bmr = 10 * kg + 6.25 * h - 5 * age + (male ? 5 : -161);
+    v.bmr = (.0481 * kg + .0234 * h - .0138 * age - (male ? .4235 : .9708)) * 1000 / 4.186;
   }
   return { v, age, h, sex };
 }
-// Usual adult ranges; a scale brand can draw its lines a little differently.
+// The lines smart scale apps draw (checked against one: BMI 18.5 / 24.9 / 29.9, the rest below).
+// Muscle mass is judged in kilograms against a standard for the sex and height, BMR against the standard
+// for the ideal weight: kcal per kg per day by age (male 24.0 / 22.3 / 21.5, female 22.1 / 21.7 / 20.7 for
+// 18–29 / 30–49 / 50+).
 const BS = { lo: 'Rendah', ok: 'Sehat', hi: 'Tinggi', bad: 'Sangat tinggi' };
-function bodyStatus(k, v, sex) {
+const MUS_STD = { male: [[160, 38.5, 46.5], [170, 44, 52.4], [Infinity, 49.4, 59.4]], female: [[150, 29.1, 34.7], [160, 32.9, 37.5], [Infinity, 36.5, 42.5]] };
+const stdWeight = (h, sex) => (h - (sex === 'male' ? 80 : 70)) * (sex === 'male' ? .7 : .6);
+function bodyStatus(k, v, sex, b = {}) {
   const by = (x, a, b, c) => x < a ? 'lo' : x <= b ? 'ok' : x <= c ? 'hi' : 'bad';
   if (v[k] == null) return '';
   switch (k) {
-    case 'kg': case 'bmi': return v.bmi == null ? '' : v.bmi < 18.5 ? 'lo' : v.bmi < 25 ? 'ok' : v.bmi < 30 ? 'hi' : 'bad';
+    case 'kg': case 'bmi': return v.bmi == null ? '' : v.bmi < 18.5 ? 'lo' : v.bmi <= 24.9 ? 'ok' : v.bmi <= 29.9 ? 'hi' : 'bad';
     case 'fat': case 'fatKg': return sex === 'male' ? by(v.fat, 10, 20, 25) : by(v.fat, 20, 28, 35);
-    case 'mus': case 'musKg': return v.mus < (sex === 'male' ? 68 : 58) ? 'lo' : 'ok';
+    case 'mus': case 'musKg': { const r = b.h && MUS_STD[sex]?.find(x => b.h < x[0]); return !r ? '' : v.musKg < r[1] ? 'lo' : 'ok' }
+    case 'bmr': {
+      if (!b.h || !b.age || !sex) return '';
+      const f = sex === 'male' ? (b.age < 30 ? 24 : b.age < 50 ? 22.3 : 21.5) : (b.age < 30 ? 22.1 : b.age < 50 ? 21.7 : 20.7);
+      return v.bmr < stdWeight(b.h, sex) * f ? 'lo' : 'ok';
+    }
     case 'water': case 'waterKg': return sex === 'male' ? (v.water < 50 ? 'lo' : v.water <= 65 ? 'ok' : 'hi') : (v.water < 45 ? 'lo' : v.water <= 60 ? 'ok' : 'hi');
     case 'prot': return v.prot < 16 ? 'lo' : v.prot <= 20 ? 'ok' : 'hi';
-    case 'obese': return by(v.obese, -10, 10, 20);
+    case 'obese': return by(v.obese, -20, 10, 20);
   }
   return '';
 }
@@ -3986,42 +3996,42 @@ const bsTag = c => c ? `<em class="bs ${c}">${BS[c]}</em>` : '';
 // BMI bands as kilograms for this height, with the marker where the weight sits
 function bmiBar(kg, h) {
   const m2 = (h / 100) ** 2, bmi = kg / m2, at = (lo, hi, i) => (i + clamp((bmi - lo) / (hi - lo), 0, 1)) * 25;
-  const pos = bmi < 18.5 ? at(15, 18.5, 0) : bmi < 25 ? at(18.5, 25, 1) : bmi < 30 ? at(25, 30, 2) : at(30, 35, 3);
-  return `<div class="bmib"><div class="bmib-k">${[18.5, 25, 30].map((c, i) => `<span style="left:${(i + 1) * 25}%">${fmtN(c * m2, 1)}</span>`).join('')}</div>
+  const pos = bmi < 18.5 ? at(15, 18.5, 0) : bmi <= 24.9 ? at(18.5, 24.9, 1) : bmi <= 29.9 ? at(24.9, 29.9, 2) : at(29.9, 35, 3);
+  return `<div class="bmib"><div class="bmib-k">${[18.5, 24.9, 29.9].map((c, i) => `<span style="left:${(i + 1) * 25}%">${fmtN(c * m2, 2)}</span>`).join('')}</div>
     <div class="bmib-t"><i class="lo"></i><i class="ok"></i><i class="hi"></i><i class="bad"></i><b style="left:${pos}%"></b></div>
     <div class="bmib-l"><span>Kurus</span><span>Sehat</span><span>Berlebih</span><span>Obesitas</span></div></div>`;
 }
 function bodyMini(w) {
-  const b = bodyOf(w), cell = (k, l, u) => b.v[k] == null ? '' : `<div><small>${l}</small><b>${fmtN(b.v[k], 1)}${u ? `<span>${u}</span>` : ''}</b>${bsTag(bodyStatus(k, b.v, b.sex))}</div>`;
+  const b = bodyOf(w), cell = (k, l, u) => b.v[k] == null ? '' : `<div><small>${l}</small><b>${fmtN(b.v[k], 1)}${u ? `<span>${u}</span>` : ''}</b>${bsTag(bodyStatus(k, b.v, b.sex, b))}</div>`;
   const cells = cell('bmi', 'BMI') + cell('fat', 'Lemak', '%') + cell('mus', 'Otot', '%');
   return cells ? `<div class="wc-mini">${cells}</div>` : '';
 }
 const whenOf = d => new Date(d).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 function openBody(id) {
   const ws = S.weights; if (!ws.length) return openWeightLog();
-  const i = Math.max(0, ws.findIndex(w => w.id === id)), w = ws[i], prev = ws[i + 1], st = S.settings, b = bodyOf(w), c = bodyStatus('bmi', b.v, b.sex);
+  const i = Math.max(0, ws.findIndex(w => w.id === id)), w = ws[i], prev = ws[i + 1], st = S.settings, b = bodyOf(w), c = bodyStatus('bmi', b.v, b.sex, b);
   ui.bodyId = w.id;
   // the best of the 30 days up to this weigh-in: lowest when the goal is to lose, highest when it is to gain
   const t = new Date(w.date).getTime(), win = ws.filter(x => { const u = new Date(x.date).getTime(); return u <= t && u > t - 30 * 864e5 }).map(x => x.kg);
   const gain = st.goalW && st.startW && st.goalW > st.startW, best = win.length > 1 ? (gain ? Math.max(...win) : Math.min(...win)) : null;
   const diff = prev ? w.kg - prev.kg : null;
-  const rows = BODY_M.filter(([k]) => b.v[k] != null).map(([k, l, u, d]) => `<div class="bd-row"><span>${l}</span><span class="bd-v"><b>${fmtN(b.v[k], d)}${u ? `<small>${u}</small>` : ''}</b>${bsTag(bodyStatus(k, b.v, b.sex))}</span></div>`).join('')
+  const rows = BODY_M.filter(([k]) => b.v[k] != null).map(([k, l, u, d]) => `<div class="bd-row"><span>${l}</span><span class="bd-v"><b>${fmtN(b.v[k], d)}${u ? `<small>${u}</small>` : ''}</b>${bsTag(bodyStatus(k, b.v, b.sex, b))}</span></div>`).join('')
     + (b.age ? `<div class="bd-row"><span>Usia</span><span class="bd-v"><b>${b.age}<small>thn</small></b></span></div>` : '')
     + (b.h ? `<div class="bd-row"><span>Tinggi</span><span class="bd-v"><b>${fmtN(b.h, 1)}<small>cm</small></b></span></div>` : '');
   const hist = ws.slice(0, 90).map((x, j) => { const o = ws[j + 1], d = o ? x.kg - o.kg : 0, bx = bodyOf(x);
     return `<button class="bd-h${x.id === w.id ? ' on' : ''}" data-a="bdOpen" data-id="${x.id}"><span><b>${new Date(x.date).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</b>${bx.v.bmi != null ? `<small>BMI ${fmtN(bx.v.bmi, 1)}${bx.v.fat != null ? ` · lemak ${fmtN(bx.v.fat, 1)}%` : ''}</small>` : ''}</span>
-      <span class="bd-hk"><b>${fmtN(x.kg, 1)} kg</b>${o && Math.abs(d) >= .05 ? `<small class="${d > 0 ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${fmtN(d, 1)}</small>` : ''}</span>${I('chev')}</button>` }).join('');
+      <span class="bd-hk"><b>${fmtN(x.kg, 2)} kg</b>${o && Math.abs(d) >= .005 ? `<small class="${d > 0 ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${fmtN(d, 2)}</small>` : ''}</span>${I('chev')}</button>` }).join('');
   sheet(`<h2 class="sh">Detail tubuh</h2>
     <section class="bd-hero">
       <div class="bd-top">${c ? `<em class="bs big ${c}">${{ lo: 'Kurus', ok: 'Sehat', hi: 'Berlebih', bad: 'Obesitas' }[c]}</em>` : '<span></span>'}
         <div class="bd-nav"><button class="icon-btn sm" data-a="bdOpen" data-id="${ws[i + 1]?.id || ''}" aria-label="Catatan sebelumnya"${ws[i + 1] ? '' : ' disabled'}>${I('back')}</button><button class="icon-btn sm" data-a="bdOpen" data-id="${ws[i - 1]?.id || ''}" aria-label="Catatan berikutnya"${i > 0 ? '' : ' disabled'}>${I('chev')}</button></div></div>
-      <div class="bd-kg">${fmtN(w.kg, 1)}<span>kg</span></div>
+      <div class="bd-kg">${fmtN(w.kg, 2)}<span>kg</span></div>
       <small class="bd-when">${whenOf(w.date)}</small>
       ${b.h ? bmiBar(w.kg, b.h) : ''}
     </section>
     <div class="sgroup bd-cmp">
-      <div class="bd-row"><span>${I('chart')}Dibanding sebelumnya${prev ? ` <small>(${new Date(prev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })})</small>` : ''}</span><b class="${diff > 0 ? 'up' : diff < 0 ? 'dn' : ''}">${diff == null ? '–' : `${diff > 0 ? '+' : ''}${fmtN(diff, 1)} kg`}</b></div>
-      <div class="bd-row"><span>${I('trophy')}Terbaik 30 hari</span><b>${best == null ? '–' : `${fmtN(best, 1)} kg`}</b></div>
+      <div class="bd-row"><span>${I('chart')}Dibanding sebelumnya${prev ? ` <small>(${new Date(prev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })})</small>` : ''}</span><b class="${diff > 0 ? 'up' : diff < 0 ? 'dn' : ''}">${diff == null ? '–' : `${diff > 0 ? '+' : ''}${fmtN(diff, 2)} kg`}</b></div>
+      <div class="bd-row"><span>${I('trophy')}Terbaik 30 hari</span><b>${best == null ? '–' : `${fmtN(best, 2)} kg`}</b></div>
     </div>
     ${b.h && b.sex && b.age ? '' : profileCta()}
     <div class="bd-mh"><h3 class="sh2">Komposisi tubuh</h3><button class="aibtn ask" data-a="bdAi">${I('sparkles')} Analisis ${aiName()}</button></div>
@@ -4049,9 +4059,9 @@ async function askBodyAi() {
   const b = bodyOf(w), st = S.settings, past = S.weights.slice(S.weights.indexOf(w) + 1, S.weights.indexOf(w) + 9);
   const prompt = `Kamu pelatih kebugaran dan ahli gizi. Jelaskan kondisi tubuh ini dengan bahasa Indonesia yang sederhana.
 Orang: ${b.sex === 'male' ? 'pria' : b.sex === 'female' ? 'wanita' : 'jenis kelamin tidak diketahui'}${b.age ? `, ${b.age} tahun` : ''}${b.h ? `, tinggi ${b.h} cm` : ''}. Target berat: ${st.goalW ? `${st.goalW} kg` : 'tidak diisi'}. Rutin latihan beban di gym.
-Berat ${fmtN(w.kg, 1)} kg pada ${whenOf(w.date)}${b.v.bmi != null ? `, BMI ${fmtN(b.v.bmi, 1)}` : ''}.
+Berat ${fmtN(w.kg, 2)} kg pada ${whenOf(w.date)}${b.v.bmi != null ? `, BMI ${fmtN(b.v.bmi, 1)}` : ''}.
 ${b.v.fat != null ? `Perkiraan rumus (bukan hasil ukur): lemak ${fmtN(b.v.fat, 1)}%, otot ${fmtN(b.v.musKg, 1)} kg, air ${fmtN(b.v.water, 1)}%, BMR ${fmtN(b.v.bmr, 0)} kkal.` : ''}
-${past.length ? `Berat sebelumnya: ${past.map(x => `${new Date(x.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} ${fmtN(x.kg, 1)} kg`).join(', ')}.` : ''}
+${past.length ? `Berat sebelumnya: ${past.map(x => `${new Date(x.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} ${fmtN(x.kg, 2)} kg`).join(', ')}.` : ''}
 Sebut yang sudah baik, yang perlu diperbaiki, tren beratnya, dan saran latihan serta makan (termasuk protein per hari). Perkiraan rumus jangan dibahas seolah hasil ukur.
 Balas HANYA JSON: {"summary": "1-2 kalimat", "points": ["3-5 poin singkat"]}`;
   ui.bdAi[id] = { busy: true }; show();
@@ -5355,12 +5365,12 @@ const A = {
   bdAi: askBodyAi,
   bdDel: async () => {
     const w = S.weights.find(x => x.id === ui.bodyId); if (!w) return;
-    if (!(await ask({ title: 'Hapus catatan ini?', msg: `Berat ${fmtN(w.kg, 1)} kg tanggal ${new Date(w.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} akan dihapus.`, ok: 'Hapus' }))) return;
+    if (!(await ask({ title: 'Hapus catatan ini?', msg: `Berat ${fmtN(w.kg, 2)} kg tanggal ${new Date(w.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} akan dihapus.`, ok: 'Hapus' }))) return;
     S.weights = S.weights.filter(x => x !== w); save(); render();
     if (S.weights.length) openBody(S.weights[0].id); else closeSheet();
     toast('Catatan dihapus');
   },
-  wD: el => { const i = $('#wIn'), v = parseFloat(i.value.replace(',', '.')) || ui.wkg; i.value = fmt1(clamp(v + +el.dataset.d / 10, 30, 300)) },
+  wD: el => { const i = $('#wIn'), v = parseFloat(i.value.replace(',', '.')) || ui.wkg; i.value = fmtN(clamp(Math.round((v + +el.dataset.d / 10) * 100) / 100, 30, 300), 2) },
   wSave: () => {
     const v = parseFloat($('#wIn').value.replace(',', '.'));
     if (!(v >= 30 && v <= 300)) { $('#wErr').textContent = 'Berat antara 30–300 kg.'; return }

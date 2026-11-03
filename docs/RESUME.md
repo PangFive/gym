@@ -174,8 +174,10 @@ tersinkron di semua perangkat.
   sebelumnya, terbaik 30 hari, daftar komposisi dengan status (Rendah/Sehat/Tinggi), riwayat semua catatan berat, geser antar
   catatan, hapus (dengan konfirmasi), dan **Analisis AI** opsional. Hanya berat yang dicatat; sisanya rumus tanpa AI:
   BMI, lemak (Deurenberg), air (Watson, paling banyak 73 % berat tanpa lemak), berat tanpa lemak, tulang ≈ 5,2 % FFM, otot = FFM − tulang, protein = otot − air,
-  BMR (Mifflin–St Jeor), derajat obesitas (berat standar pria (cm − 80) × 0,7, wanita (cm − 70) × 0,6). Otot rangka,
-  lemak visceral, dan usia tubuh tidak ditampilkan karena butuh timbangan pintar.
+  BMR (Ganpule 2007, sama dengan timbangan; target kalori tetap Mifflin–St Jeor), derajat obesitas (berat standar pria (cm − 80) × 0,7, wanita (cm − 70) × 0,6). Otot rangka,
+  lemak visceral, dan usia tubuh tidak ditampilkan karena butuh timbangan pintar. Status mengikuti aplikasi timbangan: BMI 18,5 / 24,9 / 29,9;
+  otot dibanding standar berat otot menurut jenis kelamin dan tinggi; derajat obesitas sehat −20 sampai 10 %; BMR dibanding
+  BMR berat ideal (kkal/kg/hari menurut umur). Berat disimpan sampai 0,01 kg.
 
 ### Statistik
 - Total volume di samping karakter, pilihan rentang, grafik batang (tertinggi berwarna coral), tile target. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
