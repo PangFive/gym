@@ -1,6 +1,6 @@
 {
  "note": "Hasil analisis 141 video playlist Treinos. same = klip kembar. Teks dari gambar dan narasi, belum diperiksa pelatih.",
- "count": 146,
+ "count": 155,
  "items": [
   {
    "id": 1,
@@ -171,7 +171,8 @@
    "youtube": "0hjapbEpu80",
    "filename": "Treinos  (278).mp4",
    "same": [
-    426
+    426,
+    535
    ],
    "ok": [
     "Pegangan sedang, batang turun ke dada"
@@ -334,7 +335,9 @@
    "equipment": "dumbbell",
    "youtube": "GvgDZrF5Caw",
    "filename": "Treinos  (286).mp4",
-   "same": [],
+   "same": [
+    534
+   ],
    "ok": [
     "Arah ujung kaki menggeser fokus betis"
    ],
@@ -432,7 +435,8 @@
    "filename": "Treinos  (290).mp4",
    "same": [
     326,
-    472
+    472,
+    517
    ],
    "ok": [
     "Siku sedikit menekuk, turun terkontrol"
@@ -459,7 +463,8 @@
    "filename": "Treinos  (291).mp4",
    "same": [
     368,
-    474
+    474,
+    525
    ],
    "ok": [
     "Arah tarikan menggeser fokus: lats, trapezius, bahu belakang"
@@ -505,7 +510,8 @@
    "youtube": "DRgg7Zp7GGk",
    "filename": "Treinos  (293).mp4",
    "same": [
-    451
+    451,
+    537
    ],
    "ok": [
     "Pergelangan lurus di atas siku, sandaran sedikit miring"
@@ -627,7 +633,9 @@
    "equipment": "barbell",
    "youtube": "BHFwM2-Wntg",
    "filename": "Treinos  (298).mp4",
-   "same": [],
+   "same": [
+    508
+   ],
    "ok": [
     "Jarak kaki menggeser fokus: paha depan, paha belakang, glutes"
    ],
@@ -778,7 +786,8 @@
    "filename": "Treinos  (306).mp4",
    "same": [
     376,
-    468
+    468,
+    547
    ],
    "ok": [
     "Lengan atas tegak dekat kepala"
@@ -899,7 +908,8 @@
    "filename": "Treinos  (311).mp4",
    "same": [
     398,
-    457
+    457,
+    522
    ],
    "ok": [
     "Tarik menyilang ke arah bawah"
@@ -948,7 +958,9 @@
    "equipment": "barbell",
    "youtube": "Pdc2IQlUXLM",
    "filename": "Treinos  (313).mp4",
-   "same": [],
+   "same": [
+    538
+   ],
    "ok": [
     "Kaki dekat batang, punggung lurus"
    ],
@@ -976,7 +988,8 @@
    "filename": "Treinos  (314).mp4",
    "same": [
     360,
-    393
+    393,
+    540
    ],
    "ok": [
     "Siku diam, bahu turun"
@@ -1029,7 +1042,8 @@
    "filename": "Treinos  (316).mp4",
    "same": [
     428,
-    484
+    484,
+    520
    ],
    "ok": [
     "Telapak penuh di papan, panggul tetap menempel"
@@ -1054,7 +1068,8 @@
    "youtube": "-VU89OvyIkU",
    "filename": "Treinos  (318).mp4",
    "same": [
-    411
+    411,
+    513
    ],
    "ok": [
     "Lima langkah persiapan bench press: pegangan, kaki, bahu, batang, jalur"
@@ -1080,7 +1095,9 @@
    "equipment": "barbell",
    "youtube": "lIVJaV_5VRE",
    "filename": "Treinos  (319).mp4",
-   "same": [],
+   "same": [
+    523
+   ],
    "ok": [
     "Lengan atas diam, turun ke dahi"
    ],
@@ -1409,7 +1426,8 @@
    "youtube": "2Vyal99HbVg",
    "filename": "Treinos  (337).mp4",
    "same": [
-    413
+    413,
+    528
    ],
    "ok": [
     "Tali dibuka di bawah, siku diam"
@@ -1533,7 +1551,8 @@
    "filename": "Treinos  (344).mp4",
    "same": [
     350,
-    500
+    500,
+    511
    ],
    "ok": [
     "Batang sejajar dada, bahu ke belakang"
@@ -1607,7 +1626,9 @@
    "equipment": "dumbbell",
    "youtube": "Zfl1nHhPltA",
    "filename": "Treinos  (348).mp4",
-   "same": [],
+   "same": [
+    533
+   ],
    "ok": [
     "Hanya lengan yang bekerja"
    ],
@@ -1702,7 +1723,9 @@
    "equipment": "dumbbell",
    "youtube": "Otg6beEckMc",
    "filename": "Treinos  (356).mp4",
-   "same": [],
+   "same": [
+    532
+   ],
    "ok": [
     "Turun penuh sampai lengan lurus"
    ],
@@ -1792,7 +1815,9 @@
    "youtube": "Q42e6Fit1mA",
    "filename": "Treinos  (361).mp4",
    "same": [
-    375
+    375,
+    514,
+    542
    ],
    "ok": [
     "Tarik lebih rendah agar lats bekerja"
@@ -1952,7 +1977,9 @@
    "equipment": "dumbbell",
    "youtube": "5Ix2taEgzx8",
    "filename": "Treinos  (370).mp4",
-   "same": [],
+   "same": [
+    529
+   ],
    "ok": [
     "Dagu turun, panggul naik sejajar"
    ],
@@ -2072,7 +2099,9 @@
    "equipment": "body",
    "youtube": "0C-3uZcgauY",
    "filename": "Treinos  (379).mp4",
-   "same": [],
+   "same": [
+    506
+   ],
    "ok": [
     "Punggung rata"
    ],
@@ -2096,7 +2125,9 @@
    "equipment": "cable",
    "youtube": "atXpk1eQ3Vo",
    "filename": "Treinos  (380).mp4",
-   "same": [],
+   "same": [
+    531
+   ],
    "ok": [
     "Tarik dengan punggung, lengan hampir lurus"
    ],
@@ -2140,7 +2171,9 @@
    "equipment": "cable",
    "youtube": "DNWgNMi1dEQ",
    "filename": "Treinos  (382).mp4",
-   "same": [],
+   "same": [
+    509
+   ],
    "ok": [
     "Telapak menapak, dada terbuka"
    ],
@@ -2187,7 +2220,9 @@
    "equipment": "cable",
    "youtube": "jUuALJKMggI",
    "filename": "Treinos  (385).mp4",
-   "same": [],
+   "same": [
+    507
+   ],
    "ok": [
     "Sudut kabel menggeser fokus dada"
    ],
@@ -2342,7 +2377,8 @@
    "youtube": "VwprzanAImU",
    "filename": "Treinos  (392).mp4",
    "same": [
-    433
+    433,
+    536
    ],
    "ok": [
     "Paha terkunci, ibu jari searah, dada naik"
@@ -2365,7 +2401,9 @@
    "equipment": "machine",
    "youtube": "yiBfnyLEEJ4",
    "filename": "Treinos  (394).mp4",
-   "same": [],
+   "same": [
+    541
+   ],
    "ok": [
     "Posisi kaki menggeser fokus"
    ],
@@ -2481,7 +2519,8 @@
    "youtube": "-8hVg2EW8Mc",
    "filename": "Treinos  (401).mp4",
    "same": [
-    476
+    476,
+    510
    ],
    "ok": [
     "Ganti pegangan, ganti otot yang kerja"
@@ -2503,7 +2542,9 @@
    "equipment": "dumbbell",
    "youtube": "gu5e8QBwPLg",
    "filename": "Treinos  (403).mp4",
-   "same": [],
+   "same": [
+    530
+   ],
    "ok": [
     "Satu pasang dumbel untuk trisep, bahu, dada, dan lats"
    ],
@@ -2549,7 +2590,9 @@
    "equipment": "dumbbell",
    "youtube": "hmlJrPHE5rM",
    "filename": "Treinos  (408).mp4",
-   "same": [],
+   "same": [
+    504
+   ],
    "ok": [
     "Tumit kaki depan tetap menapak",
     "Badan tegak, lutut belakang turun lurus ke lantai"
@@ -2648,7 +2691,9 @@
    "equipment": "cable",
    "youtube": "vBbaFrjUpO8",
    "filename": "Treinos  (423).mp4",
-   "same": [],
+   "same": [
+    527
+   ],
    "ok": [
     "Variasi kabel untuk bahu dan dada"
    ],
@@ -2929,7 +2974,8 @@
    "youtube": "IWBlQReknP4",
    "filename": "Treinos  (442).mp4",
    "same": [
-    449
+    449,
+    518
    ],
    "ok": [
     "Angkat dumbel sampai sejajar bahu"
@@ -3075,7 +3121,8 @@
    "filename": "Treinos  (459).mp4",
    "same": [
     460,
-    496
+    496,
+    543
    ],
    "ok": [
     "Lengan atas diam, turunkan batang ke arah dahi"
@@ -3098,7 +3145,9 @@
    "equipment": "smith",
    "youtube": "yAES66RABhs",
    "filename": "Treinos  (462).mp4",
-   "same": [],
+   "same": [
+    521
+   ],
    "ok": [
     "Lebar dan arah kaki menggeser fokus: paha dalam, glutes, dan paha belakang; paha luar; paha depan"
    ],
@@ -3142,7 +3191,9 @@
    "equipment": "barbell",
    "youtube": "5R47nmnwPGI",
    "filename": "Treinos  (464).mp4",
-   "same": [],
+   "same": [
+    519
+   ],
    "ok": [
     "Lebar pegangan menggeser porsi kerja trisep, dada, dan bahu"
    ],
@@ -3213,7 +3264,9 @@
    "equipment": "machine",
    "youtube": "uznLV2k134s",
    "filename": "Treinos  (492).mp4",
-   "same": [],
+   "same": [
+    526
+   ],
    "ok": [
     "Lengan membuka sejajar bahu, dada menempel sandaran"
    ],
@@ -3320,6 +3373,221 @@
    "secondary": [
     "deltoids",
     "chest"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 505,
+   "title": "Lying Leg Curl Toe Direction",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "vVcwSrTbCcY",
+   "filename": "Treinos  (505).mp4",
+   "same": [
+    546
+   ],
+   "ok": [
+    "Arah ujung kaki menggeser fokus paha belakang: bagian dalam, luar, atau seluruhnya"
+   ],
+   "no": [],
+   "primary": [
+    "hamstring"
+   ],
+   "secondary": [
+    "calves"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 512,
+   "title": "Chest Routine by Area",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "jpRH_p72g70",
+   "filename": "Treinos  (512).mp4",
+   "same": [],
+   "ok": [
+    "Fly dan press dumbel untuk seluruh dada",
+    "Press kabel duduk untuk dada atas dan bahu depan",
+    "Bench press untuk seluruh dada, dip untuk dada bawah"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids",
+    "triceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 515,
+   "title": "Hip Abduction Lean Angle",
+   "type": "variasi",
+   "category": "glutes",
+   "equipment": "machine",
+   "youtube": "wE3NWLuTYRc",
+   "filename": "Treinos  (515).mp4",
+   "same": [],
+   "ok": [
+    "Bersandar ke belakang: gluteus medius 55%, minimus 35%",
+    "Duduk tegak: medius 45%, maximus 30%",
+    "Condong ke depan: maximus 55%, medius 35%"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 516,
+   "title": "Push-Up Mistakes",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "rXSdNJA6SAE",
+   "filename": "Treinos  (516).mp4",
+   "same": [],
+   "ok": [
+    "Tangan di bawah bahu, lengan lurus",
+    "Badan lurus dari bahu sampai tumit"
+   ],
+   "no": [
+    "Posisi telapak tangan salah",
+    "Bahu terangkat tegang ke telinga",
+    "Pinggul turun hingga badan melengkung"
+   ],
+   "primary": [
+    "chest",
+    "triceps"
+   ],
+   "secondary": [
+    "deltoids",
+    "abs"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 524,
+   "title": "Floor Knee Tuck over Chair",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "_3W3NO7BNj0",
+   "filename": "Treinos  (524).mp4",
+   "same": [],
+   "ok": [
+    "Duduk bertumpu tangan, angkat dan tekuk lutut melewati kursi; 3 set x 20 reps"
+   ],
+   "no": [],
+   "primary": [
+    "abs"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 539,
+   "title": "Plate-Elevated Leg Moves",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "dumbbell",
+   "youtube": "I8BvJKmlWsk",
+   "filename": "Treinos  (539).mp4",
+   "same": [],
+   "ok": [
+    "Tumit di atas plat saat squat untuk paha depan",
+    "Squat dalam untuk glutes",
+    "Ujung kaki di atas plat saat RDL untuk paha belakang"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal",
+    "hamstring"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 544,
+   "title": "Squat Quads vs Glutes",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "Lwv3Y7hZWow",
+   "filename": "Treinos  (544).mp4",
+   "same": [],
+   "ok": [
+    "Badan tegak, lutut maju untuk paha depan",
+    "Pinggul mundur, badan condong untuk glutes"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 545,
+   "title": "Chair Core Routine",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "CN9LzdoZxFM",
+   "filename": "Treinos  (545).mp4",
+   "same": [],
+   "ok": [
+    "Russian twist duduk 3x20, side bend duduk 3x16, marching duduk 3x30 detik",
+    "Seated jack 3x20, jump rope knee tuck duduk 3x30 detik"
+   ],
+   "no": [],
+   "primary": [
+    "abs",
+    "obliques"
+   ],
+   "secondary": [
+    "quadriceps"
+   ],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 548,
+   "title": "Cable Back by Area",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "HTV0K0rf6LM",
+   "filename": "Treinos  (548).mp4",
+   "same": [],
+   "ok": [
+    "Tarik ke wajah untuk bahu belakang",
+    "Tarik ke dada atas dengan siku lebar untuk punggung atas",
+    "Tarik lengan lurus ke bawah untuk lats"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back",
+    "deltoids"
+   ],
+   "secondary": [
+    "trapezius"
    ],
    "narration": "",
    "confidence": "sedang"
