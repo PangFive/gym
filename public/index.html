@@ -1339,6 +1339,110 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .bd-hk{display:flex;flex-direction:column;align-items:flex-end}
 .bd-hk small.up{color:#b45309}.bd-hk small.dn{color:#0b8a5e}
 .bd-h>svg.i{flex:none;width:16px;height:16px;color:var(--faint)}
+/* ---- chat with the AI: the floating button (Beranda only) and the chat over the app ---- */
+.aifab{position:fixed;z-index:22;right:max(16px,calc(50% - 214px));bottom:calc(96px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;height:52px;padding:0 20px 0 16px;border:0;border-radius:999px;background:linear-gradient(140deg,#8b5cf6,#2f7cf6 70%);color:#fff;font-weight:800;font-size:15px;box-shadow:0 16px 28px -12px rgba(76,60,220,.75),inset 0 1px 0 rgba(255,255,255,.35);animation:fabIn .4s cubic-bezier(.2,.9,.3,1.2);transition:transform .14s ease,bottom .25s ease}
+.aifab:active{transform:scale(.95)}
+.aifab svg.i{width:22px;height:22px;stroke-width:2}
+#rest:not([hidden])~.aifab{bottom:calc(210px + env(safe-area-inset-bottom))}
+body.fabbed #app{padding-bottom:180px}
+@keyframes fabIn{from{transform:translateY(16px) scale(.9);opacity:0}}
+#chat{position:fixed;inset:0;z-index:45;background:#e9effb;animation:chIn .26s cubic-bezier(.2,.9,.3,1)}
+#chat::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,#d6e6fc 0%,#e9eefb 45%,#fbeadf 100%);pointer-events:none}
+@keyframes chIn{from{transform:translateY(28px);opacity:0}}
+.ch-in{position:relative;height:100%;max-width:460px;margin:0 auto;display:flex;flex-direction:column}
+.ch-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px}
+.ch-tt{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.ch-av{flex:none;width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,#8b5cf6,#2f7cf6 70%)}
+.ch-av svg.i{width:21px;height:21px}
+.ch-tt span{min-width:0;display:flex;flex-direction:column}
+.ch-tt b{font-size:17px;font-weight:800}
+.ch-tt small{font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:6px 16px 14px;display:flex;flex-direction:column;gap:14px}
+.cm{display:flex;flex-direction:column;gap:6px;max-width:86%}
+.cm.u{align-self:flex-end;align-items:flex-end}
+.cm.a{align-self:stretch;max-width:100%}
+.cm .cb{font-size:15px;line-height:1.55;overflow-wrap:anywhere}
+.cm.u .cb{padding:10px 15px;border-radius:22px 22px 6px 22px;background:var(--grad);color:#fff;white-space:pre-wrap;box-shadow:0 10px 20px -12px rgba(37,99,235,.7)}
+.cm.a .cb{padding:12px 15px;border-radius:22px 22px 22px 6px;background:rgba(255,255,255,.88);border:1px solid #fff;box-shadow:var(--shadow)}
+.cimgs{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.cimgs img{width:132px;height:132px;object-fit:cover;border-radius:18px;border:2px solid #fff;box-shadow:0 8px 18px -10px rgba(24,32,47,.5)}
+.cimgs.n2 img,.cimgs.n3 img{width:96px;height:96px}
+.cgone{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-weight:600}
+.cgone svg.i{width:16px;height:16px}
+.cb p{margin:0 0 8px}.cb>:last-child{margin-bottom:0}
+.cb ul,.cb ol{margin:0 0 8px;padding-left:20px}.cb li{margin:2px 0}
+.cb .md-h{margin:12px 0 4px;font-size:15.5px;font-weight:800}.cb .md-h:first-child{margin-top:0}
+.cb hr{border:0;border-top:1px solid rgba(24,32,47,.1);margin:10px 0}
+.cb blockquote{margin:0 0 8px;padding:2px 0 2px 10px;border-left:3px solid rgba(47,124,246,.35);color:var(--muted)}
+.cb code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:rgba(24,32,47,.07);padding:1px 5px;border-radius:6px}
+.cb pre{margin:0 0 8px;padding:10px 12px;border-radius:12px;background:#18202f;color:#e7ecf5;overflow-x:auto;font-size:12.5px;line-height:1.45}
+.cb pre code{background:none;padding:0;color:inherit}
+.cb a{color:var(--acc-2);font-weight:600}
+.mdt{margin:0 0 8px;overflow-x:auto;border-radius:12px;border:1px solid rgba(24,32,47,.08)}
+.mdt table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.4}
+.mdt th,.mdt td{padding:7px 10px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(24,32,47,.07)}
+.mdt th{background:rgba(47,124,246,.07);font-weight:800;white-space:nowrap}
+.mdt tr:last-child td{border-bottom:0}
+.mdx{display:inline-flex;align-items:center;gap:4px;max-width:100%;margin:1px 0;padding:2px 10px 2px 7px;border:1px solid rgba(47,124,246,.25);border-radius:999px;background:var(--acc-soft);color:var(--acc-2);font:inherit;font-size:14px;font-weight:700;line-height:1.45;vertical-align:baseline;text-align:left}
+.mdx svg.i{width:13px;height:13px;stroke-width:2.4;flex:none}
+.cdots{display:inline-flex;gap:5px;padding:6px 2px}
+.cdots i{width:8px;height:8px;border-radius:50%;background:#8b9bb8;animation:cdot 1.1s ease-in-out infinite}
+.cdots i:nth-child(2){animation-delay:.15s}.cdots i:nth-child(3){animation-delay:.3s}
+@keyframes cdot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+.cerr{margin:6px 0 0;color:#c2332a;font-weight:600}
+.cstop{margin:6px 0 0;font-size:12.5px;color:var(--faint);font-weight:600}
+.ctools{display:flex;gap:4px;padding-left:4px}
+.ctools button{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:4px 10px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:700}
+.ctools button:active{background:rgba(24,32,47,.06)}
+.ctools svg.i{width:15px;height:15px}
+.ccard{margin:10px 0;padding:12px 13px;border-radius:18px;background:linear-gradient(160deg,#f3f7ff,#fff);border:1px solid rgba(47,124,246,.18)}
+.ccard.cmeal{background:linear-gradient(160deg,#fff4ee,#fff);border-color:rgba(242,120,92,.25)}
+.ccard.wait{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;font-weight:600}
+.ccard.wait .spin{width:18px;height:18px;border-width:2px}
+.cc-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cc-h svg.i{width:19px;height:19px;color:var(--acc)}.cmeal .cc-h svg.i{color:var(--coral)}
+.cc-h b{flex:1;min-width:0;font-size:15px;font-weight:800}
+.cc-k{flex:none;font-weight:800;color:#c2552f;font-size:14px}
+.cc-r{margin:4px 0 8px}.cc-r>b{display:block;font-size:14px}
+.cc-r small,.cc-w{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
+.cc-w{display:flex;gap:6px;align-items:flex-start;margin:0 0 8px}.cc-w svg.i{width:15px;height:15px;margin-top:1px}
+.ccard ol,.ccard ul{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:2px}
+.ccard li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;line-height:1.35;padding:3px 0;border-bottom:1px dashed rgba(24,32,47,.08)}
+.ccard li:last-child{border-bottom:0}
+.ccard li span{flex:none;color:var(--muted);font-weight:600;font-size:12.5px;text-align:right}
+.cc-x{min-width:0;padding:0;border:0;background:none;color:var(--acc-2);font:inherit;font-weight:700;text-align:left}
+.cc-mac{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--muted);font-weight:600}
+.cc-mac b{color:var(--ink)}
+.cc-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cc-b .btn{flex:1 1 auto}
+.cnote{font-size:12.5px;color:var(--faint)}
+.ch-hi{margin:auto 0;padding:10px 4px 4px;text-align:center}
+.ch-hi .ch-av{width:64px;height:64px;border-radius:22px;margin:0 auto 14px;box-shadow:0 18px 30px -14px rgba(76,60,220,.7)}
+.ch-hi .ch-av svg.i{width:32px;height:32px}
+.ch-hi h2{margin:0 0 6px;font-size:22px;letter-spacing:-.01em}
+.ch-hi p{margin:0 auto 18px;max-width:320px;color:var(--muted);font-size:14.5px;line-height:1.5}
+.ch-sug{display:grid;gap:8px;text-align:left}
+.ch-sug button{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 14px;border:1px solid #fff;border-radius:18px;background:rgba(255,255,255,.72);color:var(--ink);font:inherit;font-size:14.5px;font-weight:600;line-height:1.35;text-align:left;box-shadow:0 8px 20px -16px rgba(24,32,47,.5)}
+.ch-sug button:active{transform:scale(.98)}
+.ch-sug .qi{width:34px;height:34px;border-radius:12px}
+.ch-nokey{padding:16px;border-radius:20px;background:#fff;border:1px solid rgba(47,124,246,.2);text-align:center}
+.ch-nokey p{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.5}
+.ch-pics{display:flex;gap:8px;padding:0 18px 8px;overflow-x:auto}
+.ch-pic{position:relative;flex:none}
+.ch-pic img{width:64px;height:64px;object-fit:cover;border-radius:14px;border:2px solid #fff;box-shadow:0 6px 14px -8px rgba(24,32,47,.5)}
+.ch-pic button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;padding:0;border-radius:50%;border:2px solid #fff;background:#18202f;color:#fff;display:grid;place-items:center}
+.ch-pic button svg.i{width:12px;height:12px;stroke-width:2.6}
+.ch-bar{display:flex;align-items:flex-end;gap:6px;margin:0 12px calc(10px + env(safe-area-inset-bottom));padding:6px;border-radius:28px;background:rgba(255,255,255,.94);border:1px solid #fff;box-shadow:0 14px 32px -16px rgba(24,32,47,.45);transition:box-shadow .2s}
+.ch-bar:focus-within{box-shadow:0 0 0 3px var(--acc-soft),0 14px 32px -16px rgba(24,32,47,.45)}
+.ch-bar textarea{flex:1;min-width:0;max-height:140px;padding:10px 4px;border:0;background:transparent;resize:none;font:inherit;font-size:16px;line-height:1.4;color:var(--ink);outline:none}
+.ch-bar textarea::placeholder{color:#8a93a5}
+.ch-ib{flex:none;width:42px;height:42px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--muted)}
+.ch-ib:active{background:rgba(24,32,47,.06)}
+.ch-ib.go{background:var(--grad);color:#fff;box-shadow:0 8px 16px -8px rgba(37,99,235,.8)}
+.ch-ib.go svg.i{stroke-width:2.4}
+.ch-ib.go[disabled]{opacity:.35;box-shadow:none}
+.ch-ib.stop{background:#18202f;color:#fff}
+.ch-foot{margin:-4px 0 8px;text-align:center;font-size:11.5px;color:var(--faint)}
 </style>
 </head>
 <body>
@@ -1349,6 +1453,9 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
   <div class="rs-t"><small><b id="restL">Istirahat</b><em id="restHr" hidden></em></small><span id="restN"></span></div>
   <div class="rs-b"><button class="rs-adj" data-a="restAdd" data-d="-15" aria-label="Kurangi 15 detik">−15</button><button class="rs-adj" data-a="restAdd" data-d="15" aria-label="Tambah 15 detik">+15</button><button class="rs-sk" data-a="restSkip"><span class="a">Lewati</span><span class="b">Oke</span></button></div>
 </div>
+<button id="aiFab" class="aifab" data-a="chat" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.6 4.4 4.4 1.6-4.4 1.6L12 15.5l-1.6-4.4L6 9.5l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg><span>Tanya AI</span></button>
+<div id="chat" hidden role="dialog" aria-modal="true" aria-label="Tanya AI"></div>
+<input type="file" id="chatPic" accept="image/*" multiple hidden>
 <div id="sheet"></div>
 <div id="offline" hidden role="status"><i></i>Offline · perubahan disimpan di perangkat</div>
 <button id="upd" hidden data-a="reload"><span>Versi baru tersedia</span><b>Muat ulang</b></button>
@@ -1544,6 +1651,8 @@ const ICONS = {
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
   up: '<path d="M6 15l6-6 6 6"/>',
+  send: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  stop: '<rect x="7" y="7" width="10" height="10" rx="2.5" fill="currentColor" stroke="none"/>',
   grip: '<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
   edit: '<path d="M4 20h4.5L19 9.5 14.5 5 4 15.5z"/><path d="M13 6.5l4.5 4.5"/>',
@@ -1810,17 +1919,20 @@ function render() {
   const nav = $('#nav');
   if (phase !== 'app') {
     $('#app').innerHTML = phase === 'login' ? vLogin() : phase === 'error' ? vError() : vSplash(phase === 'loading' ? 'Memuat datamu…' : 'Menyiapkan…');
-    nav.hidden = true; document.body.classList.add('navless', 'pre'); $('#offline').hidden = true; lastRoute = ''; return;
+    nav.hidden = true; document.body.classList.add('navless', 'pre'); $('#offline').hidden = true; lastRoute = '';
+    $('#aiFab').hidden = true; document.body.classList.remove('fabbed'); closeChat(); return;
   }
-  let html;
+  let html, home = false;
   if (page === 'library') html = arg === 'teknik' ? vForm() : vLibrary();
   else if (page === 'plan') html = vPlan(arg);
   else if (page === 'stats') html = vStats();
   else if (page === 'workout' && S.active) html = vWorkout();
   else if (page === 'edit') html = vEdit(arg);
   else if (page === 'makan') html = vMeals();
-  else html = vHome();
+  else { html = vHome(); home = true }
   $('#app').innerHTML = html;
+  $('#aiFab').hidden = !home; document.body.classList.toggle('fabbed', home);
+  if (!home) closeChat();
   document.body.classList.remove('pre');
   const full = page === 'workout' || page === 'edit' || page === 'makan';
   nav.hidden = full;
@@ -2585,7 +2697,7 @@ function closeSheet() {
   closeVideo(); ui.mealSlot = null;
   const s = $('#sheet');
   if (!s.classList.contains('open')) return;
-  s.classList.remove('open'); s.classList.add('closing'); document.body.classList.remove('noscroll');
+  s.classList.remove('open'); s.classList.add('closing'); document.body.classList.toggle('noscroll', chatOpen());
   clearTimeout(sheetT);
   sheetT = setTimeout(() => { s.classList.remove('closing'); s.innerHTML = '' }, 220);
 }
@@ -2606,7 +2718,7 @@ function ask({ title, msg = '', ok = 'Ya', cancel = 'Batal', tone = 'danger', ic
   return new Promise(res => {
     dlgDone = v => {
       dlgDone = null; d.classList.add('out');
-      if (!$('#sheet').classList.contains('open')) document.body.classList.remove('noscroll');
+      if (!$('#sheet').classList.contains('open') && !chatOpen()) document.body.classList.remove('noscroll');
       setTimeout(() => { if (!dlgDone) { d.hidden = true; d.innerHTML = '' } }, 160);
       res(v);
     };
@@ -4316,10 +4428,13 @@ async function routerRead(r) {
 // Gemini-style parts (text, inline_data) as an OpenAI chat message, the photo before the words.
 // 9router streams unless told not to. JSON mode is asked for; a model that refuses it (or a set
 // temperature) gets the request again without them, the prompt asks for JSON anyway.
-async function routerCall(key, url, model, parts, json, signal) {
+const routerContent = parts => {
   const imgs = parts.filter(x => x.inline_data), texts = parts.filter(x => x.text).map(x => x.text);
-  const content = imgs.length ? [...imgs.map(x => ({ type: 'image_url', image_url: { url: `data:${x.inline_data.mime_type};base64,${x.inline_data.data}` } })),
+  return imgs.length ? [...imgs.map(x => ({ type: 'image_url', image_url: { url: `data:${x.inline_data.mime_type};base64,${x.inline_data.data}` } })),
     ...texts.map(text => ({ type: 'text', text }))] : texts.join('\n\n');
+};
+async function routerCall(key, url, model, parts, json, signal) {
+  const content = routerContent(parts);
   const call = async extras => {
     const body = { model, stream: false, messages: [{ role: 'user', content }] };
     if (json) body.messages.unshift({ role: 'system', content: 'Balas hanya dengan satu objek JSON yang valid, tanpa teks lain.' });
@@ -4432,6 +4547,372 @@ function openMealReview() {
     <div class="row2">${m.id ? `<button class="btn danger" data-a="mealDel">${I('trash')} Hapus</button>` : `<button class="btn soft" data-a="close">Batal</button>`}<button class="btn pri" data-a="mealSave">Simpan</button></div>`);
 }
 const refreshMealTot = () => { const t = $('#mTot'); if (t) t.innerHTML = mealTotHtml() };
+
+// ---------- chat with the AI ----------
+// The floating "Tanya AI" button on Beranda opens a chat over the app. Anything may be asked, with up
+// to three photos a message. The AI is told the user's profile, targets, today's food, plan, programs,
+// recent workouts and the gym's machines, so workout and meal advice fits the app: it names machines
+// as [[alat:ID]] (a button to the machine's video) and puts a program or a meal in a why-plan /
+// why-meal block, which shows as a card that saves it (through the import sheet, or the meal check
+// before it is logged). The AI is the one set in Pengaturan; answers stream in. The conversation stays
+// on this device only (why_chat_<uid>), photos as small copies; full-size ones live until a reload.
+const CHAT_MAX = 80, CHAT_PICS = 3;
+const chatS = { msgs: [], full: {}, pics: [], busy: null, key: '' };
+const chatKey = () => 'why_chat_' + (fb.user?.uid || 'local');
+const chatOpen = () => !$('#chat').hidden;
+function chatLoad() {
+  const k = chatKey(); if (chatS.key === k) return;
+  chatS.key = k; chatS.full = {}; chatS.pics = [];
+  try { chatS.msgs = asList(JSON.parse(localStorage.getItem(k))?.msgs).filter(m => m.id && (m.r === 'u' || m.r === 'a')) } catch { chatS.msgs = [] }
+}
+// When the device runs out of room, older photos go first (the message then says how many there were).
+function chatSave() {
+  const msgs = chatS.msgs.filter(m => !m.busy).slice(-CHAT_MAX).map(({ id, r, t, imgs, gone, at, err, stopped }) => ({ id, r, t, at, imgs, gone, err, stopped }));
+  for (const keep of [10, 3, 0]) {
+    let n = 0;
+    const out = msgs.slice().reverse().map(m => m.imgs?.length && n++ >= keep ? { ...m, imgs: undefined, gone: m.imgs.length } : m).reverse();
+    try { localStorage.setItem(chatKey(), JSON.stringify({ v: 1, msgs: out })); return } catch {}
+  }
+}
+// a smaller copy of a photo already shrunk for the AI, to show and to keep
+async function shrinkData(dataUrl, max, q) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = dataUrl });
+  const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
+}
+
+// ---- what the AI is told: who it is, the app's buttons it can make, and the user's own data
+function chatSystem() {
+  const st = S.settings, now = new Date(), today = dayKey(now), e = energy(), goal = kcalGoal(), mg = macroGoals(goal), eat = dayTotals(today), w = weekStats();
+  const slotN = k => (MEAL_SLOTS.find(x => x[0] === k) || [k, k])[1];
+  const line = it => T[it.id] ? `${T[it.id].t} (${planText(it.id, it.sets, it.reps)})` : null;
+  const meals = dayMeals(today).map(m => { const x = mealTotals(m); return `  - ${slotN(m.slot)}: ${m.name}, ${r0(x.kcal)} kkal (P ${r0(x.p)} g, K ${r0(x.c)} g, L ${r0(x.f)} g)` });
+  const hist = S.history.slice(0, 8).map(h => `  - ${dayKey(h.date)} ${h.name}, ${h.dur} mnt: ` + h.items.map(it => `${T[it.id]?.t || 'alat ' + it.id} ${it.sets.map(s => setText(it.id, s)).join(', ')}`).join('; '));
+  const ws = S.weights.slice(0, 5).map(x => `${dayKey(x.date)} ${fmtW(x.kg)} kg`).join(', ');
+  const hm = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}`;
+  return [
+    `Kamu asisten AI di aplikasi gym ${APP.appName}. Pengguna boleh bertanya apa saja, tidak hanya soal gym (pengetahuan umum, pelajaran, pekerjaan, ide, dan lainnya); jawab semuanya dengan baik.`,
+    'Jawab dalam bahasa Indonesia yang santai dan jelas; ikuti bahasa pengguna bila ia memakai bahasa lain. Langsung ke inti dan ringkas. Format Markdown sederhana: paragraf pendek, **tebal**, daftar "-", tabel bila membantu. Tanpa HTML.',
+    'Untuk latihan, makan, dan berat badan: sesuaikan dengan profil, target, catatan makan, dan riwayat pengguna di bawah, dan pakai latihan dari daftar di bawah. Bila pengguna mengirim foto makanan, perkirakan isi dan kalorinya. Untuk keluhan kesehatan atau cedera: beri informasi umum dan sarankan ke dokter atau fisioterapis bila serius.',
+    '',
+    'TOMBOL DI APLIKASI (ikuti persis):',
+    '1. Sebut latihan dari daftar dengan [[alat:ID]], mis. [[alat:38]]; aplikasi menampilkannya sebagai tombol ke video caranya. Hanya ID dari daftar, jangan mengarang. Bila alat yang cocok tidak ada di gym, katakan saja.',
+    '2. Bila kamu menyarankan program latihan (atau diminta membuatkan), tambahkan di akhir jawaban SATU blok ini agar bisa disimpan sekali ketuk:',
+    '```why-plan',
+    '{"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10-12"}]}],"week":{"senin":["Push Day"],"kamis":["Push Day"]}}',
+    '```',
+    '   "week" opsional: senin … minggu berisi nama program dari "routines"; hari lain istirahat. "reps" angka atau rentang pendek tanpa satuan (mis. "10-12", paling banyak 7 karakter). Alat kardio: sets 1, reps = jumlah menit.',
+    '3. Bila kamu menyarankan menu atau menghitung kalori makanan/minuman (termasuk dari foto), tambahkan satu blok per kali makan agar bisa dicatat: semua yang dimakan dan diminum bersamaan jadi item di blok yang sama (paling banyak 4 blok):',
+    '```why-meal',
+    '{"name":"Nasi ayam bakar","slot":"lunch","items":[{"name":"Nasi putih","grams":150,"kcal":195,"protein":4,"carbs":43,"fat":0.4}]}',
+    '```',
+    '   slot: breakfast, lunch, dinner, atau snack. Buat blok hanya bila relevan, dan jangan membahas isi bloknya; ringkas dengan kata-kata biasa di jawabanmu.',
+    '4. Kamu tidak bisa menyimpan, mencatat, atau mengubah apa pun sendiri. Blok tampil sebagai kartu, lalu pengguna yang mengetuk "Simpan ke program" atau "Catat makanan". Jadi jangan bilang sudah disimpan atau sudah dicatat; ajak pengguna mengetuk tombol di kartu.',
+    '',
+    `DATA PENGGUNA (sekarang ${DAYN[now.getDay()]} ${today}, jam ${hm}):`,
+    `- Nama: ${st.name || '-'}. ${aiWho()}${st.height ? ` Tinggi ${st.height} cm.` : ''}${st.goalW ? ` Target berat ${fmtW(st.goalW)} kg.` : ''}`,
+    e ? `- BMR ${r0(e.bmr)} kkal, pembakaran harian (TDEE) ${r0(e.tdee)} kkal.` : '- Profil tubuh belum lengkap, jadi BMR dan TDEE belum diketahui.',
+    `- Target harian: ${r0(goal)} kkal, protein ${r0(mg.p)} g, karbo ${r0(mg.c)} g, lemak ${r0(mg.f)} g.`,
+    `- Makan hari ini: ${r0(eat.kcal)} kkal (P ${r0(eat.p)} g, K ${r0(eat.c)} g, L ${r0(eat.f)} g)${meals.length ? ':' : ', belum ada yang dicatat.'}`, ...meals,
+    ws ? `- Berat badan terakhir: ${ws}.` : '- Belum ada catatan berat badan.',
+    `- Target workout ${st.goal}× per minggu; minggu ini sudah ${w.n}× (${w.min} menit). Istirahat antar set ${st.rest} detik.`,
+    '- Plan mingguan: ' + DOW.map(d => `${DAYN[d]} ${dayRoutines(d).length ? dayName(dayRoutines(d)) : 'istirahat'}`).join(', ') + '.',
+    '- Program:', ...(S.routines.length ? S.routines.map(r => `  - ${r.name || 'Tanpa nama'}: ${r.items.map(line).filter(Boolean).join(', ')}`) : ['  (belum ada)']),
+    S.active ? `- Sedang workout: ${S.active.name}.` : false,
+    '- Workout terakhir:', ...(hist.length ? hist : ['  (belum ada)']),
+    '',
+    'DAFTAR ALAT DI GYM (id|nama|otot):', aiMachines(),
+    ...CARDIO.map(t => `${t.id}|${t.t}|kardio`),
+    ...(FORM.length ? ['', 'LATIHAN BEBAN BEBAS / BEBAN TUBUH, ADA VIDEO TEKNIKNYA (id|nama|alat|otot utama; pendukung):',
+      ...FORM.map(f => `${FORM_BASE + f.id}|${f.t}|${eqName(f.e)}|${mNames(f.p)}${f.s.length ? '; ' + mNames(f.s) : ''}`)] : [])
+  ].filter(x => x !== false).join('\n');
+}
+// The conversation as the AI reads it: the last 24 messages, photos only on the last 6 so the request
+// stays small, turns of the same side joined. A failed answer is left out with the question it was for,
+// so the next question is not read together with it.
+function chatTurns() {
+  const all = chatS.msgs, out = [];
+  const ms = all.filter((m, i) => !m.busy && !m.err && !(m.r === 'u' && all[i + 1]?.err) && (m.r === 'a' ? m.t : m.t || m.imgs?.length || m.gone)).slice(-24);
+  while (ms.length && ms[0].r !== 'u') ms.shift();
+  ms.forEach((m, i) => {
+    const role = m.r === 'u' ? 'user' : 'model', parts = [];
+    if (role === 'user') {
+      const pics = i >= ms.length - 6 ? chatS.full[m.id] || m.imgs || [] : [];
+      pics.forEach(d => parts.push({ inline_data: { mime_type: 'image/jpeg', data: String(d).split(',')[1] } }));
+      const n = m.imgs?.length || m.gone || 0, t = m.t || (pics.length ? '' : `(mengirim ${n} foto)`);
+      if (t) parts.push({ text: t });
+    } else parts.push({ text: m.t });
+    const prev = out[out.length - 1];
+    if (prev?.role === role) prev.parts.push(...parts); else out.push({ role, parts });
+  });
+  return out;
+}
+
+// ---- streaming: the answer shows as it comes, on Gemini (streamGenerateContent, alt=sse) and on
+// 9router (stream: true). A busy or used-up model (429, 5xx) hands over before anything has come:
+// Gemini to its lighter models, 9router to the recommended combo.
+async function geminiOpen(c, model, chat, signal) {
+  const go = thinking => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {
+    method: 'POST', signal, headers: { 'Content-Type': 'application/json', 'x-goog-api-key': c.key },
+    body: JSON.stringify({ systemInstruction: { parts: [{ text: chat.system }] }, contents: chat.turns,
+      generationConfig: { temperature: .7, maxOutputTokens: 8192, ...(thinking ? { thinkingConfig: { thinkingLevel: 'minimal' } } : {}) } })
+  });
+  let r = await go(true), j = r.ok ? null : await r.json().catch(() => ({}));
+  if (r.status === 400 && /thinking/i.test(j?.error?.message || '')) { r = await go(false); j = r.ok ? null : await r.json().catch(() => ({})) }
+  return [r, j];
+}
+async function routerOpen(c, model, chat, signal) {
+  const messages = [{ role: 'system', content: chat.system }, ...chat.turns.map(t => t.role === 'model'
+    ? { role: 'assistant', content: t.parts.map(p => p.text || '').join('\n\n') } : { role: 'user', content: routerContent(t.parts) })];
+  const go = temp => fetch(c.url + '/chat/completions', { method: 'POST', signal, headers: { ...routerHeaders(c.key), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, stream: true, messages, ...(temp ? { temperature: .7 } : {}) }) });
+  let r = await go(true), j = r.ok ? null : await routerRead(r);
+  if (r.status === 400 && /temperature/i.test(routerMsg(j))) { r = await go(false); j = r.ok ? null : await routerRead(r) }
+  return [r, j];
+}
+const geminiPick = j => { if (j.error) throw new Error(geminiError(500, j)); return (j.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || '').join('') };
+const routerPick = j => { if (j.error) throw new Error(routerError(500, j)); const c = j.choices?.[0]; return c?.delta?.content || (typeof c?.message?.content === 'string' ? c.message.content : '') };
+async function sseRead(res, pick, onText) {
+  // a server that answers in one piece instead of streaming is read whole
+  if (!/event-stream/i.test(res.headers.get('content-type') || '')) { const j = await routerRead(res), t = pick(j); if (t) onText(t); return { text: t, last: j } }
+  const rd = res.body.getReader(), dec = new TextDecoder();
+  let buf = '', text = '', last = null;
+  const eat = l => {
+    l = l.replace(/\r$/, ''); if (!l.startsWith('data:')) return;
+    const d = l.slice(5).trim(); if (!d || d === '[DONE]') return;
+    let j; try { j = JSON.parse(d) } catch { return }
+    last = j; const t = pick(j); if (t) { text += t; onText(text) }
+  };
+  for (;;) {
+    const { value, done } = await rd.read(); if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let i; while ((i = buf.indexOf('\n')) >= 0) { eat(buf.slice(0, i)); buf = buf.slice(i + 1) }
+  }
+  eat(buf + dec.decode());
+  return { text, last };
+}
+async function chatAi(chat, onText, signal, c = aiConf()) {
+  if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
+  const g = c.prov !== 'router', who = AI_PROV[c.prov].name;
+  // a connection that drops (a tunnel blinks, the phone switches networks) is tried once more
+  const open = async m => { for (let n = 0; ; n++) { try { return await (g ? geminiOpen : routerOpen)(c, m, chat, signal) } catch (e) { if (e?.name === 'AbortError' || n) throw e; await new Promise(r => setTimeout(r, 1500)) } } };
+  let first = null;
+  for (const m of [...new Set(g ? [c.model, ...AI_BACKUP] : [c.model, c.rec])].filter(Boolean)) {
+    let r, j;
+    try { [r, j] = await open(m) }
+    catch (e) { if (e?.name === 'AbortError') throw e; throw new Error(`Tidak bisa menghubungi ${who}. Periksa ${g ? '' : 'alamat server dan '}koneksi internet. (${e?.message || e})`) }
+    if (r.ok) {
+      const { text, last } = await sseRead(r, g ? geminiPick : routerPick, onText);
+      const no = last?.promptFeedback?.blockReason || /SAFETY|PROHIBITED|BLOCKLIST/.test(last?.candidates?.[0]?.finishReason || '') || last?.choices?.[0]?.finish_reason === 'content_filter';
+      if (!text && no) throw new Error('AI tidak mau menjawab permintaan ini. Coba dengan kata-kata atau foto lain.');
+      return text;
+    }
+    first ||= [r.status, j];
+    if (r.status !== 429 && r.status < 500) break;
+  }
+  throw new Error((g ? geminiError : routerError)(...first));
+}
+
+// ---- the answer on screen: Markdown, machine buttons, and the program / meal cards
+// A fenced block is a card when it says so (why-plan / why-meal) or, as plain JSON, holds a program
+// or a meal. Cards are numbered in order, so a button finds its block again in the message.
+const CH_FENCE = /```[ \t]*([\w-]*)[^\n]*\n?([\s\S]*?)(```|$)/g;
+const blockKind = (lang, body) => lang === 'why-plan' ? 'plan' : lang === 'why-meal' ? 'meal' : !/^(json)?$/i.test(lang) ? null
+  : /"(routines|why_plan)"\s*:/.test(body) ? 'plan' : /"items"\s*:/.test(body) && /"kcal"\s*:/.test(body) ? 'meal' : null;
+function chatPlanOf(o) {
+  const rs = asList(o?.routines ?? (o?.items ? [o] : [])).map(r => ({ name: String(r?.name || 'Program').slice(0, 40),
+    items: asList(r?.items).map(x => Array.isArray(x) ? { id: +x[0], sets: x[1], reps: x[2] } : { id: +x?.id, sets: x?.sets, reps: x?.reps })
+      .filter(x => T[x.id]).map(x => ({ id: x.id, sets: clamp(parseInt(x.sets) || 3, 1, 10), reps: String(x.reps ?? '10').slice(0, 7) })) })).filter(r => r.items.length);
+  return rs.length ? { routines: rs, week: o.week && typeof o.week === 'object' && !Array.isArray(o.week) ? o.week : null } : null;
+}
+function chatMealOf(o) { try { const m = parseMeal(JSON.stringify(o)); return m.items.length ? { ...m, slot: MEAL_SLOTS.some(x => x[0] === o.slot) ? o.slot : '' } : null } catch { return null } }
+// the cards of a finished message, in order
+function chatBlocks(text) {
+  const out = [];
+  String(text || '').replace(CH_FENCE, (m, lang, body, end) => {
+    const kind = end && blockKind(lang.toLowerCase(), body);
+    if (kind) { let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {} const v = o && (kind === 'plan' ? chatPlanOf(o) : chatMealOf(o)); if (v) out.push({ kind, v }) }
+    return '';
+  });
+  return out;
+}
+const cap = s => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+function planCard(p, mid, k) {
+  const one = p.routines.length === 1, wk = p.week ? Object.entries(p.week).map(([d, n]) => `${cap(d)}: ${[].concat(n).join(' + ')}`).join(' · ') : '';
+  return `<div class="ccard"><div class="cc-h">${I('clip')}<b>${esc(one ? p.routines[0].name : `${p.routines.length} program latihan`)}</b></div>
+    ${p.routines.map(r => `<div class="cc-r">${one ? '' : `<b>${esc(r.name)}</b>`}<small>${r.items.length} latihan · ±${estMin(r.items)} menit</small>
+      <ol>${r.items.map(i => `<li><button class="cc-x" data-a="open" data-id="${i.id}">${esc(T[i.id].t)}</button><span>${esc(planText(i.id, i.sets, i.reps))}</span></li>`).join('')}</ol></div>`).join('')}
+    ${wk ? `<p class="cc-w">${I('calendar')}<span>${esc(wk)}</span></p>` : ''}
+    <div class="cc-b"><button class="btn pri sm" data-a="chatPlan" data-m="${mid}" data-b="${k}">${I('plus')} Simpan ke program</button>${one ? `<button class="btn soft sm" data-a="chatGo" data-m="${mid}" data-b="${k}">${I('playf')} Mulai sekarang</button>` : ''}</div></div>`;
+}
+function mealCard(m, mid, k) {
+  const t = mealTotals({ ...m, portion: 1 });
+  return `<div class="ccard cmeal"><div class="cc-h">${I('apple')}<b>${esc(m.name)}</b><span class="cc-k">${r0(t.kcal)} kkal</span></div>
+    <div class="cc-mac"><span>Protein <b>${r0(t.p)} g</b></span><span>Karbo <b>${r0(t.c)} g</b></span><span>Lemak <b>${r0(t.f)} g</b></span></div>
+    <ul>${m.items.map(i => `<li>${esc(i.n)}<span>${i.g ? r0(i.g) + ' g · ' : ''}${r0(i.kcal)} kkal</span></li>`).join('')}</ul>
+    <div class="cc-b"><button class="btn pri sm" data-a="chatMeal" data-m="${mid}" data-b="${k}">${I('plus')} Catat makanan</button></div></div>`;
+}
+// [[alat:38]] → a button to that machine's (or technique clip's) video; an id not in the gym shows nothing
+const alatChip = id => { const t = T[id]; return t ? `<button class="mdx" data-a="open" data-id="${id}">${I(t.c ? 'heart' : 'playf')}<span>${esc(t.t)}</span></button>` : '' };
+// on text already escaped
+const mdInline = s => s.split(/(`[^`\n]+`)/).map((p, i) => i % 2 ? `<code>${p.slice(1, -1)}</code>` : p
+  .replace(/\[\[\s*(?:alat|latihan|teknik)?\s*[:#]?\s*(\d+)\s*(?:\|[^\]\n]*)?\]\]/gi, (m, id) => alatChip(+id))
+  .replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+  .replace(/\*\*([^*\n]+)\*\*|__([^_\n]+)__/g, (m, a, b) => `<b>${a || b}</b>`)
+  .replace(/(^|[^*\w])\*(?!\s)([^*\n]+?)\*(?!\w)/g, '$1<i>$2</i>')).join('');
+function mdHtml(src, mid = '', live = false) {
+  const keep = []; let k = 0;
+  src = String(src || '').replace(/[\r\u0001]/g, '').replace(CH_FENCE, (m, lang, body, end) => {
+    const kind = blockKind(lang.toLowerCase(), body);
+    let h = '';
+    if (kind && !end) h = live ? '<div class="ccard wait"><span class="spin" aria-hidden="true"></span>Menyiapkan kartu…</div>' : '';
+    else if (kind) {
+      let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {}
+      const v = o && (kind === 'plan' ? chatPlanOf(o) : chatMealOf(o));
+      h = v ? (kind === 'plan' ? planCard(v, mid, k) : mealCard(v, mid, k)) : '<p class="cnote">Kartu ini tidak bisa dibaca.</p>';
+      if (v) k++;
+    } else if (body.trim()) h = `<pre><code>${esc(body.replace(/\n$/, ''))}</code></pre>`;
+    keep.push(h); return `\n\u0001${keep.length - 1}\u0001\n`;
+  });
+  const lines = esc(src).split('\n'), out = [];
+  let para = [], list = null;
+  const flushP = () => { if (para.length) out.push(`<p>${para.map(mdInline).join('<br>')}</p>`); para = [] };
+  const flushL = () => { if (list) out.push(`<${list.t}${list.start > 1 ? ` start="${list.start}"` : ''}>${list.items.map(x => `<li>${mdInline(x).replace(/\n/g, '<br>')}</li>`).join('')}</${list.t}>`); list = null };
+  const flush = () => { flushP(); flushL() };
+  const cells = l => l.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i], tr = l.trim(); let m;
+    if (!tr) { flush(); continue }
+    if (/^\u0001\d+\u0001$/.test(tr)) { flush(); out.push(tr); continue }
+    if ((m = tr.match(/^#{1,6}\s+(.*?)\s*#*$/))) { flush(); out.push(`<h4 class="md-h">${mdInline(m[1])}</h4>`); continue }
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(tr)) { flush(); out.push('<hr>'); continue }
+    if (tr.startsWith('|') && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1] || '')) {
+      flush(); const head = cells(tr), body = []; i++;
+      while ((lines[i + 1] || '').trim().startsWith('|')) body.push(cells(lines[++i]));
+      out.push(`<div class="mdt"><table><thead><tr>${head.map(c => `<th>${mdInline(c)}</th>`).join('')}</tr></thead><tbody>${body.map(r => `<tr>${r.map(c => `<td>${mdInline(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
+      continue;
+    }
+    if ((m = l.match(/^\s*[-*•+]\s+(.*)$/))) { flushP(); if (list?.t !== 'ul') { flushL(); list = { t: 'ul', items: [] } } list.items.push(m[1]); continue }
+    if ((m = l.match(/^\s*(\d+)[.)]\s+(.*)$/))) { flushP(); if (list?.t !== 'ol') { flushL(); list = { t: 'ol', items: [], start: +m[1] } } list.items.push(m[2]); continue }
+    if ((m = tr.match(/^&gt;\s?(.*)$/))) { flush(); out.push(`<blockquote>${mdInline(m[1])}</blockquote>`); continue }
+    if (list && /^\s{2,}\S/.test(l)) { list.items[list.items.length - 1] += '\n' + tr; continue }
+    flushL(); para.push(tr);
+  }
+  flush();
+  return out.join('').replace(/\u0001(\d+)\u0001/g, (m, n) => keep[+n] || '');
+}
+
+// ---- the chat screen
+const chatHead = () => { const c = aiConf(); return c.key ? `${esc(aiName())} · ${esc(modelName(c.model))}` : 'AI belum terhubung' };
+const CH_SUG = [
+  ['clip', '#2f7cf6', 'Buatkan program 3× seminggu sesuai tujuanku'],
+  ['apple', '#f2785c', 'Sisa kalori hari ini, sebaiknya makan apa?'],
+  ['dumbbell', '#14b8a6', 'Latihan punggung pakai alat di gym ini'],
+  ['camera', '#8b5cf6', 'Hitung kalori makanan dari foto', 1],
+  ['sparkles', '#f59e0b', 'Tips tidur nyenyak setelah latihan malam']
+];
+const chatEmpty = () => `<div class="ch-hi"><div class="ch-av">${I('sparkles')}</div><h2>Tanya apa saja</h2>
+  <p>Soal latihan, makan, atau hal lain. AI tahu programmu, target kalori, dan alat di gym ini, dan bisa langsung menyimpan program atau mencatat makanan.</p>
+  <div class="ch-sug">${CH_SUG.map(([ic, c, q, pic]) => `<button data-a="chatSug" data-q="${esc(q)}"${pic ? ' data-pic="1"' : ''}><span class="qi" style="--c:${c}">${I(ic)}</span>${esc(q)}</button>`).join('')}</div></div>`;
+const chatNoKey = () => `<div class="ch-nokey"><p>Hubungkan AI dulu: Gemini (gratis) atau 9router, dengan API key milikmu.</p><button class="btn pri" data-a="chatSetup">${I('sparkles')} Hubungkan AI</button></div>`;
+function chatAiBody(m) {
+  if (m.busy && !m.t) return '<span class="cdots" aria-label="AI sedang mengetik"><i></i><i></i><i></i></span>';
+  return mdHtml(m.t, m.id, !!m.busy) + (m.err ? `<p class="cerr">${esc(m.err)}</p>` : '') + (m.stopped ? '<p class="cstop">Dihentikan</p>' : '');
+}
+function chatMsgHtml(m, last) {
+  if (m.r === 'u') {
+    const n = m.imgs?.length || 0;
+    return `<div class="cm u" id="cm${m.id}">${n ? `<div class="cimgs n${n}">${m.imgs.map(d => `<img src="${esc(d)}" alt="Foto yang dikirim">`).join('')}</div>` : m.gone ? `<div class="cgone">${I('image')} ${m.gone} foto</div>` : ''}${m.t ? `<div class="cb">${esc(m.t)}</div>` : ''}</div>`;
+  }
+  const tools = m.busy ? '' : m.err ? (last ? `<button data-a="chatRetry" data-m="${m.id}">${I('refresh')} Coba lagi</button><button data-a="chatSetup">${I('sliders')} Pengaturan AI</button>` : '')
+    : `<button data-a="chatCopy" data-m="${m.id}">${I('copy')} Salin</button>${last ? `<button data-a="chatRetry" data-m="${m.id}">${I('refresh')} Ulangi</button>` : ''}`;
+  return `<div class="cm a" id="cm${m.id}"><div class="cb">${chatAiBody(m)}</div>${tools ? `<div class="ctools">${tools}</div>` : ''}</div>`;
+}
+const chatNear = () => { const b = $('#chList'); return !b || b.scrollHeight - b.scrollTop - b.clientHeight < 140 };
+const chatBottom = () => { const b = $('#chList'); if (b) b.scrollTop = b.scrollHeight };
+function chatList() {
+  const box = $('#chList'); if (!box) return;
+  const ms = chatS.msgs, lastA = ms.length && ms[ms.length - 1].r === 'a' ? ms[ms.length - 1].id : '';
+  box.innerHTML = (aiConf().key ? '' : chatNoKey()) + (ms.length ? ms.map(m => chatMsgHtml(m, m.id === lastA)).join('') : aiConf().key ? chatEmpty() : '');
+  $('#chHead').innerHTML = chatHead();
+  chatBottom();
+}
+function chatBar() {
+  const p = $('#chPics'), b = $('#chSend'), q = $('#chQ'); if (!b) return;
+  p.hidden = !chatS.pics.length;
+  p.innerHTML = chatS.pics.map((x, i) => `<div class="ch-pic"><img src="${esc(x.thumb)}" alt="Foto ${i + 1}"><button data-a="chatPicDel" data-ix="${i}" aria-label="Hapus foto ${i + 1}">${I('x')}</button></div>`).join('');
+  const busy = !!chatS.busy;
+  b.className = 'ch-ib ' + (busy ? 'stop' : 'go'); b.dataset.a = busy ? 'chatStop' : 'chatSend';
+  b.setAttribute('aria-label', busy ? 'Hentikan jawaban' : 'Kirim'); b.innerHTML = I(busy ? 'stop' : 'send');
+  b.disabled = !busy && !q.value.trim() && !chatS.pics.length;
+  $('#chPicB').disabled = chatS.pics.length >= CHAT_PICS;
+}
+function openChat() {
+  if (phase !== 'app') return;
+  chatLoad();
+  const el = $('#chat');
+  el.innerHTML = `<div class="ch-in">
+    <header class="ch-top"><button class="icon-btn" data-a="chatClose" aria-label="Tutup chat">${I('back')}</button>
+      <div class="ch-tt"><span class="ch-av" aria-hidden="true">${I('sparkles')}</span><span><b>Tanya AI</b><small id="chHead">${chatHead()}</small></span></div>
+      <button class="icon-btn" data-a="chatNew" aria-label="Chat baru">${I('edit')}</button></header>
+    <div class="ch-list" id="chList" role="log" aria-live="polite"></div>
+    <div class="ch-pics" id="chPics" hidden></div>
+    <div class="ch-bar"><button class="ch-ib" id="chPicB" data-a="chatPic" aria-label="Tambah foto">${I('image')}</button>
+      <textarea id="chQ" data-i="chatQ" rows="1" maxlength="4000" placeholder="Tanya apa saja…" enterkeyhint="send" aria-label="Pesan untuk AI"></textarea>
+      <button class="ch-ib go" id="chSend" data-a="chatSend" aria-label="Kirim">${I('send')}</button></div>
+    <p class="ch-foot">AI bisa keliru. Periksa lagi sebelum menyimpan.</p></div>`;
+  el.hidden = false; document.body.classList.add('noscroll');
+  chatList(); chatBar();
+  if (matchMedia('(pointer:fine)').matches) $('#chQ').focus();
+}
+function closeChat() {
+  const el = $('#chat'); if (el.hidden) return;
+  el.hidden = true; el.innerHTML = '';
+  if (!$('#sheet').classList.contains('open')) document.body.classList.remove('noscroll');
+}
+// the AI's answer to everything said so far, into a new message at the bottom
+async function chatReply() {
+  const a = { id: uid(), r: 'a', t: '', at: Date.now(), busy: true }, ctl = new AbortController();
+  const turns = chatTurns();
+  chatS.msgs.push(a); chatS.busy = { a, ctl, stop: false };
+  chatList(); chatBar();
+  let idle = 0, raf = 0;
+  const poke = () => { clearTimeout(idle); idle = setTimeout(() => ctl.abort(), 90000) };
+  const show = () => { raf = 0; const el = $('#cm' + a.id + ' .cb'); if (!el) return; const near = chatNear(); el.innerHTML = chatAiBody(a); if (near) chatBottom() };
+  poke();
+  try {
+    a.t = await chatAi({ system: chatSystem(), turns }, t => { a.t = t; poke(); raf ||= requestAnimationFrame(show) }, ctl.signal);
+    if (!a.t.trim()) throw new Error('AI tidak memberi jawaban. Coba lagi.');
+  } catch (e) {
+    if (chatS.busy?.stop) a.stopped = true;
+    else a.err = e?.name === 'AbortError' ? 'AI tidak menjawab dalam 90 detik. Coba lagi, atau pilih model yang lebih cepat di Pengaturan AI.'
+      : a.t ? `Jawaban terputus: ${e?.message || e}` : String(e?.message || e);
+  } finally {
+    clearTimeout(idle); cancelAnimationFrame(raf);
+    delete a.busy; chatS.busy = null; chatSave();
+    if (chatOpen()) { const near = chatNear(); chatList(); chatBar(); if (!near) { const el = $('#cm' + a.id); el?.scrollIntoView({ block: 'start' }) } }
+  }
+}
+async function chatSend(text = $('#chQ')?.value || '') {
+  text = text.trim().slice(0, 4000);
+  if (chatS.busy || (!text && !chatS.pics.length)) return;
+  if (!aiConf().key) return openAiSetup('chat');
+  const pics = chatS.pics.splice(0), u = { id: uid(), r: 'u', t: text, at: Date.now(), ...(pics.length ? { imgs: pics.map(p => p.thumb) } : {}) };
+  if (pics.length) chatS.full[u.id] = pics.map(p => p.full);
+  chatS.msgs.push(u);
+  const q = $('#chQ'); if (q) { q.value = ''; q.style.height = '' }
+  await chatReply();
+}
+// the card's block in its message, or null when the message has changed since
+const chatBlock = el => chatBlocks(chatS.msgs.find(m => m.id === el.dataset.m)?.t)[+el.dataset.b] || null;
+// the photo the user sent last before that message, to show with the meal while it is checked
+function chatPhotoBefore(mid) {
+  const i = chatS.msgs.findIndex(m => m.id === mid);
+  for (let j = i - 1; j >= 0; j--) { const m = chatS.msgs[j]; if (m.r === 'u') return m.imgs?.[0] || '' }
+  return '';
+}
 
 // ---------- QR on the machines ----------
 // The gym's stickers hold JSON: {"type":"tutorial","id":63,"title":…,"youtube_url":…,"youtube_id":…}
@@ -5344,6 +5825,48 @@ const A = {
     S.meals = S.meals.filter(x => x.id !== m.id); save(); closeSheet(); render(); toast('Makanan dihapus');
   },
   aiSetup: () => openAiSetup(),
+  chat: openChat,
+  chatClose: closeChat,
+  chatSend: () => chatSend(),
+  chatStop: () => { if (chatS.busy) { chatS.busy.stop = true; chatS.busy.ctl.abort() } },
+  chatPic: () => { if (chatS.pics.length < CHAT_PICS) $('#chatPic').click() },
+  chatPicDel: el => { chatS.pics.splice(+el.dataset.ix, 1); chatBar() },
+  chatSug: el => {
+    if (!aiConf().key) return openAiSetup('chat');
+    if (!el.dataset.pic) return chatSend(el.dataset.q);
+    $('#chQ').value = el.dataset.q; chatBar(); $('#chatPic').click();
+  },
+  chatSetup: () => openAiSetup('chat'),
+  chatNew: async () => {
+    if (!chatS.msgs.length) return;
+    if (!(await ask({ title: 'Mulai chat baru?', msg: 'Percakapan ini dihapus dari perangkat ini.', ok: 'Mulai baru', tone: 'info', icon: 'edit' }))) return;
+    if (chatS.busy) { chatS.busy.stop = true; chatS.busy.ctl.abort() }
+    chatS.msgs = []; chatS.full = {}; chatS.pics = []; chatSave(); chatList(); chatBar();
+  },
+  // a failed or unwanted last answer is asked again
+  chatRetry: el => {
+    const i = chatS.msgs.findIndex(m => m.id === el.dataset.m);
+    if (chatS.busy || i < 0 || i !== chatS.msgs.length - 1) return;
+    chatS.msgs.splice(i, 1); chatReply();
+  },
+  chatCopy: async el => {
+    const t = String(chatS.msgs.find(m => m.id === el.dataset.m)?.t || '').replace(CH_FENCE, '')
+      .replace(/\[\[\s*(?:alat|latihan|teknik)?\s*[:#]?\s*(\d+)\s*(?:\|[^\]\n]*)?\]\]/gi, (x, id) => T[+id]?.t || '').trim();
+    try { await navigator.clipboard.writeText(t); toast('Jawaban disalin') } catch { toast('Tidak bisa menyalin di perangkat ini', 'err') }
+  },
+  // a card's program goes through the import sheet (tick which go in, and the weekly plan)
+  chatPlan: el => {
+    const b = chatBlock(el); if (!b) return toast('Kartu ini tidak bisa dibaca lagi', 'err');
+    importText(JSON.stringify({ why_plan: 1, routines: b.v.routines, ...(b.v.week ? { week: b.v.week } : {}) }));
+  },
+  chatGo: el => { const b = chatBlock(el); if (b) startWorkout(b.v.routines[0].items, b.v.routines[0].name) },
+  // a card's meal is checked (and can be edited) before it is logged, as after a meal photo
+  chatMeal: el => {
+    const b = chatBlock(el); if (!b) return toast('Kartu ini tidak bisa dibaca lagi', 'err');
+    const m = b.v;
+    ui.meal = { id: null, date: new Date().toISOString(), slot: m.slot || slotNow(), portion: 1, name: m.name, items: m.items.map(x => ({ ...x })), conf: m.conf, note: m.note, img: chatPhotoBefore(el.dataset.m) };
+    openMealReview();
+  },
   aiProv: el => { if (el.dataset.k !== ui.aiProv) openAiSetup(null, el.dataset.k, true) },
   aiSave: async el => {
     const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey').value), url = aiUrlNow(), sig = prov + url + key, err = $('#aiErr');
@@ -5362,6 +5885,7 @@ const A = {
       delete s.claude;   // the direct Claude option of before
       localStorage.setItem(AI_KEY, JSON.stringify(prov === 'router' ? { ...s, use: 'router', router: c } : { ...c, use: 'gemini', router: s.router }));
       const then = ui.aiThen; closeSheet(); toast(`${p.name} terhubung`); render();
+      if (chatOpen()) { chatList(); chatBar() }
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
       else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
       else if (then === 'text') setTimeout(() => A.mealText(), 300);
@@ -5377,6 +5901,7 @@ const A = {
     if (keep) localStorage.setItem(AI_KEY, JSON.stringify({ ...(prov === 'router' ? { ...s, router: undefined, claude: undefined } : { router: s.router }), use: other }));
     else localStorage.removeItem(AI_KEY);
     closeSheet(); toast('API key dihapus'); render();
+    if (chatOpen()) { chatList(); chatBar() }
   },
   profile: openProfile,
   pSet: el => {
@@ -5561,6 +6086,7 @@ document.addEventListener('input', e => {
     const x = $('#fx' + ei); if (x) x.textContent = cardioEst(it.id, s);
   }
   else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
+  else if (k === 'chatQ') { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; chatBar() }
   else if (k === 'aiKey' || k === 'aiUrl') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {
@@ -5665,6 +6191,11 @@ document.addEventListener('change', e => {
     const f = e.target.files[0], src = e.target.id; e.target.value = '';
     return shrinkImage(f).then(dataUrl => openPhotoNote(dataUrl, src)).catch(() => toast('Foto tidak bisa dibaca', 'err'));
   }
+  if (e.target.id === 'chatPic' && e.target.files.length) {
+    const fs = [...e.target.files].slice(0, CHAT_PICS - chatS.pics.length); e.target.value = '';
+    return Promise.all(fs.map(async f => { const full = await shrinkImage(f); return { full, thumb: await shrinkData(full, 480, .72) } }))
+      .then(ps => { chatS.pics.push(...ps); chatBar(); $('#chQ')?.focus() }).catch(() => toast('Foto tidak bisa dibaca', 'err'));
+  }
   if (e.target.id === 'tutFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
   }
@@ -5676,10 +6207,11 @@ document.addEventListener('change', e => {
 });
 // closes the topmost dialog, popup or sheet; the Android app calls it for the back button
 function closeTop() {
-  if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet(); else return false;
+  if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet(); else if (chatOpen()) closeChat(); else return false;
   return true;
 }
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'chQ' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); return chatSend() }
   if (e.key === 'Escape') closeTop();
   // The muscles on the body map are SVG paths, which do not click on Enter/Space by themselves.
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A.muscle(e.target) }

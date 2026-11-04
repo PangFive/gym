@@ -79,6 +79,14 @@ Format hasil Export (field yang bisa diedit):
 `youtube` boleh berisi id video atau link YouTube. Kode otot untuk `primary`/`secondary` tercantum di
 bagian `muscles` pada file Export.
 
+## Tanya AI
+
+Tombol **Tanya AI** di Beranda membuka chat dengan AI yang dipasang di **Pengaturan → AI** (Gemini atau 9router).
+Boleh bertanya apa saja dan mengirim foto. AI tahu profil, target kalori, makanan hari ini, program, riwayat, dan
+daftar alat gym, jadi saran latihan dan makannya sesuai aplikasi: alat yang disebut bisa diketuk untuk membuka
+videonya, program yang disarankan bisa langsung **Simpan ke program**, dan menu bisa langsung **Catat makanan**.
+Percakapan hanya tersimpan di perangkat (`why_chat_<uid>` di `localStorage`), tidak di Firebase.
+
 ## Program dari Claude
 
 Di halaman **Plan**, tekan **Salin data** lalu tempel ke chat Claude. Jawaban Claude dalam format
