@@ -88,7 +88,7 @@ tersinkron di semua perangkat.
 ### Workout
 - **Fokus set**: satu latihan terbuka, satu set aktif; kg (±2,5) dan reps (±1) lewat tombol −/+ (angka tetap bisa diketik), "Terakhir 50 kg × 10 · Pakai" dari sesi sebelumnya
 - Set tampil sebagai **timeline** (hijau = selesai, biru = sedang diisi, abu = belum); ketuk titik untuk mengedit set mana saja, + untuk tambah set; set banyak → bisa digeser
-- **Timer istirahat** = kartu dengan cincin hitung mundur, info set berikutnya, −15/+15/Lewati; 3 detik terakhir kuning, lalu kartu hijau "Lanjut Set 2". Bunyi (3 tik + nada naik) dijadwalkan di jam audio saat set selesai, dan audio dibuka saat tombol diketuk (aturan autoplay HP)
+- **Timer istirahat** = kartu kaca buram ala iOS (putih tembus pandang, `backdrop-filter: blur(30px) saturate(1.9)`, garis tepi putih, kilau di atas) dengan **bom**: bola gelap mengkilap berisi sisa waktu, dikelilingi sumbu oranye yang terbakar. Ujung sumbu memercik seperti **kembang api lidi**: titik putih panas dengan cahaya berkedip, 16 garis percikan ke segala arah dengan irama masing-masing, dan 8 serpihan yang terlempar, berkelip, lalu jatuh (dibuat sekali oleh `restSparks()`, angka acaknya tetap). Ujung itu bergerak memendekkan sumbu sesuai sisa waktu (`--a` = sudut sisa waktu, `@property` supaya geraknya halus; percikan diputar balik agar arah jatuhnya tetap ke bawah). Info set berikutnya, −15/+15/Lewati; 3 detik terakhir percikan membesar dan makin cepat, sumbu memerah, bom bergetar; waktu habis → letupan kembang api (kilat + 14 garis emas/oranye yang memancar lalu turun), lalu kartu kaca hijau dengan bom hijau bercentang dan tombol "Oke" hijau, "Lanjut Set 2". Bunyi (3 tik + nada naik) dijadwalkan di jam audio saat set selesai, dan audio dibuka saat tombol diketuk (aturan autoplay HP)
 - "Selesai set" → **timer istirahat**, beban baru terbawa ke set berikutnya yang belum diubah manual, lalu lanjut otomatis ke set/latihan berikutnya; latihan lain terlipat jadi satu baris; yang sudah selesai naik ke atas (urut waktu selesai)
   (bunyi/getar bisa diatur).
 - **Ganti latihan** (tombol "Ganti" di kartu latihan yang terbuka, selama masih ada set belum selesai): pilih alasan
@@ -352,6 +352,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
     gauge kalori, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
 17. Pilihan AI Claude diganti 9router (server router AI milik pengguna, format OpenAI, combo WHY).
 18. Tanya AI: tombol melayang di Beranda, chat bebas dengan foto, jawaban streaming, kartu simpan program dan catat makanan.
+19. Timer istirahat bergaya kaca iOS dengan bom: sumbu terbakar mengikuti sisa waktu, meledak saat istirahat selesai.
 
 ## 8. Ide berikutnya
 
