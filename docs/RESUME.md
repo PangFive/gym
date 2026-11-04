@@ -183,6 +183,25 @@ tersinkron di semua perangkat.
   otot dibanding standar berat otot menurut jenis kelamin dan tinggi; derajat obesitas sehat −20 sampai 10 %; BMR dibanding
   BMR berat ideal (kkal/kg/hari menurut umur). Berat disimpan sampai 0,01 kg.
 
+### Tanya AI (chat)
+- Tombol melayang **Tanya AI** hanya di Beranda (di atas navigasi, naik sendiri saat timer istirahat tampil). Membuka layar chat
+  penuh di atas aplikasi; tombol kembali / Escape / Android back menutupnya, pindah ke halaman lain juga menutupnya.
+- Boleh bertanya apa saja (tidak hanya gym), dengan sampai 3 foto per pesan (diperkecil 1024 px untuk AI, salinan 480 px untuk
+  ditampilkan). Jawaban muncul bertahap (streaming: Gemini `streamGenerateContent?alt=sse`, 9router `stream: true`), bisa
+  **dihentikan**, **disalin**, dan jawaban terakhir bisa **diulang**. AI-nya yang dipasang di Pengaturan (Gemini atau 9router);
+  model sibuk/habis kuota diserahkan ke model cadangan seperti fitur AI lain, koneksi yang putus dicoba sekali lagi.
+- AI diberi konteks: profil (umur, berat, tinggi, target berat), BMR/TDEE, target kalori & makro, makanan hari ini, berat terakhir,
+  target & jumlah workout minggu ini, plan mingguan, program, 8 workout terakhir, daftar alat gym (+ kardio) dan latihan teknik.
+  Konteks dibuat ulang tiap pesan, jadi selalu data terbaru. AI ikut riwayat 24 pesan terakhir (foto hanya di 6 pesan terakhir);
+  jawaban yang gagal tidak ikut, begitu juga pertanyaannya.
+- Jawaban Markdown (judul, tebal, daftar, tabel, kode, link) dirender sendiri dengan aman (teks di-escape dulu). AI menyebut alat
+  sebagai `[[alat:ID]]` → tombol ke video alat itu. Program dalam blok ```` ```why-plan ```` → kartu dengan daftar latihan, jadwal,
+  **Simpan ke program** (lewat lembar Import yang biasa) dan **Mulai sekarang** (bila satu program). Makanan dalam blok
+  ```` ```why-meal ```` → kartu kalori & makro dengan **Catat makanan** (lembar Hasil analisis yang biasa, bisa diedit dulu).
+  AI diberi tahu bahwa ia tidak bisa menyimpan sendiri, jadi mengajak pengguna mengetuk tombol kartu.
+- Percakapan disimpan **hanya di perangkat** (`localStorage` `why_chat_<uid>`, 80 pesan terakhir); kalau penyimpanan penuh, foto
+  lama dibuang dulu. **Chat baru** (ikon pensil) menghapusnya.
+
 ### Statistik
 - Total volume di samping karakter, pilihan rentang, grafik batang (tertinggi berwarna coral), tile target. Volume per minggu/bulan/tahun, target mingguan (workout, set, menit), keseimbangan otot
   (peta panas + set efektif; otot pendukung dihitung ½ set), riwayat.
@@ -332,6 +351,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Roboto di semua teks, tombol navigasi bulat,
     gauge kalori, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
 17. Pilihan AI Claude diganti 9router (server router AI milik pengguna, format OpenAI, combo WHY).
+18. Tanya AI: tombol melayang di Beranda, chat bebas dengan foto, jawaban streaming, kartu simpan program dan catat makanan.
 
 ## 8. Ide berikutnya
 
