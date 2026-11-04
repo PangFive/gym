@@ -792,30 +792,26 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .rs-ring b{position:absolute;inset:0;z-index:1;display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.01em;text-shadow:0 1px 2px rgba(0,0,0,.4)}
 .rs-ring b svg.i{width:26px;height:26px;stroke-width:3;transform:none}
 .rs-tip{position:absolute;inset:0;z-index:2;pointer-events:none;transform:rotate(var(--a));transition:--a .25s linear}
-.rs-fire{position:absolute;left:50%;top:4.75px;width:0;height:0;transform:rotate(calc(var(--a) * -1));transition:scale .3s}
-.rs-fire .core{position:absolute;left:-4.5px;top:-4.5px;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle,#fff 0 28%,#ffe38a 46%,#ff9a3c 72%,rgba(255,110,40,0) 100%);box-shadow:0 0 6px 2px rgba(255,196,90,.95),0 0 16px 6px rgba(255,110,30,.5);animation:ember .3s ease-in-out infinite alternate}
-.rs-fire .fl{position:absolute;left:-7px;top:-21px;width:14px;height:20px;transform-origin:50% 100%;animation:flick .5s ease-in-out infinite}
-.rs-fire .fl::before,.rs-fire .fl::after{content:'';position:absolute;left:50%;bottom:2px;border-radius:0 50% 50% 50%;transform:translateX(-50%) rotate(45deg)}
-.rs-fire .fl::before{width:12px;height:12px;bottom:3px;background:linear-gradient(135deg,#f0442a 0%,#ff8a2a 45%,#ffd25c 85%);opacity:.92}
-.rs-fire .fl::after{width:6px;height:6px;bottom:2px;background:linear-gradient(135deg,#ffd25c,#fff6d0)}
-.rs-fire .sp{position:absolute;left:-1.5px;top:-1.5px;width:3px;height:3px;border-radius:50%;background:#ffd25c;box-shadow:0 0 4px 1px rgba(255,170,60,.9);opacity:0;animation:spark .75s ease-out infinite}
-.rs-fire .sp:nth-of-type(1){--dx:-10px;--dy:-13px}
-.rs-fire .sp:nth-of-type(2){--dx:9px;--dy:-15px;animation-delay:.19s}
-.rs-fire .sp:nth-of-type(3){--dx:-4px;--dy:-19px;animation-delay:.38s}
-.rs-fire .sp:nth-of-type(4){--dx:12px;--dy:-6px;animation-delay:.56s}
-@keyframes ember{to{transform:scale(1.25);box-shadow:0 0 8px 3px rgba(255,210,110,1),0 0 20px 8px rgba(255,110,30,.6)}}
-@keyframes flick{0%,100%{transform:scale(1,1) skewX(0)}25%{transform:scale(.9,1.14) skewX(5deg)}50%{transform:scale(1.06,.9) skewX(-3deg)}75%{transform:scale(.95,1.08) skewX(-6deg)}}
-@keyframes spark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
+.rs-fire{--k:1;position:absolute;left:50%;top:4.75px;width:0;height:0;transform:rotate(calc(var(--a) * -1));transition:scale .3s}
+/* the burning end spits sparks like a sparkler: a white-hot point in a flickering glow, thin rays shot
+   out all round, each on its own beat (made once by the script, see restSparks), and specks that fly
+   further, twinkle and drop. --k speeds it all up in the last seconds. */
+.rs-fire::before{content:'';position:absolute;left:-15px;top:-15px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,rgba(255,240,190,.8) 0,rgba(255,180,70,.38) 38%,rgba(255,140,40,0) 70%);animation:halo .2s ease-in-out infinite alternate}
+.rs-fire .core{position:absolute;left:-3.5px;top:-3.5px;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 3px 2px #fff6d0,0 0 9px 4px rgba(255,205,95,.95),0 0 18px 7px rgba(255,120,30,.55);animation:ember .12s steps(2) infinite alternate}
+.rs-fire .ray{position:absolute;left:0;top:-.7px;width:var(--l);height:1.4px;border-radius:2px;transform-origin:0 50%;background:linear-gradient(90deg,#fff 0,#fff3c4 30%,#ffc94d 65%,rgba(255,150,40,0));opacity:0;animation:ray calc(var(--d) * var(--k)) linear var(--dl) infinite}
+.rs-fire .dot{position:absolute;left:-1px;top:-1px;width:2.2px;height:2.2px;border-radius:50%;background:#fff6d0;box-shadow:0 0 3px 1px rgba(255,190,80,.95);opacity:0;animation:speck calc(var(--d) * var(--k)) ease-out var(--dl) infinite}
+@keyframes halo{to{transform:scale(1.25);opacity:.7}}
+@keyframes ember{to{transform:scale(1.3)}}
+@keyframes ray{0%{opacity:1;transform:rotate(var(--r)) translateX(1px) scaleX(.15)}55%{opacity:1;transform:rotate(var(--r)) translateX(2px) scaleX(1)}100%{opacity:0;transform:rotate(var(--r)) translateX(calc(var(--l) * .6)) scaleX(.3)}}
+@keyframes speck{0%{opacity:1;transform:translateY(0) rotate(var(--r)) translateX(2px) scale(1)}45%{opacity:.35}60%{opacity:1}100%{opacity:0;transform:translateY(6px) rotate(var(--r)) translateX(var(--l)) scale(.5)}}
 /* a new rest lights a new fuse: no sweep around the ring */
 #rest.ig .rs-tip,#rest.ig .rs-fg{transition:none}
 .rs-boom{display:none;position:absolute;inset:0;z-index:3;pointer-events:none}
 .rs-boom::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,#fff 0,#ffe38a 22%,#ff9a3c 42%,rgba(255,90,30,.35) 58%,rgba(255,90,30,0) 72%);animation:boom .6s ease-out forwards}
-.rs-boom i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#ff9a3c;box-shadow:0 0 6px 2px rgba(255,160,60,.8);opacity:0;animation:shard .7s cubic-bezier(.15,.7,.3,1) forwards}
-.rs-boom i:nth-child(1){--r:0deg}.rs-boom i:nth-child(2){--r:45deg}.rs-boom i:nth-child(3){--r:90deg}.rs-boom i:nth-child(4){--r:135deg}
-.rs-boom i:nth-child(5){--r:180deg}.rs-boom i:nth-child(6){--r:225deg}.rs-boom i:nth-child(7){--r:270deg}.rs-boom i:nth-child(8){--r:315deg}
-.rs-boom i:nth-child(even){width:4px;height:4px;margin:-2px 0 0 -2px;background:#ffd25c}
+.rs-boom i{position:absolute;left:50%;top:50%;width:var(--l);height:2px;margin-top:-1px;border-radius:2px;transform-origin:0 50%;background:linear-gradient(90deg,rgba(255,255,255,0) 0,var(--c) 70%,#fff 100%);opacity:0;animation:burst .8s cubic-bezier(.12,.75,.3,1) forwards}
+.rs-boom i:nth-child(odd){height:1.5px;animation-delay:.06s}
 @keyframes boom{0%{transform:scale(.2);opacity:1}60%{opacity:.85}100%{transform:scale(1.9);opacity:0}}
-@keyframes shard{0%{opacity:1;transform:rotate(var(--r)) translateY(0)}100%{opacity:0;transform:rotate(var(--r)) translateY(-50px) scale(.4)}}
+@keyframes burst{0%{opacity:1;transform:rotate(var(--r)) translateX(0) scaleX(.1)}40%{opacity:1;transform:rotate(var(--r)) translateX(6px) scaleX(1)}100%{opacity:0;transform:translateY(9px) rotate(var(--r)) translateX(18px) scaleX(.45)}}
 .rs-t{grid-area:text;min-width:0;display:flex;flex-direction:column;gap:1px}
 .rs-t small{font-size:12px;font-weight:700;color:var(--muted)}
 .rs-t small b{font-weight:inherit}
@@ -830,8 +826,7 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .rs-sk .b{display:none}
 /* the last seconds: the flame grows, the fuse runs red, the bomb trembles and its number beats */
 #rest.soon .rs-fg{stroke:url(#rsFuseHot);filter:drop-shadow(0 0 3px rgba(239,68,68,.7))}
-#rest.soon .rs-fire{scale:1.4}
-#rest.soon .rs-fire .sp{animation-duration:.45s}
+#rest.soon .rs-fire{scale:1.45;--k:.6}
 #rest.soon .rs-ring::before{box-shadow:inset 0 -3px 6px rgba(0,0,0,.45),0 0 14px 2px rgba(239,68,68,.55)}
 #rest.soon .rs-ring{animation:tremble .18s linear infinite}
 #rest.soon .rs-ring b{animation:beat .9s ease-in-out infinite}
@@ -1505,8 +1500,8 @@ body.fabbed #app{padding-bottom:180px}
 <nav id="nav" class="glass" aria-label="Navigasi"></nav>
 <div id="rest" hidden role="timer" aria-label="Timer istirahat">
   <div class="rs-ring"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="rsFuse" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc94d"/><stop offset=".5" stop-color="#ff8a2a"/><stop offset="1" stop-color="#f0522a"/></linearGradient><linearGradient id="rsFuseHot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a3c"/><stop offset="1" stop-color="#e11d48"/></linearGradient></defs><circle cx="32" cy="32" r="28" class="rs-bg"/><circle cx="32" cy="32" r="28" class="rs-fg" id="restRing"/></svg><b id="restT">0:00</b>
-    <span class="rs-tip" id="restTip" aria-hidden="true"><span class="rs-fire"><i class="fl"></i><i class="core"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i><i class="sp"></i></span></span>
-    <span class="rs-boom" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+    <span class="rs-tip" id="restTip" aria-hidden="true"><span class="rs-fire" id="restFire"><i class="core"></i></span></span>
+    <span class="rs-boom" id="restBoom" aria-hidden="true"></span></div>
   <div class="rs-t"><small><b id="restL">Istirahat</b><em id="restHr" hidden></em></small><span id="restN"></span></div>
   <div class="rs-b"><button class="rs-adj" data-a="restAdd" data-d="-15" aria-label="Kurangi 15 detik">−15</button><button class="rs-adj" data-a="restAdd" data-d="15" aria-label="Tambah 15 detik">+15</button><button class="rs-sk" data-a="restSkip"><span class="a">Lewati</span><span class="b">Oke</span></button></div>
 </div>
@@ -3343,6 +3338,17 @@ let rest = null, restTimer = null;
 // Rest between sets. The end-of-rest sound is scheduled on the audio clock when the rest starts,
 // so it lands on time even when the phone throttles the page's timers.
 const RING = 175.93;   // 2πr of the ring, r = 28
+// The fuse's sparks, like a sparkler: 16 rays round the burning end and 8 specks, each with its own
+// angle, length and beat; and the bang when the rest is over, 14 rays of a firework. The "random"
+// numbers are fixed, so it looks the same every time.
+(function restSparks() {
+  const rnd = (i, k) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x) };
+  let h = '';
+  for (let i = 0; i < 16; i++) h += `<i class="ray" style="--r:${(i * 22.5 + rnd(i, 1) * 14 - 7).toFixed(1)}deg;--l:${(9 + rnd(i, 2) * 10).toFixed(1)}px;--d:${(.3 + rnd(i, 3) * .3).toFixed(2)}s;--dl:${(-rnd(i, 4) * .6).toFixed(2)}s"></i>`;
+  for (let i = 0; i < 8; i++) h += `<i class="dot" style="--r:${(rnd(i, 5) * 360).toFixed(0)}deg;--l:${(15 + rnd(i, 6) * 11).toFixed(1)}px;--d:${(.55 + rnd(i, 7) * .35).toFixed(2)}s;--dl:${(-rnd(i, 8) * .9).toFixed(2)}s"></i>`;
+  $('#restFire').insertAdjacentHTML('beforeend', h);
+  $('#restBoom').innerHTML = Array.from({ length: 14 }, (_, i) => `<i style="--r:${(i * 360 / 14 + rnd(i, 9) * 10).toFixed(1)}deg;--l:${(30 + rnd(i, 10) * 16).toFixed(0)}px;--c:${['#ffd25c', '#ff9a3c', '#fff3c4', '#ff6b4a'][i % 4]}"></i>`).join('');
+})();
 function startRest(sec = S.settings.rest, ei = -1) {
   stopRest();
   rest = { end: Date.now() + sec * 1000, total: sec, ei, snd: [] };
