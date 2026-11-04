@@ -5035,7 +5035,7 @@ async function openScan(rid = null, swap = false) {
   const el = $('#scan');
   el.innerHTML = `<video id="scanV" playsinline muted autoplay></video><div class="scan-frame"></div>
     <button class="icon-btn scan-x" data-a="scanClose" aria-label="Tutup">${I('x')}</button>
-    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.swap ? 'Dicek apakah alatnya bisa menggantikan latihan tadi' : scan.rid ? 'Bisa scan beberapa alat berturut-turut' : S.active ? 'Detail alatnya terbuka, tambahkan ke workout dari sana' : 'Tutorial alatnya langsung terbuka'}</small></div>
+    <div class="scan-tip" id="scanTip" role="status">Arahkan kamera ke QR code di alat<small>${scan.swap ? 'Dicek apakah alatnya bisa menggantikan latihan tadi' : scan.rid ? 'Alatnya langsung masuk ke program' : S.active ? 'Detail alatnya terbuka, tambahkan ke workout dari sana' : 'Tutorial alatnya langsung terbuka'}</small></div>
     <div class="scan-ctl" id="scanCtl" hidden></div><div class="scan-ask" id="scanAsk" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
   // closing and reopening while this one still waits on the camera must not leave two readers running
@@ -5141,10 +5141,10 @@ function stopScan() {
   const el = $('#scan'); el.hidden = true; el.innerHTML = '';
   if (!$('#sheet').classList.contains('open')) document.body.classList.remove('noscroll');
   if (scan.added) {
-    toast(`${scan.added} alat ditambahkan ke program`);
+    toast(scan.added === 1 && scan.name ? `${scan.name} ditambahkan ke program` : `${scan.added} alat ditambahkan ke program`);
     setTimeout(() => { const rows = document.querySelectorAll('.edrow'); rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, 60);
   }
-  scan.rid = null; scan.added = 0; scan.last = 0; scan.pending = null;
+  scan.rid = null; scan.added = 0; scan.name = ''; scan.last = 0; scan.pending = null;
   if (scan.swap) { scan.swap = false; if (ui.swap && swItem()) swapSheet() }
 }
 function scanAsk(t) {
@@ -6024,9 +6024,9 @@ const A = {
     if (scan.rid) {
       const r = findR(scan.rid); if (!r) return stopScan();
       const like = r.items[r.items.length - 1];   // same sets and reps as the program's last exercise
-      r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; save(); render();
-      return scanResume(`${esc(t.t)} ditambahkan<small>${scan.added} alat masuk ke program. Scan alat berikutnya, atau tutup kalau sudah.</small>`);
+      r.items.push({ id: t.id, sets: like?.sets || 3, reps: like?.reps || '10' }); scan.added++; scan.name = t.t; save(); render();
     }
+    // the camera closes once the machine is in; the program then scrolls to it
     stopScan();
   },
   // from a machine's detail during a workout: add it and open it there; data-open goes to the one
