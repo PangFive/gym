@@ -1393,7 +1393,10 @@ button.urow:active{background:rgba(24,32,47,.04)}
 .av{display:grid;place-items:center;background:linear-gradient(160deg,#e3edfd,#f6f8fc)}
 .av svg.i{width:46px;height:46px;color:var(--acc);opacity:.85}
 .av .a3t{position:absolute;left:9px;top:9px;padding:3px 9px;border-radius:999px;background:var(--acc);color:#fff;font-size:11.5px;font-weight:800}
-.a3d{position:relative;height:min(62vh,440px);margin:0 0 14px;border-radius:24px;overflow:hidden;background:linear-gradient(170deg,#e6eefc 0%,#f4f7fc 70%,#eef2f8 100%)}
+.a3d{position:relative;height:min(62vh,440px);margin:0 0 14px;border-radius:24px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 70% at 50% 18%,#ffffff 0%,rgba(255,255,255,0) 60%),radial-gradient(90% 60% at 100% 0%,rgba(124,92,255,.22),transparent 70%),radial-gradient(90% 60% at 0% 100%,rgba(47,124,246,.28),transparent 70%),linear-gradient(170deg,#dfe9fd 0%,#eef3fd 55%,#d6e3fb 100%)}
+.a3d::before{content:'';position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(47,124,246,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(47,124,246,.07) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(80% 60% at 50% 35%,#000,transparent)}
+.a3d .a3w{position:absolute;inset:auto 0 18% 0;z-index:-1;text-align:center;font-size:clamp(64px,22vw,120px);font-weight:900;letter-spacing:-2px;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(47,124,246,.16);white-space:nowrap;pointer-events:none}
 .a3d canvas{display:block;width:100%;height:100%;touch-action:none}
 .a3d .a3l{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:var(--muted);font-size:14px;font-weight:600}
 .a3d .a3p{position:absolute;left:12px;top:12px;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.88);font-size:13px;font-weight:800;color:var(--ink);transition:color .2s}
@@ -2459,7 +2462,7 @@ function vAnim() {
 function openAnim(id) {
   const a = ANIM.find(x => x.id === id); if (!a) return;
   const cue = (cls, ic, title, xs) => `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`;
-  sheet(`<div class="a3d" id="a3d"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
+  sheet(`<div class="a3d" id="a3d"><div class="a3w" aria-hidden="true">${esc(a.t.split(' ').pop().toUpperCase())}</div><div class="a3l" id="a3l">Memuat animasi 3D…</div>
       <div class="a3p" id="a3p">Siap</div>
       <div class="a3c"><button data-sp="0.5">Pelan</button><button data-sp="1" class="on">Normal</button><button data-rot>Putar</button></div>
       <div class="a3h">Geser untuk memutar</div></div>
@@ -2494,7 +2497,22 @@ async function anim3d(host, a) {
   Object.assign(key.shadow.camera, { left: -2, right: 2, top: 2.5, bottom: -.5, near: .5, far: 12 });
   key.shadow.bias = -.0003; key.shadow.normalBias = .02; scene.add(key);
   const back = new THREE.DirectionalLight(0xdfe9fb, .9); back.position.set(-3, 2.6, -3); scene.add(back);
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .16 }));
+  // a stage under the feet: a fading blue grid and two rings in the accent colour, drawn once on a canvas
+  const fc = document.createElement('canvas'); fc.width = fc.height = 1024;
+  const fx = fc.getContext('2d'), mid = 512;
+  fx.strokeStyle = 'rgba(47,124,246,.35)'; fx.lineWidth = 2;
+  for (let p = 0; p <= 1024; p += 48) { fx.beginPath(); fx.moveTo(p, 0); fx.lineTo(p, 1024); fx.moveTo(0, p); fx.lineTo(1024, p); fx.stroke() }
+  fx.globalCompositeOperation = 'destination-in';
+  const fade = fx.createRadialGradient(mid, mid, 0, mid, mid, mid); fade.addColorStop(0, '#000'); fade.addColorStop(.55, 'rgba(0,0,0,.6)'); fade.addColorStop(1, 'rgba(0,0,0,0)');
+  fx.fillStyle = fade; fx.fillRect(0, 0, 1024, 1024); fx.globalCompositeOperation = 'source-over';
+  const disc = fx.createRadialGradient(mid, mid, 0, mid, mid, 150); disc.addColorStop(0, 'rgba(47,124,246,.28)'); disc.addColorStop(1, 'rgba(47,124,246,0)');
+  fx.fillStyle = disc; fx.beginPath(); fx.arc(mid, mid, 150, 0, Math.PI * 2); fx.fill();
+  [[150, 4, .7], [196, 2, .35]].forEach(([r, w, o]) => { fx.strokeStyle = `rgba(47,124,246,${o})`; fx.lineWidth = w; fx.beginPath(); fx.arc(mid, mid, r, 0, Math.PI * 2); fx.stroke() });
+  const tex = new THREE.CanvasTexture(fc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const stage = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
+  stage.rotation.x = -Math.PI / 2; stage.position.y = .001; scene.add(stage);
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .18 }));
+  floor.position.y = .002;
   floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
   // the app's colours: the main muscle in the accent blue, the helping one in the light blue of the body map
   const U = { uA: { value: .8 }, uB: { value: .55 }, cA: { value: new THREE.Color(0x2f7cf6) }, cB: { value: new THREE.Color(0x8fb6f8) } };
@@ -2545,8 +2563,8 @@ async function anim3d(host, a) {
     const c = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, .04, 20), steel); c.rotation.z = Math.PI / 2; c.position.x = s * .56; bar.add(c);
   });
   bar.traverse(o => { if (o.isMesh) o.castShadow = true }); scene.add(bar);
-  const target = V(0, height * 1.12, 0); controls.target.copy(target);
-  camera.position.copy(target).addScaledVector(fwd, 3.4).addScaledVector(left, -1.1).add(V(0, .35, 0)); controls.update();
+  const target = V(0, height * .98, 0); controls.target.copy(target);
+  camera.position.copy(target).addScaledVector(fwd, 3.7).addScaledVector(left, -1.2).add(V(0, .55, 0)); controls.update();
 
   // barbell curl, t = 0 (arms down) … 1 (top)
   const FINGERS = ['Index', 'Middle', 'Ring', 'Pinky'];
