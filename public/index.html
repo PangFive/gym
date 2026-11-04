@@ -910,7 +910,8 @@ body.navless.resting #app{padding-bottom:calc(140px + env(safe-area-inset-bottom
 .fld input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
 .fld .fhint{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:8px 4px 0}
 .fhint .spin{width:14px;height:14px;border-width:2px;flex:none}
-.mlist{display:grid;gap:8px}
+.mlist{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.mlist.long{max-height:min(52vh,440px);overflow-y:auto;overscroll-behavior:contain;padding:3px;margin:-3px}
 .mopt{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;padding:10px 14px;border:1px solid rgba(24,32,47,.1);border-radius:16px;background:#fff;text-align:left;color:var(--ink);font:inherit;transition:border-color .15s,box-shadow .15s,background .15s}
 .mopt:active{transform:scale(.99)}
 .mopt.on{border-color:var(--acc);background:#f4f8ff;box-shadow:0 0 0 3px var(--acc-soft)}
@@ -2739,7 +2740,7 @@ function pickAiHtml() {
 }
 async function askExercises() {
   const p = ui.pick;
-  if (!aiConf().key) { p.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau Claude di Pengaturan.' }; return $('#pkAi').innerHTML = pickAiHtml() }
+  if (!aiConf().key) { p.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau 9router di Pengaturan.' }; return $('#pkAi').innerHTML = pickAiHtml() }
   const r = p.mode === 'edit' ? findR(p.rid) : null, have = (r ? r.items : S.active?.items || []).map(it => it.id);
   // A request that names muscles ("latihan perut hari ini") counts like muscles picked on the map: the gym may
   // have only one machine for them, and then one machine is the answer, not a balanced program around it.
@@ -2856,7 +2857,7 @@ const swRow = (id, sub, pri) => { const t = T[id]; return `<div class="sw-row">
 function swapAiHtml() {
   const w = ui.swap, a = w.ai, busy = !!a?.busy;
   const head = `<div class="aa-h">${I('sparkles')}<b>Rekomendasi ${aiName()}</b></div>`;
-  if (!aiConf().key) return `<div class="aiadv ok sw-ai">${head}<p>Hubungkan Gemini atau Claude di Pengaturan untuk saran pengganti. Alat untuk otot yang sama ada di bawah.</p>
+  if (!aiConf().key) return `<div class="aiadv ok sw-ai">${head}<p>Hubungkan Gemini atau 9router di Pengaturan untuk saran pengganti. Alat untuk otot yang sama ada di bawah.</p>
     <div class="aa-b"><button class="aibtn" data-a="settings">${I('sliders')} Buka Pengaturan</button></div></div>`;
   let res = '';
   if (busy) res = `<div class="sw-busy"><span class="spin" aria-hidden="true"></span><span role="status">${aiName()} sedang mencari pengganti…</span></div>`;
@@ -3082,7 +3083,7 @@ function openSettings() {
 
     <h3 class="sh2">Perangkat ini</h3>
     <div class="sgroup">
-      ${link('sparkles', '#2f7cf6', 'AI (kalori & latihan)', 'aiSetup', aiConf().key ? `${aiName()} terhubung · key tersimpan di perangkat ini` : 'Belum terhubung · ketuk untuk memasang key Gemini atau Claude')}
+      ${link('sparkles', '#2f7cf6', 'AI (kalori & latihan)', 'aiSetup', aiConf().key ? `${aiName()} terhubung · key tersimpan di perangkat ini` : 'Belum terhubung · ketuk untuk memasang key Gemini atau 9router')}
       ${standalone() ? '' : link('download', '#14b8a6', `Pasang ${esc(APP.appName)} di layar utama`, 'install', 'Buka seperti aplikasi dan tetap jalan offline')}
     </div>
 
@@ -3706,32 +3707,43 @@ function onUser(user) {
   });
 }
 // ---------- calories ----------
-// A photo (or a typed description) goes straight from the phone to Google Gemini or Anthropic Claude
-// with the user's own API key, kept on this device only (why_ai). The AI answers with JSON; the user
-// checks and edits it, and the meal is saved to users/<uid>/meals. Photos are never stored.
+// A photo (or a typed description) goes straight from the phone to Google Gemini or to the user's
+// own 9router (an OpenAI-style router in front of Claude, Gemini, OpenRouter and more) with the
+// user's own API key, kept on this device only (why_ai). The AI answers with JSON; the user checks
+// and edits it, and the meal is saved to users/<uid>/meals. Photos are never stored.
 const MEAL_SLOTS = [['breakfast', 'Sarapan'], ['lunch', 'Makan siang'], ['dinner', 'Makan malam'], ['snack', 'Camilan']];
 const AI_KEY = 'why_ai';
 // gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
-// thinking answers in a couple of seconds.
-const AI_MODEL = 'gemini-3.5-flash', CLAUDE_MODEL = 'claude-opus-5-5';
+// thinking answers in a couple of seconds. On 9router, WHY is the combo made for this app.
+const AI_MODEL = 'gemini-3.5-flash', ROUTER_MODEL = 'WHY', ROUTER_URL = 'https://ryysvy8.abc-tunnel.us/v1';
 const AI_PROV = {
-  gemini: { name: 'Gemini', model: AI_MODEL, site: 'AI Studio', who: 'Google Gemini', free: true,
+  gemini: { name: 'Gemini', model: AI_MODEL, site: 'AI Studio', who: 'Google Gemini', cost: 'gratis',
     steps: ['Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>', 'Masuk dengan akun Google, lalu ketuk <b>Create API key</b>', 'Ketuk ikon salin di samping key, lalu tempel di bawah'] },
-  claude: { name: 'Claude', model: CLAUDE_MODEL, site: 'Claude Console', who: 'Anthropic Claude',
-    steps: ['Buka <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener">platform.claude.com/settings/keys</a>', 'Masuk, isi saldo di <b>Billing</b>, lalu ketuk <b>Create Key</b>', 'Salin key yang muncul, lalu tempel di bawah'] },
+  router: { name: '9router', model: ROUTER_MODEL, site: 'dashboard 9router', who: '9router, lalu ke provider model yang dipilih', cost: 'dari dashboard 9router',
+    steps: ['Buka dashboard 9router, lalu salin <b>API key</b> (atau buat yang baru)', 'Tempel key di bawah. <b>Alamat server</b> sudah terisi; ganti bila alamat tunnel-nya berubah', 'Pilih model. Combo tampil paling atas dan pindah sendiri ke provider lain bila satu gagal'] },
 };
 const aiStore = () => { try { return JSON.parse(localStorage.getItem(AI_KEY)) || {} } catch { return {} } };
-// Gemini's settings sit at the top level (as before Claude came), Claude's under .claude
+// Gemini's settings sit at the top level (as before a second AI came), 9router's under .router.
+// The direct Claude option of before is gone; its key is ignored and dropped on the next save.
 function aiConfOf(prov, s = aiStore()) {
-  const c = (prov === 'claude' ? s.claude : s) || {}, def = AI_PROV[prov].model;
-  return { prov, key: c.key || '', model: !c.model || c.model === 'gemini-flash-latest' ? def : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || def };
+  const c = (prov === 'router' ? s.router : s) || {}, def = AI_PROV[prov].model;
+  return { prov, key: c.key || '', url: prov === 'router' ? cleanUrl(c.url) || ROUTER_URL : '',
+    model: !c.model || c.model === 'gemini-flash-latest' ? def : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || def };
 }
 // the provider saved last
-const aiConf = () => { const s = aiStore(); return aiConfOf(s.use === 'claude' || (!s.key && s.claude?.key) ? 'claude' : 'gemini', s) };
+const aiConf = () => { const s = aiStore(); return aiConfOf(s.use === 'router' || (!s.key && s.router?.key) ? 'router' : 'gemini', s) };
 const aiName = () => AI_PROV[aiConf().prov].name;
-// Spaces and line breaks sneak in when copying; the key's format is Google's business (AIza…, AQ.…),
-// so Gemini itself decides whether it is valid.
+// Spaces and line breaks sneak in when copying; the key's format is the provider's business
+// (AIza…, AQ.…, sk-…), so the provider itself decides whether it is valid.
 const cleanKey = v => String(v || '').replace(/[^\w.-]+/g, '');
+// The 9router address as pasted: https:// added when missing, a trailing slash or /chat/completions
+// dropped, /v1 added to a bare host (9router serves its OpenAI-style API there). '' when unusable.
+const cleanUrl = v => {
+  let u = String(v || '').replace(/\s+/g, '').replace(/\/(chat\/completions|models)?\/*$/i, '');
+  if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try { return new URL(u).pathname === '/' ? u + '/v1' : u } catch { return '' }
+};
 const slotNow = () => { const h = new Date().getHours(); return h < 10 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snack' };
 const mealTotals = m => { const k = m.portion || 1, t = { kcal: 0, p: 0, c: 0, f: 0 }; m.items.forEach(i => { t.kcal += i.kcal * k; t.p += i.p * k; t.c += i.c * k; t.f += i.f * k }); return t };
 const dayMeals = key => S.meals.filter(m => dayKey(m.date) === key);
@@ -3899,7 +3911,7 @@ function recentStats() {
 async function askTargetAdvice() {
   const { o, err } = profDraft();
   if (err) { $('#pfErr').textContent = err; return }
-  if (!aiConf().key) { ui.prof.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau Claude di Pengaturan.' }; return profRefresh() }
+  if (!aiConf().key) { ui.prof.ai = { err: 'AI belum terhubung. Pasang API key Gemini atau 9router di Pengaturan.' }; return profRefresh() }
   const e = energy(o, o.kg), act = ACTS.find(a => a[0] === o.act) || ACTS[1], r = recentStats();
   const goal = !o.goalW || !e.dir ? 'mempertahankan berat' : `${e.dir < 0 ? 'turun' : 'naik'} ke ${o.goalW} kg, ${o.pace} kg per minggu`;
   const prompt = `Kamu ahli gizi olahraga. Rekomendasikan target kalori harian yang aman dan realistis untuk orang ini.
@@ -4055,7 +4067,7 @@ async function askBodyAi() {
   const id = ui.bodyId, w = S.weights.find(x => x.id === id); if (!w) return;
   ui.bdAi = ui.bdAi || {};
   const show = () => { if (ui.bodyId === id && $('#bdAi')) $('#bdAi').innerHTML = bdAiHtml() };
-  if (!aiConf().key) { ui.bdAi[id] = { err: 'AI belum terhubung. Pasang API key Gemini atau Claude di Pengaturan.' }; return show() }
+  if (!aiConf().key) { ui.bdAi[id] = { err: 'AI belum terhubung. Pasang API key Gemini atau 9router di Pengaturan.' }; return show() }
   const b = bodyOf(w), st = S.settings, past = S.weights.slice(S.weights.indexOf(w) + 1, S.weights.indexOf(w) + 9);
   const prompt = `Kamu pelatih kebugaran dan ahli gizi. Jelaskan kondisi tubuh ini dengan bahasa Indonesia yang sederhana.
 Orang: ${b.sex === 'male' ? 'pria' : b.sex === 'female' ? 'wanita' : 'jenis kelamin tidak diketahui'}${b.age ? `, ${b.age} tahun` : ''}${b.h ? `, tinggi ${b.h} cm` : ''}. Target berat: ${st.goalW ? `${st.goalW} kg` : 'tidak diisi'}. Rutin latihan beban di gym.
@@ -4116,36 +4128,41 @@ function vMeals() {
     ${energy() ? '' : profileCta()}
     ${weightCard()}`;
 }
-// ---- the AI: Gemini or Claude, picked on top of the sheet (swap redraws only the sheet's body)
+// ---- the AI: Gemini or 9router, picked on top of the sheet (swap redraws only the sheet's body)
 function openAiSetup(then, prov = aiConf().prov, swap) {
   if (!swap) ui.aiThen = then || null;
   ui.aiProv = prov;
   const c = aiConfOf(prov), p = AI_PROV[prov];
   const html = `<h2 class="sh">Hubungkan AI</h2>
-    <p class="scope" style="margin-top:-8px">AI yang menghitung kalori dari foto. Butuh API key ${p.name} milikmu sendiri (${p.free ? 'gratis' : 'berbayar sesuai pemakaian'}).</p>
+    <p class="scope" style="margin-top:-8px">AI yang menghitung kalori dari foto. Butuh API key ${p.name} milikmu sendiri (${p.cost}).</p>
     <div class="seg pseg aiseg" role="radiogroup" aria-label="AI">${Object.entries(AI_PROV).map(([k, v]) => `<button role="radio" aria-checked="${k === prov}" class="${k === prov ? 'on' : ''}" data-a="aiProv" data-k="${k}">${v.name}</button>`).join('')}</div>
     <ol class="steps-ai">${p.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+    ${prov === 'router' ? `<label class="fld"><span>Alamat server</span><input id="aiUrl" data-i="aiUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="${ROUTER_URL}" value="${esc(c.url)}"></label>` : ''}
     <label class="fld"><span>API key ${p.name}</span><input id="aiKey" data-i="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini" value="${esc(c.key)}"></label>
     <div class="fld"><span id="aiMl">Model</span><input type="hidden" id="aiModel" value="${esc(c.model)}">
-      <div class="mlist" id="aiModels" role="radiogroup" aria-labelledby="aiMl">${modelOpts(c.models.length ? c.models : [c.model], c.model, c.rec, c.ms, !c.models.length)}</div>
+      <div class="mlist${c.models.length > 6 ? ' long' : ''}" id="aiModels" role="radiogroup" aria-labelledby="aiMl">${modelOpts(c.models.length ? c.models : [c.model], c.model, c.rec, c.ms, !c.models.length)}</div>
       <small class="fhint" id="aiMs" role="status">${c.models.length ? `${c.models.length} model bisa dipakai dengan key ini.` : 'Pilihan model muncul setelah key ditempel.'}</small></div>
     <p class="scope">Key hanya tersimpan di perangkat ini. Foto dikirim langsung ke ${p.who} untuk dianalisis dan tidak disimpan di aplikasi.</p>
     <p class="ferr" id="aiErr" role="alert"></p>
     <div class="row2">${c.key ? `<button class="btn danger" data-a="aiForget">${I('trash')} Hapus key</button>` : '<span></span>'}<button class="btn pri" data-a="aiSave">Tes &amp; simpan</button></div>`;
   if (swap) $('#sheet .sheet-body').innerHTML = html; else sheet(html);
   aiMsFor = ''; ui.aiModels = c.models; ui.aiMs = c.ms; ui.aiRec = c.rec;
-  // every Claude test call is billed, so a list saved with the key is not tested again
-  if (c.key && (prov === 'gemini' || !c.models.length)) loadAiModels();
+  // 9router's list costs nothing (no test calls), so both lists are fetched fresh
+  if (c.key) loadAiModels();
 }
+// what the sheet holds now: 9router's address (as typed, or the default), '' for Gemini
+const aiUrlNow = () => ui.aiProv === 'router' ? cleanUrl($('#aiUrl')?.value) || ROUTER_URL : '';
 // The models a key can use, best for meal photos first: the recommended one, then Flash (newest
 // first), Flash Lite, Pro. Speech, image, live, embedding and robotics models are left out.
 const AI_SKIP = /tts|image|live|embed|robotics|computer|transcribe|audio|banana|customtools|omni|argon|nano/;
-// gemini-3.5-flash-lite → "Gemini 3.5 Flash Lite", claude-opus-5-5 → "Claude Opus 5.5"; preview / latest become a small tag
-const modelName = n => /^claude-/.test(n) ? n.replace(/-(\d+)-(\d+)$/, ' $1.$2').split(/[- ]/).map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+// gemini-3.5-flash-lite → "Gemini 3.5 Flash Lite"; preview / latest become a small tag. 9router ids
+// (cc/claude-opus-5-5, gc/gemini-2.5-pro, a combo's own name) stay as its dashboard shows them.
+const modelName = n => !/^gemini-/.test(n) ? n
   : n.replace(/-(preview|latest)$/, '').replace(/^gemini-/, 'Gemini ').split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
 const modelOpts = (list, cur, rec = AI_MODEL, ms = {}, off) => list.map(n => {
   const t = ms[n], lv = !t ? 0 : t < 2500 ? 3 : t < 5000 ? 2 : 1, on = n === cur;
-  const tag = /preview/.test(n) ? 'Preview' : /latest/.test(n) ? 'Latest' : '';
+  // 9router names its models provider/model; a bare name is a combo
+  const tag = ui.aiProv === 'router' && !n.includes('/') ? 'Combo' : /preview/.test(n) ? 'Preview' : /latest/.test(n) ? 'Latest' : '';
   const sub = [t ? `<span class="mo-sp l${lv}" aria-hidden="true"><i></i><i></i><i></i></span>${(t / 1000).toFixed(1).replace('.', ',')} dtk · ${['', 'Lambat', 'Sedang', 'Cepat'][lv]}` : '', tag ? `<span class="mo-tag">${tag}</span>` : ''].filter(Boolean).join(' ');
   return `<button type="button" class="mopt${on ? ' on' : ''}" role="radio" aria-checked="${on}" data-a="aiPick" data-m="${esc(n)}"${off ? ' disabled' : ''}>
     <span class="mo-dot" aria-hidden="true"></span><span class="mo-t"><b>${esc(modelName(n))}</b>${sub ? `<small>${sub}</small>` : ''}</span>${n === rec ? '<span class="mo-rec">Disarankan</span>' : ''}</button>`;
@@ -4165,60 +4182,69 @@ async function geminiModels(key) {
     .map(m => String(m.name || '').replace(/^models\//, '')).filter(n => /^gemini-/.test(n) && !AI_SKIP.test(n))
     .sort((a, b) => rank(a) - rank(b) || /latest|preview/.test(a) - /latest|preview/.test(b) || ver(b) - ver(a) || a.localeCompare(b));
 }
-// Anthropic lists only models the key can use; the newest of each family (Opus, Sonnet, Haiku, Fable)
-// that reads photos is offered, the recommended one first.
-async function claudeModels(key) {
+// 9router lists every model of the providers connected to it. Those that read photos are offered
+// (all of them when the server does not say), the WHY combo first, then the other combos, then the
+// rest as the server orders them. Music, speech, image-making and embedding models are left out.
+const ROUTER_SKIP = /tts|embed|lyria|whisper|transcri|image|imagen|veo|banana|audio|rerank|moderation/i;
+async function routerModels(key, url) {
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000);
   let res, j;
   try {
-    res = await fetch('https://api.anthropic.com/v1/models?limit=100', { headers: claudeHeaders(key), signal: ctl.signal });
-    j = await res.json().catch(() => ({}));
-  } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'Daftar model tidak termuat. Coba lagi.' : 'Tidak bisa menghubungi Claude. Periksa koneksi internet.') }
+    res = await fetch(url + '/models', { headers: routerHeaders(key), signal: ctl.signal });
+    j = await res.json().catch(() => null);
+  } catch (e) { throw new Error(e && e.name === 'AbortError' ? 'Daftar model tidak termuat. Coba lagi.' : 'Tidak bisa menghubungi 9router. Periksa alamat server dan koneksi internet.') }
   finally { clearTimeout(timer) }
-  if (!res.ok) throw new Error(claudeError(res.status, j));
-  const fam = m => m.line || (String(m.id).match(/^claude-([a-z]+)/) || [])[1], newest = {};
-  asList(j.data).filter(m => /^claude-/.test(m.id) && m.capabilities?.image_input?.supported !== false && !m.deprecated_at)
-    .forEach(m => { const f = fam(m); if (f && (!newest[f] || m.created_at > newest[f].created_at)) newest[f] = m });
-  const rank = n => n === CLAUDE_MODEL ? 0 : /sonnet/.test(n) ? 1 : /haiku/.test(n) ? 2 : 3;
-  return Object.values(newest).map(m => m.id).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+  if (!res.ok) throw new Error(routerError(res.status, j));
+  if (!Array.isArray(j?.data)) throw new Error('Alamat ini bukan server 9router. Periksa alamat server.');
+  const all = j.data.filter(m => typeof m?.id === 'string' && !ROUTER_SKIP.test(m.id));
+  const told = all.some(m => m.capabilities && 'vision' in m.capabilities);
+  const rank = n => n === ROUTER_MODEL ? 0 : n.includes('/') ? 2 : 1;
+  return [...new Set(all.filter(m => !told || m.capabilities?.vision === true).map(m => m.id))].sort((a, b) => rank(a) - rank(b));
 }
 // Google lists models a key cannot really use (retired for new users, or thinking for over a
 // minute), so each one gets a tiny test call and only those that answer in time are offered.
-// A refusal for the whole key (wrong key, no credit, no quota) comes back as the reason.
-async function probeModel(prov, key, model) {
+// A refusal for the whole key (wrong key, no quota) comes back as the reason.
+async function probeModel(key, model) {
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 15000), t0 = performance.now();
   try {
-    const [res, j] = await (prov === 'claude' ? claudeCall : geminiCall)(key, model, [{ text: 'Balas hanya: OK' }], false, ctl.signal);
-    return res.ok ? [performance.now() - t0] : [0, [400, 401, 403, 429].includes(res.status) ? (prov === 'claude' ? claudeError : geminiError)(res.status, j) : ''];
+    const [res, j] = await geminiCall(key, model, [{ text: 'Balas hanya: OK' }], false, ctl.signal);
+    return res.ok ? [performance.now() - t0] : [0, [400, 401, 403, 429].includes(res.status) ? geminiError(res.status, j) : ''];
   } catch { return [0] } finally { clearTimeout(timer) }
 }
 let aiMsFor = '', aiMsT = 0;
 async function loadAiModels(force) {
-  const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey')?.value), sel = $('#aiModel'), box = $('#aiModels'), msg = $('#aiMs');
-  if (!sel || key.length < 20 || (!force && prov + key === aiMsFor)) return;
+  const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey')?.value), url = aiUrlNow(), sig = prov + url + key;
+  const sel = $('#aiModel'), box = $('#aiModels'), msg = $('#aiMs');
+  if (!sel || key.length < 20 || (!force && sig === aiMsFor)) return;
   const say = (t, spin) => { msg.innerHTML = (spin ? '<span class="spin" aria-hidden="true"></span>' : '') + esc(t) };
-  aiMsFor = prov + key; say('Memuat daftar model…', 1);
-  const stale = () => cleanKey($('#aiKey')?.value) !== key || ui.aiProv !== prov || !sel.isConnected;
+  aiMsFor = sig; say('Memuat daftar model…', 1);
+  const stale = () => cleanKey($('#aiKey')?.value) !== key || aiUrlNow() !== url || ui.aiProv !== prov || !sel.isConnected;
   try {
-    const all = await (prov === 'claude' ? claudeModels : geminiModels)(key);
+    const all = await (prov === 'router' ? routerModels(key, url) : geminiModels(key));
     if (stale()) return;
-    if (!all.length) throw new Error(`Key ini tidak punya model ${p.name} yang cocok.`);
-    let done = 0, why = '';
-    say(`Mengetes ${all.length} model…`, 1);
-    const ms = Object.fromEntries(await Promise.all(all.map(async n => {
-      const [t, e] = await probeModel(prov, key, n);
-      why ||= e;
-      if (!stale()) say(`Mengetes model… ${++done}/${all.length}`, 1);
-      return [n, t];
-    })));
-    if (stale()) return;
-    const list = all.filter(n => ms[n]);
-    if (!list.length) throw new Error(why || `Belum ada model yang menjawab. Server ${p.name} mungkin sibuk; coba lagi sebentar lagi.`);
-    const rec = ms[p.model] ? p.model : list[0], cur = list.includes(sel.value) ? sel.value : rec;
-    sel.value = cur; box.innerHTML = modelOpts(list, cur, rec, ms);
-    Object.assign(ui, { aiModels: list, aiMs: Object.fromEntries(list.map(n => [n, Math.round(ms[n])])), aiRec: rec });
-    say(`${list.length} dari ${all.length} model menjawab dan bisa dipakai.`);
-  } catch (e) { if (aiMsFor === prov + key) { aiMsFor = ''; say(e.message) } }
+    if (!all.length) throw new Error(`Key ini tidak punya model ${p.name} yang bisa membaca foto.`);
+    let list = all, ms = prov === 'router' ? { ...ui.aiMs } : {};   // 9router: speeds from earlier saves stay
+    // every 9router test call goes on to a real provider and uses its quota, so its list is offered
+    // as the server gives it; Tes & simpan checks the model picked
+    if (prov === 'gemini') {
+      let done = 0, why = '';
+      say(`Mengetes ${all.length} model…`, 1);
+      ms = Object.fromEntries(await Promise.all(all.map(async n => {
+        const [t, e] = await probeModel(key, n);
+        why ||= e;
+        if (!stale()) say(`Mengetes model… ${++done}/${all.length}`, 1);
+        return [n, t];
+      })));
+      if (stale()) return;
+      list = all.filter(n => ms[n]);
+      if (!list.length) throw new Error(why || `Belum ada model yang menjawab. Server ${p.name} mungkin sibuk; coba lagi sebentar lagi.`);
+    }
+    const rec = list.includes(p.model) && (prov === 'router' || ms[p.model]) ? p.model : prov === 'router' && list.find(n => !n.includes('/')) || list[0];
+    const cur = list.includes(sel.value) ? sel.value : rec;
+    sel.value = cur; box.innerHTML = modelOpts(list, cur, rec, ms); box.classList.toggle('long', list.length > 6);
+    Object.assign(ui, { aiModels: list, aiMs: Object.fromEntries(list.filter(n => ms[n]).map(n => [n, Math.round(ms[n])])), aiRec: rec });
+    say(prov === 'router' ? `${list.length} model bisa dipakai dengan key ini.` : `${list.length} dari ${all.length} model menjawab dan bisa dipakai.`);
+  } catch (e) { if (aiMsFor === sig) { aiMsFor = ''; say(e.message) } }
 }
 function geminiError(status, j) {
   const m = j?.error?.message || '', st = j?.error?.status || '';
@@ -4261,59 +4287,73 @@ async function gemini(parts, { key, model } = aiConf(), json = true, timeoutMs =
   if (!res.ok) throw new Error(geminiError(res.status, j));
   return (j.candidates?.[0]?.content?.parts || []).map(x => x.text || '').join('');
 }
-// ---- Claude, called straight from the phone like Gemini; the browser has to say so in a header
-const claudeHeaders = key => ({ 'x-api-key': key, 'anthropic-version': '2026-10-21', 'anthropic-dangerous-direct-browser-access': 'true' });
-function claudeError(status, j) {
-  const m = j?.error?.message || '';
-  if (status === 401) return 'API key tidak valid. Periksa lagi key-nya.';
-  if (/credit balance/i.test(m)) return 'Saldo Claude habis. Isi saldo di platform.claude.com → Billing.';
-  if (status === 403) return 'API key ini tidak punya akses ke model ini.';
-  if (status === 404) return `Model tidak ditemukan. Coba model ${modelName(CLAUDE_MODEL)}.`;
-  if (status === 429) return 'Batas pemakaian Claude tercapai. Coba lagi sebentar lagi.';
-  if (status >= 500) return 'Server Claude sedang sibuk. Coba lagi sebentar lagi.';
-  return 'Claude gagal (' + (m || status) + ').';
+// ---- 9router, the user's own OpenAI-style router (Claude, Gemini, OpenRouter … behind one key),
+// called straight from the phone like Gemini
+const routerHeaders = key => ({ Authorization: 'Bearer ' + key });
+const routerMsg = j => String(typeof j?.error === 'string' ? j.error : j?.error?.message || j?.message || '');
+function routerError(status, j) {
+  const m = routerMsg(j);
+  if (status === 401 || (status === 403 && /key/i.test(m))) return 'API key tidak valid. Periksa lagi key-nya di dashboard 9router.';
+  if (status === 403) return 'API key ini tidak boleh memakai model ini.';
+  if (status === 404) return /model|provider|credential/i.test(m) ? 'Model ini tidak tersedia di 9router. Pilih model lain.' : 'Alamat server tidak ditemukan. Periksa alamat 9router.';
+  if (status === 429) return 'Batas pemakaian model ini tercapai. Coba lagi sebentar lagi, atau pilih model lain.';
+  // the tunnel answers by itself (no 9router message) while 9router or the tunnel is off
+  if (status >= 500 && !m) return 'Server 9router tidak menjawab. Pastikan 9router dan tunnel-nya menyala.';
+  if (status >= 500) return `9router sedang bermasalah (${m.slice(0, 120)}). Coba lagi sebentar lagi.`;
+  return '9router gagal (' + (m.slice(0, 160) || status) + ').';
 }
-// Gemini-style parts (text, inline_data) as Claude content, the photo before the words.
-// Answers stay short (low effort); when a model declines (stop_reason refusal) the API may hand the
-// request to another model by itself (fallbacks, not offered on Haiku).
-const CLAUDE_BACKUP = ['claude-sonnet-5-5', 'claude-haiku-5-5'];
-async function claudeCall(key, model, parts, json, signal) {
-  const content = [...parts.filter(x => x.inline_data).map(x => ({ type: 'image', source: { type: 'base64', media_type: x.inline_data.mime_type, data: x.inline_data.data } })),
-    ...parts.filter(x => x.text).map(x => ({ type: 'text', text: x.text }))];
+// The answer as JSON; an answer streamed anyway (data: {…} lines) is put back together.
+async function routerRead(r) {
+  const t = await r.text().catch(() => '');
+  try { return JSON.parse(t) } catch {}
+  let text = '', fin = null;
+  for (const l of t.split('\n')) {
+    if (!l.startsWith('data:')) continue;
+    try { const c = JSON.parse(l.slice(5)).choices?.[0]; text += c?.delta?.content || ''; fin = c?.finish_reason || fin } catch {}
+  }
+  return text || fin ? { choices: [{ message: { content: text }, finish_reason: fin }] } : {};
+}
+// Gemini-style parts (text, inline_data) as an OpenAI chat message, the photo before the words.
+// 9router streams unless told not to. JSON mode is asked for; a model that refuses it (or a set
+// temperature) gets the request again without them, the prompt asks for JSON anyway.
+async function routerCall(key, url, model, parts, json, signal) {
+  const imgs = parts.filter(x => x.inline_data), texts = parts.filter(x => x.text).map(x => x.text);
+  const content = imgs.length ? [...imgs.map(x => ({ type: 'image_url', image_url: { url: `data:${x.inline_data.mime_type};base64,${x.inline_data.data}` } })),
+    ...texts.map(text => ({ type: 'text', text }))] : texts.join('\n\n');
   const call = async extras => {
-    const body = { model, max_tokens: json ? 16000 : 1024, messages: [{ role: 'user', content }] };
-    if (json) body.system = 'Balas hanya dengan satu objek JSON yang valid, tanpa teks lain.';
-    const fb = extras && !/haiku/.test(model);
-    if (extras) body.output_config = { effort: 'low' };
-    if (fb) body.fallbacks = 'default';
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', signal, body: JSON.stringify(body),
-      headers: { ...claudeHeaders(key), 'Content-Type': 'application/json', ...(fb ? { 'anthropic-beta': 'server-side-fallback-2026-07-01' } : {}) }
-    });
-    return [r, await r.json().catch(() => ({}))];
+    const body = { model, stream: false, messages: [{ role: 'user', content }] };
+    if (json) body.messages.unshift({ role: 'system', content: 'Balas hanya dengan satu objek JSON yang valid, tanpa teks lain.' });
+    if (extras) { body.temperature = json ? .2 : 0; if (json) body.response_format = { type: 'json_object' } }
+    const r = await fetch(url + '/chat/completions', { method: 'POST', signal, body: JSON.stringify(body), headers: { ...routerHeaders(key), 'Content-Type': 'application/json' } });
+    return [r, await routerRead(r)];
   };
   const out = await call(true);
-  // a model without effort levels or fallbacks refuses them; ask again without
-  return out[0].status === 400 && /effort|fallback/i.test(out[1]?.error?.message || '') ? call(false) : out;
+  return out[0].status === 400 && /response_format|json|temperature/i.test(routerMsg(out[1])) ? call(false) : out;
 }
-async function claude(parts, { key, model }, json = true, timeoutMs = 90000) {
+async function routerAsk(parts, { key, url = ROUTER_URL, model, rec }, json = true, timeoutMs = 90000) {
   if (!navigator.onLine) throw new Error('Tidak ada koneksi internet.');
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), timeoutMs);
   let res, j;
   try {
-    for (const m of [model, ...CLAUDE_BACKUP.filter(b => b !== model)]) {
-      [res, j] = await claudeCall(key, m, parts, json, ctl.signal);
-      if (res.status !== 429 && res.status < 500) break;
+    [res, j] = await routerCall(key, url, model, parts, json, ctl.signal);
+    // a busy or used-up model (429, 5xx) hands over to the recommended combo, which in turn tries
+    // its own providers; its answer counts only when it has one
+    if (rec && rec !== model && (res.status === 429 || res.status >= 500)) {
+      const b = await routerCall(key, url, rec, parts, json, ctl.signal);
+      if (b[0].ok) [res, j] = b;
     }
   } catch (e) {
-    throw new Error(e && e.name === 'AbortError' ? `Claude tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau pilih model yang lebih cepat.` : `Tidak bisa menghubungi Claude. Periksa koneksi internet. (${e && e.message || e})`);
+    throw new Error(e && e.name === 'AbortError' ? `9router tidak menjawab dalam ${Math.round(timeoutMs / 1000)} detik. Coba lagi, atau pilih model yang lebih cepat.` : `Tidak bisa menghubungi 9router. Periksa alamat server dan koneksi internet. (${e && e.message || e})`);
   } finally { clearTimeout(timer) }
-  if (!res.ok) throw new Error(claudeError(res.status, j));
-  if (j.stop_reason === 'refusal') throw new Error('Claude tidak mau menjawab permintaan ini. Coba foto atau kata-kata lain.');
-  return asList(j.content).filter(b => b.type === 'text').map(b => b.text).join('');
+  if (!res.ok) throw new Error(routerError(res.status, j));
+  const c = j.choices?.[0], m = c?.message?.content;
+  const text = typeof m === 'string' ? m : asList(m).map(x => x?.text || '').join('');
+  if (!text && c?.finish_reason === 'content_filter') throw new Error('Model tidak mau menjawab permintaan ini. Coba foto atau kata-kata lain.');
+  if (!text && routerMsg(j)) throw new Error(routerError(0, j));
+  return text;
 }
 // the AI saved in Pengaturan, or the one being tested there
-const askAi = (parts, conf = aiConf(), json = true, timeoutMs = 90000) => (conf.prov === 'claude' ? claude : gemini)(parts, conf, json, timeoutMs);
+const askAi = (parts, conf = aiConf(), json = true, timeoutMs = 90000) => (conf.prov === 'router' ? routerAsk : gemini)(parts, conf, json, timeoutMs);
 const MEAL_PROMPT = `Kamu ahli gizi. Perkirakan makanan dan minuman pada foto atau deskripsi untuk porsi yang terlihat/disebut.
 Balas HANYA dengan JSON berbentuk:
 {"name": "nama hidangan singkat dalam bahasa Indonesia",
@@ -5306,16 +5346,21 @@ const A = {
   aiSetup: () => openAiSetup(),
   aiProv: el => { if (el.dataset.k !== ui.aiProv) openAiSetup(null, el.dataset.k, true) },
   aiSave: async el => {
-    const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey').value), err = $('#aiErr');
+    const prov = ui.aiProv, p = AI_PROV[prov], key = cleanKey($('#aiKey').value), url = aiUrlNow(), sig = prov + url + key, err = $('#aiErr');
+    if (prov === 'router' && $('#aiUrl').value.trim() && !cleanUrl($('#aiUrl').value)) { err.textContent = 'Alamat server tidak valid. Contoh: ' + ROUTER_URL; return }
     if (key.length < 20) { err.textContent = `Key terlalu pendek. Salin ulang seluruh key dari ${p.site}.`; return }
     busy(el, true); err.textContent = '';
     try {
-      if (prov + key !== aiMsFor) await loadAiModels(true);
-      const model = $('#aiModel').value || p.model;
-      await askAi([{ text: 'Balas hanya: OK' }], { prov, key, model }, false, 30000);
+      if (sig !== aiMsFor) await loadAiModels(true);
+      const model = $('#aiModel').value || p.model, t0 = performance.now();
+      await askAi([{ text: 'Balas hanya: OK' }], { prov, key, url, model }, false, 30000);
+      // 9router's list is not tested one by one; the model just tested shows its speed
+      if (prov === 'router' && sig === aiMsFor) ui.aiMs = { ...ui.aiMs, [model]: Math.round(performance.now() - t0) };
       // the provider saved last is the one in use; the other one's key stays for switching back
-      const s = aiStore(), c = prov + key === aiMsFor ? { key, model, models: ui.aiModels, ms: ui.aiMs, rec: ui.aiRec } : { key, model };
-      localStorage.setItem(AI_KEY, JSON.stringify(prov === 'claude' ? { ...s, use: 'claude', claude: c } : { ...c, use: 'gemini', claude: s.claude }));
+      const s = aiStore(), c = sig === aiMsFor ? { key, model, models: ui.aiModels, ms: ui.aiMs, rec: ui.aiRec } : { key, model };
+      if (prov === 'router') c.url = url;
+      delete s.claude;   // the direct Claude option of before
+      localStorage.setItem(AI_KEY, JSON.stringify(prov === 'router' ? { ...s, use: 'router', router: c } : { ...c, use: 'gemini', router: s.router }));
       const then = ui.aiThen; closeSheet(); toast(`${p.name} terhubung`); render();
       if (then === 'cam') setTimeout(() => $('#mealCam').click(), 250);
       else if (then === 'gal') setTimeout(() => $('#mealGal').click(), 250);
@@ -5327,9 +5372,9 @@ const A = {
     document.querySelectorAll('#aiModels .mopt').forEach(b => { const on = b === el; b.classList.toggle('on', on); b.setAttribute('aria-checked', on) });
   },
   aiForget: async () => {
-    const prov = ui.aiProv, other = prov === 'claude' ? 'gemini' : 'claude', s = aiStore(), keep = aiConfOf(other, s).key;
+    const prov = ui.aiProv, other = prov === 'router' ? 'gemini' : 'router', s = aiStore(), keep = aiConfOf(other, s).key;
     if (!(await ask({ title: `Hapus API key ${AI_PROV[prov].name}?`, msg: keep ? `${AI_PROV[other].name} dipakai sebagai gantinya.` : 'Fitur AI berhenti sampai key dipasang lagi.', ok: 'Hapus' }))) return;
-    if (keep) localStorage.setItem(AI_KEY, JSON.stringify({ ...(prov === 'claude' ? { ...s, claude: undefined } : { claude: s.claude }), use: other }));
+    if (keep) localStorage.setItem(AI_KEY, JSON.stringify({ ...(prov === 'router' ? { ...s, router: undefined, claude: undefined } : { router: s.router }), use: other }));
     else localStorage.removeItem(AI_KEY);
     closeSheet(); toast('API key dihapus'); render();
   },
@@ -5516,7 +5561,7 @@ document.addEventListener('input', e => {
     const x = $('#fx' + ei); if (x) x.textContent = cardioEst(it.id, s);
   }
   else if (k === 'prof') { ui.prof[el.dataset.k] = el.value; ui.prof.ai = null; $('#pfErr').textContent = ''; profRefresh() }
-  else if (k === 'aiKey') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
+  else if (k === 'aiKey' || k === 'aiUrl') { $('#aiErr').textContent = ''; clearTimeout(aiMsT); aiMsT = setTimeout(loadAiModels, 500) }
   else if (k.startsWith('auth')) { el.removeAttribute('aria-invalid'); if (k === 'authEmail') ui.authEmail = el.value; const er = $('#authErr'); if (er) er.textContent = '' }
   else if (k === 'ap') {
     const f = el.dataset.k; ui.appDraft[f] = el.value;
