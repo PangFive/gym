@@ -1391,7 +1391,8 @@ button.urow:active{background:rgba(24,32,47,.04)}
 .fno{background:#fde8e4;color:#b3321c}
 /* 3D exercise animations */
 .av{display:grid;place-items:center;background:linear-gradient(160deg,#e3edfd,#f6f8fc)}
-.av svg.i{width:46px;height:46px;color:var(--acc);opacity:.85}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.a3d .a3s{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;opacity:.55}
 .av .a3t{position:absolute;left:9px;top:9px;padding:3px 9px;border-radius:999px;background:var(--acc);color:#fff;font-size:11.5px;font-weight:800}
 .a3d{position:relative;height:min(62vh,440px);margin:0 0 14px;border-radius:24px;overflow:hidden;isolation:isolate;
   background:radial-gradient(120% 70% at 50% 18%,#ffffff 0%,rgba(255,255,255,0) 60%),radial-gradient(90% 60% at 100% 0%,rgba(124,92,255,.22),transparent 70%),radial-gradient(90% 60% at 0% 100%,rgba(47,124,246,.28),transparent 70%),linear-gradient(170deg,#dfe9fd 0%,#eef3fd 55%,#d6e3fb 100%)}
@@ -2056,7 +2057,7 @@ function setOnline(on) {
   else offT = setTimeout(() => { if (!fb.online) $('#offline').hidden = phase !== 'app' }, 3000);
 }
 
-const ui = { ms: new Set(), lcx: false, q: '', fms: new Set(), fe: 'all', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
+const ui = { ms: new Set(), lcx: false, q: '', fms: new Set(), fe: 'all', acat: 'all', aq: '', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
 let lastRoute = '';
 
 // ---------- router ----------
@@ -2442,173 +2443,124 @@ function openForm(id) {
     <a class="ytlink" href="https://www.youtube.com/watch?v=${t.y}" target="_blank" rel="noopener">${I('ext')} Buka di YouTube</a>`);
   $('#sheet .sheet-body').scrollTop = 0;
 }
-// ---- 3D animations: a rigged mannequin (Mixamo X Bot from the three.js examples) posed from its bones each
-// frame, the working muscles painted solid from the skin weights (no glow). One move for now, as the example.
-const ANIM = [
-  { id: 'bb_curl', t: 'Barbell Curl', e: 'barbell', p: ['biceps'], s: ['forearm'], reps: '8–12', rest: 90, tempo: 'Angkat 1 dtk, turun 2 dtk',
-    why: 'Curl yang paling gampang dinaikkan bebannya bertahap. Dua lengan kerja bersamaan.',
-    ok: ['Genggaman selebar bahu, siku di samping badan.', 'Angkat tanpa mengayun badan.', 'Turun pelan sampai lengan hampir lurus.'],
-    no: ['Badan diayun ke belakang.', 'Siku maju ke depan.'] }
-];
+// ---- 3D animations (Tutorial → Animasi). The moves live at /app/animasi as { v, count, updatedAt, items:
+// { <id>: { id, t, cat, e, p, s, reps, rest, tempo, why, ok, no, an } } }; an is the 2D rig that anim3d.js
+// turns into a 3D scene. Everyone reads it; admins replace it by importing JSON. Each card shows anim/<id>.webp.
+const ANIM_CACHE = 'why_animasi', ANIM_CAT = [['push', 'Dorong'], ['pull', 'Tarik'], ['legs', 'Kaki'], ['core', 'Core']];
+let ANIM = [], animMeta = { updatedAt: 0 };
+function animItem(x) {
+  const id = String(x?.id ?? '').trim(), t = String(x?.t ?? x?.title ?? '').trim(), an = x?.an ?? x?.anim, p = muscleList(x?.p ?? x?.primary);
+  if (!/^[a-z0-9_]{1,40}$/.test(id) || !t || !an || typeof an !== 'object' || !an.A || !p.length) return null;
+  const e = String(x.e ?? x.equipment ?? ''), cat = String(x.cat ?? '');
+  return { id, t: t.slice(0, 80), cat: ANIM_CAT.some(c => c[0] === cat) ? cat : 'push', e: EQUIP.some(q => q[0] === e) ? e : 'other', p, s: muscleList(x.s ?? x.secondary),
+    reps: String(x.reps ?? '').slice(0, 20), rest: +x.rest || 0, tempo: String(x.tempo ?? '').slice(0, 60), why: String(x.why ?? '').slice(0, 300),
+    ok: cueList(x.ok), no: cueList(x.no), an };
+}
+const setAnim = list => { ANIM = list.map(animItem).filter(Boolean) };
+function applyAnim(val) {
+  if (val && val.items) {
+    setAnim(Object.values(val.items)); animMeta = { updatedAt: +val.updatedAt || 0 };
+    try { localStorage.setItem(ANIM_CACHE, JSON.stringify({ items: val.items, updatedAt: val.updatedAt || 0 })) } catch {}
+  } else {
+    setAnim([]); animMeta = { updatedAt: 0 };
+    try { localStorage.removeItem(ANIM_CACHE) } catch {}
+  }
+  softRender();
+}
+const animHits = () => { const q = ui.aq.trim().toLowerCase(); return ANIM.filter(a => (ui.acat === 'all' || a.cat === ui.acat) && (!q || (a.t + ' ' + a.p.map(k => MI[k]?.n).join(' ') + ' ' + eqName(a.e)).toLowerCase().includes(q))) };
+const animChips = () => chip('acat', ui.acat === 'all', 'all', 'Semua', ANIM.length) + ANIM_CAT.map(([k, n]) => [k, n, ANIM.filter(a => a.cat === k).length]).filter(x => x[2]).map(([k, n, c]) => chip('acat', ui.acat === k, k, n, c)).join('');
+function animList() {
+  const xs = animHits();
+  if (!xs.length) return `<div class="empty glass">${ANIM.length ? 'Tidak ada animasi yang cocok.' : 'Belum ada animasi gerakan.'}</div>`;
+  return `<div class="fgrid">${xs.map(a => `<button class="fcard glass" data-a="anim" data-id="${a.id}">
+      <span class="fv av"><img src="anim/${a.id}.webp" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="a3t">3D</span></span>
+      <b>${esc(a.t)}</b><small>${MI[a.p[0]].n} · ${eqName(a.e)}</small></button>`).join('')}</div>`;
+}
+const refreshAnim = () => { const row = $('#aChips'), x = row.scrollLeft; row.innerHTML = animChips(); row.scrollLeft = x; $('#aHead').innerHTML = `<span>${ui.acat === 'all' && !ui.aq ? 'Semua animasi' : 'Hasil'} · <b>${animHits().length}</b></span>`; $('#aList').innerHTML = animList() };
 function vAnim() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${ANIM.length} animasi gerakan</div></div>
       ${headActs()}</header>
     ${libTabs('animasi')}
-    <div class="lhead"><span>Semua animasi · <b>${ANIM.length}</b></span></div>
-    <div class="fgrid">${ANIM.map(a => `<button class="fcard glass" data-a="anim" data-id="${a.id}">
-      <span class="fv av"><span class="a3t">3D</span>${I('playf')}</span>
-      <b>${esc(a.t)}</b><small>${MI[a.p[0]].n} · ${eqName(a.e)}</small></button>`).join('')}</div>`;
+    <label class="search glass">${I('search')}<input data-i="aq" type="search" placeholder="Cari gerakan, otot, atau alat…" value="${esc(ui.aq)}" autocomplete="off"></label>
+    <div class="chips fchips" id="aChips">${animChips()}</div>
+    <div class="lhead" id="aHead"><span>${ui.acat === 'all' && !ui.aq ? 'Semua animasi' : 'Hasil'} · <b>${animHits().length}</b></span></div>
+    <div id="aList">${animList()}</div>`;
 }
+let a3stop = null;
+const stopAnim3d = () => { if (a3stop) { a3stop(); a3stop = null } };
 function openAnim(id) {
   const a = ANIM.find(x => x.id === id); if (!a) return;
-  const cue = (cls, ic, title, xs) => `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`;
-  sheet(`<div class="a3d" id="a3d"><div class="a3w" aria-hidden="true">${esc(a.t.split(' ').pop().toUpperCase())}</div><div class="a3l" id="a3l">Memuat animasi 3D…</div>
-      <div class="a3p" id="a3p">Siap</div>
+  const cue = (cls, ic, title, xs) => xs.length ? `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : '';
+  const tempo = a.tempo.replace(/Angkat (\d+) dtk, turun (\d+) dtk/i, '↑$1 · ↓$2 dtk');
+  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp" alt="" onerror="this.remove()"><div class="a3w" aria-hidden="true">${esc(a.t.split(' ').pop().toUpperCase())}</div><div class="a3l" id="a3l">Memuat animasi 3D…</div>
+      <div class="a3p">Siap</div>
       <div class="a3c"><button data-sp="0.5">Pelan</button><button data-sp="1" class="on">Normal</button><button data-rot>Putar</button></div>
       <div class="a3h">Geser untuk memutar</div></div>
     <h2 class="dt">${esc(a.t)}</h2>
     <div class="tags ftags">${mTag(a.p[0])}<span class="tag" style="--c:#64748b">${eqName(a.e)}</span></div>
-    <div class="stats3"><div><small>Repetisi</small><b>${a.reps}</b></div><div><small>Istirahat</small><b>${a.rest} dtk</b></div><div><small>Tempo</small><b>${esc(a.tempo.replace(/Angkat (\d+) dtk, turun (\d+) dtk/, '↑$1 · ↓$2 dtk'))}</b></div></div>
+    ${a.reps || a.rest || tempo ? `<div class="stats3"><div><small>${/dtk/.test(a.reps) ? 'Durasi' : 'Repetisi'}</small><b>${esc(a.reps || '–')}</b></div><div><small>Istirahat</small><b>${a.rest ? a.rest + ' dtk' : '–'}</b></div><div><small>Tempo</small><b>${esc(tempo || '–')}</b></div></div>` : ''}
     ${a.why ? `<p class="desc">${esc(a.why)}</p>` : ''}
-    <div class="fcmp">${cue('fok', 'check', 'Cara melakukan', a.ok)}${cue('fno', 'x', 'Yang salah', a.no)}</div>
+    ${a.ok.length || a.no.length ? `<div class="fcmp">${cue('fok', 'check', 'Cara melakukan', a.ok)}${cue('fno', 'x', 'Yang salah', a.no)}</div>` : ''}
     ${muscleMap(a)}`);
   $('#sheet .sheet-body').scrollTop = 0;
-  anim3d($('#a3d'), a).catch(e => { console.warn('WHY 3d', e); const l = $('#a3l'); if (l) l.textContent = 'Animasi tidak termuat. Periksa koneksi internet.' });
-}
-let a3stop = null;
-const stopAnim3d = () => { if (a3stop) { a3stop(); a3stop = null } };
-async function anim3d(host, a) {
   stopAnim3d();
-  const [THREE, { OrbitControls }, { GLTFLoader }] = await Promise.all([import('three'), import('three/addons/controls/OrbitControls.js'), import('three/addons/loaders/GLTFLoader.js')]);
-  if (!host.isConnected) return;
-  const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z), RAD = Math.PI / 180, UP = V(0, 1, 0);
-  const lerp = (p, q, t) => p + (q - p) * t, ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08;
-  host.prepend(renderer.domElement);
-  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(32, 1, .05, 60);
-  const controls = new OrbitControls(camera, renderer.domElement);
-  Object.assign(controls, { enableDamping: true, enablePan: false, minDistance: 1.6, maxDistance: 7, maxPolarAngle: Math.PI * .52, autoRotateSpeed: 1.4 });
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d6ea, 1.25));
-  const key = new THREE.DirectionalLight(0xffffff, 2);
-  key.position.set(2.2, 4.2, 3.2); key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
-  Object.assign(key.shadow.camera, { left: -2, right: 2, top: 2.5, bottom: -.5, near: .5, far: 12 });
-  key.shadow.bias = -.0003; key.shadow.normalBias = .02; scene.add(key);
-  const back = new THREE.DirectionalLight(0xdfe9fb, .9); back.position.set(-3, 2.6, -3); scene.add(back);
-  // a stage under the feet: a fading blue grid and two rings in the accent colour, drawn once on a canvas
-  const fc = document.createElement('canvas'); fc.width = fc.height = 1024;
-  const fx = fc.getContext('2d'), mid = 512;
-  fx.strokeStyle = 'rgba(47,124,246,.35)'; fx.lineWidth = 2;
-  for (let p = 0; p <= 1024; p += 48) { fx.beginPath(); fx.moveTo(p, 0); fx.lineTo(p, 1024); fx.moveTo(0, p); fx.lineTo(1024, p); fx.stroke() }
-  fx.globalCompositeOperation = 'destination-in';
-  const fade = fx.createRadialGradient(mid, mid, 0, mid, mid, mid); fade.addColorStop(0, '#000'); fade.addColorStop(.55, 'rgba(0,0,0,.6)'); fade.addColorStop(1, 'rgba(0,0,0,0)');
-  fx.fillStyle = fade; fx.fillRect(0, 0, 1024, 1024); fx.globalCompositeOperation = 'source-over';
-  const disc = fx.createRadialGradient(mid, mid, 0, mid, mid, 150); disc.addColorStop(0, 'rgba(47,124,246,.28)'); disc.addColorStop(1, 'rgba(47,124,246,0)');
-  fx.fillStyle = disc; fx.beginPath(); fx.arc(mid, mid, 150, 0, Math.PI * 2); fx.fill();
-  [[150, 4, .7], [196, 2, .35]].forEach(([r, w, o]) => { fx.strokeStyle = `rgba(47,124,246,${o})`; fx.lineWidth = w; fx.beginPath(); fx.arc(mid, mid, r, 0, Math.PI * 2); fx.stroke() });
-  const tex = new THREE.CanvasTexture(fc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const stage = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
-  stage.rotation.x = -Math.PI / 2; stage.position.y = .001; scene.add(stage);
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .18 }));
-  floor.position.y = .002;
-  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-  // the app's colours: the main muscle in the accent blue, the helping one in the light blue of the body map
-  const U = { uA: { value: .8 }, uB: { value: .55 }, cA: { value: new THREE.Color(0x2f7cf6) }, cB: { value: new THREE.Color(0x8fb6f8) } };
-  const bodyMat = color => {
-    const m = new THREE.MeshStandardMaterial({ color, roughness: .5, metalness: 0 });
-    m.onBeforeCompile = sh => {
-      Object.assign(sh.uniforms, U);
-      sh.vertexShader = 'attribute float hlA;\nattribute float hlB;\nvarying float vHlA;\nvarying float vHlB;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vHlA = hlA; vHlB = hlB;');
-      sh.fragmentShader = 'uniform float uA, uB;\nuniform vec3 cA, cB;\nvarying float vHlA;\nvarying float vHlB;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
-        diffuseColor.rgb = mix(diffuseColor.rgb, cA, clamp(vHlA, 0.0, 1.0) * uA);
-        diffuseColor.rgb = mix(diffuseColor.rgb, cB, clamp(vHlB, 0.0, 1.0) * uB);`);
-    };
-    return m;
-  };
-  const _a = V(), _b = V(), _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _q3 = new THREE.Quaternion();
-  const rotateWorld = (bone, dq) => { bone.getWorldQuaternion(_q1); bone.parent.getWorldQuaternion(_q2); bone.quaternion.copy(_q2.invert().multiply(dq.clone().multiply(_q1))); bone.updateWorldMatrix(false, true) };
-  const aim = (bone, child, dir) => { bone.getWorldPosition(_a); child.getWorldPosition(_b); rotateWorld(bone, _q3.setFromUnitVectors(_b.sub(_a).normalize(), dir.clone().normalize())) };
-  const signedAngle = (p, q, axis) => { const pa = p.clone().addScaledVector(axis, -p.dot(axis)).normalize(), pb = q.clone().addScaledVector(axis, -q.dot(axis)).normalize(); return Math.atan2(axis.dot(pa.clone().cross(pb)), pa.dot(pb)) };
-
-  const gltf = await new GLTFLoader().loadAsync('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/models/gltf/Xbot.glb');
-  if (!host.isConnected) { renderer.dispose(); return }
-  const model = gltf.scene; scene.add(model); model.updateMatrixWorld(true);
-  const bones = {}; model.traverse(o => { if (o.isBone) bones[o.name.replace(/^mixamorig:?/, '')] = o });
-  const P = n => bones[n].getWorldPosition(V());
-  const left = P('LeftArm').sub(P('RightArm')).setY(0).normalize(), fwd = P('LeftToeBase').sub(P('LeftFoot')).setY(0).normalize(), height = P('Hips').y;
-  const rest = new Map(); model.traverse(o => { if (o.isBone) rest.set(o, o.quaternion.clone()) });
-  const handRestQ = { Left: bones.LeftHand.getWorldQuaternion(new THREE.Quaternion()), Right: bones.RightHand.getWorldQuaternion(new THREE.Quaternion()) };
-  model.traverse(o => {
-    if (!o.isSkinnedMesh) return;
-    o.castShadow = true; o.receiveShadow = true;
-    o.material = bodyMat(/joint/i.test(o.name) || /joint/i.test(o.material?.name || '') ? 0xaeb8c4 : 0xe9edf2);
-    const g = o.geometry, si = g.attributes.skinIndex, sw = g.attributes.skinWeight, nrm = g.attributes.normal;
-    const idx = n => o.skeleton.bones.indexOf(bones[n]), arm = new Set([idx('LeftArm'), idx('RightArm')]), fore = new Set([idx('LeftForeArm'), idx('RightForeArm')]);
-    const nm = new THREE.Matrix3().getNormalMatrix(o.matrixWorld), A = new Float32Array(si.count), B = new Float32Array(si.count), n = V();
-    for (let i = 0; i < si.count; i++) {
-      let wa = 0, wb = 0;
-      for (let c = 0; c < 4; c++) { const bi = si.getComponent(i, c), w = sw.getComponent(i, c); if (arm.has(bi)) wa += w; if (fore.has(bi)) wb += w }
-      n.fromBufferAttribute(nrm, i).applyMatrix3(nm).normalize();
-      A[i] = Math.min(1, wa * 1.4) * THREE.MathUtils.smoothstep(n.dot(fwd), -.05, .45);   // biceps = front of the upper arm
-      B[i] = Math.min(1, wb * 1.2);
-    }
-    g.setAttribute('hlA', new THREE.BufferAttribute(A, 1)); g.setAttribute('hlB', new THREE.BufferAttribute(B, 1));
-  });
-  const bar = new THREE.Group(), steel = new THREE.MeshStandardMaterial({ color: 0x8a94a1, roughness: .3, metalness: .85 }), plate = new THREE.MeshStandardMaterial({ color: 0x1f2a3d, roughness: .55, metalness: .2 });
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, 1.5, 16), steel); shaft.rotation.z = Math.PI / 2; bar.add(shaft);
-  [-1, 1].forEach(s => {
-    const p = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .045, 40), plate); p.rotation.z = Math.PI / 2; p.position.x = s * .6; bar.add(p);
-    const c = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, .04, 20), steel); c.rotation.z = Math.PI / 2; c.position.x = s * .56; bar.add(c);
-  });
-  bar.traverse(o => { if (o.isMesh) o.castShadow = true }); scene.add(bar);
-  const target = V(0, height * .98, 0); controls.target.copy(target);
-  camera.position.copy(target).addScaledVector(fwd, 3.7).addScaledVector(left, -1.2).add(V(0, .55, 0)); controls.update();
-
-  // barbell curl, t = 0 (arms down) … 1 (top)
-  const FINGERS = ['Index', 'Middle', 'Ring', 'Pinky'];
-  const pose = t => {
-    rest.forEach((q, b) => b.quaternion.copy(q)); model.updateMatrixWorld(true);
-    const theta = lerp(8, 138, t) * RAD, phi = lerp(4, 14, t) * RAD, palms = [];
-    ['Left', 'Right'].forEach(side => {
-      const sv = side === 'Left' ? left : left.clone().negate(), arm = bones[side + 'Arm'], fore = bones[side + 'ForeArm'], hand = bones[side + 'Hand'];
-      aim(arm, fore, UP.clone().multiplyScalar(-Math.cos(phi)).addScaledVector(fwd, Math.sin(phi)).addScaledVector(sv, .2).normalize());
-      const f = UP.clone().multiplyScalar(-Math.cos(theta)).addScaledVector(fwd, Math.sin(theta)).addScaledVector(sv, .04).normalize();
-      aim(fore, hand, f);
-      const palmWant = UP.clone().multiplyScalar(Math.sin(theta)).addScaledVector(fwd, Math.cos(theta)).normalize();
-      const hq = hand.getWorldQuaternion(new THREE.Quaternion()).multiply(handRestQ[side].clone().invert());
-      rotateWorld(fore, new THREE.Quaternion().setFromAxisAngle(f, signedAngle(V(0, -1, 0).applyQuaternion(hq), palmWant, f)));
-      const mid = bones[side + 'HandMiddle1']; if (mid) aim(hand, mid, f);
-      const axis = f.clone().cross(palmWant).normalize();
-      FINGERS.forEach(fn => [1, 2, 3].forEach((k, j) => { const b = bones[side + 'Hand' + fn + k], c = bones[side + 'Hand' + fn + (k + 1)]; if (b && c) aim(b, c, f.clone().applyAxisAngle(axis, [50, 115, 165][j] * RAD)) }));
-      const t1 = bones[side + 'HandThumb2'], t2 = bones[side + 'HandThumb3'];
-      if (t1 && t2) aim(t1, t2, f.clone().applyAxisAngle(axis, 70 * RAD).addScaledVector(sv, -.6).normalize());
-      palms.push(hand.getWorldPosition(V()).addScaledVector(f, .075).addScaledVector(palmWant, .03));
-    });
-    bar.position.copy(palms[0]).add(palms[1]).multiplyScalar(.5);
-    bar.quaternion.setFromUnitVectors(V(1, 0, 0), palms[0].clone().sub(palms[1]).normalize());
-  };
-  const PHASES = [['Siap', .35, 0, 0, .35], ['Angkat', 1, 0, 1, 1], ['Peras', .4, 1, 1, 1], ['Turun pelan', 2, 1, 0, .6]];
-  const TOTAL = PHASES.reduce((s, p) => s + p[1], 0);
-  const phaseAt = sec => { let t = sec % TOTAL; for (const [label, dur, from, to, k] of PHASES) { if (t < dur || label === 'Turun pelan') return { u: lerp(from, to, ease(Math.min(t / dur, 1))), k, label }; t -= dur } };
-  const resize = () => { const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix() };
-  const ro = new ResizeObserver(resize); ro.observe(host); resize();
-  host.querySelector('#a3l')?.remove();
-  const ph = host.querySelector('#a3p'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let speed = 1, clock = 0, last = null, lastLabel = '', raf = 0;
-  host.querySelectorAll('[data-sp]').forEach(b => b.onclick = () => { speed = +b.dataset.sp; host.querySelectorAll('[data-sp]').forEach(x => x.classList.toggle('on', x === b)) });
-  const rot = host.querySelector('[data-rot]'); rot.onclick = () => { controls.autoRotate = !controls.autoRotate; rot.classList.toggle('on', controls.autoRotate) };
-  const frame = ts => {
-    if (!host.isConnected) return stopAnim3d();
-    if (last != null) clock += (ts - last) / 1000 * speed; last = ts;
-    const p = reduce ? { u: .55, k: 1, label: 'Posisi tengah' } : phaseAt(clock);
-    pose(p.u); U.uA.value = .55 + .3 * p.k; U.uB.value = .35 + .25 * p.k;
-    if (p.label !== lastLabel) { lastLabel = p.label; ph.textContent = p.label; ph.classList.toggle('go', p.label === 'Angkat') }
-    controls.update(); renderer.render(scene, camera); raf = requestAnimationFrame(frame);
-  };
-  raf = requestAnimationFrame(frame);
-  a3stop = () => { cancelAnimationFrame(raf); ro.disconnect(); controls.dispose(); renderer.dispose(); renderer.forceContextLoss() };
+  const host = $('#a3d');
+  import('./anim3d.js').then(m => m.mount(host, a)).then(stop => { if (host.isConnected) { a3stop = stop; host.querySelector('.a3s')?.remove() } else stop() })
+    .catch(e => { console.warn('WHY 3d', e); const l = $('#a3l'); if (l) l.textContent = 'Animasi tidak termuat. Periksa koneksi internet.' });
+}
+function parseAnim(txt) {
+  txt = String(txt || '');
+  const a = txt.search(/[[{]/), b = Math.max(txt.lastIndexOf('}'), txt.lastIndexOf(']'));
+  let o; try { o = JSON.parse(txt.slice(a, b + 1)) } catch { throw new Error('Format JSON tidak valid') }
+  const raw = Array.isArray(o) ? o : Array.isArray(o?.items) ? o.items : o?.items && typeof o.items === 'object' ? Object.values(o.items) : null;
+  if (!raw) throw new Error('Tidak ada daftar gerakan di JSON ini');
+  const seen = new Set(), list = [];
+  raw.forEach(x => { const f = animItem(x); if (f && !seen.has(f.id)) { seen.add(f.id); list.push(f) } });
+  return { list, skipped: raw.length - list.length };
+}
+const animKey = x => JSON.stringify([x.t, x.cat, x.e, x.p, x.s, x.reps, x.rest, x.tempo, x.why, x.ok, x.no, x.an]);
+async function importAnim(txt, btn) {
+  let parsed;
+  try { parsed = parseAnim(txt) } catch (e) { return toast(e.message, 'err') }
+  const { list, skipped } = parsed;
+  if (!list.length) return toast('Tidak ada gerakan yang lengkap (id, nama, otot, animasi) di JSON ini', 'err');
+  const now = new Map(ANIM.map(x => [x.id, animKey(x)]));
+  const added = list.filter(x => !now.has(x.id)).length, changed = list.filter(x => now.has(x.id) && now.get(x.id) !== animKey(x)).length;
+  const removed = [...now.keys()].filter(id => !list.some(x => x.id === id)).length;
+  const ok = await ask({ title: `Simpan ${list.length} animasi?`, tone: 'warn', icon: 'upload', ok: 'Simpan ke Firebase',
+    msg: `${added} baru · ${changed} berubah · ${removed} dihapus${skipped ? ` · ${skipped} dilewati (tidak lengkap)` : ''}. Data animasi semua pengguna diganti dengan isi file ini.` });
+  if (!ok) return;
+  busy(btn, true);
+  try {
+    const items = {}; list.forEach(x => { items[x.id] = x });
+    await fb.mod.set(fb.mod.ref(fb.db, 'app/animasi'), { v: 1, count: list.length, updatedAt: fb.mod.serverTimestamp(), items });
+    closeSheet(); toast(`${list.length} animasi tersimpan di Firebase`);
+  } catch (e) { toast('Gagal menyimpan: ' + (e.code || e.message), 'err') }
+  finally { if (btn?.isConnected) busy(btn, false) }
+}
+function exportAnim() {
+  const items = ANIM.map(x => ({ id: x.id, title: x.t, cat: x.cat, equipment: x.e, primary: x.p, secondary: x.s, reps: x.reps, rest: x.rest, tempo: x.tempo, why: x.why, ok: x.ok, no: x.no, anim: x.an }));
+  download(`why-animasi-${dayKey(new Date())}.json`, JSON.stringify({
+    why_animasi: 1, exported: new Date().toISOString(), count: items.length,
+    note: 'Edit lalu import lagi lewat Pengaturan → Data animasi. anim = rig 2D (A/B sudut sendi); gambar kartu ada di anim/<id>.webp.',
+    categories: Object.fromEntries(ANIM_CAT), equipment: Object.fromEntries(EQUIP), muscles: Object.fromEntries(MUSCLES.map(m => [m.k, m.n])), items
+  }, null, 2));
+}
+function openAnimImport() {
+  sheet(`<h2 class="sh">Import data animasi</h2>
+    <p class="scope" style="margin-top:-8px">Tempel JSON atau pilih file hasil <b>Export</b> dari sini. Semua data animasi diganti dengan isi file ini.</p>
+    <textarea id="animTxt" class="ta" placeholder='{"why_animasi":1,"items":[{"id":"bb_curl","title":"Barbell Curl","primary":["biceps"],"anim":{…}}]}'></textarea>
+    <div class="row2"><label class="btn soft">${I('upload')} Pilih file<input type="file" id="animFile" accept=".json,application/json,text/plain" hidden></label><button class="btn pri" data-a="animImport">Import</button></div>`);
+}
+function animCard() {
+  const when = animMeta.updatedAt ? new Date(animMeta.updatedAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  const link = (icon, c, title, a, sub = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}"`, right: I('chev') });
+  return `<h3 class="sh2">Data animasi</h3>
+    <div class="sgroup">
+      ${sRow({ icon: 'video', c: '#2f7cf6', title: `${ANIM.length} animasi gerakan`, sub: ANIM.length ? `Di Firebase${when ? ' · diperbarui ' + when : ''}` : 'Belum ada data' })}
+      ${link('upload', '#14b8a6', 'Import JSON', 'animOpen', 'Ganti semua data animasi dari file')}
+      ${link('download', '#8b5cf6', 'Export JSON', 'animExport', 'Unduh untuk diedit atau dicadangkan')}
+    </div>`;
 }
 function vLibrary() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div>
@@ -3488,6 +3440,7 @@ function adminSection() {
     </div></div>
     ${tutCard()}
     ${formCard()}
+    ${animCard()}
     <div class="savebar" id="apBar" role="status" ${appDirty() ? '' : 'hidden'}><span>Ada perubahan yang belum disimpan</span>
       <button class="btn soft sm" data-a="apReset">Batal</button><button class="btn pri sm" data-a="appSave">Simpan</button></div>`;
 }
@@ -4121,6 +4074,7 @@ async function boot() {
   try { const c = JSON.parse(localStorage.getItem(TUT_CACHE)); if (c && c.items) { setTutorials(Object.values(c.items)); tutMeta = { source: 'firebase', updatedAt: c.updatedAt || 0 } } } catch {}
   if (!TUTORIALS.length) setTutorials(builtinList());
   try { const c = JSON.parse(localStorage.getItem(FORM_CACHE)); if (c && c.items) { setForm(Object.values(c.items)); formMeta = { updatedAt: c.updatedAt || 0 } } } catch {}
+  try { const c = JSON.parse(localStorage.getItem(ANIM_CACHE)); if (c && c.items) { setAnim(Object.values(c.items)); animMeta = { updatedAt: c.updatedAt || 0 } } } catch {}
   // Someone was signed in here last time: open on this device's copy straight away.
   const last = localStorage.getItem(LAST), c = last && cacheLoad(last);
   if (c) { S = c.S; synced = c.synced; fromCache = true; fb.user = { uid: last, cached: true }; phase = 'app' }
@@ -4138,6 +4092,7 @@ async function boot() {
     d.onValue(d.ref(fb.db, 'app/meta/hasAdmin'), s => { fb.hasAdmin = s.val() === true; offerAdmin() }, () => {});
     d.onValue(d.ref(fb.db, 'app/tutorials'), s => applyTutorials(s.val()), () => {});
     d.onValue(d.ref(fb.db, 'app/teknik'), s => applyForm(s.val()), () => {});
+    d.onValue(d.ref(fb.db, 'app/animasi'), s => applyAnim(s.val()), () => {});
     au.getRedirectResult(fb.auth).catch(authFail);
     au.onAuthStateChanged(fb.auth, onUser);
   } catch (e) {
@@ -6129,6 +6084,10 @@ const A = {
   open: el => openDetail(+el.dataset.id),
   form: el => openForm(+el.dataset.id),
   anim: el => openAnim(el.dataset.id),
+  acat: el => { ui.acat = flip(ui.acat, el.dataset.k); refreshAnim() },
+  animOpen: openAnimImport,
+  animExport: exportAnim,
+  animImport: el => importAnim($('#animTxt').value, el),
   fmus: el => { const k = el.dataset.k; if (k === 'all') ui.fms.clear(); else if (MI[k]) ui.fms.has(k) ? ui.fms.delete(k) : ui.fms.add(k); refreshForm(el.tagName === 'path' && k) },
   fe: el => { ui.fe = flip(ui.fe, el.dataset.k); refreshForm() },
   play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1${el.dataset.loop ? `&cc_load_policy=0&loop=1&playlist=${encodeURIComponent(el.dataset.y)}` : ''}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
@@ -6665,6 +6624,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('input', e => {
   const el = e.target, k = el.dataset.i; if (!k) return;
   if (k === 'q') { ui.q = el.value; $('#libHead').innerHTML = libHead(); $('#libList').innerHTML = libList() }
+  else if (k === 'aq') { ui.aq = el.value; refreshAnim() }
   else if (k === 'pq') { ui.pick.q = el.value; $('#pkList').innerHTML = pickList() }
   else if (k === 'usrQ') { adm.q = el.value; $('#usrList').innerHTML = usrList() }
   else if (k === 'pkAiQ') ui.pick.aiQ = el.value.slice(0, 200);
@@ -6789,6 +6749,9 @@ document.addEventListener('change', e => {
   }
   if (e.target.id === 'tutFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#tutTxt').value = t; importTutorials(t, document.querySelector('[data-a=tutImport]')) });
+  }
+  if (e.target.id === 'animFile' && e.target.files[0]) {
+    return e.target.files[0].text().then(t => { $('#animTxt').value = t; importAnim(t, document.querySelector('[data-a=animImport]')) });
   }
   if (e.target.id === 'formFile' && e.target.files[0]) {
     return e.target.files[0].text().then(t => { $('#formTxt').value = t; importForm(t, document.querySelector('[data-a=formImport]')) });

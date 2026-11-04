@@ -33,6 +33,10 @@ tersinkron di semua perangkat.
 - Dari detail, video bisa masuk **Program**, **Latih Ini**, atau **Tambah ke workout**; di program id-nya 100000 + id klip.
 - Detail: video berulang dengan suara, teks otomatis YouTube mati, kotak **Yang benar** dan **Yang salah**, peta otot.
 - Data di Firebase `app/teknik`, dikelola admin di **Pengaturan → Data teknik** (Import, Export).
+- **Animasi** (tab ketiga Tutorial): 158 gerakan 3D. Data di Firebase `app/animasi` (Pengaturan → Data animasi, Import/Export);
+  tiap item membawa rig 2D (`an`: pose A/B sebagai sudut sendi, anchor, alat, otot `hl`) yang diubah jadi adegan 3D oleh
+  `public/anim3d.js` (manekin X Bot ber-rig Mixamo dari CDN three.js, otot warna solid biru aksen/biru muda). Gambar kartu
+  `public/anim/<id>.webp` dibuat dari `still()` di file yang sama. Sumber data: `gymbro-exercises.json` (aplikasi GymBro).
   `docs/teknik-katalog.json` menyimpan hasil analisis lengkap dengan narasi. Kolom item (`j` jenis, `id` nomor klip, `t` judul, `e` alat dari `EQUIP`, `y` id YouTube, `d` deskripsi, `ok` / `no`
   poin benar dan salah, `p` / `s` otot utama dan pendukung).
 
@@ -273,6 +277,7 @@ tersinkron di semua perangkat.
 | Path | Isi | Akses |
 |---|---|---|
 | `app/teknik` | Video teknik: `{ v, count, updatedAt, items: { <id>: { id, t, j, e, y, ok, no, p, s } } }` | baca: semua · tulis: admin |
+| `app/animasi` | Animasi 3D: `{ v, count, updatedAt, items: { <id>: { id, t, cat, e, p, s, reps, rest, tempo, why, ok, no, an } } }` | baca: semua · tulis: admin |
 | `app/settings` | Pengaturan aplikasi: `appName`, `announcement`, `defaultRest`, `defaultGoal`, `suggestion` | baca: semua · tulis: admin |
 | `app/tutorials` | Data alat: `{ v, count, updatedAt, items: { <id>: { id, t, m, y, d, p, s } } }` | baca: semua · tulis: admin |
 | `app/admins/<uid>` | `true` untuk admin | akun pertama mengklaim sendiri; berikutnya lewat Console |
