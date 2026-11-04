@@ -217,6 +217,16 @@ tersinkron di semua perangkat.
   istirahat & target default, saran set × reps — dengan pratinjau langsung.
 - **Data alat** (admin): simpan ke Firebase, Import JSON, Export JSON.
 - Admin pertama ditawari lewat popup selama aplikasi belum punya admin.
+- **Pantau pengguna** (admin, Pengaturan → Pengguna): semua akun terdaftar dengan ringkasan (terdaftar,
+  sedang latihan, aktif 7 hari, baru 30 hari), cari nama/email, urutkan Aktif / Terbaru / Paling rajin / A–Z.
+  Tiap baris: foto atau inisial (titik hijau berdenyut = sedang latihan), status ("Latihan 23 mnt · Leg Day"
+  atau "Aktif 2 jam lalu"), workout minggu ini / target. Ketuk → detail: workout yang berjalan (set per latihan,
+  live), minggu ini / 30 hari / total / volume, grafik workout 8 minggu, berat & perubahan, target berat &
+  kalori, rata-rata makan 7 hari, program, 10 workout terakhir (bisa dibuka), 5 makanan terakhir, info akun.
+  Cara kerjanya: daftar id akun dari REST `users.json?shallow=true` (hanya kunci), lalu `users/<uid>/profile`
+  tiap akun diikuti live; detail membaca `users/<uid>` penuh. Setiap aplikasi menulis ringkasannya sendiri
+  (`memberStats()` → `profile/stats`, hanya bila berubah). Back/Escape dari detail kembali ke daftar.
+  Pengguna diberi tahu di Pengaturan → Akun bahwa admin bisa melihat datanya.
 - Backup/restore data, "Salin data untuk Claude", hapus data latihan, salin ID akun.
 
 ### PWA
@@ -274,7 +284,8 @@ tersinkron di semua perangkat.
 | `users/<uid>/meals/<id>` | Catatan makan: `{ date, slot, name, portion, conf, note, items: [{ n, g, kcal, p, c, f }] }` | pemilik akun |
 | `users/<uid>/weights/<YYYY-MM-DD>` | Berat badan per hari: `{ date, kg }` | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
-| `users/<uid>/profile` | Email, nama, waktu login terakhir | pemilik akun |
+| `users/<uid>/profile` | `email`, `displayName`, `lastLogin`, `joined` (akun dibuat), `via` (cara login), `photo`, `seen` (terakhir dipakai), `stats`: `{ name, goal, n, routines, vol, days: [60 tanggal workout terakhir, ms], meals, lastMeal, kg, active: { name, start, done, sets } }` | pemilik akun · dibaca admin |
+| `users/` (semua) | — | baca: admin (halaman Pengguna) · tulis: tidak |
 
 Kode field alat: `t` judul, `m` kategori, `y` id YouTube, `d` deskripsi, `p`/`s` otot utama/pendukung.
 
@@ -358,6 +369,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 17. Pilihan AI Claude diganti 9router (server router AI milik pengguna, format OpenAI, combo WHY).
 18. Tanya AI: tombol melayang di Beranda, chat bebas dengan foto, jawaban streaming, kartu simpan program dan catat makanan.
 19. Timer istirahat bergaya kaca iOS dengan bom: sumbu terbakar mengikuti sisa waktu, meledak saat istirahat selesai.
+20. Pantau pengguna untuk admin: daftar akun live, detail aktivitas tiap akun; aturan database: admin boleh membaca `users/`.
 
 ## 8. Ide berikutnya
 

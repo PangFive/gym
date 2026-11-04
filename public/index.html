@@ -1086,6 +1086,73 @@ textarea.sin{min-height:84px;resize:vertical;line-height:1.5}
 .savebar .btn.soft{background:rgba(255,255,255,.14);border:0;color:#fff}
 .claim{display:flex;gap:12px;align-items:center;padding:14px;margin-bottom:10px;border-radius:20px;background:linear-gradient(135deg,#eef4ff,#fff);border:1px solid rgba(47,124,246,.25)}
 .claim .stx b{font-size:15px}
+/* admin: users */
+.utiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.utiles div{padding:12px 14px;border-radius:18px;background:#fff;border:1px solid rgba(24,32,47,.06);box-shadow:0 6px 18px -14px rgba(24,32,47,.35);min-width:0}
+.utiles b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.utiles b i{font-style:normal;font-size:14px;color:var(--faint);font-weight:700}
+.utiles small{font-size:12.5px;font-weight:600;color:var(--muted)}
+.utiles .live b{color:#15803d}
+.usort{margin:-4px 0 12px}
+.ulist{background:#fff;border-radius:20px;border:1px solid rgba(24,32,47,.06);box-shadow:0 6px 18px -14px rgba(24,32,47,.35);overflow:hidden;margin-bottom:10px}
+.urow{display:flex;align-items:center;gap:12px;width:100%;min-height:72px;padding:12px 14px;border:0;border-bottom:1px solid rgba(24,32,47,.06);background:transparent;text-align:left;color:var(--ink);font:inherit}
+.urow:last-child{border-bottom:0}
+button.urow:active{background:rgba(24,32,47,.04)}
+.urow.ghost{opacity:.6}
+.urow>svg.i{color:var(--faint);width:18px;height:18px;flex:none}
+.uav{position:relative;width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--c);color:#fff;font-weight:800;font-size:17px}
+.uav.big{width:52px;height:52px;font-size:21px}
+.uav img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--c)}
+.uav i{position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border-radius:50%;background:#22c55e;border:2.5px solid #fff;animation:ulive 1.6s ease-out infinite}
+@keyframes ulive{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}100%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+.utx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.utx b{font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.utx small{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ust{font-weight:600}
+.ust.live{color:#15803d}
+.ume{font-style:normal;font-size:10.5px;font-weight:800;color:var(--acc);background:var(--acc-soft);padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:2px;letter-spacing:.02em}
+.umeta{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+.umeta b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.umeta b i{font-style:normal;color:var(--faint);font-size:13px;font-weight:700}
+.umeta small{font-size:11px;color:var(--faint);font-weight:600;line-height:1.3}
+.ubk{display:inline-flex;align-items:center;gap:2px;border:0;background:transparent;color:var(--acc);font:inherit;font-weight:700;font-size:15px;min-height:40px;padding:0 6px 0 0;margin:-10px 0 6px -4px}
+.ubk svg.i{width:20px;height:20px}
+.uprof{margin-bottom:12px}
+.uprof small.ust{word-break:normal}
+.ulive{padding:14px;border-radius:20px;background:linear-gradient(135deg,#ecfdf3,#fff 70%);border:1px solid rgba(22,163,74,.28);margin-bottom:14px}
+.ulive-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ulive-h b{flex:1;min-width:0;font-size:15px;color:#166534;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ulive-t{font-weight:800;font-variant-numeric:tabular-nums;color:#166534}
+.ldot{width:9px;height:9px;border-radius:50%;background:#22c55e;flex:none;animation:ulive 1.6s ease-out infinite}
+.ubar{height:8px;border-radius:999px;background:rgba(22,163,74,.15);overflow:hidden}
+.ubar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#4ade80,#16a34a);transition:width .4s}
+.ulive-s{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin:6px 0 4px}
+.uex{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:7px 0;border-top:1px solid rgba(22,163,74,.14)}
+.uex span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uex b{font-variant-numeric:tabular-nums;color:var(--muted)}
+.uex.ok b{color:#15803d}
+.upad{padding:14px 14px 6px}
+.upad .ct{margin:0 0 12px;font-size:15px}
+.ubars{height:118px;gap:6px}
+.ubars .bar em{font-size:11px}
+.udk{font-size:12.5px;color:var(--muted);font-weight:700}
+.uh{border-bottom:1px solid rgba(24,32,47,.06)}
+.uh:last-child{border-bottom:0}
+.uh summary{display:flex;align-items:center;gap:12px;padding:10px 14px;min-height:62px;cursor:pointer;list-style:none}
+.uh summary::-webkit-details-marker{display:none}
+.uh summary>svg.i{color:var(--faint);width:18px;height:18px;flex:none;transform:rotate(90deg);transition:transform .2s}
+.uh[open] summary>svg.i{transform:rotate(-90deg)}
+.udt{width:40px;height:44px;border-radius:12px;background:var(--acc-soft);color:var(--acc);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;line-height:1.1}
+.udt b{font-size:16px} .udt small{font-size:10.5px;font-weight:700;text-transform:uppercase}
+.uhx{padding:0 14px 12px 66px;display:grid;gap:8px}
+.uhx div{display:flex;flex-direction:column;gap:1px}
+.uhx b{font-size:13.5px} .uhx small{font-size:12.5px;color:var(--muted);line-height:1.4}
+.uwarn{display:flex;gap:12px;padding:14px;border-radius:20px;background:#fffbeb;border:1px solid rgba(217,119,6,.3);margin-bottom:12px;text-align:left}
+.uwarn>div{flex:1;min-width:0}
+.uwarn>div>b{font-size:15px}
+.uwarn p{font-size:13px;color:var(--muted);line-height:1.5;margin:4px 0 12px}
+.uwarn code{font-size:12px;background:rgba(24,32,47,.06);padding:1px 5px;border-radius:6px}
+.uwarn .row2{margin-bottom:8px}
 /* QR scanner */
 #scan{position:fixed;inset:0;z-index:75;background:#05070c;overflow:hidden}
 #scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -1745,6 +1812,7 @@ const ICONS = {
   sparkles: '<path d="M12 3.5l1.6 4.4 4.4 1.6-4.4 1.6L12 15.5l-1.6-4.4L6 9.5l4.4-1.6z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
   scale: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M8.2 10a5.4 5.4 0 0 1 7.6 0M12 11.6l1.6-2"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
+  users: '<circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 19.5a6.5 6.5 0 0 1 13 0M15.5 5.2a3.5 3.5 0 0 1 0 6.6M18 13.8a6.5 6.5 0 0 1 3.5 5.7"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
 };
 const I = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -1870,7 +1938,7 @@ async function push() {
     Object.keys(a).forEach(id => { if (a[id] !== b[id]) up[m + '/' + id] = JSON.parse(a[id]) });
     Object.keys(b).forEach(id => { if (!(id in a)) up[m + '/' + id] = null });
   });
-  if (!Object.keys(up).length) return setSync('ok');
+  if (!Object.keys(up).length) { pushStats(); return setSync('ok') }
   setSync('busy');
   try {
     await fb.mod.update(userRef(), up);
@@ -1879,8 +1947,27 @@ async function push() {
       if (!id) synced[k] = now[k];
       else if (up[k] === null) delete synced[m][id]; else synced[m][id] = now[m][id];
     });
-    cacheSave(); setSync(pending() ? 'busy' : 'ok');
+    cacheSave(); setSync(pending() ? 'busy' : 'ok'); pushStats();
   } catch (e) { setSync('err'); console.warn('WHY sync', e) }
+}
+// What the admin's Pengguna page shows of this account, at users/<uid>/profile/stats: counts and the
+// dates of the latest workouts, never the workouts themselves, so that list stays small however long
+// the histories grow. Sent only when it changes; `seen` is then the last time this app was used.
+let statsSent = '';
+function memberStats() {
+  const st = S.settings, a = S.active, sets = a ? a.items.flatMap(i => i.sets) : [];
+  return { name: st.name || '', goal: st.goal || 0, n: S.history.length, routines: S.routines.length,
+    vol: Math.round(S.history.reduce((t, h) => t + (h.vol || 0), 0)),
+    days: S.history.slice(0, 60).map(h => Date.parse(h.date) || 0).filter(Boolean),
+    meals: S.meals.length, lastMeal: Date.parse(S.meals[0]?.date || '') || 0, kg: S.weights[0]?.kg || 0,
+    active: a ? { name: a.name || 'Workout', start: +a.start || 0, done: sets.filter(x => x.done).length, sets: sets.length } : null };
+}
+function pushStats() {
+  if (!fb.mod || !fb.user || fb.user.cached || !synced) return;
+  const st = memberStats(), c = canon(st);
+  if (c === statsSent) return;
+  statsSent = c;
+  fb.mod.update(userRef('profile'), { stats: st, seen: fb.mod.serverTimestamp() }).catch(() => { statsSent = '' });
 }
 // Data saved on this device before accounts existed is carried into the first account that signs in.
 function legacyState() {
@@ -1894,7 +1981,8 @@ function legacyState() {
 }
 let pendingName = '', fromCache = false;
 function applyRemote(val) {
-  if (!fb.touched) { fb.touched = true; fb.mod.update(userRef('profile'), { email: fb.user.email || '', displayName: fb.user.displayName || pendingName || '', lastLogin: fb.mod.serverTimestamp() }).catch(() => {}) }
+  if (!fb.touched) { fb.touched = true; fb.mod.update(userRef('profile'), { email: fb.user.email || '', displayName: fb.user.displayName || pendingName || '', lastLogin: fb.mod.serverTimestamp(),
+    joined: Date.parse(fb.user.metadata?.creationTime || '') || 0, via: (fb.user.providerData || []).map(x => x.providerId).join(','), photo: fb.user.photoURL || '' }).catch(() => {}) }
   const remote = normalize(val), rs = snap(remote);
   const fresh = !val || !(val.settings || val.routines || val.history || val.week || val.meals || val.weights);
   if (!synced) {
@@ -2744,16 +2832,18 @@ function vStats() {
 }
 
 // ---------- sheets ----------
-let sheetT;
+let sheetT, sheetOff = null;
+// a sheet that follows live data sets sheetOff to stop it; called when the sheet closes or another replaces it
+const sheetLeave = () => { const f = sheetOff; sheetOff = null; if (f) f() };
 function sheet(html) {
   const s = $('#sheet');
-  clearTimeout(sheetT); s.classList.remove('closing');
+  sheetLeave(); clearTimeout(sheetT); s.classList.remove('closing');
   s.innerHTML = `<div class="scrim" data-a="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="sheet-head"><div class="grab"></div><button class="icon-btn sm sx" data-a="close" aria-label="Tutup">${I('x')}</button></div><div class="sheet-body">${html}</div></div>`;
   s.classList.add('open'); document.body.classList.add('noscroll');
   fitThumbs();
 }
 function closeSheet() {
-  closeVideo(); ui.mealSlot = null;
+  closeVideo(); ui.mealSlot = null; sheetLeave();
   const s = $('#sheet');
   if (!s.classList.contains('open')) return;
   s.classList.remove('open'); s.classList.add('closing'); document.body.classList.toggle('noscroll', chatOpen());
@@ -3247,6 +3337,9 @@ function openSettings() {
       ${sRow({ icon: 'vibrate', c: '#ec4899', title: 'Getar', sub: 'Saat waktu istirahat habis', right: sw('vibrate') })}
     </div>
 
+    ${fb.admin ? `<h3 class="sh2">Pengguna<span class="adm">ADMIN</span></h3>
+    <div class="sgroup">${link('users', '#2f7cf6', 'Pantau pengguna', 'users', adm.ids ? `${adm.ids.length} akun terdaftar · aktivitas, program, dan riwayatnya` : 'Akun yang terdaftar, aktivitas, program, dan riwayatnya')}</div>` : ''}
+
     <h3 class="sh2">Pengaturan aplikasi${fb.admin ? '<span class="adm">ADMIN</span>' : ''}</h3>
     <p class="scope">Berlaku untuk semua pengguna. ${fb.admin ? 'Kamu admin, jadi bisa mengubahnya.' : 'Hanya admin yang bisa mengubahnya.'}</p>
     ${claim}
@@ -3267,6 +3360,7 @@ function openSettings() {
     </div>
 
     <h3 class="sh2">Akun</h3>
+    <p class="scope">Admin ${esc(APP.appName)} bisa melihat profil, program, dan riwayatmu (latihan, makanan, berat) untuk memantau pengguna.</p>
     <div class="sgroup">
       ${link('key', '#2f7cf6', 'Ubah password', 'changePassword', hasPassword() ? 'Ganti password akun' : 'Tambah password untuk login dengan email')}
       ${link('user', '#64748b', 'Salin ID akun', 'copyUid', esc(u.uid || ''))}
@@ -3666,7 +3760,7 @@ function hrSheet() {
 }
 
 function tick() {
-  hrDraw();
+  hrDraw(); usrTick();
   if (!S.active) return;
   if (!hr.resumed) { hr.resumed = true; hrResume() }
   const s = mmss((Date.now() - S.active.start) / 1000);
@@ -3870,7 +3964,7 @@ async function boot() {
 function onUser(user) {
   if (unsub) { unsub(); unsub = null }
   if (!user) {
-    fb.user = null; fb.admin = false; synced = null; S = defaults(); phase = 'login';
+    fb.user = null; fb.admin = false; synced = null; S = defaults(); phase = 'login'; Object.assign(adm, { ids: null, prof: {}, names: {}, goals: {} });
     try { localStorage.removeItem(LAST) } catch {}
     stopRest(); closeSheet(); render(); return;
   }
@@ -3878,7 +3972,7 @@ function onUser(user) {
     const c = cacheLoad(user.uid);
     S = c ? c.S : defaults(); synced = c ? c.synced : null; fromCache = !!c; phase = c && c.synced ? 'app' : 'loading';
   } else if (!synced) phase = 'loading';
-  fb.user = user; fb.touched = false; fb.admin = false; fb.adminKnown = false; fb.offered = false;
+  fb.user = user; fb.touched = false; fb.admin = false; fb.adminKnown = false; fb.offered = false; statsSent = '';
   try { localStorage.setItem(LAST, user.uid) } catch {}
   render();
   const { ref, get, onValue } = fb.mod;
@@ -5509,6 +5603,229 @@ async function claimAdmin(btn) {
   } finally { if (btn && btn.nodeType && btn.isConnected) busy(btn, false) }
 }
 
+// ---------- users (admin) ----------
+// The admin's view of every account. The keys under users/ come from a shallow REST read (just the
+// ids, none of the data), then each account's profile (email, sign-in, last opened and the short
+// stats its own app keeps, see memberStats) is followed live, so a workout someone starts shows up
+// at once. Opening one account reads it in full: programs, workouts, meals and weights. The database
+// rules let an admin read users/, never write there.
+const RULES_URL = 'https://github.com/PangFive/gym/blob/main/database.rules.json';
+const RULES_CONSOLE = `https://console.firebase.google.com/project/${FIREBASE.projectId}/database/${FIREBASE.projectId}-default-rtdb/rules`;
+const LIVE_MAX = 4 * 36e5;   // a workout open for longer than 4 hours was left open, nobody is still lifting
+const adm = { ids: null, prof: {}, names: {}, goals: {}, offs: [], q: '', sort: 'seen', err: '', loading: false,
+  open: null, user: null, uerr: '', offU: null, paintT: 0, top: 0, ticks: 0 };
+const isLive = a => !!(a && a.start && Date.now() - a.start < LIVE_MAX);
+const lastSeen = p => Math.max(+p.lastLogin || 0, +p.seen || 0);
+const uName = id => { const p = adm.prof[id] || {}; return p.stats?.name || adm.names[id] || p.displayName || (p.email || '').split('@')[0] || 'Tanpa nama' };
+const uGoal = id => +(adm.prof[id]?.stats?.goal || adm.goals[id] || 0);
+const uDays = p => asList(p.stats?.days).map(Number).filter(Boolean);
+const countFrom = (days, from) => days.filter(t => t >= +from).length;
+const runMin = start => Math.max(1, Math.round((Date.now() - start) / 6e4)) + ' mnt';
+const UCOL = ['#2f7cf6', '#f2785c', '#14b8a6', '#8b5cf6', '#f59e0b', '#ec4899', '#12a372', '#0ea5e9'];
+const uCol = id => UCOL[[...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0) % UCOL.length];
+const VIA = { 'google.com': 'Google', password: 'Email & password' };
+function since(ms) {
+  if (!ms) return '';
+  const m = Math.round((Date.now() - ms) / 6e4);
+  return m < 2 ? 'baru saja' : m < 60 ? m + ' mnt lalu' : m < 1440 ? Math.floor(m / 60) + ' jam lalu' : ago(ms);
+}
+const seenText = ms => ms ? `Aktif <span data-ago="${ms}">${since(ms)}</span>` : 'Belum pernah membuka aplikasi';
+const uDate = ms => ms ? new Date(ms).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+function uAvatar(id, big) {
+  const p = adm.prof[id] || {}, live = isLive(p.stats?.active);
+  return `<span class="uav${big ? ' big' : ''}" style="--c:${uCol(id)}">${esc(uName(id).trim().charAt(0).toUpperCase() || '?')}${p.photo ? `<img src="${esc(p.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : ''}${live ? '<i title="Sedang latihan"></i>' : ''}</span>`;
+}
+const uStatus = id => {
+  const p = adm.prof[id] || {}, a = p.stats?.active;
+  return isLive(a) ? `<small class="ust live">Latihan <span data-run="${a.start}">${runMin(a.start)}</span> · ${esc(a.name)}</small>` : `<small class="ust">${seenText(lastSeen(p))}</small>`;
+};
+
+// the list
+const USORT = [['seen', 'Aktif'], ['new', 'Terbaru'], ['rajin', 'Paling rajin'], ['name', 'A–Z']];
+function usrRows() {
+  const q = adm.q.trim().toLowerCase(), m30 = Date.now() - 30 * 864e5;
+  const rows = (adm.ids || []).filter(id => !q || (uName(id) + ' ' + (adm.prof[id]?.email || '')).toLowerCase().includes(q));
+  const key = {
+    seen: id => (isLive(adm.prof[id]?.stats?.active) ? 1e15 : 0) + lastSeen(adm.prof[id] || {}),
+    new: id => +(adm.prof[id]?.joined || 0),
+    rajin: id => countFrom(uDays(adm.prof[id] || {}), m30) * 1e13 + lastSeen(adm.prof[id] || {})
+  }[adm.sort];
+  return key ? rows.sort((a, b) => key(b) - key(a)) : rows.sort((a, b) => uName(a).localeCompare(uName(b), 'id'));
+}
+function usrTiles() {
+  const ids = adm.ids || [], P = id => adm.prof[id] || {}, d7 = Date.now() - 7 * 864e5, d30 = Date.now() - 30 * 864e5;
+  const tile = (v, n, cls = '') => `<div class="${cls}"><b>${adm.ids ? v : '–'}</b><small>${n}</small></div>`;
+  return tile(ids.length, 'Terdaftar') + tile(ids.filter(id => isLive(P(id).stats?.active)).length, 'Sedang latihan', 'live')
+    + tile(ids.filter(id => lastSeen(P(id)) >= d7).length, 'Aktif 7 hari') + tile(ids.filter(id => +P(id).joined >= d30).length, 'Baru 30 hari');
+}
+const usrRules = () => `<div class="uwarn"><span class="sico" style="--c:#d97706">${I('alert')}</span><div>
+    <b>Aturan database perlu diperbarui</b>
+    <p>Admin belum diizinkan membaca data pengguna. Di Firebase Console buka <b>Realtime Database → Rules</b>, ganti isinya dengan <code>database.rules.json</code> yang terbaru, lalu tekan <b>Publish</b>.</p>
+    <div class="row2"><a class="btn soft sm" href="${RULES_URL}" target="_blank" rel="noopener">${I('ext')} Lihat aturan</a><a class="btn soft sm" href="${RULES_CONSOLE}" target="_blank" rel="noopener">${I('ext')} Buka Firebase</a></div>
+    <button class="btn pri sm block" data-a="usrLoad">${I('refresh')} Sudah, coba lagi</button></div></div>`;
+function usrList() {
+  if (adm.err === 'rules') return usrRules();
+  if (adm.err) return `<div class="empty">${esc(adm.err)}<br><button class="btn soft sm mt" data-a="usrLoad">${I('refresh')} Coba lagi</button></div>`;
+  if (!adm.ids) return '<div class="empty">Memuat daftar pengguna…</div>';
+  const rows = usrRows();
+  if (!rows.length) return `<div class="empty">${adm.q.trim() ? 'Tidak ada pengguna yang cocok.' : 'Belum ada pengguna.'}</div>`;
+  const wk = weekStart(), me = fb.user?.uid;
+  return `<div class="ulist">${rows.map(id => {
+    const p = adm.prof[id], g = uGoal(id);
+    if (!p) return `<div class="urow ghost">${uAvatar(id)}<span class="utx"><b>Memuat…</b><small>${esc(id)}</small></span></div>`;
+    return `<button class="urow" data-a="usr" data-id="${esc(id)}">${uAvatar(id)}
+      <span class="utx"><b>${esc(uName(id))}${id === me ? '<em class="ume">Kamu</em>' : ''}</b><small>${esc(p.email || id)}</small>${uStatus(id)}</span>
+      <span class="umeta">${p.stats ? `<b>${countFrom(uDays(p), wk)}${g ? `<i>/${g}</i>` : ''}</b><small>minggu ini</small>` : '<small>belum ada<br>ringkasan</small>'}</span>${I('chev')}</button>`;
+  }).join('')}</div>`;
+}
+const usrSortHtml = () => USORT.map(([k, n]) => `<button class="chip ${adm.sort === k ? 'on' : ''}" data-a="usrSort" data-k="${k}" aria-pressed="${adm.sort === k}">${n}</button>`).join('');
+const usrListView = () => `<h2 class="sh">Pengguna</h2>
+    <p class="scope" style="margin-top:-8px">Semua akun di ${esc(APP.appName)}. Statusnya diperbarui langsung saat mereka memakai aplikasi.</p>
+    <div class="utiles" id="usrTiles">${usrTiles()}</div>
+    <label class="search">${I('search')}<input data-i="usrQ" type="search" placeholder="Cari nama atau email…" value="${esc(adm.q)}" autocomplete="off" aria-label="Cari pengguna"></label>
+    <div class="qchips usort" id="usrSort">${usrSortHtml()}</div>
+    <div id="usrList">${usrList()}</div>`;
+
+// one account
+function usrWeeks(hist, goal) {
+  const wks = [...Array(8)].map((_, i) => {
+    const f = weekStart(new Date(Date.now() - (7 - i) * 7 * 864e5)), t = new Date(f); t.setDate(t.getDate() + 7);
+    return { f, n: hist.filter(h => { const d = new Date(h.date); return d >= f && d < t }).length };
+  });
+  const mx = Math.max(goal, ...wks.map(w => w.n), 1);
+  return `<div class="bars ubars">${wks.map((w, i) => `<div class="bar${i === 7 ? ' today' : ''}${w.n ? ' has' : ''}" aria-label="Minggu ${w.f.getDate()} ${MONTHS[w.f.getMonth()]}: ${w.n} workout"><div class="bw">${w.n ? `<small>${w.n}</small>` : ''}<span style="height:${w.n ? `calc((100% - 18px) * ${Math.max(.08, w.n / mx)})` : '7px'}"></span></div><em>${w.f.getDate()}/${w.f.getMonth() + 1}</em></div>`).join('')}</div>`;
+}
+function usrLive(a) {
+  if (!a || !isLive(a)) return '';
+  const all = a.items.flatMap(i => i.sets), done = all.filter(x => x.done).length;
+  return `<div class="ulive"><div class="ulive-h"><span class="ldot"></span><b>Sedang latihan · ${esc(a.name)}</b><span class="ulive-t" data-clock="${a.start}">${mmss((Date.now() - a.start) / 1000)}</span></div>
+    <div class="ubar" role="progressbar" aria-valuemin="0" aria-valuemax="${all.length}" aria-valuenow="${done}"><span style="width:${all.length ? done / all.length * 100 : 0}%"></span></div>
+    <small class="ulive-s">${done} dari ${all.length} set selesai</small>
+    ${a.items.filter(it => T[it.id]).map(it => { const d = it.sets.filter(x => x.done).length; return `<div class="uex${d === it.sets.length && d ? ' ok' : ''}"><span>${esc(T[it.id].t)}</span><b>${d}/${it.sets.length}</b></div>` }).join('')}</div>`;
+}
+function usrHist(h) {
+  const d = new Date(h.date);
+  return `<details class="uh" data-k="h:${esc(h.id)}"><summary><span class="udt"><b>${d.getDate()}</b><small>${MONTHS[d.getMonth()]}</small></span>
+      <span class="stx"><b>${esc(h.name)}</b><small>${ago(h.date)} · ${h.dur} mnt · ${h.sets} set · ${fmtK(h.vol)} kg</small></span>${I('chev')}</summary>
+    <div class="uhx">${h.items.filter(it => T[it.id]).map(it => `<div><b>${esc(T[it.id].t)}</b><small>${it.sets.map(x => setText(it.id, x)).join(' · ')}</small></div>`).join('') || '<small class="muted">Tidak ada set.</small>'}</div></details>`;
+}
+function usrDetailView() {
+  const id = adm.open, p = adm.prof[id] || {}, u = adm.user, st = u?.settings || {}, sum = p.stats || {};
+  const row = (icon, c, title, v) => sRow({ icon, c, title, right: `<b class="sval">${v}</b>` });
+  const head = `<button class="ubk" data-a="usrBack">${I('back')} Pengguna</button>
+    <div class="prof uprof">${uAvatar(id, true)}<div><b>${esc(uName(id))}${id === fb.user?.uid ? '<em class="ume">Kamu</em>' : ''}</b><small>${esc(p.email || '')}</small>${uStatus(id)}</div></div>`;
+  const info = `<h3 class="sh2">Akun</h3><div class="sgroup">
+      ${row('calendar', '#2f7cf6', 'Terdaftar', uDate(+p.joined))}
+      ${row('clock', '#14b8a6', 'Terakhir aktif', lastSeen(p) ? `<span data-ago="${lastSeen(p)}">${since(lastSeen(p))}</span>` : '—')}
+      ${row('key', '#8b5cf6', 'Masuk dengan', esc(String(p.via || '').split(',').filter(Boolean).map(v => VIA[v] || v).join(', ') || '—'))}
+      ${sRow({ icon: 'user', c: '#64748b', title: 'ID akun', sub: esc(id), tag: 'button', attrs: `data-a="usrCopy" data-id="${esc(id)}"`, right: I('copy') })}
+    </div>`;
+  if (adm.uerr) return head + (adm.uerr === 'rules' ? usrRules() : `<div class="empty">Gagal memuat: ${esc(adm.uerr)}</div>`) + info;
+  if (!u) return head + `<div class="empty">Memuat data ${esc(uName(id))}…</div>` + info;
+  const hist = u.history, goal = st.goal || sum.goal || 0, now = Date.now();
+  const wk = hist.filter(h => new Date(h.date) >= weekStart()).length, d30 = hist.filter(h => Date.parse(h.date) >= now - 30 * 864e5).length;
+  const vol = hist.reduce((t, h) => t + (h.vol || 0), 0);
+  const kg = u.weights[0]?.kg || 0, kg0 = u.weights.at(-1)?.kg || 0, dk = kg && kg0 ? kg - kg0 : 0;
+  const kcal = (st.kcalAuto && energy(st, kg)?.target) || st.kcal || 2000;
+  const m7 = u.meals.filter(m => Date.parse(m.date) >= new Date().setHours(0, 0, 0, 0) - 6 * 864e5);
+  const mDays = new Set(m7.map(m => dayKey(m.date))).size, mK = m7.reduce((t, m) => t + mealTotals(m).kcal, 0);
+  return head + usrLive(u.active) + `
+    <div class="utiles u4">
+      <div><b>${wk}${goal ? `<i>/${goal}</i>` : ''}</b><small>Minggu ini</small></div>
+      <div><b>${d30}</b><small>30 hari</small></div>
+      <div><b>${hist.length}</b><small>Total workout</small></div>
+      <div><b>${fmtK(vol)}</b><small>Volume (kg)</small></div>
+    </div>
+    <section class="sgroup upad"><h3 class="ct">Workout per minggu ${goal ? `<span class="muted sm">target ${goal}×</span>` : ''}</h3>${usrWeeks(hist, goal)}</section>
+    <h3 class="sh2">Tubuh & makan</h3><div class="sgroup">
+      ${row('scale', '#12a372', 'Berat terakhir', kg ? `${fmt1(kg)} kg${dk ? ` <span class="udk">${dk > 0 ? '+' : '−'}${fmt1(Math.abs(dk))}</span>` : ''}` : '—')}
+      ${row('target', '#f2785c', 'Target berat', st.goalW ? fmt1(st.goalW) + ' kg' : '—')}
+      ${row('flame', '#f59e0b', 'Target kalori', r0(kcal) + ' kkal/hari')}
+      ${sRow({ icon: 'apple', c: '#ec4899', title: 'Makan 7 hari', sub: m7.length ? `rata-rata, ${mDays} hari dicatat` : '', right: `<b class="sval">${m7.length ? r0(mK / mDays) + ' kkal/hari' : 'Belum dicatat'}</b>` })}
+    </div>
+    <h3 class="sh2">Program (${u.routines.length})</h3>
+    <div class="sgroup">${u.routines.map(r => sRow({ icon: 'dumbbell', c: r.color || '#2f7cf6', title: esc(rName(r)), sub: `${r.items.length} latihan · ±${estMin(r.items)} menit` })).join('') || '<div class="empty">Belum ada program.</div>'}</div>
+    <h3 class="sh2">Workout terakhir</h3>
+    <div class="sgroup">${hist.slice(0, 10).map(usrHist).join('') || '<div class="empty">Belum ada workout.</div>'}</div>
+    ${u.meals.length ? `<h3 class="sh2">Makanan terakhir</h3><div class="sgroup">${u.meals.slice(0, 5).map(m => sRow({ icon: 'apple', c: '#ec4899', title: esc(m.name), sub: `${ago(m.date)} · ${(MEAL_SLOTS.find(x => x[0] === m.slot) || [, ''])[1]}`, right: `<b class="sval">${r0(mealTotals(m).kcal)} kkal</b>` })).join('')}</div>` : ''}
+    ${info}`;
+}
+
+function usersPaint() {
+  const box = $('#usr'); if (!box) return;
+  if (adm.open) {
+    const keep = [...box.querySelectorAll('details[open]')].map(d => d.dataset.k);
+    box.innerHTML = usrDetailView();
+    keep.forEach(k => box.querySelectorAll('details').forEach(d => { if (d.dataset.k === k) d.open = true }));
+    return;
+  }
+  if (!$('#usrList')) { box.innerHTML = usrListView(); return }
+  $('#usrTiles').innerHTML = usrTiles(); $('#usrList').innerHTML = usrList();
+}
+const usersSoon = () => { clearTimeout(adm.paintT); adm.paintT = setTimeout(usersPaint, 60) };
+function usersStop() {
+  adm.offs.forEach(f => f()); adm.offs = [];
+  if (adm.offU) adm.offU(); adm.offU = null; adm.open = null; adm.user = null;
+  clearTimeout(adm.paintT);
+}
+function openUsers() {
+  adm.open = null; adm.err = '';
+  sheet(`<div id="usr">${usrListView()}</div>`);
+  sheetOff = usersStop;
+  usersLoad();
+}
+async function usersLoad() {
+  adm.offs.forEach(f => f()); adm.offs = [];
+  if (!fb.mod || !fb.user || fb.user.cached) { adm.err = 'Butuh koneksi internet untuk memuat pengguna.'; return usersPaint() }
+  adm.err = ''; usersPaint();
+  try {
+    const tok = await fb.user.getIdToken();
+    const r = await fetch(`${FIREBASE.databaseURL}/users.json?shallow=true&auth=${encodeURIComponent(tok)}`, { cache: 'no-store' });
+    if (r.status === 401 || r.status === 403) throw Object.assign(new Error('rules'), { rules: true });
+    if (!r.ok) throw new Error('Server menjawab ' + r.status);
+    const ids = Object.keys((await r.json()) || {});
+    if (sheetOff !== usersStop) return;   // closed meanwhile
+    adm.ids = ids;
+    const { ref, onValue, get } = fb.mod;
+    adm.offs = ids.map(id => onValue(ref(fb.db, `users/${id}/profile`), s => {
+      adm.prof[id] = s.val() || {};
+      // an app from before these stats: its name and target from the account's settings, once
+      if (!adm.prof[id].stats && !(id in adm.names)) {
+        adm.names[id] = '';
+        get(ref(fb.db, `users/${id}/settings`)).then(x => { const v = x.val() || {}; adm.names[id] = String(v.name || ''); adm.goals[id] = +v.goal || 0; usersSoon() }).catch(() => {});
+      }
+      usersSoon();
+    }, e => { if (/permission/i.test(e.code || e.message || '')) { adm.err = 'rules'; usersSoon() } }));
+    usersPaint();
+  } catch (e) {
+    if (e.rules) adm.ids = null;
+    adm.err = e.rules ? 'rules' : e instanceof TypeError ? 'Tidak bisa terhubung. Cek internet lalu coba lagi.' : (e.code || e.message || 'Gagal memuat');
+    usersPaint();
+  }
+}
+function usersOpen(id) {
+  const body = $('#sheet .sheet-body');
+  adm.top = body ? body.scrollTop : 0;
+  adm.open = id; adm.user = null; adm.uerr = '';
+  usersPaint(); if (body) body.scrollTop = 0;
+  adm.offU = fb.mod.onValue(fb.mod.ref(fb.db, `users/${id}`), s => { if (adm.open === id) { adm.user = normalize(s.val()); usersSoon() } },
+    e => { if (adm.open === id) { adm.uerr = /permission/i.test(e.code || e.message || '') ? 'rules' : (e.code || e.message); usersSoon() } });
+}
+function usersBack() {
+  if (adm.offU) adm.offU(); adm.offU = null; adm.open = null; adm.user = null;
+  const box = $('#usr'); if (!box) return;
+  box.innerHTML = usrListView();
+  const body = $('#sheet .sheet-body'); if (body) body.scrollTop = adm.top;
+}
+// the running clocks and "… lalu" on the page, once a second (the rest of the page only redraws on new data)
+function usrTick() {
+  const box = $('#usr'); if (!box) return;
+  box.querySelectorAll('[data-clock]').forEach(e => { e.textContent = mmss((Date.now() - +e.dataset.clock) / 1000) });
+  if (++adm.ticks % 15) return;
+  box.querySelectorAll('[data-run]').forEach(e => { e.textContent = runMin(+e.dataset.run) });
+  box.querySelectorAll('[data-ago]').forEach(e => { e.textContent = since(+e.dataset.ago) });
+}
+
 async function signInGoogle() {
   if (!fb.mod) return fieldErr(null, 'Masih menyiapkan koneksi. Coba lagi sebentar.');
   const { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signInWithCredential } = fb.mod;
@@ -5855,6 +6172,12 @@ const A = {
   copyUid: async () => { try { await navigator.clipboard.writeText(fb.user.uid); toast('ID akun disalin') } catch { toast(fb.user.uid, 'info') } },
   changePassword: () => openChangePassword(),
   claimAdmin: el => claimAdmin(el),
+  users: () => openUsers(),
+  usr: el => usersOpen(el.dataset.id),
+  usrBack: () => usersBack(),
+  usrLoad: () => usersLoad(),
+  usrSort: el => { adm.sort = el.dataset.k; $('#usrSort').innerHTML = usrSortHtml(); $('#usrList').innerHTML = usrList() },
+  usrCopy: async el => { try { await navigator.clipboard.writeText(el.dataset.id); toast('ID akun disalin') } catch { toast(el.dataset.id, 'info') } },
   appSave: async el => {
     const v = appFields(ui.appDraft);
     busy(el, true);
@@ -6157,6 +6480,7 @@ document.addEventListener('input', e => {
   const el = e.target, k = el.dataset.i; if (!k) return;
   if (k === 'q') { ui.q = el.value; $('#libHead').innerHTML = libHead(); $('#libList').innerHTML = libList() }
   else if (k === 'pq') { ui.pick.q = el.value; $('#pkList').innerHTML = pickList() }
+  else if (k === 'usrQ') { adm.q = el.value; $('#usrList').innerHTML = usrList() }
   else if (k === 'pkAiQ') ui.pick.aiQ = el.value.slice(0, 200);
   else if (k === 'swQ') { if (ui.swap) ui.swap.q = el.value.slice(0, 200) }
   else if (k === 'rname') { const r = curR(); if (r) { r.name = el.value.slice(0, 40); save() } }
@@ -6288,7 +6612,7 @@ document.addEventListener('change', e => {
 });
 // closes the topmost dialog, popup or sheet; the Android app calls it for the back button
 function closeTop() {
-  if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if ($('#sheet').classList.contains('open')) closeSheet(); else if (chatOpen()) closeChat(); else return false;
+  if (dlgDone) dlgDone(false); else if (!$('#vmodal').hidden) closeVideo(); else if (!$('#scan').hidden) stopScan(); else if (adm.open && $('#usr')) usersBack(); else if ($('#sheet').classList.contains('open')) closeSheet(); else if (chatOpen()) closeChat(); else return false;
   return true;
 }
 document.addEventListener('keydown', e => {

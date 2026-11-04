@@ -45,10 +45,23 @@ Pengaturan aplikasi dan pengaturan user disimpan terpisah.
 | `users/<uid>/history/<id>` | Riwayat workout | pemilik akun |
 | `users/<uid>/meals/<id>` | Catatan makan (kalori & makro) | pemilik akun |
 | `users/<uid>/active` | Workout yang sedang berjalan | pemilik akun |
-| `users/<uid>/profile` | Email, nama, waktu login terakhir | pemilik akun |
+| `users/<uid>/profile` | Email, nama, cara login, tanggal daftar, login terakhir, dan `stats` (ringkasan untuk halaman Pengguna) | pemilik akun · dibaca admin |
+
+Admin boleh **membaca** seluruh `users/` (untuk halaman Pengguna), tapi tidak bisa mengubahnya.
 
 Data juga di-cache di perangkat: aplikasi langsung terbuka, tetap bisa dipakai offline, dan
 perubahannya dikirim ke Firebase begitu online lagi.
+
+## Pantau pengguna (admin)
+
+**Pengaturan → Pengguna → Pantau pengguna** menampilkan semua akun yang terdaftar: jumlah akun,
+yang sedang latihan (live), aktif 7 hari terakhir, dan yang baru daftar. Daftarnya bisa dicari dan
+diurutkan (aktif terakhir, terbaru daftar, paling rajin, A–Z). Ketuk satu akun untuk melihat workout
+yang sedang berjalan (set per latihan, diperbarui langsung), workout per minggu (8 minggu), berat
+badan, target kalori, makan 7 hari, program, riwayat workout, makanan terakhir, dan info akunnya.
+
+Butuh aturan database terbaru (baris `".read"` admin di `users`). Kalau belum di-Publish, halaman
+itu menampilkan langkahnya.
 
 ## Pasang di HP (PWA)
 
