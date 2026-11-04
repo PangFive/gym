@@ -143,23 +143,27 @@ tersinkron di semua perangkat.
   Kalori pada menit yang terukur pakai rumus **Keytel 2005** (jenis kelamin, umur, berat; minimal 1 MET),
   menit yang tidak terukur tetap MET. Huawei Health Kit / Health Connect tidak dipakai: tertutup untuk web app.
 
-### Kalori (AI Gemini atau Claude)
+### Kalori (AI Gemini atau 9router)
 - Kartu **Kalori Hari Ini** di Beranda: tombol **Detail** ke halaman Kalori, gauge setengah lingkaran vs target (merah bila lewat), tile protein/karbo/lemak, tombol
   **Foto makanan**, **Dari galeri**, **Tulis manual**; halaman Kalori dengan strip minggu (pilih hari,
   rata-rata kkal, hari sesuai target) dan daftar makanan per waktu makan. Di halaman Kalori target harian
   tampil sebagai label hijau "Target N kkal" (ketuk untuk membuka profil).
 - Setelah foto dipilih ada langkah **Keterangan (opsional)**: porsi, cara masak, atau yang tidak terlihat
   di foto; dikirim bersama foto dan diutamakan AI bila berbeda dengan tebakannya. **Ganti foto** memilih ulang.
-- Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** atau **Anthropic Claude**
+- Foto diperkecil (1024 px) lalu dikirim langsung dari HP ke **Google Gemini** atau ke **9router** milik pengguna
   dengan API key milik pengguna (disimpan hanya di perangkat, Pengaturan → Perangkat ini → AI). Hasil: nama hidangan,
   rincian item (gram, kkal, makro), tingkat keyakinan; bisa diedit (gram menskalakan kalori, porsi
   ¼×–4×, waktu makan) sebelum disimpan. Foto tidak disimpan.
-- **Pilihan AI** di lembar Hubungkan AI: Gemini (key gratis dari AI Studio) atau Claude (key berbayar dari
-  platform.claude.com, isi saldo dulu). Yang terakhir disimpan yang dipakai untuk semua fitur AI (kalori, rekomendasi
-  latihan, ganti alat, saran target); key yang lain tetap tersimpan untuk pindah lagi. Claude: model terbaru tiap keluarga
-  (Opus 5.5 disarankan, Sonnet, Haiku, Fable) dites sekali saat key ditempel lalu disimpan, karena tiap tes ditagih;
-  effort `low`, foto dikirim sebelum teks, `fallbacks: "default"` (beta) bila model menolak; Haiku tanpa fallback.
-  Saldo habis tampil sebagai "Saldo Claude habis".
+- **Pilihan AI** di lembar Hubungkan AI: Gemini (key gratis dari AI Studio) atau 9router (router AI format OpenAI
+  milik pengguna yang meneruskan ke Claude, Gemini, OpenRouter, dll.). Yang terakhir disimpan yang dipakai untuk semua
+  fitur AI (kalori, rekomendasi latihan, ganti alat, saran target); key yang lain tetap tersimpan untuk pindah lagi.
+  9router: **Alamat server** sudah terisi `https://ryysvy8.abc-tunnel.us/v1` (bisa diganti bila tunnel berubah;
+  `https://` dan `/v1` ditambahkan sendiri), key `sk-…` dari dashboard 9router. Daftar model dari `GET /v1/models`:
+  hanya yang bisa membaca foto (`capabilities.vision`), combo **WHY** disarankan dan combo lain di atas; daftar tidak
+  dites satu per satu karena tiap tes memakai kuota provider di belakangnya, hanya model yang dipilih yang dites saat
+  **Tes & simpan**. Panggilan `POST /v1/chat/completions` dengan `stream: false`, foto sebagai `image_url` (data URL)
+  sebelum teks, `response_format: json_object` (diulang tanpa bila model menolak). Model yang sibuk/habis kuota (429/5xx)
+  diserahkan ke combo yang disarankan. Pilihan Claude langsung (api.anthropic.com) sudah dihapus; key-nya diabaikan.
 - **Profil tubuh** (jenis kelamin, tahun lahir, tinggi, berat, target berat, aktivitas, kecepatan
   0,25–1 kg/minggu), seperti onboarding MyFitnessPal / Lose It. BMR dengan rumus Mifflin–St Jeor
   × faktor aktivitas = TDEE; target harian = TDEE ± kecepatan × 7.700 / 7 kkal, minimal 1.500 (pria)
@@ -327,6 +331,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 15. Claude sebagai pilihan AI di samping Gemini.
 16. Desain baru: karakter orang (gambar AI, `public/img/char-*.webp`, latar dipotong), font Roboto di semua teks, tombol navigasi bulat,
     gauge kalori, halaman masuk dengan Google lebih dulu, tanpa bola dekorasi. Warna tetap terang bergradasi; peta otot tidak berubah.
+17. Pilihan AI Claude diganti 9router (server router AI milik pengguna, format OpenAI, combo WHY).
 
 ## 8. Ide berikutnya
 
