@@ -309,9 +309,9 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .tap .bm-m:hover{fill:#a9c7f9}
 .tap .bm-m.sel:hover{fill:var(--acc-2)}
 .hint{text-align:center;color:var(--faint);font-size:12.5px;font-weight:600;margin:6px 0 10px}
-.lhead{display:flex;justify-content:space-between;align-items:center;margin:4px 4px 12px;font-size:14px;color:var(--muted);font-weight:600}
+.lhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 4px 12px;font-size:14px;color:var(--muted);font-weight:600}
 .lhead b{color:var(--ink)}
-.lhead button{border:0;background:transparent;color:var(--acc);font-weight:700;font-size:14px;padding:4px 0}
+.lhead button{flex:none;border:0;background:transparent;color:var(--acc);font-weight:700;font-size:14px;padding:4px 0}
 .bm-legend{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;color:var(--faint);font-weight:700;margin:8px 0 6px}
 .bm-legend i{width:16px;height:10px;border-radius:4px}
 .empty .linkbtn{margin-top:4px}
@@ -1951,7 +1951,7 @@ function setOnline(on) {
   else offT = setTimeout(() => { if (!fb.online) $('#offline').hidden = phase !== 'app' }, 3000);
 }
 
-const ui = { muscle: 'all', q: '', fmus: 'all', fe: 'all', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
+const ui = { ms: new Set(), lcx: false, q: '', fms: new Set(), fe: 'all', range: 'week', pick: null, day: null, authMode: 'in', authEmail: '', appDraft: null };
 let lastRoute = '';
 
 // ---------- router ----------
@@ -2170,18 +2170,22 @@ function vHome() {
     ${S.history[0] ? `<h2 class="st">Workout Terakhir</h2>${histCard(S.history[0])}` : ''}`;
 }
 
-function chips(sel, act) {
-  return `<button class="chip ${sel === 'all' ? 'on' : ''}" data-a="${act}" data-k="all">Semua <small>${TUTORIALS.length + CARDIO.length}</small></button>` +
-    `<button class="chip ${sel === 'cardio' ? 'on' : ''}" data-a="${act}" data-k="cardio">Kardio <small>${CARDIO.length}</small></button>` +
-    MUSCLES.map(m => `<button class="chip ${sel === m.k ? 'on' : ''}" data-a="${act}" data-k="${m.k}">${m.n} <small>${count(m.k)}</small></button>`).join('');
-}
+// The library filters by any number of muscles (ui.ms), as the exercise picker does: a machine shows
+// when it trains one of them, and the ones that hit more of the chosen muscles (as a main muscle first)
+// come first. Kardio (ui.lcx) stands alone: picking it lets go of the muscles, and a muscle lets go of it.
+const libAll = () => !ui.ms.size && !ui.lcx;
+const chip = (act, on, k, label, n) => `<button class="chip ${on ? 'on' : ''}" data-a="${act}" data-k="${k}" aria-pressed="${on}">${label} <small>${n}</small></button>`;
+const chips = () => chip('muscle', libAll(), 'all', 'Semua', TUTORIALS.length + CARDIO.length) + chip('muscle', ui.lcx, 'cardio', 'Kardio', CARDIO.length)
+  + MUSCLES.map(m => chip('muscle', ui.ms.has(m.k), m.k, m.n, count(m.k))).join('');
 const matches = (t, m, q) => (m === 'all' || (m === 'cardio' ? !!t.c : trains(t, m))) && (!q || t.t.toLowerCase().includes(q) || t.d.toLowerCase().includes(q));
-// the machines a library filter looks through: cardio only shows under All and Kardio
-const libPool = m => m === 'all' || m === 'cardio' ? [...TUTORIALS, ...CARDIO] : TUTORIALS;
-function libList() {
+// cardio only shows under Semua and Kardio
+const libHits = () => {
   const q = ui.q.trim().toLowerCase();
-  // A muscle's own exercises first, then the ones that train it on the side.
-  const xs = libPool(ui.muscle).filter(t => matches(t, ui.muscle, q)).sort((a, b) => b.p.includes(ui.muscle) - a.p.includes(ui.muscle));
+  return (libAll() ? [...TUTORIALS, ...CARDIO] : ui.lcx ? CARDIO : TUTORIALS.filter(t => pickHits(t, ui.ms)))
+    .filter(t => matches(t, 'all', q)).sort((a, b) => pickHits(b, ui.ms) - pickHits(a, ui.ms));
+};
+function libList() {
+  const xs = libHits();
   if (!xs.length) return `<div class="empty glass">Tidak ada latihan yang cocok.</div>`;
   return xs.map(t => `<button class="wcard glass" data-a="open" data-id="${t.id}">
       <div class="wtxt"><h3>${esc(t.t)}</h3>${pTags(t)}${alsoLine(t)}<span class="go">${I('arrow')}</span></div>
@@ -2238,29 +2242,31 @@ new MutationObserver(() => {
 // The actions every main page carries top-right: scan a machine's QR, and settings.
 const headActs = () => `<div class="row-btns"><button class="icon-btn pri" data-a="scan" aria-label="Scan QR alat">${I('qr')}</button><button class="icon-btn" data-a="settings" aria-label="Pengaturan">${I('sliders')}</button></div>`;
 const genderSeg = () => `<div class="gseg">${[['male', 'Pria'], ['female', 'Wanita']].map(([k, n]) => `<button class="${S.settings.body === k ? 'on' : ''}" data-a="body" data-k="${k}">${n}</button>`).join('')}</div>`;
-const libMap = () => bodyMap({ tap: true, sel: ui.muscle === 'all' ? null : ui.muscle, level: () => ui.muscle === 'all' ? 1 : 0 });
+const libMap = () => bodyMap({ tap: true, sel: ui.ms, level: () => libAll() ? 1 : 0 });
 function libHead() {
-  const xs = libPool(ui.muscle).filter(t => matches(t, ui.muscle, ui.q.trim().toLowerCase()));
-  if (ui.muscle === 'all') return `<span>Semua latihan · <b>${xs.length}</b></span>`;
-  if (ui.muscle === 'cardio') return `<span>Alat <b>Kardio</b> · ${xs.length}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
-  const main = xs.filter(t => t.p.includes(ui.muscle)).length;
-  return `<span>Latihan untuk <b>${MI[ui.muscle].n}</b> · ${xs.length}${main < xs.length ? ` (${main} utama)` : ''}</span><button data-a="muscle" data-k="all">Hapus pilihan</button>`;
+  const xs = libHits(), clear = '<button data-a="muscle" data-k="all">Hapus pilihan</button>';
+  if (libAll()) return `<span>Semua latihan · <b>${xs.length}</b></span>`;
+  if (ui.lcx) return `<span>Alat <b>Kardio</b> · ${xs.length}</span>${clear}`;
+  const main = xs.filter(t => t.p.some(k => ui.ms.has(k))).length;
+  return `<span>Latihan untuk <b>${mNames([...ui.ms])}</b> · ${xs.length}${main < xs.length ? ` (${main} utama)` : ''}</span>${clear}`;
 }
 // A filter tapped a second time is taken off again.
 const flip = (cur, k) => cur === k ? 'all' : k;
-function centerChip(row) {
-  const on = row.querySelector('.chip.on');
+// a muscle tapped on the map brings its chip into view; a tapped chip leaves the row where it is
+function centerChip(row, k) {
+  const on = k && row.querySelector(`.chip.on[data-k="${k}"]`);
   if (on) {
     const a = on.getBoundingClientRect(), b = row.getBoundingClientRect();
     row.scrollLeft += (a.left + a.width / 2) - (b.left + b.width / 2);
   }
 }
-function refreshLib() {
+function refreshLib(k) {
+  const row = $('#libChips'), x = row.scrollLeft;
   $('#libMap').innerHTML = libMap();
-  $('#libChips').innerHTML = chips(ui.muscle, 'muscle');
+  row.innerHTML = chips(); row.scrollLeft = x;
   $('#libHead').innerHTML = libHead();
   $('#libList').innerHTML = libList();
-  centerChip($('#libChips'));
+  centerChip(row, k);
 }
 // ---------- exercise technique ----------
 // Technique clips, from /app/teknik (see "technique clips" further down). j = koreksi (right against wrong), variasi or
@@ -2276,16 +2282,16 @@ const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel']
 const eqName = k => EQUIP.find(x => x[0] === k)?.[1] || k;
 const libTabs = tab => `<div class="seg glass lseg">${[['', 'Alat'], ['teknik', 'Teknik']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-a="go" data-to="library${k && '/' + k}">${n}</button>`).join('')}</div>`;
 const formCount = k => FORM.filter(t => trains(t, k)).length;
-const formChip = (act, sel, k, label, n) => `<button class="chip ${sel === k ? 'on' : ''}" data-a="${act}" data-k="${k}">${label} <small>${n}</small></button>`;
+// Muscles, any number of them (ui.fms), as in the library; one kind of equipment at a time.
 // Only what has clips, so a chip never leads to an empty list.
-const fmChips = () => formChip('fmus', ui.fmus, 'all', 'Semua', FORM.length) + MUSCLES.filter(m => formCount(m.k)).map(m => formChip('fmus', ui.fmus, m.k, m.n, formCount(m.k))).join('');
-const feChips = () => formChip('fe', ui.fe, 'all', 'Semua alat', FORM.length) + EQUIP.map(([k, n]) => [k, n, FORM.filter(t => t.e === k).length]).filter(x => x[2]).map(([k, n, c]) => formChip('fe', ui.fe, k, n, c)).join('');
+const fmChips = () => chip('fmus', !ui.fms.size, 'all', 'Semua', FORM.length) + MUSCLES.filter(m => formCount(m.k)).map(m => chip('fmus', ui.fms.has(m.k), m.k, m.n, formCount(m.k))).join('');
+const feChips = () => chip('fe', ui.fe === 'all', 'all', 'Semua alat', FORM.length) + EQUIP.map(([k, n]) => [k, n, FORM.filter(t => t.e === k).length]).filter(x => x[2]).map(([k, n, c]) => chip('fe', ui.fe === k, k, n, c)).join('');
 // A muscle with clips is tinted; a selected one takes the accent.
-const formMap = () => bodyMap({ tap: true, act: 'fmus', sel: ui.fmus === 'all' ? null : ui.fmus, level: k => ui.fmus === 'all' && formCount(k) ? 1 : 0 });
-const formHits = () => FORM.filter(t => (ui.fmus === 'all' || trains(t, ui.fmus)) && (ui.fe === 'all' || t.e === ui.fe)).sort((a, b) => b.p.includes(ui.fmus) - a.p.includes(ui.fmus));
+const formMap = () => bodyMap({ tap: true, act: 'fmus', sel: ui.fms, level: k => !ui.fms.size && formCount(k) ? 1 : 0 });
+const formHits = () => FORM.filter(t => (!ui.fms.size || pickHits(t, ui.fms)) && (ui.fe === 'all' || t.e === ui.fe)).sort((a, b) => pickHits(b, ui.fms) - pickHits(a, ui.fms));
 function formHead() {
   const n = formHits().length;
-  return ui.fmus === 'all' ? `<span>Semua video · <b>${n}</b></span>` : `<span>Video untuk <b>${MI[ui.fmus].n}</b> · ${n}</span><button data-a="fmus" data-k="all">Hapus pilihan</button>`;
+  return !ui.fms.size ? `<span>Semua video · <b>${n}</b></span>` : `<span>Video untuk <b>${mNames([...ui.fms])}</b> · ${n}</span><button data-a="fmus" data-k="all">Hapus pilihan</button>`;
 }
 function formList() {
   const xs = formHits();
@@ -2294,13 +2300,14 @@ function formList() {
       <span class="fv">${pic(t.y)}<span class="pm">${I('playf')}</span></span>
       <b>${esc(t.t)}</b><small>${MI[t.p[0]].n} · ${eqName(t.e)}</small></button>`).join('')}</div>`;
 }
-const refreshForm = () => {
+const refreshForm = k => {
+  const row = $('#fmChips'), fe = $('#feChips'), x = row.scrollLeft, y = fe.scrollLeft;
   $('#formMap').innerHTML = formMap();
-  $('#fmChips').innerHTML = fmChips();
-  $('#feChips').innerHTML = feChips();
+  row.innerHTML = fmChips(); row.scrollLeft = x;
+  fe.innerHTML = feChips(); fe.scrollLeft = y;
   $('#formHead').innerHTML = formHead();
   $('#formList').innerHTML = formList();
-  centerChip($('#fmChips'));
+  centerChip(row, k);
 };
 function vForm() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${FORM.length} video teknik</div></div>
@@ -2309,7 +2316,7 @@ function vForm() {
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="formMap">${formMap()}</div>
-      <p class="hint">Ketuk otot untuk melihat video tekniknya</p>
+      <p class="hint">Ketuk otot untuk melihat videonya. Bisa lebih dari satu.</p>
       <div class="chips" id="fmChips">${fmChips()}</div>
     </section>
     <div class="chips fchips" id="feChips">${feChips()}</div>
@@ -2337,8 +2344,8 @@ function vLibrary() {
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="libMap">${libMap()}</div>
-      <p class="hint">Ketuk otot untuk melihat latihan yang melatihnya</p>
-      <div class="chips" id="libChips">${chips(ui.muscle, 'muscle')}</div>
+      <p class="hint">Ketuk otot untuk melihat latihannya. Bisa lebih dari satu.</p>
+      <div class="chips" id="libChips">${chips()}</div>
     </section>
     <label class="search glass">${I('search')}<input data-i="q" type="search" placeholder="Cari latihan atau alat…" value="${esc(ui.q)}" autocomplete="off"></label>
     <div class="lhead" id="libHead">${libHead()}</div>
@@ -5601,10 +5608,14 @@ const A = {
   go: el => { closeSheet(); go(el.dataset.to) },
   close: closeSheet,
   settings: openSettings,
+  // from Beranda: the library with that one muscle; in the library each tap adds or takes off one
   muscle: el => {
-    if (route().page !== 'library') { ui.muscle = el.dataset.k; return go('library') }
-    ui.muscle = flip(ui.muscle, el.dataset.k);
-    refreshLib();
+    const k = el.dataset.k;
+    if (route().page !== 'library') { ui.ms = new Set(MI[k] ? [k] : []); ui.lcx = k === 'cardio'; return go('library') }
+    if (k === 'all') { ui.ms.clear(); ui.lcx = false }
+    else if (k === 'cardio') { ui.lcx = !ui.lcx; ui.ms.clear() }
+    else if (MI[k]) { ui.lcx = false; ui.ms.has(k) ? ui.ms.delete(k) : ui.ms.add(k) }
+    refreshLib(el.tagName === 'path' && k);
   },
   body: el => {
     S.settings.body = el.dataset.k; save(); render();
@@ -5613,7 +5624,7 @@ const A = {
   },
   open: el => openDetail(+el.dataset.id),
   form: el => openForm(+el.dataset.id),
-  fmus: el => { ui.fmus = flip(ui.fmus, el.dataset.k); refreshForm() },
+  fmus: el => { const k = el.dataset.k; if (k === 'all') ui.fms.clear(); else if (MI[k]) ui.fms.has(k) ? ui.fms.delete(k) : ui.fms.add(k); refreshForm(el.tagName === 'path' && k) },
   fe: el => { ui.fe = flip(ui.fe, el.dataset.k); refreshForm() },
   play: el => { (el.closest('.vm-vid') || $('#vid')).innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(el.dataset.y)}?autoplay=1&rel=0&playsinline=1&modestbranding=1${el.dataset.loop ? `&cc_load_policy=0&loop=1&playlist=${encodeURIComponent(el.dataset.y)}` : ''}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video tutorial"></iframe>` },
   addTo: el => openAddTo(+el.dataset.id),
@@ -6282,7 +6293,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'chQ' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); return chatSend() }
   if (e.key === 'Escape') closeTop();
   // The muscles on the body map are SVG paths, which do not click on Enter/Space by themselves.
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A.muscle(e.target) }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('path[data-a]')) { e.preventDefault(); A[e.target.dataset.a]?.(e.target) }
 });
 // Drag a sheet down from its top to close it, the way native bottom sheets work.
 let drag = null;

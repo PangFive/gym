@@ -28,7 +28,7 @@ tersinkron di semua perangkat.
 
 ### Teknik latihan
 - Halaman Tutorial punya dua tab: **Alat** dan **Teknik** (`#/library/teknik`). Tab Teknik memakai Jelajahi Otot yang
-  sama, chip otot dan chip alat hanya untuk yang punya video, lalu kartu video dua kolom.
+  sama (otot bisa dipilih lebih dari satu; alat satu per satu), chip otot dan chip alat hanya untuk yang punya video, lalu kartu video dua kolom.
 - **Pilih latihan** (program dan workout) punya switch **Alat | Teknik**; pilihan dari kedua tab digabung; rekomendasi AI memilih dari daftar tab yang sedang terbuka.
 - Dari detail, video bisa masuk **Program**, **Latih Ini**, atau **Tambah ke workout**; di program id-nya 100000 + id klip.
 - Detail: video berulang dengan suara, teks otomatis YouTube mati, kotak **Yang benar** dan **Yang salah**, peta otot.
@@ -47,7 +47,11 @@ tersinkron di semua perangkat.
   program). Muncul di chip **Kardio** (Tutorial dan Pilih latihan), kartu **Kardio** di Jelajahi Otot (Beranda), dan
   di "Semua"; tidak muncul di filter otot dan tidak dikirim ke rekomendasi Gemini "Pilih latihan". Tidak ikut data
   alat gym di Firebase (Import/Export alat tetap 56 alat video).
-- **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot.
+- **Peta otot** depan/belakang (pria/wanita): ketuk otot untuk menyaring latihan; 15 otot. **Bisa pilih lebih dari satu**
+  (peta dan chip; ketuk lagi untuk melepas), seperti di Pilih latihan: tampil latihan yang melatih salah satu otot pilihan,
+  yang mengenai lebih banyak otot pilihan (sebagai otot utama dulu) di atas; judul daftar menyebut semua otot pilihan dan
+  berapa yang utama. **Kardio** berdiri sendiri (memilihnya melepas otot, memilih otot melepasnya); **Semua** / **Hapus
+  pilihan** mengosongkan. Kotak otot di Beranda membuka Tutorial dengan otot itu saja terpilih.
 - Halaman detail: video, peta otot latihan itu, saran set × reps, **+ Program**, **Latih Ini** (saat
   workout berjalan: **Tambah ke workout** / **Buka di workout**).
 - **Scan QR di mesin** (tombol QR di kanan atas semua halaman): membuka detail alat itu. Saat workout:
