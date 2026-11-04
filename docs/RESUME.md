@@ -161,7 +161,8 @@ tersinkron di semua perangkat.
 - **Pilihan AI** di lembar Hubungkan AI: Gemini (key gratis dari AI Studio) atau 9router (router AI format OpenAI
   milik pengguna yang meneruskan ke Claude, Gemini, OpenRouter, dll.). Yang terakhir disimpan yang dipakai untuk semua
   fitur AI (kalori, rekomendasi latihan, ganti alat, saran target); key yang lain tetap tersimpan untuk pindah lagi.
-  9router: **Alamat server** sudah terisi `https://ryysvy8.abc-tunnel.us/v1` (bisa diganti bila tunnel berubah;
+  9router: **Alamat server** sudah terisi `https://9router.nakamo.fun/v1` (domain sendiri; Cloudflare Worker `9router-cors`, kode di
+  `docs/9router-cors-worker.js`, menjawab cek CORS browser; alamat tunnel lama yang tersimpan dipindah otomatis; bisa diganti;
   `https://` dan `/v1` ditambahkan sendiri), key `sk-…` dari dashboard 9router. Daftar model dari `GET /v1/models`:
   hanya yang bisa membaca foto (`capabilities.vision`), combo **WHY** disarankan dan combo lain di atas; daftar tidak
   dites satu per satu karena tiap tes memakai kuota provider di belakangnya, hanya model yang dipilih yang dites saat

@@ -3902,19 +3902,21 @@ const MEAL_SLOTS = [['breakfast', 'Sarapan'], ['lunch', 'Makan siang'], ['dinner
 const AI_KEY = 'why_ai';
 // gemini-flash-latest (the old default) can think for over a minute; 3.5 Flash with minimal
 // thinking answers in a couple of seconds. On 9router, WHY is the combo made for this app.
-const AI_MODEL = 'gemini-3.5-flash', ROUTER_MODEL = 'WHY', ROUTER_URL = 'https://ryysvy8.abc-tunnel.us/v1';
+// 9router sits behind the owner's own domain (a Cloudflare Worker there answers the browser's CORS check);
+// the tunnel address saved by earlier versions moves to it.
+const AI_MODEL = 'gemini-3.5-flash', ROUTER_MODEL = 'WHY', ROUTER_URL = 'https://9router.nakamo.fun/v1', ROUTER_OLD = 'https://ryysvy8.abc-tunnel.us/v1';
 const AI_PROV = {
   gemini: { name: 'Gemini', model: AI_MODEL, site: 'AI Studio', who: 'Google Gemini', cost: 'gratis',
     steps: ['Buka <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>', 'Masuk dengan akun Google, lalu ketuk <b>Create API key</b>', 'Ketuk ikon salin di samping key, lalu tempel di bawah'] },
   router: { name: '9router', model: ROUTER_MODEL, site: 'dashboard 9router', who: '9router, lalu ke provider model yang dipilih', cost: 'dari dashboard 9router',
-    steps: ['Buka dashboard 9router, lalu salin <b>API key</b> (atau buat yang baru)', 'Tempel key di bawah. <b>Alamat server</b> sudah terisi; ganti bila alamat tunnel-nya berubah', 'Pilih model. Combo tampil paling atas dan pindah sendiri ke provider lain bila satu gagal'] },
+    steps: ['Buka dashboard 9router, lalu salin <b>API key</b> (atau buat yang baru)', 'Tempel key di bawah. <b>Alamat server</b> sudah terisi; ganti bila alamatnya berubah', 'Pilih model. Combo tampil paling atas dan pindah sendiri ke provider lain bila satu gagal'] },
 };
 const aiStore = () => { try { return JSON.parse(localStorage.getItem(AI_KEY)) || {} } catch { return {} } };
 // Gemini's settings sit at the top level (as before a second AI came), 9router's under .router.
 // The direct Claude option of before is gone; its key is ignored and dropped on the next save.
 function aiConfOf(prov, s = aiStore()) {
   const c = (prov === 'router' ? s.router : s) || {}, def = AI_PROV[prov].model;
-  return { prov, key: c.key || '', url: prov === 'router' ? cleanUrl(c.url) || ROUTER_URL : '',
+  return { prov, key: c.key || '', url: prov === 'router' ? (cleanUrl(c.url) === ROUTER_OLD ? '' : cleanUrl(c.url)) || ROUTER_URL : '',
     model: !c.model || c.model === 'gemini-flash-latest' ? def : c.model, models: asList(c.models), ms: c.ms || {}, rec: c.rec || def };
 }
 // the provider saved last
