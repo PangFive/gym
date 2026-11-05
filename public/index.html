@@ -5532,7 +5532,7 @@ function shotPrompt(refs) {
   return `Kamu ahli alat gym. Pengguna memotret satu alat di gym-nya; kenali alat itu dan cocokkan dengan alat di gym ini.
 Daftar alat gym ini (id: nama — kategori; otot utama; keterangan):
 ${[...TUTORIALS, ...CARDIO].map(line).join('\n')}
-${refs ? 'Setelah foto pengguna ada gambar referensi tiap alat di gym ini, masing-masing tepat setelah baris "Referensi id N" (id yang sama juga tertulis di label kuning gambarnya). Cari referensi yang alatnya SAMA dengan alat di foto: bandingkan bentuk rangka, posisi badan (duduk/berdiri/berbaring), pegangan, bantalan, arah gerak, tumpukan beban atau plat, dan warna rangka; abaikan orangnya dan pencahayaan. Ambil id dari baris tepat sebelum gambar referensi itu. Alat kardio tidak punya gambar referensi, kenali dari daftar.' : 'Cocokkan dari bentuk rangka, posisi duduk/berdiri/berbaring, pegangan, bantalan, arah gerak, kabel/tumpukan beban/plat.'} Tulisan atau merek di mesin yang terbaca juga petunjuk.
+${refs ? 'Di bawah ini ada gambar referensi tiap alat di gym ini, masing-masing tepat setelah baris "Referensi id N" (id yang sama juga tertulis di label kuning gambarnya), lalu di paling akhir FOTO PENGGUNA. Cari referensi yang alatnya SAMA dengan alat di foto: bandingkan bentuk rangka, posisi badan (duduk/berdiri/berbaring), pegangan, bantalan, arah gerak, tumpukan beban atau plat, dan warna rangka; abaikan orangnya dan pencahayaan. Ambil id dari baris tepat sebelum gambar referensi itu. Alat kardio tidak punya gambar referensi, kenali dari daftar.' : 'Cocokkan dari bentuk rangka, posisi duduk/berdiri/berbaring, pegangan, bantalan, arah gerak, kabel/tumpukan beban/plat.'} Tulisan atau merek di mesin yang terbaca juga petunjuk.
 Balas HANYA JSON: {"name": "nama alat di foto menurutmu", "match": [{"id": id dari daftar, "conf": 0-100}], "note": "1 kalimat bahasa Indonesia, maksimal 18 kata: alat apa ini dan otot yang dilatih"}
 match: maksimal 3, urut dari yang paling mirip; conf = seberapa yakin itu alat yang sama persis, bukan sekadar sejenis. Kosongkan match bila tidak ada yang mirip atau foto bukan alat gym.`;
 }
@@ -5543,12 +5543,13 @@ function scanFrame(max = 1024) {
   c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', .82);
 }
-// what is sent: the task and the list, the photo, then each reference after the line that names it
+// What is sent: the task and the list, each reference after the line that names it, and the photo last.
+// With the photo first, the reference right after it was now and then taken for the photo itself.
 function shotParts(photo, refs) {
   const img = data => ({ inline_data: { mime_type: 'image/jpeg', data } });
-  return [{ text: shotPrompt(refs.length) }, { text: 'FOTO PENGGUNA:' }, img(photo),
-    ...refs.flatMap(r => [{ text: `Referensi id ${r.t.id}: ${r.t.t}` }, img(r.d)]),
-    ...(refs.length ? [{ text: 'Selesai. Bandingkan FOTO PENGGUNA dengan semua referensi di atas, lalu jawab JSON sesuai format.' }] : [])];
+  return [{ text: shotPrompt(refs.length) }, ...refs.flatMap(r => [{ text: `Referensi id ${r.t.id}: ${r.t.t}` }, img(r.d)]),
+    { text: refs.length ? 'FOTO PENGGUNA (alat yang harus dikenali):' : 'FOTO PENGGUNA:' }, img(photo),
+    ...(refs.length ? [{ text: 'Bandingkan FOTO PENGGUNA di atas dengan semua gambar referensi, lalu jawab JSON sesuai format.' }] : [])];
 }
 async function scanShot() {
   if (scan.pending || scan.shot || !scan.stream) return;
