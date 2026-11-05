@@ -63,6 +63,19 @@ tersinkron di semua perangkat.
   Tambahkan); setelah **Tambahkan** kamera langsung tertutup dan daftar program bergeser ke alat yang baru masuk. Tombol **Tambah** dan **Scan** ada di atas daftar latihan.
 - Kamera scan minta 4:3 (1920×1440), penuh layar, zoom kamera diset tepat 1× (kamera multi-lensa Samsung 0,6×–10× bisa terbuka di 0,6× ultrawide) + fokus otomatis terus; kotak scan dibaca resolusi penuh; tombol **Senter** muncul kalau
   kameranya mendukung; tanpa tombol zoom; scan pertama pindah dari ultrawide ke lensa utama (Android: camera2 0) dan lensa diingat, tombol **Lensa** untuk ganti manual; ketuk layar untuk fokus; petunjuk muncul setelah 7 detik.
+- **Kamera hybrid** (semua tempat scan: kanan atas, Mulai workout, workout berjalan, Edit Program, Ganti latihan): QR
+  tetap terbaca otomatis begitu dekat; di tengah bawah ada tombol rana **Tanya AI** (Senter di kiri, Lensa di kanan)
+  untuk memfoto alat yang tidak ada QR-nya. Foto membeku (kilat putih), kotak scan menghilang, lalu AI (Gemini atau
+  9router) menerima foto + daftar alat + **lembar referensi**: thumbnail video tiap alat (bagian tengah tegak dari
+  `hqdefault`, cache service worker) disusun 4×4 per lembar dengan id di label kuning (`refSheets()`, dibuat sekali saat
+  kamera terbuka, ±4 lembar, ±600 KB). Tanpa referensi (thumbnail gagal dimuat) hanya daftar nama yang dikirim.
+  Jawaban: maksimal 3 alat paling mirip dengan persen keyakinan (hijau ≥75, oranye ≥50) dan 1 kalimat AI; yang
+  pertama terpilih, ketuk untuk memilih yang lain; di bawah 60% muncul catatan "AI kurang yakin". Tombol sesuai
+  konteks: **Buka tutorial** / **Lihat alat** (saat workout) / **Tambahkan ke program** (langsung masuk, kamera tertutup) /
+  **Cek sebagai pengganti** (lalu dinilai seperti QR). **Foto ulang** atau Back/Escape kembali ke kamera; alat tidak
+  ada di daftar → nama dari AI + Foto ulang; gagal → Coba lagi (foto yang sama). Belum ada API key → kartu
+  "Hubungkan AI dulu", setelah terhubung kamera terbuka lagi di konteks yang sama. Bila di foto ternyata ada QR,
+  QR-nya yang dibaca (tanpa AI).
 
 ### Program & plan mingguan
 - Tab **Jadwal**: tiap hari Senin–Minggu berisi satu/lebih program atau hari istirahat, dengan status
@@ -107,7 +120,7 @@ tersinkron di semua perangkat.
   tanpa API key / offline). "Terasa sakit" menampilkan peringatan untuk berhenti bila nyeri tajam. Belum ada set
   selesai → latihan diganti di tempat (jumlah set & reps sama, beban dari riwayat alat baru); sebagian selesai → set
   yang selesai tetap di alat lama, sisa set pindah ke alat baru tepat di bawahnya. Hanya workout hari ini; program tetap.
-  **Scan alat lain** dari sheet yang sama: kamera terbuka dalam mode cek, QR alat yang kosong dibaca, lalu sheet kembali
+  **Scan atau foto alat lain** dari sheet yang sama: kamera terbuka dalam mode cek, QR alat yang kosong dibaca (atau fotonya dikenali AI), lalu sheet kembali
   dengan kartu "Hasil scan" (peta otot alat itu + penilaian Gemini: Cocok / Bisa, dengan catatan / Kurang cocok,
   alasan, tip) dan tombol "Pakai alat ini" / "Scan lagi". Tanpa API key: hanya perbandingan otot utama. Alat yang sama
   dengan yang diganti tidak bisa dipakai. Alat lain yang sudah ada di workout boleh dipakai setelah popup konfirmasi
@@ -336,7 +349,7 @@ Kode otot: `chest` Dada, `deltoids` Bahu, `trapezius` Trapezius, `upper-back` Pu
 
 ### QR di mesin
 Isi QR stiker gym: `{"type":"tutorial","id":63,"title":"…","youtube_url":"…","youtube_id":"…"}`.
-Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
+Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat. Alat tanpa QR: foto lewat **Tanya AI** di kamera yang sama.
 
 ---
 
@@ -375,6 +388,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat.
 18. Tanya AI: tombol melayang di Beranda, chat bebas dengan foto, jawaban streaming, kartu simpan program dan catat makanan.
 19. Timer istirahat bergaya kaca iOS dengan bom: sumbu terbakar mengikuti sisa waktu, meledak saat istirahat selesai.
 20. Pantau pengguna untuk admin: daftar akun live, detail aktivitas tiap akun; aturan database: admin boleh membaca `users/`.
+21. Kamera hybrid: QR otomatis + tombol Tanya AI untuk memfoto alat; AI membandingkan foto dengan lembar referensi alat gym ini.
 
 ## 8. Ide berikutnya
 

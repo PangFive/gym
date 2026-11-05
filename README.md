@@ -92,6 +92,13 @@ Format hasil Export (field yang bisa diedit):
 `youtube` boleh berisi id video atau link YouTube. Kode otot untuk `primary`/`secondary` tercantum di
 bagian `muscles` pada file Export.
 
+## Scan QR atau foto alat
+
+Kamera scan (tombol QR di kanan atas, Mulai workout, Edit Program, dan Ganti latihan) membaca QR di mesin
+secara otomatis. Mesin tanpa QR: ketuk **Tanya AI** dan foto alatnya. AI membandingkan foto dengan gambar
+tiap alat di gym ini, lalu menampilkan sampai 3 alat yang paling mirip untuk dipilih. Butuh AI yang
+dipasang di **Pengaturan → AI**.
+
 ## Tanya AI
 
 Tombol **Tanya AI** di Beranda membuka chat dengan AI yang dipasang di **Pengaturan → AI** (Gemini atau 9router).
