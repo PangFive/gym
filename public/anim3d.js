@@ -131,8 +131,9 @@ async function build(item) {
     root.updateMatrixWorld(true);
     // keep the anchor joint where the picture puts it (pairs by their middle; sideways offsets stay)
     const a = an.anchor || { pt: 'ank', x: 200, y: 320 };
-    const j = { hip: ['Hips'], ank: ['LeftFoot', 'RightFoot'], ank2: ['RightFoot'], toe: ['LeftToeBase', 'RightToeBase'], wri: ['LeftHand', 'RightHand'],
+    const j0 = { hip: ['Hips'], ank: ['LeftFoot', 'RightFoot'], ank2: ['RightFoot'], toe: ['LeftToeBase', 'RightToeBase'], wri: ['LeftHand', 'RightHand'],
       sho: ['LeftArm', 'RightArm'], kne: ['LeftLeg', 'RightLeg'], elb: ['LeftForeArm', 'RightForeArm'] }[a.pt] || ['Hips'];
+    const j = !front && j0.length === 2 && ['ua2', 'fa2', 'th2', 'sh2'].some(key => key in an.A) ? [j0[0]] : j0;
     const cur = j.reduce((s, n) => s.add(wp(B(n))), V()).multiplyScalar(1 / j.length), d = map(a.x, a.y).sub(cur);
     d.addScaledVector(front ? F : L, -d.dot(front ? F : L));
     root.position.add(d); root.updateMatrixWorld(true);
@@ -160,21 +161,67 @@ async function build(item) {
   };
   const disc = (g, mat, c, axis, r, w) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, w, 28), mat); m.position.copy(c); m.quaternion.setFromUnitVectors(UP, axis.clone().normalize()); m.castShadow = true; g.add(m) };
   const rot2 = (x, y, e) => { if (!e.ang) return [x, y]; const c = Math.cos(e.ang * RAD), s = Math.sin(e.ang * RAD), cx = e.cx ?? x, cy = e.cy ?? y; return [cx + (x - cx) * c - (y - cy) * s, cy + (x - cx) * s + (y - cy) * c] };
-  const slab = (e, mat, depth) => {   // bench, seat, step: a rectangle of the picture, maybe turned about (cx, cy)
+  const ground = p => p.clone().setY(0);
+  const slab = (e, mat, depth, sh, foot) => {   // bench, seat, step: a rectangle of the picture, maybe turned about (cx, cy)
     const [cx, cy] = rot2(e.x + e.w / 2, e.y + e.h / 2, e), ang = (e.ang || 0) * RAD;
     const ax = H.clone().multiplyScalar(Math.cos(ang)).addScaledVector(UP, -Math.sin(ang)).normalize(), ay = H.clone().multiplyScalar(Math.sin(ang)).addScaledVector(UP, Math.cos(ang)).normalize();
-    if (front) { const back = e.h > e.w; box(fixed, mat, map(cx, cy, 0).addScaledVector(F, back ? -.24 : -.06), L.clone(), UP.clone(), e.w * k, e.h * k, back ? .1 : .42) }
-    else box(fixed, mat, map(cx, cy), ax, ay, e.w * k, e.h * k, depth);
-    (e.legs || []).forEach(x => { const [lx, ly] = rot2(x, e.y + e.h, e); rod(fixed, M.frame, map(lx, ly), map(lx, e.legs_to ?? GY), .022) });
+    if (front) { const back = e.h > e.w; box(fixed, mat, map(cx, cy, 0).add(sh).addScaledVector(F, back ? -.24 : -.06), L.clone(), UP.clone(), e.w * k, e.h * k, back ? .1 : .42) }
+    else if (foot) {   // a step stands on the floor: its top where the foot is, its bottom on the ground
+      const top = map(cx, e.y).add(sh).y, c = map(cx, cy).add(sh); c.y = Math.max(top, .02) / 2; box(fixed, mat, c, H.clone(), UP.clone(), e.w * k, Math.max(top, .02), depth);
+    } else box(fixed, mat, map(cx, cy).add(sh), ax, ay, e.w * k, e.h * k, depth);
+    if (!foot) (e.legs || []).forEach(x => { const [lx, ly] = rot2(x, e.y + e.h, e), q = map(lx, ly).add(sh); [-.12, .12].forEach(z => rod(fixed, M.frame, q.clone().addScaledVector(L, front ? 0 : z), ground(q).addScaledVector(L, front ? 0 : z), .02)) });
   };
-  (an.eq || []).forEach(e => {
-    if (e.t === 'bench' || e.t === 'seat') slab(e, M.pad, .34);
-    else if (e.t === 'step') slab(e, M.frame, .5);
-    else if (e.t === 'wall') box(fixed, new THREE.MeshStandardMaterial({ color: 0xdfe7f5, roughness: .9 }), map(e.x - 4, (e.y1 + GY) / 2), H.clone(), UP.clone(), .06, (GY - e.y1) * k, 1.6);
-    else if (e.t === 'rail') [-.24, .24].forEach(z => rod(fixed, M.frame, map(e.x1, e.y1, front ? 0 : z), map(e.x2, e.y2, front ? 0 : z), .016));
-    else if (e.t === 'dipbar') [-.26, .26].forEach(z => { rod(fixed, M.metal, map(e.x - 45, e.y, z), map(e.x + 45, e.y, z), .018); rod(fixed, M.frame, map(e.x + 35, e.y, z), map(e.x + 35, GY, z), .025) });
-    else if (e.t === 'bar' && front) rod(fixed, M.metal, map(e.x1, e.y), map(e.x2, e.y), .016);
-  });
+  // where the 2D picture puts each joint in pose P: the rig's segment lengths chained from the hip, moved so the
+  // anchor joint sits on its point (limb 1 = the body's left, the near side of a side view, the right of a front view)
+  const LEN = { torso: 90, ua: 58, fa: 54, th: 70, sh: 66, ft: 20 };
+  function joints2(P) {
+    const v = (a, len, mirror) => [Math.cos(a * RAD) * len * (mirror ? -1 : 1), -Math.sin(a * RAD) * len];
+    const add = (p, q) => [p[0] + q[0], p[1] + q[1]], J = { hip: [0, 0] };
+    J.sho = add(J.hip, v(P.torso ?? 90, LEN.torso)); J.mid = [J.sho[0] / 2, J.sho[1] / 2]; J.head = add(J.sho, v(P.head ?? P.torso ?? 90, 22));
+    [['', false], ['2', true]].forEach(([n, two]) => {
+      const sfx = two && !front ? '2' : '', g = key => front && two && P[key + 'L'] != null ? P[key + 'L'] : P[key + sfx] ?? P[key];
+      const mir = front && two && P.uaL == null, legMir = front && two;
+      const sho = add(J.sho, front ? [two ? -22 : 22, 0] : [0, 0]), hip = add(J.hip, front ? [two ? -10 : 10, 0] : [0, 0]);
+      J['elb' + n] = add(sho, v(g('ua'), LEN.ua * (P.uaS ?? 1), mir)); J['wri' + n] = add(J['elb' + n], v(g('fa'), LEN.fa * (P.faS ?? 1), mir));
+      J['kne' + n] = add(hip, v(P['th' + sfx] ?? P.th ?? -90, LEN.th * (P.thS ?? 1), legMir)); J['ank' + n] = add(J['kne' + n], v(P['sh' + sfx] ?? P.sh ?? -90, LEN.sh * (P.shS ?? 1), legMir));
+      J['toe' + n] = add(J['ank' + n], v(front ? -90 : P['ft' + sfx] ?? P.ft ?? 0, LEN.ft, legMir));
+    });
+    const a = an.anchor || { pt: 'ank', x: 200, y: 320 }, pair = front && J[a.pt + '2'] && !/2$/.test(a.pt);
+    const o = pair ? [(J[a.pt][0] + J[a.pt + '2'][0]) / 2, (J[a.pt][1] + J[a.pt + '2'][1]) / 2] : J[a.pt] || J.hip;
+    for (const j in J) J[j] = [J[j][0] - o[0] + a.x, J[j][1] - o[1] + a.y];
+    return J;
+  }
+  const J3 = { hip: 'Hips', mid: 'Spine1', sho: 'LeftArm', head: 'Head', elb: 'LeftForeArm', kne: 'LeftLeg', ank: 'LeftFoot', toe: 'LeftToeBase', elb2: 'RightForeArm', kne2: 'RightLeg', ank2: 'RightFoot', toe2: 'RightToeBase' };
+  const joints3 = () => { const o = {}; for (const j in J3) o[j] = wp(B(J3[j])); const [l, r] = ends(); o.wri = l.p; o.wri2 = r.p; return o };
+  // distance in the picture from a joint to a piece of equipment
+  const segD = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy || 1))); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy) };
+  const rectD = (p, e) => {
+    let q = p;
+    if (e.ang) { const c = Math.cos(-e.ang * RAD), s2 = Math.sin(-e.ang * RAD), cx = e.cx ?? 0, cy = e.cy ?? 0; q = [cx + (p[0] - cx) * c - (p[1] - cy) * s2, cy + (p[0] - cx) * s2 + (p[1] - cy) * c] }
+    return Math.hypot(Math.max(e.x - q[0], 0, q[0] - e.x - e.w), Math.max(e.y - q[1], 0, q[1] - e.y - e.h));
+  };
+  const eqD = (p, e) => e.t === 'rail' ? segD(p, [e.x1, e.y1], [e.x2, e.y2]) : e.t === 'dipbar' ? segD(p, [e.x - 45, e.y], [e.x + 45, e.y]) : e.t === 'wall' ? segD(p, [e.x, e.y1], [e.x, GY]) : e.t === 'bar' ? segD(p, [e.x1, e.y], [e.x2, e.y]) : rectD(p, e);
+  // the mannequin's proportions differ from the picture's, so each fixed piece moves onto the joint that touches it
+  function buildFixed() {
+    const poses = [0, 1].map(t => { pose(at(t)); return { j2: joints2(at(t)), j3: joints3() } });
+    (an.eq || []).forEach(e => {
+      if (!['bench', 'seat', 'step', 'wall', 'rail', 'dipbar'].includes(e.t) && !(e.t === 'bar' && front)) return;
+      let best = null;
+      poses.forEach(P => { for (const j in P.j2) { if (!P.j3[j]) continue; const d = eqD(P.j2[j], e); if (!best || d < best.d) best = { d, j, P } } });
+      const sh = V(); let hand = null;
+      if (best && best.d < 45) {
+        sh.copy(best.P.j3[best.j]).sub(map(...best.P.j2[best.j])); sh.addScaledVector(L, -sh.dot(L)); if (front) sh.addScaledVector(F, -sh.dot(F));
+        if (/^wri/.test(best.j)) hand = best.P.j3;
+      }
+      const zs = hand && !front ? [hand.wri.dot(L), hand.wri2.dot(L)] : [-.24, .24];
+      if (e.t === 'bench' || e.t === 'seat') slab(e, M.pad, .34, sh);
+      else if (e.t === 'step') slab(e, M.frame, .5, sh, true);
+      else if (e.t === 'wall') box(fixed, new THREE.MeshStandardMaterial({ color: 0xdfe7f5, roughness: .9 }), map(e.x - 4, (e.y1 + GY) / 2).add(sh.clone().setY(0)), H.clone(), UP.clone(), .06, (GY - e.y1) * k, 1.6);
+      else if (e.t === 'rail') zs.forEach(z => rod(fixed, M.frame, map(e.x1, e.y1, front ? 0 : z).add(sh), map(e.x2, e.y2, front ? 0 : z).add(sh), .016));
+      else if (e.t === 'dipbar') (hand ? zs : [-.26, .26]).forEach(z => { const a = map(e.x - 45, e.y, z).add(sh), b = map(e.x + 45, e.y, z).add(sh), post = map(e.x + 35, e.y, z).add(sh); rod(fixed, M.metal, a, b, .018); rod(fixed, M.frame, post, ground(post), .025) });
+      else if (e.t === 'bar') rod(fixed, M.metal, map(e.x1, e.y).add(sh), map(e.x2, e.y).add(sh), .016);
+    });
+  }
   const ends = () => ['Left', 'Right'].map(S => {
     const h = wp(B(S + 'Hand')), m = wp(B(S + 'HandMiddle1')), i1 = B(S + 'HandIndex1'), p1 = B(S + 'HandPinky1');
     return { p: h.clone().lerp(m, 1.6), f: m.clone().sub(h).normalize(), x: i1 && p1 ? wp(i1).sub(wp(p1)).normalize() : L.clone() };
@@ -188,9 +235,18 @@ async function build(item) {
       else if (e.t === 'dumbbell') [hl2, hr].forEach(h => { rod(moving, M.metal, h.p.clone().addScaledVector(h.x, -.09), h.p.clone().addScaledVector(h.x, .09), .013); [-1, 1].forEach(s => disc(moving, M.bell, h.p.clone().addScaledVector(h.x, s * .085), h.x, .062, .05)) });
       else if (e.t === 'kb') { const s = new THREE.Mesh(new THREE.SphereGeometry((e.r || 13) * k * 1.3, 20, 16), M.bell); s.position.copy(mid).addScaledVector(UP, -.11); s.castShadow = true; moving.add(s) }
       else if (e.t === 'pad') {
-        const j = { wri: 'Hand', kne: 'Leg', ank: 'Foot', elb: 'ForeArm', sho: 'Arm', hip: 'UpLeg' }[e.at] || 'Leg';
-        const a = wp(B('Left' + j)), b = wp(B('Right' + j)), c = a.clone().add(b).multiplyScalar(.5).add(vec2(...(e.off || [0, 0])));
-        rod(moving, M.pad, c.clone().addScaledVector(L, -.2), c.clone().addScaledVector(L, .2), Math.max(.04, (e.r || 9) * k));
+        // elbL / elbR: one side of a front view (L = the left of the picture, the body's right)
+        const side = /[LR]$/.test(e.at) ? (e.at.endsWith('L') ? 'Right' : 'Left') : null, at0 = side ? e.at.slice(0, -1) : e.at;
+        const j = { wri: 'Hand', kne: 'Leg', ank: 'Foot', elb: 'ForeArm', sho: 'Arm', hip: 'UpLeg' }[at0] || 'Leg', r = Math.max(.04, (e.r || 9) * k);
+        if (side) {   // a pad against the outside of that limb, its axis towards the viewer
+          const c = wp(B(side + j)).addScaledVector(L, (side === 'Left' ? 1 : -1) * (r + .03));
+          rod(moving, M.pad, c.clone().addScaledVector(F, -.1), c.clone().addScaledVector(F, .1), r);
+        } else {
+          // a one-sided move (limb 2 has its own angles) gets a short pad on limb 1 only
+          const one = !front && ['ua2', 'fa2', 'th2', 'sh2'].some(key => key in an.A || key in (an.B || {}));
+          const a = wp(B('Left' + j)), b = wp(B('Right' + j)), c = (one ? a : a.clone().add(b).multiplyScalar(.5)).add(vec2(...(e.off || [0, 0]))), w = one ? .11 : .2;
+          rod(moving, M.pad, c.clone().addScaledVector(L, -w), c.clone().addScaledVector(L, w), r);
+        }
       }
       else if (e.t === 'bar' && !front) { const c = mid.clone().setY((GY - e.y) * k); c.addScaledVector(L, -c.dot(L)); rod(moving, M.metal, c.clone().addScaledVector(L, -.7), c.clone().addScaledVector(L, .7), .016) }
       else if (e.t === 'cable') {
@@ -216,6 +272,7 @@ async function build(item) {
   const PA = an.A, PB = an.B || an.A, keys = [...new Set([...Object.keys(PA), ...Object.keys(PB)])];
   const at = t => { const o = {}; keys.forEach(key => { const p = PA[key] ?? PB[key], q = PB[key] ?? PA[key]; o[key] = /S$/.test(key) ? lerp(p, q, t) : lerpAng(p, q, t) }); return o };
   const set = (t, kk = 1) => { pose(at(t)); equip(); U.uA.value = .55 + .3 * kk; U.uB.value = .35 + .25 * kk };
+  buildFixed();
 
   // frame the camera on both poses: side views from the body's left, front views from the front
   const pts = [], bb = new THREE.Box3();
@@ -235,16 +292,11 @@ function lights(scene) {
   const back = new THREE.DirectionalLight(0xdfe9fb, .9); back.position.set(-3, 2.6, -3); scene.add(back);
   const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .18 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .002; floor.receiveShadow = true; scene.add(floor);
 }
-// a stage under the feet: a fading blue grid and two rings in the accent colour
+// a stage under the feet: a soft blue spot and two rings in the accent colour
 let stageTex = null;
 function stage(scene) {
   if (!stageTex) {
     const c = document.createElement('canvas'); c.width = c.height = 1024; const x = c.getContext('2d'), m = 512;
-    x.strokeStyle = 'rgba(47,124,246,.35)'; x.lineWidth = 2;
-    for (let p = 0; p <= 1024; p += 48) { x.beginPath(); x.moveTo(p, 0); x.lineTo(p, 1024); x.moveTo(0, p); x.lineTo(1024, p); x.stroke() }
-    x.globalCompositeOperation = 'destination-in';
-    const f = x.createRadialGradient(m, m, 0, m, m, m); f.addColorStop(0, '#000'); f.addColorStop(.55, 'rgba(0,0,0,.6)'); f.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = f; x.fillRect(0, 0, 1024, 1024);
-    x.globalCompositeOperation = 'source-over';
     const d = x.createRadialGradient(m, m, 0, m, m, 150); d.addColorStop(0, 'rgba(47,124,246,.28)'); d.addColorStop(1, 'rgba(47,124,246,0)'); x.fillStyle = d; x.beginPath(); x.arc(m, m, 150, 0, Math.PI * 2); x.fill();
     [[150, 4, .7], [196, 2, .35]].forEach(([r, w, o]) => { x.strokeStyle = `rgba(47,124,246,${o})`; x.lineWidth = w; x.beginPath(); x.arc(m, m, r, 0, Math.PI * 2); x.stroke() });
     stageTex = new THREE.CanvasTexture(c); stageTex.colorSpace = THREE.SRGBColorSpace; stageTex.anisotropy = 4;
@@ -285,7 +337,7 @@ export async function mount(host, item) {
     if (last != null) clock += (ts - last) / 1000 * speed; last = ts;
     const p = reduce ? { u: .6, k: 1, label: 'Posisi tengah' } : phaseAt(clock);
     s.set(ba ? 1 - p.u : p.u, p.k);
-    if (ph && p.label !== lastLabel) { lastLabel = p.label; ph.textContent = p.label; ph.classList.toggle('go', p.label === 'Angkat') }
+    if (ph && p.label !== lastLabel) { lastLabel = p.label; ph.textContent = p.label; ph.classList.toggle('lift', p.label === 'Angkat') }
     controls.update(); r.render(s.scene, camera); raf = requestAnimationFrame(frame);
   };
   raf = requestAnimationFrame(frame);

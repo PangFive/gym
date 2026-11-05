@@ -1396,12 +1396,10 @@ button.urow:active{background:rgba(24,32,47,.04)}
 .av .a3t{position:absolute;left:9px;top:9px;padding:3px 9px;border-radius:999px;background:var(--acc);color:#fff;font-size:11.5px;font-weight:800}
 .a3d{position:relative;height:min(62vh,440px);margin:0 0 14px;border-radius:24px;overflow:hidden;isolation:isolate;
   background:radial-gradient(120% 70% at 50% 18%,#ffffff 0%,rgba(255,255,255,0) 60%),radial-gradient(90% 60% at 100% 0%,rgba(124,92,255,.22),transparent 70%),radial-gradient(90% 60% at 0% 100%,rgba(47,124,246,.28),transparent 70%),linear-gradient(170deg,#dfe9fd 0%,#eef3fd 55%,#d6e3fb 100%)}
-.a3d::before{content:'';position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(47,124,246,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(47,124,246,.07) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(80% 60% at 50% 35%,#000,transparent)}
-.a3d .a3w{position:absolute;inset:auto 0 18% 0;z-index:-1;text-align:center;font-size:clamp(64px,22vw,120px);font-weight:900;letter-spacing:-2px;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(47,124,246,.16);white-space:nowrap;pointer-events:none}
 .a3d canvas{display:block;width:100%;height:100%;touch-action:none}
 .a3d .a3l{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:var(--muted);font-size:14px;font-weight:600}
 .a3d .a3p{position:absolute;left:12px;top:12px;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.88);font-size:13px;font-weight:800;color:var(--ink);transition:color .2s}
-.a3d .a3p.go{color:var(--acc-2)}
+.a3d .a3p.lift{color:var(--acc-2)}
 .a3d .a3c{position:absolute;right:10px;top:10px;display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.88)}
 .a3d .a3c button{min-height:30px;padding:0 11px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:700}
 .a3d .a3c button.on{background:var(--acc);color:#fff}
@@ -2492,7 +2490,7 @@ function openAnim(id) {
   const a = ANIM.find(x => x.id === id); if (!a) return;
   const cue = (cls, ic, title, xs) => xs.length ? `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : '';
   const tempo = a.tempo.replace(/Angkat (\d+) dtk, turun (\d+) dtk/i, '↑$1 · ↓$2 dtk');
-  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp" alt="" onerror="this.remove()"><div class="a3w" aria-hidden="true">${esc(a.t.split(' ').pop().toUpperCase())}</div><div class="a3l" id="a3l">Memuat animasi 3D…</div>
+  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp" alt="" onerror="this.remove()"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
       <div class="a3p">Siap</div>
       <div class="a3c"><button data-sp="0.5">Pelan</button><button data-sp="1" class="on">Normal</button><button data-rot>Putar</button></div>
       <div class="a3h">Geser untuk memutar</div></div>
