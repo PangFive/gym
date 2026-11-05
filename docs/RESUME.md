@@ -66,9 +66,14 @@ tersinkron di semua perangkat.
 - **Kamera hybrid** (semua tempat scan: kanan atas, Mulai workout, workout berjalan, Edit Program, Ganti latihan): QR
   tetap terbaca otomatis begitu dekat; di tengah bawah ada tombol rana **Tanya AI** (Senter di kiri, Lensa di kanan)
   untuk memfoto alat yang tidak ada QR-nya. Foto membeku (kilat putih), kotak scan menghilang, lalu AI (Gemini atau
-  9router) menerima foto + daftar alat + **lembar referensi**: thumbnail video tiap alat (bagian tengah tegak dari
-  `hqdefault`, cache service worker) disusun 4×4 per lembar dengan id di label kuning (`refSheets()`, dibuat sekali saat
-  kamera terbuka, ±4 lembar, ±600 KB). Tanpa referensi (thumbnail gagal dimuat) hanya daftar nama yang dikirim.
+  9router) menerima daftar alat + **gambar referensi tiap alat**: thumbnail videonya (bagian tengah tegak dari
+  `hqdefault`, cache service worker, 150×267 dengan id di label kuning), masing-masing tepat setelah baris
+  "Referensi id N: nama" (`refTiles()`, dibuat sekali saat kamera terbuka, ±56 gambar ±600 KB), lalu **foto pengguna
+  paling akhir** (`shotParts()`). Uji dengan Gemini 3.5 Flash (frame lain dari video tiap alat sebagai "foto", 10 alat):
+  daftar nama saja 4/10 tepat; lembar 4×4 berisi 16 alat 5/10 (AI menemukan alatnya tapi membaca id kotak lain di
+  baris yang sama); gambar terpisah berlabel 9/10; foto di akhir 7/7 (yang tadinya meleset ikut benar; dengan foto di
+  depan, referensi pertama kadang dikira fotonya). Jawaban ±7–25 detik. 9router meneruskan urutan teks–gambar apa
+  adanya bila ada teks di antara gambar. Tanpa referensi (thumbnail gagal dimuat) hanya daftar nama yang dikirim.
   Jawaban: maksimal 3 alat paling mirip dengan persen keyakinan (hijau ≥75, oranye ≥50) dan 1 kalimat AI; yang
   pertama terpilih, ketuk untuk memilih yang lain; di bawah 60% muncul catatan "AI kurang yakin". Tombol sesuai
   konteks: **Buka tutorial** / **Lihat alat** (saat workout) / **Tambahkan ke program** (langsung masuk, kamera tertutup) /
@@ -388,7 +393,7 @@ Aplikasi mencocokkan `id` (lalu `youtube_id`) dengan data alat. Alat tanpa QR: f
 18. Tanya AI: tombol melayang di Beranda, chat bebas dengan foto, jawaban streaming, kartu simpan program dan catat makanan.
 19. Timer istirahat bergaya kaca iOS dengan bom: sumbu terbakar mengikuti sisa waktu, meledak saat istirahat selesai.
 20. Pantau pengguna untuk admin: daftar akun live, detail aktivitas tiap akun; aturan database: admin boleh membaca `users/`.
-21. Kamera hybrid: QR otomatis + tombol Tanya AI untuk memfoto alat; AI membandingkan foto dengan lembar referensi alat gym ini.
+21. Kamera hybrid: QR otomatis + tombol Tanya AI untuk memfoto alat; AI membandingkan foto dengan gambar referensi tiap alat gym ini.
 
 ## 8. Ide berikutnya
 
