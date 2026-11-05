@@ -4775,8 +4775,10 @@ async function routerRead(r) {
 // temperature) gets the request again without them, the prompt asks for JSON anyway.
 const routerContent = parts => {
   const imgs = parts.filter(x => x.inline_data), texts = parts.filter(x => x.text).map(x => x.text);
-  return imgs.length ? [...imgs.map(x => ({ type: 'image_url', image_url: { url: `data:${x.inline_data.mime_type};base64,${x.inline_data.data}` } })),
-    ...texts.map(text => ({ type: 'text', text }))] : texts.join('\n\n');
+  const url = x => ({ type: 'image_url', image_url: { url: `data:${x.inline_data.mime_type};base64,${x.inline_data.data}` } });
+  // text between the pictures (each machine's reference after the line naming it) keeps its place
+  if (parts.some((x, i) => x.text && parts.slice(0, i).some(y => y.inline_data))) return parts.map(x => x.inline_data ? url(x) : { type: 'text', text: x.text || '' });
+  return imgs.length ? [...imgs.map(url), ...texts.map(text => ({ type: 'text', text }))] : texts.join('\n\n');
 };
 async function routerCall(key, url, model, parts, json, signal) {
   const content = routerContent(parts);
@@ -5319,7 +5321,7 @@ async function openScan(rid = null, swap = false) {
     <div class="scan-ctl" id="scanCtl"><span class="sc-l"></span><span class="sc-m"><button class="scan-shut" data-a="scanShot" aria-label="Foto alat dan tanya AI"><i>${I('sparkles')}</i></button><span>Tanya AI</span></span><span class="sc-r"></span></div>
     <div class="scan-ask" id="scanAsk" hidden></div>`;
   el.hidden = false; document.body.classList.add('noscroll'); scan.miss = ''; scan.n = 0;
-  if (aiConf().key) setTimeout(refSheets, 600);
+  if (aiConf().key) setTimeout(refTiles, 600);
   // closing and reopening while this one still waits on the camera must not leave two readers running
   const run = ++scan.run, live = () => run === scan.run && scan.stream;
   if (!navigator.mediaDevices?.getUserMedia) return scanTip('Browser ini tidak bisa membuka kamera.', true);
@@ -5486,36 +5488,40 @@ function scanAddTo(t) {
 // ---- no QR: a photo of the machine, recognised by the AI
 // The shutter freezes the picture and sends it to the AI with this gym's machines: the list (name, kind,
 // main muscles, the start of the description, so two machines of the same name can be told apart) and
-// reference sheets of how each one looks (refSheets). From names alone the AI guesses often wrong; with the
+// a reference picture of how each one looks (refTiles). From names alone the AI guesses often wrong; with the
 // gym's own machines to look at it compares frames. It names up to three that look the same, most likely
 // first; the user picks the right one and it goes on as a scanned QR would. A QR that is in the photo
 // after all is read instead, without the AI.
-// The sheets: each machine's video thumbnail (the upright middle of YouTube's hq picture, mostly in the
-// service worker's cache already), 4 × 4 to a sheet with its id on a yellow label. Made once per machine
-// list, while the camera is open; without them (offline thumbnails) the list alone is sent.
-const REF = { key: '', p: null, n: 0 };
-function refSheets() {
+// The references: each machine's video thumbnail (the upright middle of YouTube's hq picture, mostly in the
+// service worker's cache already), small, with its id written on it, sent one by one right after a line
+// naming it. Laid out 4 × 4 on a few big sheets instead, the AI often found the right machine but read the
+// id of another square in the same row. Made once per machine list, while the camera is open; without them
+// (thumbnails that will not load) the list alone is sent.
+const REF = { key: '', p: null };
+function refTiles() {
   const list = TUTORIALS.filter(t => t.y && !String(t.y).startsWith('cardio:')), key = list.map(t => t.id + ':' + t.y).join();
   if (REF.key === key && REF.p) return REF.p;
-  REF.key = key; REF.n = list.length;
-  const load = t => new Promise(ok => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => ok(i.naturalWidth > 120 ? i : null); i.onerror = () => ok(null); i.src = thumb(t.y, 'hq') });
-  return REF.p = Promise.all(list.map(load)).then(imgs => {
-    if (!imgs.some(Boolean)) throw new Error('no thumbnails');
-    const W = 150, H = 267, C = 4, N = 16, out = [];
-    for (let s = 0; s < list.length; s += N) {
-      const part = list.slice(s, s + N), c = document.createElement('canvas'), x = c.getContext('2d');
-      c.width = W * C; c.height = H * Math.ceil(part.length / C);
-      x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
-      part.forEach((t, i) => {
-        const im = imgs[s + i], cx = (i % C) * W, cy = (i / C | 0) * H;
-        if (im) { const sw = im.naturalHeight * 9 / 16; x.drawImage(im, (im.naturalWidth - sw) / 2, 0, sw, im.naturalHeight, cx, cy, W, H) }
-        else { x.fillStyle = '#d7dbe3'; x.fillRect(cx, cy, W, H) }
-        x.fillStyle = '#ffe600'; x.fillRect(cx + 4, cy + 4, 58, 30);
-        x.fillStyle = '#000'; x.font = 'bold 23px sans-serif'; x.textBaseline = 'middle'; x.fillText(String(t.id), cx + 9, cy + 20);
-        x.strokeStyle = '#fff'; x.lineWidth = 3; x.strokeRect(cx, cy, W, H);
-      });
-      out.push(c.toDataURL('image/jpeg', .72).split(',')[1]);
-    }
+  REF.key = key;
+  const W = 150, H = 267;
+  const tile = t => new Promise(ok => {
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onerror = () => ok(null);
+    im.onload = () => {
+      if (im.naturalWidth <= 120) return ok(null);   // YouTube's grey placeholder: the video is gone
+      try {
+        const c = document.createElement('canvas'), x = c.getContext('2d'), sw = im.naturalHeight * 9 / 16;
+        c.width = W; c.height = H;
+        x.drawImage(im, (im.naturalWidth - sw) / 2, 0, sw, im.naturalHeight, 0, 0, W, H);
+        x.fillStyle = '#ffe600'; x.fillRect(4, 4, 58, 30);
+        x.fillStyle = '#000'; x.font = 'bold 23px sans-serif'; x.textBaseline = 'middle'; x.fillText(String(t.id), 9, 20);
+        ok({ t, d: c.toDataURL('image/jpeg', .74).split(',')[1] });
+      } catch { ok(null) }
+    };
+    im.src = thumb(t.y, 'hq');
+  });
+  return REF.p = Promise.all(list.map(tile)).then(r => {
+    const out = r.filter(Boolean);
+    if (!out.length) throw new Error('no thumbnails');
     return out;
   }).catch(() => { REF.key = ''; REF.p = null; return [] });
 }
@@ -5523,10 +5529,10 @@ const SHOT_GO = () => scan.swap ? 'Cek sebagai pengganti' : scan.rid ? 'Tambahka
 const MACH = id => TUTORIALS.find(t => t.id === id) || CX(id);
 function shotPrompt(refs) {
   const line = t => `${t.id}: ${t.t} — ${t.c ? 'kardio' : `${t.m}; ${mNames(t.p) || '-'}`}${t.d ? `; ${t.d.replace(/\s+/g, ' ').slice(0, 90)}` : ''}`;
-  return `Kamu ahli alat gym. Gambar PERTAMA adalah foto dari pengguna di gym-nya.${refs ? ` Gambar berikutnya adalah lembar referensi alat di gym ini: setiap kotak = satu alat, dengan id-nya di label kuning pojok kiri atas.` : ''}
+  return `Kamu ahli alat gym. Pengguna memotret satu alat di gym-nya; kenali alat itu dan cocokkan dengan alat di gym ini.
 Daftar alat gym ini (id: nama — kategori; otot utama; keterangan):
 ${[...TUTORIALS, ...CARDIO].map(line).join('\n')}
-${refs ? 'Cari kotak referensi yang alatnya SAMA dengan alat di foto pengguna. Bandingkan bentuk rangka, posisi badan (duduk/berdiri/berbaring), pegangan, bantalan, arah gerak, tumpukan beban atau plat, dan warna rangka; abaikan orang di foto dan pencahayaannya. Alat kardio tidak ada di lembar referensi, kenali dari daftar.' : 'Cocokkan dari bentuk rangka, posisi duduk/berdiri/berbaring, pegangan, bantalan, arah gerak, kabel/tumpukan beban/plat.'} Tulisan atau merek di mesin yang terbaca juga petunjuk.
+${refs ? 'Setelah foto pengguna ada gambar referensi tiap alat di gym ini, masing-masing tepat setelah baris "Referensi id N" (id yang sama juga tertulis di label kuning gambarnya). Cari referensi yang alatnya SAMA dengan alat di foto: bandingkan bentuk rangka, posisi badan (duduk/berdiri/berbaring), pegangan, bantalan, arah gerak, tumpukan beban atau plat, dan warna rangka; abaikan orangnya dan pencahayaan. Ambil id dari baris tepat sebelum gambar referensi itu. Alat kardio tidak punya gambar referensi, kenali dari daftar.' : 'Cocokkan dari bentuk rangka, posisi duduk/berdiri/berbaring, pegangan, bantalan, arah gerak, kabel/tumpukan beban/plat.'} Tulisan atau merek di mesin yang terbaca juga petunjuk.
 Balas HANYA JSON: {"name": "nama alat di foto menurutmu", "match": [{"id": id dari daftar, "conf": 0-100}], "note": "1 kalimat bahasa Indonesia, maksimal 18 kata: alat apa ini dan otot yang dilatih"}
 match: maksimal 3, urut dari yang paling mirip; conf = seberapa yakin itu alat yang sama persis, bukan sekadar sejenis. Kosongkan match bila tidak ada yang mirip atau foto bukan alat gym.`;
 }
@@ -5536,6 +5542,13 @@ function scanFrame(max = 1024) {
   c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
   c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', .82);
+}
+// what is sent: the task and the list, the photo, then each reference after the line that names it
+function shotParts(photo, refs) {
+  const img = data => ({ inline_data: { mime_type: 'image/jpeg', data } });
+  return [{ text: shotPrompt(refs.length) }, { text: 'FOTO PENGGUNA:' }, img(photo),
+    ...refs.flatMap(r => [{ text: `Referensi id ${r.t.id}: ${r.t.t}` }, img(r.d)]),
+    ...(refs.length ? [{ text: 'Selesai. Bandingkan FOTO PENGGUNA dengan semua referensi di atas, lalu jawab JSON sesuai format.' }] : [])];
 }
 async function scanShot() {
   if (scan.pending || scan.shot || !scan.stream) return;
@@ -5553,10 +5566,9 @@ async function shotRun() {
   sh.busy = true; sh.err = ''; sh.res = null; shotCard();
   try {
     // the sheets are made while the camera is open; a slow phone waits a few seconds for them at most
-    const refs = await Promise.race([refSheets(), new Promise(r => setTimeout(() => r([]), 5000))]);
+    const refs = await Promise.race([refTiles(), new Promise(r => setTimeout(() => r([]), 5000))]);
     if (scan.shot !== sh) return;
-    const img = data => ({ inline_data: { mime_type: 'image/jpeg', data } });
-    const r = await askAi([{ text: shotPrompt(refs.length) }, img(sh.img.split(',')[1]), ...refs.map(img)], aiConf(), true, 75000);
+    const r = await askAi(shotParts(sh.img.split(',')[1], refs), aiConf(), true, 75000);
     const a = r.indexOf('{'), b = r.lastIndexOf('}'), j = JSON.parse(r.slice(a, b + 1));
     const match = asList(j.match).map(m => ({ t: MACH(+m.id), conf: clamp(Math.round(+m.conf || 0), 0, 100) }))
       .filter((m, i, all) => m.t && all.findIndex(x => x.t === m.t) === i).slice(0, 3);
