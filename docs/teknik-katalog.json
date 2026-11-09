@@ -1,6 +1,6 @@
 {
  "note": "Hasil analisis 141 video playlist Treinos. same = klip kembar. Teks dari gambar dan narasi, belum diperiksa pelatih.",
- "count": 180,
+ "count": 204,
  "items": [
   {
    "id": 1,
@@ -119,7 +119,8 @@
    "filename": "Treinos  (276).mp4",
    "same": [
     373,
-    489
+    489,
+    667
    ],
    "ok": [
     "Tarik dengan punggung, kabel tetap lurus"
@@ -314,7 +315,8 @@
    "youtube": "6R2OBTIk0ps",
    "filename": "Treinos  (285).mp4",
    "same": [
-    349
+    349,
+    647
    ],
    "ok": [
     "Bantalan di atas pergelangan kaki, lutut sejajar poros mesin"
@@ -566,7 +568,9 @@
    "filename": "Treinos  (295).mp4",
    "same": [
     304,
-    480
+    480,
+    640,
+    645
    ],
    "ok": [
     "Atur pegangan dan posisi batang sejajar dada"
@@ -814,7 +818,8 @@
    "youtube": "fQTDZMxLe04",
    "filename": "Treinos  (307).mp4",
    "same": [
-    475
+    475,
+    620
    ],
    "ok": [
     "Ujung kaki ke luar, lurus, ke dalam"
@@ -861,7 +866,8 @@
    "filename": "Treinos  (309).mp4",
    "same": [
     406,
-    482
+    482,
+    630
    ],
    "ok": [
     "Pergelangan lurus, punggung menempel"
@@ -993,7 +999,8 @@
    "same": [
     360,
     393,
-    540
+    540,
+    618
    ],
    "ok": [
     "Siku diam, bahu turun"
@@ -1264,7 +1271,8 @@
    "youtube": "xhfXk30uiv8",
    "filename": "Treinos  (329).mp4",
    "same": [
-    407
+    407,
+    622
    ],
    "ok": [
     "Tarik melengkung ke pinggul, siku rapat"
@@ -1482,7 +1490,9 @@
    "youtube": "6OHTh_ag21A",
    "filename": "Treinos  (340).mp4",
    "same": [
-    458
+    458,
+    639,
+    644
    ],
    "ok": [
     "Telapak rata, pinggang tetap menempel"
@@ -1506,7 +1516,9 @@
    "equipment": "smith",
    "youtube": "ZtWDkmN_GwY",
    "filename": "Treinos  (341).mp4",
-   "same": [],
+   "same": [
+    654
+   ],
    "ok": [
     "Batang di bahu, turun terkontrol"
    ],
@@ -1558,7 +1570,8 @@
    "same": [
     350,
     500,
-    511
+    511,
+    626
    ],
    "ok": [
     "Batang sejajar dada, bahu ke belakang"
@@ -1586,7 +1599,8 @@
    "filename": "Treinos  (346).mp4",
    "same": [
     453,
-    551
+    551,
+    661
    ],
    "ok": [
     "Tangan, kaki, dan badan lurus"
@@ -1659,7 +1673,9 @@
    "equipment": "cable",
    "youtube": "HZY4Q_2_L68",
    "filename": "Treinos  (352).mp4",
-   "same": [],
+   "same": [
+    653
+   ],
    "ok": [
     "Paha terkunci, dada naik"
    ],
@@ -1780,7 +1796,8 @@
    "filename": "Treinos  (358).mp4",
    "same": [
     396,
-    483
+    483,
+    635
    ],
    "ok": [
     "Single-arm lateral raise, steering wheels, rear delt row, front row, around the world"
@@ -2037,7 +2054,8 @@
    "filename": "Treinos  (372).mp4",
    "same": [
     383,
-    469
+    469,
+    666
    ],
    "ok": [
     "Batang di atas tengah kaki, tumit menapak"
@@ -2085,7 +2103,9 @@
    "equipment": "smith",
    "youtube": "jJpx8wKg8vU",
    "filename": "Treinos  (378).mp4",
-   "same": [],
+   "same": [
+    617
+   ],
    "ok": [
     "Dada dalam, seluruh dada, trisep, dada atas, dada bawah"
    ],
@@ -2108,7 +2128,8 @@
    "youtube": "0C-3uZcgauY",
    "filename": "Treinos  (379).mp4",
    "same": [
-    506
+    506,
+    659
    ],
    "ok": [
     "Punggung rata"
@@ -2180,7 +2201,8 @@
    "youtube": "DNWgNMi1dEQ",
    "filename": "Treinos  (382).mp4",
    "same": [
-    509
+    509,
+    627
    ],
    "ok": [
     "Telapak menapak, dada terbuka"
@@ -2272,7 +2294,9 @@
    "youtube": "60_ox3rruP4",
    "filename": "Treinos  (387).mp4",
    "same": [
-    588
+    588,
+    638,
+    643
    ],
    "ok": [
     "Pergelangan lurus di atas siku"
@@ -2297,7 +2321,9 @@
    "equipment": "body",
    "youtube": "a2Qf48JOUMc",
    "filename": "Treinos  (388).mp4",
-   "same": [],
+   "same": [
+    662
+   ],
    "ok": [
     "Latihan perut memakai dinding; 3x20"
    ],
@@ -2392,7 +2418,8 @@
    "filename": "Treinos  (392).mp4",
    "same": [
     433,
-    536
+    536,
+    606
    ],
    "ok": [
     "Paha terkunci, ibu jari searah, dada naik"
@@ -2462,7 +2489,8 @@
    "youtube": "arzZkLAHaiM",
    "filename": "Treinos  (397).mp4",
    "same": [
-    405
+    405,
+    624
    ],
    "ok": [
     "Hinge untuk glutes, sumo untuk paha dalam"
@@ -2582,7 +2610,9 @@
    "equipment": "barbell",
    "youtube": "pgeWAe-LK3g",
    "filename": "Treinos  (404).mp4",
-   "same": [],
+   "same": [
+    625
+   ],
    "ok": [
     "Gerakan barbel untuk glutes, paha belakang, paha dalam, paha depan, dan paha depan bersama glutes"
    ],
@@ -2708,7 +2738,8 @@
    "youtube": "vBbaFrjUpO8",
    "filename": "Treinos  (423).mp4",
    "same": [
-    527
+    527,
+    650
    ],
    "ok": [
     "Variasi kabel untuk bahu dan dada"
@@ -2945,7 +2976,10 @@
    "equipment": "body",
    "youtube": "oN6iUCOtyUc",
    "filename": "Treinos  (440).mp4",
-   "same": [],
+   "same": [
+    610,
+    611
+   ],
    "ok": [
     "Pasangan latihan kaki di gym dan versi di rumah"
    ],
@@ -3075,7 +3109,9 @@
    "equipment": "body",
    "youtube": "pipTrqSRS-4",
    "filename": "Treinos  (446).mp4",
-   "same": [],
+   "same": [
+    660
+   ],
    "ok": [
     "Gerakan duduk untuk perut atas, samping, bawah, dan seluruh perut"
    ],
@@ -3201,7 +3237,9 @@
    "equipment": "band",
    "youtube": "scLpEhGYfp4",
    "filename": "Treinos  (463).mp4",
-   "same": [],
+   "same": [
+    609
+   ],
    "ok": [
     "Kickback dan buka paha dengan band untuk glutes"
    ],
@@ -3496,7 +3534,9 @@
    "equipment": "body",
    "youtube": "rXSdNJA6SAE",
    "filename": "Treinos  (516).mp4",
-   "same": [],
+   "same": [
+    607
+   ],
    "ok": [
     "Tangan di bawah bahu, lengan lurus",
     "Badan lurus dari bahu sampai tumit"
@@ -3545,7 +3585,9 @@
    "equipment": "dumbbell",
    "youtube": "I8BvJKmlWsk",
    "filename": "Treinos  (539).mp4",
-   "same": [],
+   "same": [
+    605
+   ],
    "ok": [
     "Tumit di atas plat saat squat untuk paha depan",
     "Squat dalam untuk glutes",
@@ -3965,7 +4007,9 @@
    "equipment": "body",
    "youtube": "RfHlP4uG4jc",
    "filename": "Treinos  (584).mp4",
-   "same": [],
+   "same": [
+    614
+   ],
    "ok": [
     "Tangan selebar bahu, lengan lurus di bawah bahu",
     "Belikat stabil, badan lurus"
@@ -4040,7 +4084,9 @@
    "equipment": "body",
    "youtube": "1Fh9Y89atLI",
    "filename": "Treinos  (591).mp4",
-   "same": [],
+   "same": [
+    637
+   ],
    "ok": [
     "Siku di bawah bahu, badan lurus, perut dikencangkan"
    ],
@@ -4178,7 +4224,9 @@
    "equipment": "cable",
    "youtube": "cGLVl4xPOKo",
    "filename": "Treinos  (601).mp4",
-   "same": [],
+   "same": [
+    648
+   ],
    "ok": [
     "Duduk di lantai: tarikan satu tangan untuk lats, tarik ke wajah untuk trapezius dan bahu belakang"
    ],
@@ -4216,6 +4264,626 @@
    "secondary": [],
    "narration": "",
    "confidence": "tinggi"
+  },
+  {
+   "id": 608,
+   "title": "Barbell and Plate Raises Front vs Side",
+   "type": "variasi",
+   "category": "shoulders",
+   "equipment": "barbell",
+   "youtube": "3OK4Edt4McI",
+   "filename": "Treinos  (608).mp4",
+   "same": [],
+   "ok": [
+    "Angkat ke samping untuk bahu samping",
+    "Angkat ke depan untuk bahu depan",
+    "Angkat lurus ke atas kepala untuk bahu depan dan samping"
+   ],
+   "no": [],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "trapezius"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 612,
+   "title": "Bench Push-Up Circuit",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "body",
+   "youtube": "nGV6E5959RA",
+   "filename": "Treinos  (612).mp4",
+   "same": [
+    615
+   ],
+   "ok": [
+    "Incline push-up 3x10",
+    "Decline push-up 3x8",
+    "Bench dip 3x10",
+    "Plank shoulder tap 3x30 detik"
+   ],
+   "no": [],
+   "primary": [
+    "chest",
+    "triceps"
+   ],
+   "secondary": [
+    "deltoids",
+    "abs"
+   ],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 613,
+   "title": "Pec Deck Back on Pad",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "machine",
+   "youtube": "u1tLVD0MJMk",
+   "filename": "Treinos  (613).mp4",
+   "same": [],
+   "ok": [
+    "Punggung menempel sandaran",
+    "Siku sedikit ditekuk, tangan bertemu di depan dada"
+   ],
+   "no": [
+    "Punggung lepas dari sandaran dan bahu maju"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "rendah"
+  },
+  {
+   "id": 616,
+   "title": "Dumbbell Press Start Position",
+   "type": "koreksi",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "wfyuFRDEjBQ",
+   "filename": "Treinos  (616).mp4",
+   "same": [],
+   "ok": [
+    "Dumbbell ditaruh di paha, lalu rebah sambil membawanya ke dada"
+   ],
+   "no": [
+    "Duduk lalu rebah dengan dumbbell masih di samping badan"
+   ],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "rendah"
+  },
+  {
+   "id": 619,
+   "title": "Bench Step-Up Routine",
+   "type": "rangkaian",
+   "category": "legs",
+   "equipment": "body",
+   "youtube": "2hH1HQt1HGA",
+   "filename": "Treinos  (619).mp4",
+   "same": [],
+   "ok": [
+    "Step-up ke bangku dengan variasi gerakan lengan",
+    "3x15-20 repetisi, istirahat 40-60 detik"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [
+    "abs",
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 621,
+   "title": "EZ Preacher Curl Arm Position",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "barbell",
+   "youtube": "DvYIzcTzM-s",
+   "filename": "Treinos  (621).mp4",
+   "same": [],
+   "ok": [
+    "Lengan atas rata di bantalan, ketiak di ujung bantalan"
+   ],
+   "no": [
+    "Lengan atas terangkat dari bantalan",
+    "Badan condong dan bahu ikut menarik"
+   ],
+   "primary": [
+    "biceps"
+   ],
+   "secondary": [
+    "forearm"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 623,
+   "title": "Dumbbell Arms Routine",
+   "type": "rangkaian",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "vPklOoST68U",
+   "filename": "Treinos  (623).mp4",
+   "same": [],
+   "ok": [
+    "Trisep: extension berbaring 4x20, kickback 4x15",
+    "Bisep: curl berdiri 4x15, berlutut 4x10, berbaring 4x12",
+    "Lengan bawah: 3x15 dan putaran beban"
+   ],
+   "no": [],
+   "primary": [
+    "biceps",
+    "triceps"
+   ],
+   "secondary": [
+    "forearm"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 628,
+   "title": "Lat Pulldown Attachments",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "fVv3wSUNo90",
+   "filename": "Treinos  (628).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan lebar, sempit, dan V mengubah bagian punggung yang paling bekerja"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "biceps",
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 629,
+   "title": "Chair Full Body Routine",
+   "type": "rangkaian",
+   "category": "glutes",
+   "equipment": "body",
+   "youtube": "BODK_uTfJOk",
+   "filename": "Treinos  (629).mp4",
+   "same": [],
+   "ok": [
+    "Gerakan dengan kursi: hip thrust, incline push-up, split squat, dip, bridge kaki di kursi",
+    "3x30 untuk gerakan terakhir"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal",
+    "quadriceps"
+   ],
+   "secondary": [
+    "chest",
+    "triceps",
+    "abs"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 631,
+   "title": "Kettlebell Glute Routine",
+   "type": "rangkaian",
+   "category": "glutes",
+   "equipment": "kettlebell",
+   "youtube": "K_YxuigNSyY",
+   "filename": "Treinos  (631).mp4",
+   "same": [],
+   "ok": [
+    "Kettlebell RDL",
+    "Kettlebell glute bridge",
+    "Side-lying kickback",
+    "Kettlebell sumo squat"
+   ],
+   "no": [],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring",
+    "adductors"
+   ],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 632,
+   "title": "Dumbbell Triceps Extension Elbows",
+   "type": "koreksi",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "Xk3W4eSYceA",
+   "filename": "Treinos  (632).mp4",
+   "same": [],
+   "ok": [
+    "Siku tetap menunjuk ke atas dan rapat",
+    "Kickback: lengan atas sejajar badan"
+   ],
+   "no": [
+    "Siku membuka ke samping saat menurunkan beban"
+   ],
+   "primary": [
+    "triceps"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 633,
+   "title": "Rope Face Pull Form",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "cable",
+   "youtube": "-Tbz516_GAA",
+   "filename": "Treinos  (633).mp4",
+   "same": [],
+   "ok": [
+    "Tarik tali ke arah wajah dengan siku tinggi",
+    "Ujung tali terbuka ke samping kepala"
+   ],
+   "no": [
+    "Tarikan terlalu rendah ke leher atau dada"
+   ],
+   "primary": [
+    "deltoids"
+   ],
+   "secondary": [
+    "trapezius",
+    "upper-back"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 634,
+   "title": "Squat and Leg Press by Area",
+   "type": "variasi",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "deuSPjGFThI",
+   "filename": "Treinos  (634).mp4",
+   "same": [],
+   "ok": [
+    "Squat dan leg press kaki tinggi untuk bokong dan hamstring",
+    "Kaki rapat atau rendah untuk paha depan",
+    "Kaki lebar untuk paha dalam",
+    "3x12 tiap gerakan, istirahat 30-45 detik"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring",
+    "adductors"
+   ],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 636,
+   "title": "Posture Fix Routine",
+   "type": "rangkaian",
+   "category": "back",
+   "equipment": "band",
+   "youtube": "kRnNRz9pMSM",
+   "filename": "Treinos  (636).mp4",
+   "same": [],
+   "ok": [
+    "Band pull-apart",
+    "Angkat lengan dengan punggung menempel dinding",
+    "Peregangan pinggul berlutut",
+    "Glute bridge"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back",
+    "gluteal"
+   ],
+   "secondary": [
+    "trapezius",
+    "quadriceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 641,
+   "title": "Floor Dumbbell Chest Routine",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "h1Pwmfj3osA",
+   "filename": "Treinos  (641).mp4",
+   "same": [
+    646
+   ],
+   "ok": [
+    "Floor press, fly, dan pullover di lantai",
+    "3x15 tiap gerakan"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "triceps",
+    "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 649,
+   "title": "Dumbbell Upper Body Routine",
+   "type": "rangkaian",
+   "category": "arms",
+   "equipment": "dumbbell",
+   "youtube": "6_tyN26dzVc",
+   "filename": "Treinos  (649).mp4",
+   "same": [],
+   "ok": [
+    "Curl, overhead extension, row, shoulder press, lalu push-up di atas dumbbell",
+    "3x10-12 tiap gerakan, istirahat 30-45 detik"
+   ],
+   "no": [],
+   "primary": [
+    "biceps",
+    "triceps",
+    "upper-back",
+    "deltoids",
+    "chest"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 651,
+   "title": "Floor Abs Five Areas",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "TkAl6_HjN-k",
+   "filename": "Treinos  (651).mp4",
+   "same": [],
+   "ok": [
+    "Gerakan untuk perut bawah, atas, seluruh perut, otot perut, dan samping",
+    "3x15 tiap gerakan, istirahat 30-45 detik"
+   ],
+   "no": [],
+   "primary": [
+    "abs",
+    "obliques"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 652,
+   "title": "Kneeling Cable Kickback Setup",
+   "type": "koreksi",
+   "category": "glutes",
+   "equipment": "cable",
+   "youtube": "U2AjICZzqVk",
+   "filename": "Treinos  (652).mp4",
+   "same": [],
+   "ok": [
+    "Lutut tumpuan tepat di bawah pinggul",
+    "Punggung tetap rata"
+   ],
+   "no": [
+    "Lengan ikut menarik pegangan",
+    "Lutut tumpuan terlalu jauh dari pinggul"
+   ],
+   "primary": [
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "",
+   "confidence": "rendah"
+  },
+  {
+   "id": 655,
+   "title": "Seated Row Handle Focus",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "cable",
+   "youtube": "6onIyW6znh8",
+   "filename": "Treinos  (655).mp4",
+   "same": [],
+   "ok": [
+    "Pegangan V untuk lat",
+    "Pegangan netral lebar untuk punggung tengah",
+    "Siku melebar untuk bahu belakang dan trapezius"
+   ],
+   "no": [],
+   "primary": [
+    "upper-back"
+   ],
+   "secondary": [
+    "trapezius",
+    "deltoids",
+    "biceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 656,
+   "title": "Six-Move Core Routine",
+   "type": "rangkaian",
+   "category": "core",
+   "equipment": "body",
+   "youtube": "LY8XBbz3Rgw",
+   "filename": "Treinos  (656).mp4",
+   "same": [
+    657
+   ],
+   "ok": [
+    "Side plank 3x12 tiap sisi",
+    "Flutter kicks 3x30 detik",
+    "Scissor kicks 3x30-45 detik",
+    "Crunches 3x15-20",
+    "Russian twist 3x15-20 tiap sisi",
+    "Reverse crunches 3x12-15"
+   ],
+   "no": [],
+   "primary": [
+    "abs",
+    "obliques"
+   ],
+   "secondary": [],
+   "narration": "",
+   "confidence": "tinggi"
+  },
+  {
+   "id": 658,
+   "title": "Back Extension Back vs Glutes",
+   "type": "variasi",
+   "category": "back",
+   "equipment": "machine",
+   "youtube": "Cn7dgYMm6ec",
+   "filename": "Treinos  (658).mp4",
+   "same": [],
+   "ok": [
+    "Punggung lurus untuk punggung bawah",
+    "Punggung atas membulat untuk bokong"
+   ],
+   "no": [
+    "Naik terlalu tinggi sampai punggung melengkung"
+   ],
+   "primary": [
+    "lower-back",
+    "gluteal"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 663,
+   "title": "Bulgarian Split Squat Setup",
+   "type": "koreksi",
+   "category": "glutes",
+   "equipment": "body",
+   "youtube": "kV6oi51V2BY",
+   "filename": "Treinos  (663).mp4",
+   "same": [],
+   "ok": [
+    "Punggung kaki belakang di atas bangku",
+    "Badan condong ke depan untuk bokong",
+    "Badan tegak untuk paha depan"
+   ],
+   "no": [
+    "Berdiri terlalu dekat dengan bangku"
+   ],
+   "primary": [
+    "gluteal",
+    "quadriceps"
+   ],
+   "secondary": [
+    "hamstring"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 664,
+   "title": "Headstand Progression",
+   "type": "koreksi",
+   "category": "shoulders",
+   "equipment": "body",
+   "youtube": "BN4eACTCiFg",
+   "filename": "Treinos  (664).mp4",
+   "same": [],
+   "ok": [
+    "Lengan bawah rata di lantai, jari terjalin",
+    "Tekuk lutut dulu, lalu luruskan kaki ke atas"
+   ],
+   "no": [
+    "Tangan mengepal",
+    "Kepala terlalu jauh dari tangan",
+    "Melompat dengan kaki lurus"
+   ],
+   "primary": [
+    "deltoids",
+    "abs"
+   ],
+   "secondary": [
+    "trapezius",
+    "triceps"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 665,
+   "title": "Leg Machine Routine",
+   "type": "rangkaian",
+   "category": "legs",
+   "equipment": "machine",
+   "youtube": "k8Lc6DfM1ig",
+   "filename": "Treinos  (665).mp4",
+   "same": [],
+   "ok": [
+    "Leg extension untuk paha depan",
+    "Leg curl berdiri untuk hamstring",
+    "Mesin hip thrust untuk bokong",
+    "Calf raise duduk",
+    "Mesin untuk perut"
+   ],
+   "no": [],
+   "primary": [
+    "quadriceps",
+    "hamstring",
+    "gluteal"
+   ],
+   "secondary": [
+    "calves",
+    "abs"
+   ],
+   "narration": "",
+   "confidence": "sedang"
   },
   {
    "id": 668,
