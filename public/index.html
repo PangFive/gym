@@ -756,6 +756,8 @@ body.dragging{-webkit-user-select:none;user-select:none;cursor:grabbing}
 .wx-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .wx-t small{font-size:12.5px;font-weight:600;color:var(--muted)}
 .wx-t b{font-size:18px;line-height:1.22;font-weight:800;letter-spacing:-.01em}
+.wx-mus{margin-top:6px}.wx-mus .tag{font-size:13px;padding:5px 12px}
+.wx-m{font-style:normal;font-weight:700;color:color-mix(in srgb,var(--c) 78%,black)}.wx-m::after{content:' · ';color:var(--faint);font-weight:600}
 .tl{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:8px}
 .tl>b{flex:none;font-size:13.5px;font-weight:700}
 .tl-del{position:relative;flex:none;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--faint);display:grid;place-items:center}
@@ -1817,6 +1819,8 @@ const edTags = (it, t, i) => {
   const f = focusOf(it, t);
   return `<div class="tags ftg" role="group" aria-label="Dipakai untuk otot"><small>Untuk</small>${focusBtns(t, k => f.length ? f.includes(k) : t.p.includes(k), `data-a="edFocus" data-ix="${i}"`)}</div>`;
 };
+// the muscles an exercise is doing in this program or workout: the chosen ones, or its main muscles
+const itMain = (it, t) => { const f = focusOf(it, t); return f.length ? f : t.p.filter(k => MI[k]) };
 const focusIn = (v, t) => { const o = focusOpts(t), f = muscleList(Array.isArray(v) ? v : v ? [v] : []).filter(k => o.includes(k)); return f.length && !sameMain(f, t) ? { f } : {} };
 const focusFrom = (x, t) => focusIn(x?.for ?? x?.untuk ?? x?.f, t);
 const addFocus = id => { const t = T[id], f = ui.addF?.id === id ? [...ui.addF.set] : []; return f.length && !sameMain(f, t) ? { f } : {} };
@@ -2855,11 +2859,11 @@ function wxCard(it, ei) {
   const t = T[it.id]; if (!t) return '';
   const n = it.sets.length, done = it.sets.filter(s => s.done).length;
   if (ei !== openEx()) return `<div class="wx-row${done === n ? ' done' : ''}" id="wx${ei}"><button class="wx-v" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
-      <button class="wx-rb" data-a="wxOpen" data-ex="${ei}" aria-expanded="false"><span><b>${esc(t.t)}</b><small>${setsLine(it)}</small></span>
+      <button class="wx-rb" data-a="wxOpen" data-ex="${ei}" aria-expanded="false"><span><b>${esc(t.t)}</b><small>${t.c ? '' : itMain(it, t).slice(0, 2).map(k => `<em class="wx-m" style="--c:${MI[k].c}">${MI[k].n}</em>`).join('')}${setsLine(it)}</small></span>
       <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button></div>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id, usesIn(S.active.items.slice(0, ei), it.id)), p = prev && (prev[fi] || prev[prev.length - 1]);
   const c = CX(it.id), unit = c ? 'Bagian' : 'Set';
-  const fo = focusOf(it, t), mus = fo.length ? ` · ${mNames(fo)}` : MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
+  const mus = `<div class="tags wx-mus">${t.c ? cxTag : itMain(it, t).map(mTag).join('')}</div>`;
   // the thumbnail pulses the first time this card opens, not on every redraw
   const w = wxState(), hint = !(w.hinted ||= new Set()).has(it.id); w.hinted.add(it.id);
   const step = (x, si) => `<button class="tl-s${x.done ? ' ok' : ''}${si === fi ? ' sel' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="${unit} ${si + 1}: ${setText(it.id, x)}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}"><i>${x.done ? I('check') : si + 1}</i></button>`;
@@ -2872,7 +2876,7 @@ function wxCard(it, ei) {
     : stepper('r', 'Durasi', 'menit', 1) + (c.k === 'run' ? stepper('w', 'Kecepatan', 'km/j', .5) + stepper('g', 'Incline', '%', .5) : stepper('w', 'Level', '', 1));
   return `<section class="wx glass on" id="wx${ei}">
       <div class="wx-h"><button class="wx-v${hint ? ' hint' : ''}" data-a="open" data-id="${t.id}" aria-label="Lihat video ${esc(t.t)}">${pic(t.y)}<span class="pm">${I('playf')}</span></button>
-        <div class="wx-t"><small>Latihan ${ei + 1} dari ${S.active.items.length}${mus}</small><b>${esc(t.t)}</b></div>
+        <div class="wx-t"><small>Latihan ${ei + 1} dari ${S.active.items.length}</small><b>${esc(t.t)}</b>${mus}</div>
         ${done < n ? `<button class="wx-sw" data-a="wxSwap" data-ex="${ei}">Ganti</button>` : ''}<button class="icon-btn sm" data-a="wxDel" data-ex="${ei}" aria-label="Hapus latihan">${I('x')}</button></div>
       <div class="tl"><b>${s ? (c && n === 1 ? 'Kardio' : `${unit} ${fi + 1} dari ${n}`) : c ? 'Selesai' : `Semua ${n} set selesai`}</b>
         ${s && n > 1 && !s.done ? `<button class="tl-del" data-a="setDel" data-ex="${ei}" data-ix="${fi}" aria-label="Hapus ${unit.toLowerCase()} ${fi + 1}">${I('trash')}</button>` : ''}
@@ -5008,7 +5012,7 @@ function chatSystem() {
     'DAFTAR ALAT DI GYM (id|nama|otot):', aiMachines(),
     ...CARDIO.map(t => `${t.id}|${t.t}|kardio`),
     ...(FORM.length ? ['', 'LATIHAN BEBAN BEBAS / BEBAN TUBUH, ADA VIDEO TEKNIKNYA (id|nama|alat|otot utama; pendukung):',
-      ...FORM.map(f => `${FORM_BASE + f.id}|${f.t}|${eqName(f.e)}|${mNames(f.p)}${f.s.length ? '; ' + mNames(f.s) : ''}`)] : [])
+      ...FORM.map(f => `${FORM_BASE + f.id}|${f.t}|${eqName(f.e)}|${mNames(f.p)}${f.s.length ? '; ' + mNames(f.s) : ''}${focusOpts(T[FORM_BASE + f.id]).length ? `|MULTI, pilih "for": ${focusOpts(T[FORM_BASE + f.id]).join(' / ')}` : ''}`)] : [])
   ].filter(x => x !== false).join('\n');
 }
 // The conversation as the AI reads it: the last 24 messages, photos only on the last 6 so the request
