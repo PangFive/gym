@@ -255,7 +255,7 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .resume div{flex:1} .resume b{display:block} .resume small{opacity:.85;font-variant-numeric:tabular-nums}
 
 /* library */
-.search{display:flex;align-items:center;gap:10px;padding:0 16px;height:52px;border-radius:18px;color:var(--faint);margin-bottom:14px}
+.search{display:flex;align-items:center;gap:8px;padding:0 14px;height:42px;border-radius:14px;color:var(--faint);margin-bottom:12px}
 .search input{border:0;background:transparent;font:inherit;font-size:16px;flex:1;outline:none;color:var(--ink);height:100%;min-width:0}
 .panel .search{background:#fff;border:1px solid rgba(24,32,47,.07)}
 /* A sideways-scrolling row fades out at both ends instead of cutting chips off at the edge. */
@@ -2606,13 +2606,13 @@ function vLibrary() {
   return `<header class="top"><div><h1>Tutorial</h1><div class="sub">${TUTORIALS.length} video panduan alat gym</div></div>
       ${headActs()}</header>
     ${libTabs('')}
+    <label class="search glass">${I('search')}<input data-i="q" type="search" placeholder="Cari latihan atau alat…" value="${esc(ui.q)}" autocomplete="off"></label>
     <section class="glass card explore">
       <h2 class="ct">Jelajahi Otot ${genderSeg()}</h2>
       <div id="libMap">${libMap()}</div>
       <p class="hint">Ketuk otot untuk melihat latihannya. Bisa lebih dari satu.</p>
       <div class="chips" id="libChips">${chips()}</div>
     </section>
-    <label class="search glass">${I('search')}<input data-i="q" type="search" placeholder="Cari latihan atau alat…" value="${esc(ui.q)}" autocomplete="off"></label>
     <div class="lhead" id="libHead">${libHead()}</div>
     <div id="libList">${libList()}</div>`;
 }
