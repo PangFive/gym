@@ -1,6 +1,6 @@
 {
  "note": "Hasil analisis 141 video playlist Treinos. same = klip kembar. Teks dari gambar dan narasi, belum diperiksa pelatih.",
- "count": 204,
+ "count": 205,
  "items": [
   {
    "id": 1,
@@ -4085,7 +4085,8 @@
    "youtube": "1Fh9Y89atLI",
    "filename": "Treinos  (591).mp4",
    "same": [
-    637
+    637,
+    642
    ],
    "ok": [
     "Siku di bawah bahu, badan lurus, perut dikencangkan"
@@ -5051,6 +5052,29 @@
    "secondary": [
     "abs",
     "deltoids"
+   ],
+   "narration": "",
+   "confidence": "sedang"
+  },
+  {
+   "id": 678,
+   "title": "Kneeling Dumbbell Chest by Area",
+   "type": "rangkaian",
+   "category": "chest",
+   "equipment": "dumbbell",
+   "youtube": "7m8ylZLtf8E",
+   "filename": "Treinos  (678).mp4",
+   "same": [],
+   "ok": [
+    "Gerakan dada dengan dumbbell sambil berlutut, dibagi per area: seluruh dada, dada bawah, dada dalam, dada tengah, dan dada atas"
+   ],
+   "no": [],
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "deltoids",
+    "triceps"
    ],
    "narration": "",
    "confidence": "sedang"
