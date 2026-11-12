@@ -1817,6 +1817,8 @@ const edTags = (it, t, i) => {
   const f = focusOf(it, t);
   return `<div class="tags ftg" role="group" aria-label="Dipakai untuk otot"><small>Untuk</small>${focusBtns(t, k => f.length ? f.includes(k) : t.p.includes(k), `data-a="edFocus" data-ix="${i}"`)}</div>`;
 };
+const focusIn = (v, t) => { const o = focusOpts(t), f = muscleList(Array.isArray(v) ? v : v ? [v] : []).filter(k => o.includes(k)); return f.length && !sameMain(f, t) ? { f } : {} };
+const focusFrom = (x, t) => focusIn(x?.for ?? x?.untuk ?? x?.f, t);
 const addFocus = id => { const t = T[id], f = ui.addF?.id === id ? [...ui.addF.set] : []; return f.length && !sameMain(f, t) ? { f } : {} };
 const alsoLine = t => t.s.length ? `<small class="also">Juga melatih ${t.s.map(k => MI[k].n).join(' · ')}</small>` : '';
 
@@ -3179,7 +3181,7 @@ const mNames = ks => ks.map(k => MI[k].n).join(', ');
 const aiMuscleCodes = () => `KODE OTOT: ${MUSCLES.map(m => `${m.k}=${m.n}`).join(', ')}`;
 // trains any of these muscles, main or supporting (cardio by the muscles it works); no muscles: anything does
 const trainsAny = (t, aim) => !aim.size || musOf(t).flatMap(muscleList).some(k => aim.has(k));
-const aiMachines = (skip = new Set(), list = TUTORIALS) => list.filter(t => !skip.has(t.id)).map(t => { const [p, s] = musOf(t); return `${t.id}|${t.t}|utama: ${mNames(p)}|pendukung: ${mNames(s) || '-'}` }).join('\n');
+const aiMachines = (skip = new Set(), list = TUTORIALS) => list.filter(t => !skip.has(t.id)).map(t => { const [p, s] = musOf(t); const o = focusOpts(t); return `${t.id}|${t.t}|utama: ${mNames(p)}|pendukung: ${mNames(s) || '-'}${o.length ? `|MULTI, pilih "for": ${o.join(' / ')}` : ''}` }).join('\n');
 
 // ---- exercise suggestions from the AI: it sees the program (or workout) so far, the muscles chosen
 // on the map, the body profile, and the gym's own machine list, and may only answer with those ids.
@@ -3219,14 +3221,15 @@ Jangan pilih latihan yang sudah ada di ${where}. Urutkan dari latihan besar/comp
 ${src} (id|nama|otot):
 ${aiMachines(undefined, pool)}
 ${aiMuscleCodes()}
-Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "reason": "alasan maksimal 8 kata"}]}`;
+Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "for": ["hanya untuk latihan bertanda MULTI: kode otot yang dituju"], "reason": "alasan maksimal 8 kata"}]}
+Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
   try {
     const t = await askAi([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
     // the muscles asked for, from the map and as the AI read the request; a machine for none of them is dropped
     const aim = new Set([...want, ...(q ? muscleList(j.muscles) : [])]), hits = id => trainsAny(T[id], aim);
     const seen = new Set(have), off = asList(j.items).some(x => T[+x.id] && !hits(+x.id));
-    const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80) }))
+    const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80), ...focusFrom(x, T[+x.id]) }))
       .filter(x => T[x.id] && pool.some(t => t.id === x.id) && hits(x.id) && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
     const ms = aim.size && mNames([...aim]);
     if (!items.length) {
@@ -3995,10 +3998,10 @@ async function importText(txt) {
   const progs = [];
   list.forEach(r => {
     const items = (r?.items || r?.exercises || []).map(x => {
-      const it = Array.isArray(x) ? { id: x[0], sets: x[1], reps: x[2] } : (x || {});
+      const it = Array.isArray(x) ? { id: x[0], sets: x[1], reps: x[2], f: x[3] } : (x || {});
       const t = T[+it.id] || byTitle(it.title || it.name);
       if (!t) { dropped++; return null }
-      return { id: t.id, sets: clamp(parseInt(it.sets) || 3, 1, 10), reps: String(it.reps ?? '10').slice(0, 7) };
+      return { id: t.id, sets: clamp(parseInt(it.sets) || 3, 1, 10), reps: String(it.reps ?? '10').slice(0, 7), ...focusFrom(it, t) };
     }).filter(Boolean);
     if (items.length) progs.push({ id: uid(), name: String(r.name || 'Program').slice(0, 40), items, ...(validIcon(r.icon) && r.icon !== 'auto' ? { icon: r.icon } : {}), ...(validColor(r.color) ? { color: r.color } : {}) });
   });
@@ -4093,6 +4096,7 @@ function claudeText() {
     'Halo Claude, ini data latihan saya dari aplikasi Wegym. Tolong buatkan program latihan untuk saya.',
     'Balas dengan JSON persis format ini supaya bisa saya import:',
     '{"why_plan":1,"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10"}]}],"week":{"senin":["Push Day"],"rabu":["Pull Day"]}}',
+    'Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".',
     'Gunakan hanya id dari daftar alat di bawah. Bagian "week" opsional: nama hari (senin sampai minggu) berisi nama program dari "routines"; hari yang tidak disebut jadi hari istirahat.',
     '',
     `Target: ${S.settings.goal}× workout per minggu, istirahat antar set ${S.settings.rest} detik.`,
@@ -4981,7 +4985,7 @@ function chatSystem() {
     '```why-plan',
     '{"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10-12"}]}],"week":{"senin":["Push Day"],"kamis":["Push Day"]}}',
     '```',
-    '   "week" opsional: senin … minggu berisi nama program dari "routines"; hari lain istirahat. "reps" angka atau rentang pendek tanpa satuan (mis. "10-12", paling banyak 7 karakter). Alat kardio: sets 1, reps = jumlah menit.',
+    '   "week" opsional: senin … minggu berisi nama program dari "routines"; hari lain istirahat. "reps" angka atau rentang pendek tanpa satuan (mis. "10-12", paling banyak 7 karakter). Alat kardio: sets 1, reps = jumlah menit. Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".',
     '3. Bila kamu menyarankan menu atau menghitung kalori makanan/minuman (termasuk dari foto), tambahkan satu blok per kali makan agar bisa dicatat: semua yang dimakan dan diminum bersamaan jadi item di blok yang sama (paling banyak 4 blok):',
     '```why-meal',
     '{"name":"Nasi ayam bakar","slot":"lunch","items":[{"name":"Nasi putih","grams":150,"kcal":195,"protein":4,"carbs":43,"fat":0.4}]}',
@@ -5101,8 +5105,8 @@ const blockKind = (lang, body) => lang === 'why-plan' ? 'plan' : lang === 'why-m
   : /"(routines|why_plan)"\s*:/.test(body) ? 'plan' : /"items"\s*:/.test(body) && /"kcal"\s*:/.test(body) ? 'meal' : null;
 function chatPlanOf(o) {
   const rs = asList(o?.routines ?? (o?.items ? [o] : [])).map(r => ({ name: String(r?.name || 'Program').slice(0, 40),
-    items: asList(r?.items).map(x => Array.isArray(x) ? { id: +x[0], sets: x[1], reps: x[2] } : { id: +x?.id, sets: x?.sets, reps: x?.reps })
-      .filter(x => T[x.id]).map(x => ({ id: x.id, sets: clamp(parseInt(x.sets) || 3, 1, 10), reps: String(x.reps ?? '10').slice(0, 7) })) })).filter(r => r.items.length);
+    items: asList(r?.items).map(x => Array.isArray(x) ? { id: +x[0], sets: x[1], reps: x[2], f: x[3] } : { id: +x?.id, sets: x?.sets, reps: x?.reps, f: x?.for ?? x?.untuk ?? x?.f })
+      .filter(x => T[x.id]).map(x => ({ id: x.id, sets: clamp(parseInt(x.sets) || 3, 1, 10), reps: String(x.reps ?? '10').slice(0, 7), ...focusIn(x.f, T[x.id]) })) })).filter(r => r.items.length);
   return rs.length ? { routines: rs, week: o.week && typeof o.week === 'object' && !Array.isArray(o.week) ? o.week : null } : null;
 }
 function chatMealOf(o) { try { const m = parseMeal(JSON.stringify(o)); return m.items.length ? { ...m, slot: MEAL_SLOTS.some(x => x[0] === o.slot) ? o.slot : '' } : null } catch { return null } }
@@ -5647,7 +5651,7 @@ const DAYKEY = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
 const linkRow = (icon, c, title, a, sub = '', attrs = '') => sRow({ icon, c, title, sub, tag: 'button', attrs: `data-a="${a}" ${attrs}`, right: I('chev') });
 function planBundle(rids, withWeek) {
   const rs = S.routines.filter(r => rids.includes(r.id));
-  const b = { why_plan: 1, from: S.settings.name || '', routines: rs.map(r => ({ name: r.name || 'Program', items: r.items.filter(i => T[i.id]).map(i => [i.id, i.sets, i.reps]), ...(r.icon ? { icon: r.icon } : {}), ...(r.color ? { color: r.color } : {}) })) };
+  const b = { why_plan: 1, from: S.settings.name || '', routines: rs.map(r => ({ name: r.name || 'Program', items: r.items.filter(i => T[i.id]).map(i => [i.id, i.sets, i.reps, ...(focusOf(i).length ? [focusOf(i)] : [])]), ...(r.icon ? { icon: r.icon } : {}), ...(r.color ? { color: r.color } : {}) })) };
   if (withWeek) {
     const week = {};
     DOW.forEach(d => { const names = (S.week['d' + d] || []).map(id => rs.find(r => r.id === id)).filter(Boolean).map(r => r.name || 'Program'); if (names.length) week[DAYKEY[d]] = names });
@@ -5659,7 +5663,7 @@ const b64url = str => { let bin = ''; new TextEncoder().encode(str).forEach(c =>
 const unb64url = str => new TextDecoder().decode(Uint8Array.from(atob(str.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)));
 const shareUrl = b => `${location.origin}${location.pathname}#/import/${b64url(JSON.stringify(b))}`;
 // The file spells the exercises out so it reads well when opened.
-const bundleFile = b => JSON.stringify({ ...b, routines: b.routines.map(r => ({ ...r, items: r.items.map(([id, sets, reps]) => ({ id, title: T[id]?.t, sets, reps })) })) }, null, 2);
+const bundleFile = b => JSON.stringify({ ...b, routines: b.routines.map(r => ({ ...r, items: r.items.map(([id, sets, reps, f]) => ({ id, title: T[id]?.t, sets, reps, ...(f ? { for: f } : {}) })) })) }, null, 2);
 const bundleTitle = b => b.routines.length === 1 ? b.routines[0].name : `${b.routines.length} program latihan`;
 function iconPreview(r) {
   return `${rIcon(r, 'xl')}<div><b>${rName(r)}</b><small>${r.icon && r.icon !== 'auto' ? 'Ikon dipilih sendiri' : 'Ikon otomatis'} · ${validColor(r.color) ? 'warna dipilih sendiri' : 'warna otomatis'}</small></div>`;
@@ -6393,7 +6397,7 @@ const A = {
   pickDone: () => {
     const p = ui.pick, ids = [...p.sel];
     if (!ids.length) return toast('Pilih minimal satu latihan', 'err');
-    const it = id => ({ id, ...planOf(id), ...p.rec.get(id) && { sets: p.rec.get(id).sets, reps: p.rec.get(id).reps } });
+    const it = id => ({ id, ...planOf(id), ...p.rec.get(id) && { sets: p.rec.get(id).sets, reps: p.rec.get(id).reps, ...focusKeep(p.rec.get(id)) } });
     if (p.mode === 'edit') { const r = findR(p.rid); if (r) ids.forEach(id => r.items.push(it(id))) }
     else if (S.active) ids.forEach(id => S.active.items.push(newActiveItem(it(id), S.active.items)));
     save(); closeSheet(); render(); toast(`${ids.length} latihan ditambahkan`);
