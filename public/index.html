@@ -284,6 +284,11 @@ h1{font-size:30px;letter-spacing:-.03em;margin:0;font-weight:800}
 .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:color-mix(in srgb,var(--c) 78%,black);background:color-mix(in srgb,var(--c) 14%,white);padding:4px 10px;border-radius:999px;width:max-content;max-width:100%}
 .tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
 .tags{display:flex;gap:6px;flex-wrap:wrap}
+button.tag{border:0;font-family:inherit;cursor:pointer;min-height:30px;padding:5px 12px;transition:opacity .15s,background .15s}
+button.tag.off{background:rgba(24,32,47,.05);color:var(--faint)}
+button.tag.off::before{background:transparent;box-shadow:inset 0 0 0 1.5px currentColor}
+.ftg{align-items:center}.ftg small{font-size:12px;color:var(--faint);font-weight:600}
+.addf{margin:0 0 14px}.addf small{display:block;font-size:13px;color:var(--faint);margin-bottom:8px}
 .also{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.35}
 .dmap{background:#fff;border:1px solid rgba(24,32,47,.05);border-radius:18px;padding:12px 10px 8px;margin-bottom:14px}
 .dmap .bm-v{max-height:190px}
@@ -1797,6 +1802,20 @@ const setText = (id, s) => { const c = CX(id); return c ? cardioText(c, s) : num
 const planText = (id, sets, reps) => CX(id) ? `${parseInt(reps) || 20} mnt${+sets > 1 ? ` × ${sets}` : ''}` : `${sets} set × ${reps} reps`;
 const trains = (t, k) => t.p.includes(k) || t.s.includes(k);
 const pTags = t => `<div class="tags">${t.c ? cxTag : t.p.map(mTag).join('')}</div>`;
+// An exercise that trains several muscles can sit in a program for some of them only: it.f, a list of muscle keys.
+// Without it the exercise counts for its main muscles, as before.
+const focusOpts = t => !t || t.c ? [] : [...new Set([...t.p, ...t.s])].filter(k => MI[k]);
+const focusOf = (it, t = T[it?.id]) => { const o = focusOpts(t); return asList(it?.f).filter(k => o.includes(k)) };
+const focusKeep = i => { const f = asList(i?.f).map(String).filter(k => MI[k]).slice(0, 8); return f.length ? { f } : {} };
+const sameMain = (f, t) => f.length === t.p.length && f.every(k => t.p.includes(k));
+const itMus = (it, t) => { const f = focusOf(it, t), [a, b] = musOf(t).map(muscleList); return f.length ? [f, [...a, ...b].filter(k => !f.includes(k))] : [a, b] };
+const focusBtns = (t, on, attrs) => focusOpts(t).map(k => `<button class="tag${on(k) ? '' : ' off'}" style="--c:${MI[k].c}" ${attrs} data-k="${k}" aria-pressed="${!!on(k)}">${MI[k].n}</button>`).join('');
+const edTags = (it, t, i) => {
+  if (focusOpts(t).length < 2) return pTags(t);
+  const f = focusOf(it, t);
+  return `<div class="tags ftg" role="group" aria-label="Dipakai untuk otot"><small>Untuk</small>${focusBtns(t, k => f.length ? f.includes(k) : t.p.includes(k), `data-a="edFocus" data-ix="${i}"`)}</div>`;
+};
+const addFocus = id => { const t = T[id], f = ui.addF?.id === id ? [...ui.addF.set] : []; return f.length && !sameMain(f, t) ? { f } : {} };
 const alsoLine = t => t.s.length ? `<small class="also">Juga melatih ${t.s.map(k => MI[k].n).join(' · ')}</small>` : '';
 
 const DAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -1923,13 +1942,13 @@ function normalize(v) {
   const a = d.active;
   return {
     settings: { ...userDefaults(), ...clean(d.settings) },
-    routines: asList(d.routines).filter((r, i, all) => !r?.id || all.findIndex(x => x?.id === r.id) === i).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10') })),
+    routines: asList(d.routines).filter((r, i, all) => !r?.id || all.findIndex(x => x?.id === r.id) === i).map(r => ({ id: String(r.id || uid()), name: r.name || '', items: asList(r.items).map(i => ({ id: +i.id, sets: +i.sets || 3, reps: String(i.reps ?? '10'), ...focusKeep(i) })),
       ...(r.icon && r.icon !== 'auto' ? { icon: String(r.icon) } : {}), ...(/^#[0-9a-f]{6}$/i.test(String(r.color || '')) ? { color: String(r.color) } : {}) })),
     week,
     history: asList(d.history).filter(h => h.id && h.date).map(h => ({
       id: h.id, date: h.date, name: h.name || 'Workout', rids: asList(h.rids).length ? asList(h.rids) : h.rid ? [h.rid] : [],
       dur: +h.dur || 0, sets: +h.sets || 0, vol: +h.vol || 0,
-      items: asList(h.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0, ...(+x.g ? { g: +x.g } : {}) })) })),
+      items: asList(h.items).map(it => ({ id: +it.id, ...focusKeep(it), sets: asList(it.sets).map(x => ({ w: +x.w || 0, r: +x.r || 0, ...(+x.g ? { g: +x.g } : {}) })) })),
       ...(h.hr && +h.hr.avg ? { hr: { avg: +h.hr.avg, max: +h.hr.max || 0, min: +h.hr.min || 0, sec: +h.hr.sec || 0, s: asList(h.hr.s).map(b => +b || 0) } } : {})
     })).sort((x, y) => y.date.localeCompare(x.date)),
     meals: asList(d.meals).filter(m => m.id && m.date).map(m => ({
@@ -1940,7 +1959,7 @@ function normalize(v) {
     weights: asList(d.weights).filter(w => w.id && w.date && +w.kg > 0).map(w => ({ id: String(w.id), date: w.date, kg: +w.kg }))
       .sort((x, y) => y.date.localeCompare(x.date)),
     active: a && a.start ? { name: a.name || 'Workout', rids: asList(a.rids).length ? asList(a.rids) : a.rid ? [a.rid] : [], start: +a.start,
-      items: asList(a.items).map(it => ({ id: +it.id, sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', ...(x.g != null ? { g: x.g } : {}), done: !!x.done })) })) } : null
+      items: asList(a.items).map(it => ({ id: +it.id, ...focusKeep(it), sets: asList(it.sets).map(x => ({ w: x.w ?? '', r: x.r ?? '', ...(x.g != null ? { g: x.g } : {}), done: !!x.done })) })) } : null
   };
 }
 
@@ -2709,7 +2728,7 @@ function vEdit(id) {
     const t = T[it.id];
     return `<div class="edrow glass" data-ix="${i}">
       <div class="ed-top">${pic(t.y, '', `data-a="open" data-id="${t.id}"`)}
-        <div class="ed-m"><b>${esc(t.t)}</b>${pTags(t)}</div>
+        <div class="ed-m"><b>${esc(t.t)}</b>${edTags(it, t, i)}</div>
         <button class="icon-btn sm" data-a="edDel" data-ix="${i}" aria-label="Hapus ${esc(t.t)}">${I('trash')}</button></div>
       <div class="ed-c">${CX(t.id) ? `<span class="ed-cx">${I('clock')} Durasi</span>
         <label class="reps"><input class="inp" data-i="edReps" data-ix="${i}" value="${esc(it.reps)}" inputmode="numeric" maxlength="3" aria-label="Menit"> menit</label>`
@@ -2742,7 +2761,7 @@ function programLoad(items) {
   const main = {}, help = {};
   items.forEach(it => {
     const t = T[it.id]; if (!t) return;
-    const n = setCount(it) || 1, [p, s] = musOf(t).map(muscleList);
+    const n = setCount(it) || 1, [p, s] = itMus(it, t);
     p.forEach(k => { main[k] = (main[k] || 0) + n });
     s.forEach(k => { if (!p.includes(k)) help[k] = (help[k] || 0) + n });
   });
@@ -2783,7 +2802,7 @@ const usesIn = (items, id) => items.filter(x => x.id === id).length;
 // before: the workout's exercises ahead of this one
 function newActiveItem(it, before = []) {
   const prev = prevFor(it.id, usesIn(before, it.id)), c = CX(it.id);
-  return { id: it.id, sets: Array.from({ length: clamp(+it.sets || (c ? 1 : 3), 1, 10) }, (_, i) => {
+  return { id: it.id, ...focusKeep(it), sets: Array.from({ length: clamp(+it.sets || (c ? 1 : 3), 1, 10) }, (_, i) => {
     const p = prev && (prev[i] || prev[prev.length - 1]);
     // cardio: minutes from the program, speed or level (and incline) from last time or a usual start
     const x = { w: p && p.w ? String(p.w) : c ? String(c.w0) : '', r: String(parseInt(it.reps) || (c ? 20 : 10)), done: false };
@@ -2836,7 +2855,7 @@ function wxCard(it, ei) {
       <span class="wx-n${done === n ? ' ok' : ''}">${done === n ? I('check') : `${done}/${n}`}</span></button></div>`;
   const fi = focusSet(ei), s = it.sets[fi], prev = prevFor(it.id, usesIn(S.active.items.slice(0, ei), it.id)), p = prev && (prev[fi] || prev[prev.length - 1]);
   const c = CX(it.id), unit = c ? 'Bagian' : 'Set';
-  const mus = MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
+  const fo = focusOf(it, t), mus = fo.length ? ` · ${mNames(fo)}` : MI[t.p[0]] ? ` · ${MI[t.p[0]].n}` : '';
   // the thumbnail pulses the first time this card opens, not on every redraw
   const w = wxState(), hint = !(w.hinted ||= new Set()).has(it.id); w.hinted.add(it.id);
   const step = (x, si) => `<button class="tl-s${x.done ? ' ok' : ''}${si === fi ? ' sel' : ''}" id="sc${ei}_${si}" data-a="wxSet" data-ex="${ei}" data-ix="${si}" aria-label="${unit} ${si + 1}: ${setText(it.id, x)}${x.done ? ', selesai' : ''}" aria-pressed="${si === fi}"><i>${x.done ? I('check') : si + 1}</i></button>`;
@@ -3084,7 +3103,11 @@ function openDetail(id) {
   $('#sheet .sheet-body').scrollTop = 0;
 }
 function openAddTo(id) {
-  sheet(`<h2 class="sh">Tambah ke program</h2><div class="list plist">
+  const t = T[id], multi = focusOpts(t).length > 1;
+  ui.addF = multi ? { id, set: new Set(t.p) } : null;
+  sheet(`<h2 class="sh">Tambah ke program</h2>
+    ${multi ? `<div class="addf"><small>Dipakai untuk otot apa? Bisa lebih dari satu.</small><div class="tags">${focusBtns(t, k => ui.addF.set.has(k), `data-a="addFocus" data-id="${id}"`)}</div></div>` : ''}
+    <div class="list plist">
     ${S.routines.map(r => { const has = r.items.some(it => it.id === id); return `<button data-a="addToR" data-rid="${r.id}" data-id="${id}">${rIcon(r)}<span><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>${has ? `<em>${I('check')}Sudah ada</em>` : ''}<i class="pl-add">${I('plus')}</i></button>` }).join('')}
     <button data-a="newWith" data-id="${id}"><span class="ricon pl-new">${I('plus')}</span><span><b>Program baru</b><small>Mulai dari latihan ini</small></span></button></div>`);
 }
@@ -3596,7 +3619,7 @@ async function startWorkout(items, name, rids = []) {
 }
 async function finish() {
   const a = S.active;
-  const items = a.items.map(it => ({ id: it.id, sets: it.sets.filter(s => s.done).map(s => ({ w: num(s.w), r: parseInt(s.r) || 0, ...(num(s.g) ? { g: num(s.g) } : {}) })) })).filter(it => it.sets.length);
+  const items = a.items.map(it => ({ id: it.id, ...focusKeep(it), sets: it.sets.filter(s => s.done).map(s => ({ w: num(s.w), r: parseInt(s.r) || 0, ...(num(s.g) ? { g: num(s.g) } : {}) })) })).filter(it => it.sets.length);
   if (!items.length) {
     if (await ask({ title: 'Belum ada set selesai', msg: 'Centang set yang sudah dikerjakan supaya tersimpan. Buang workout ini?', ok: 'Buang', cancel: 'Lanjut latihan' })) { S.active = null; save(); stopRest(); hrEnd(); go('home') }
     return;
@@ -6272,10 +6295,24 @@ const A = {
   addToR: async el => {
     const r = S.routines.find(x => x.id === el.dataset.rid), id = +el.dataset.id; if (!r) return;
     if (r.items.some(it => it.id === id) && !(await askAgain(T[id], r.name || 'program ini'))) return;
-    r.items.push({ id, ...planOf(id) }); save(); closeSheet();
+    r.items.push({ id, ...planOf(id), ...addFocus(id) }); save(); closeSheet();
     toast(`Ditambahkan ke ${r.name || 'program'}`); if (route().page === 'plan') render();
   },
-  newWith: el => { closeSheet(); newDraft([{ id: +el.dataset.id, ...planOf(+el.dataset.id) }]) },
+  newWith: el => { const id = +el.dataset.id, f = addFocus(id); closeSheet(); newDraft([{ id, ...planOf(id), ...f }]) },
+  addFocus: el => {
+    const s = ui.addF?.set, k = el.dataset.k; if (!s) return;
+    if (s.has(k) && s.size === 1) return toast('Pilih minimal satu otot', 'err');
+    s.has(k) ? s.delete(k) : s.add(k);
+    el.classList.toggle('off', !s.has(k)); el.setAttribute('aria-pressed', s.has(k));
+  },
+  edFocus: el => {
+    const it = curR().items[+el.dataset.ix], t = T[it.id], k = el.dataset.k;
+    let f = focusOf(it, t); if (!f.length) f = [...t.p];
+    f = f.includes(k) ? f.filter(x => x !== k) : [...f, k];
+    if (!f.length) return toast('Pilih minimal satu otot', 'err');
+    if (sameMain(f, t)) delete it.f; else it.f = f;
+    save(); render();
+  },
   quick: el => { const t = T[+el.dataset.id]; closeSheet(); startWorkout([{ id: t.id, ...planOf(t.id) }], t.t) },
   startPick: openStartPick,
   start: el => {
