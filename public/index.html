@@ -1802,9 +1802,11 @@ const setText = (id, s) => { const c = CX(id); return c ? cardioText(c, s) : num
 const planText = (id, sets, reps) => CX(id) ? `${parseInt(reps) || 20} mnt${+sets > 1 ? ` × ${sets}` : ''}` : `${sets} set × ${reps} reps`;
 const trains = (t, k) => t.p.includes(k) || t.s.includes(k);
 const pTags = t => `<div class="tags">${t.c ? cxTag : t.p.map(mTag).join('')}</div>`;
-// An exercise that trains several muscles can sit in a program for some of them only: it.f, a list of muscle keys.
+// A multi-purpose exercise can sit in a program for some of its main muscles only: it.f, a list of muscle keys.
+// Multi-purpose: a machine with more than one main muscle (Pec / Rear Delt Fly), or a technique clip of the kind
+// 'variasi' with more than one (Quads vs Glutes). A compound move or a routine is one thing and offers no choice.
 // Without it the exercise counts for its main muscles, as before.
-const focusOpts = t => !t || t.c ? [] : [...new Set([...t.p, ...t.s])].filter(k => MI[k]);
+const focusOpts = t => { const o = !t || t.c || (t.f != null && t.j !== 'variasi') ? [] : t.p.filter(k => MI[k]); return o.length > 1 ? o : [] };
 const focusOf = (it, t = T[it?.id]) => { const o = focusOpts(t); return asList(it?.f).filter(k => o.includes(k)) };
 const focusKeep = i => { const f = asList(i?.f).map(String).filter(k => MI[k]).slice(0, 8); return f.length ? { f } : {} };
 const sameMain = (f, t) => f.length === t.p.length && f.every(k => t.p.includes(k));
@@ -2435,7 +2437,7 @@ let FORM = [];
 const FORM_BASE = 100000;
 function formToT() {
   for (const k in T) if (+k >= FORM_BASE) delete T[k];
-  FORM.forEach(t => { const id = FORM_BASE + t.id; T[id] = { id, f: t.id, t: t.t, m: 'other', y: t.y, d: '', p: t.p, s: t.s } });
+  FORM.forEach(t => { const id = FORM_BASE + t.id; T[id] = { id, f: t.id, j: t.j, t: t.t, m: 'other', y: t.y, d: '', p: t.p, s: t.s } });
 }
 const EQUIP = [['barbell', 'Barbel'], ['dumbbell', 'Dumbel'], ['cable', 'Kabel'], ['machine', 'Mesin'], ['smith', 'Smith'], ['body', 'Beban tubuh'], ['kettlebell', 'Kettlebell'], ['band', 'Band'], ['other', 'Lainnya']];
 const eqName = k => EQUIP.find(x => x[0] === k)?.[1] || k;
@@ -3106,7 +3108,7 @@ function openAddTo(id) {
   const t = T[id], multi = focusOpts(t).length > 1;
   ui.addF = multi ? { id, set: new Set(t.p) } : null;
   sheet(`<h2 class="sh">Tambah ke program</h2>
-    ${multi ? `<div class="addf"><small>Dipakai untuk otot apa? Bisa lebih dari satu.</small><div class="tags">${focusBtns(t, k => ui.addF.set.has(k), `data-a="addFocus" data-id="${id}"`)}</div></div>` : ''}
+    ${multi ? `<div class="addf"><small>Dipakai untuk otot apa?</small><div class="tags">${focusBtns(t, k => ui.addF.set.has(k), `data-a="addFocus" data-id="${id}"`)}</div></div>` : ''}
     <div class="list plist">
     ${S.routines.map(r => { const has = r.items.some(it => it.id === id); return `<button data-a="addToR" data-rid="${r.id}" data-id="${id}">${rIcon(r)}<span><b>${rName(r)}</b><small>${r.items.length} latihan · ±${estMin(r.items)} menit</small></span>${has ? `<em>${I('check')}Sudah ada</em>` : ''}<i class="pl-add">${I('plus')}</i></button>` }).join('')}
     <button data-a="newWith" data-id="${id}"><span class="ricon pl-new">${I('plus')}</span><span><b>Program baru</b><small>Mulai dari latihan ini</small></span></button></div>`);
