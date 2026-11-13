@@ -1441,14 +1441,14 @@ button.urow:active{background:rgba(24,32,47,.04)}
 .fok{background:#dcf4e8;color:#0b6b4a}
 .fno{background:#fde8e4;color:#b3321c}
 /* 3D exercise animations */
-.av{display:grid;place-items:center;background:linear-gradient(160deg,#e3edfd,#f6f8fc)}
+.av{display:grid;place-items:center;background:radial-gradient(110% 65% at 50% 22%,#3b414b 0%,rgba(59,65,75,0) 62%),linear-gradient(175deg,#272b33,#1c1f25)}
 .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .a3d .a3s{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;opacity:.55}
 .av .a3t{position:absolute;left:9px;top:9px;padding:3px 9px;border-radius:999px;background:var(--acc);color:#fff;font-size:11.5px;font-weight:800}
 .a3d{position:relative;height:min(62vh,440px);margin:0 0 14px;border-radius:24px;overflow:hidden;isolation:isolate;
-  background:radial-gradient(120% 70% at 50% 18%,#ffffff 0%,rgba(255,255,255,0) 60%),radial-gradient(90% 60% at 100% 0%,rgba(124,92,255,.22),transparent 70%),radial-gradient(90% 60% at 0% 100%,rgba(47,124,246,.28),transparent 70%),linear-gradient(170deg,#dfe9fd 0%,#eef3fd 55%,#d6e3fb 100%)}
+  background:radial-gradient(110% 65% at 50% 22%,#3b414b 0%,rgba(59,65,75,0) 62%),linear-gradient(175deg,#272b33 0%,#1c1f25 100%)}
 .a3d canvas{display:block;width:100%;height:100%;touch-action:none}
-.a3d .a3l{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:var(--muted);font-size:14px;font-weight:600}
+.a3d .a3l{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:#c9ced6;font-size:14px;font-weight:600}
 .a3d .a3p{position:absolute;left:12px;top:12px;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.88);font-size:13px;font-weight:800;color:var(--ink);transition:color .2s}
 .a3d .a3p.lift{color:var(--acc-2)}
 .a3d .a3c{position:absolute;right:10px;top:10px;display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.88)}
@@ -2553,7 +2553,7 @@ function animList() {
   const xs = animHits();
   if (!xs.length) return `<div class="empty glass">${ANIM.length ? 'Tidak ada animasi yang cocok.' : 'Belum ada animasi gerakan.'}</div>`;
   return `<div class="fgrid">${xs.map(a => `<button class="fcard glass" data-a="anim" data-id="${a.id}">
-      <span class="fv av"><img src="anim/${a.id}.webp?v=3" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="a3t">3D</span></span>
+      <span class="fv av"><img src="anim/${a.id}.webp?v=4" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="a3t">3D</span></span>
       <b>${esc(a.t)}</b><small>${MI[a.p[0]].n} · ${eqName(a.e)}</small></button>`).join('')}</div>`;
 }
 const refreshAnim = () => { const row = $('#aChips'), x = row.scrollLeft; row.innerHTML = animChips(); row.scrollLeft = x; $('#aHead').innerHTML = `<span>${ui.acat === 'all' && !ui.aq ? 'Semua animasi' : 'Hasil'} · <b>${animHits().length}</b></span>`; $('#aList').innerHTML = animList() };
@@ -2572,7 +2572,7 @@ function openAnim(id) {
   const a = ANIM.find(x => x.id === id); if (!a) return;
   const cue = (cls, ic, title, xs) => xs.length ? `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : '';
   const tempo = a.tempo.replace(/Angkat (\d+) dtk, turun (\d+) dtk/i, '↑$1 · ↓$2 dtk');
-  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp?v=3" alt="" onerror="this.remove()"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
+  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp?v=4" alt="" onerror="this.remove()"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
       <div class="a3p">Siap</div>
       <div class="a3c"><button data-sp="0.5">Pelan</button><button data-sp="1" class="on">Normal</button><button data-rot>Putar</button></div>
       <div class="a3h">Geser untuk memutar</div></div>
@@ -2592,7 +2592,7 @@ function openAnim(id) {
 // and the controls; on every frame the composition asks anim3d.js (three.js) to draw that moment of the move.
 // React and Remotion come from esm.sh the first time such a card is played, pinned to one React.
 // anim3d.js is kept on the device and refreshed in the background, so a page that needs a newer one asks for it by a new address
-const A3_SRC = './anim3d.js?v=3';
+const A3_SRC = './anim3d.js?v=4';
 const RM_V = '4.0.538', RM_D = '?deps=react@18.3.1,react-dom@18.3.1';
 let rmP = null;
 const loadRemotion = () => rmP || (rmP = Promise.all([import('https://esm.sh/react@18.3.1'), import('https://esm.sh/react-dom@18.3.1/client'),
@@ -2607,7 +2607,7 @@ async function mountRemotion(host, item) {
   const Move = () => {
     const f = rem.useCurrentFrame(), ref = React.useRef(null), label = sc.draw(f / FPS);
     React.useEffect(() => { if (ref.current) ref.current.appendChild(sc.canvas) }, []);
-    return h(rem.AbsoluteFill, null, h('div', { ref, style: { position: 'absolute', inset: 0 } }), h('div', { style: { ...pill, color: label === 'Angkat' ? '#1d4ed8' : '#18202f' } }, label));
+    return h(rem.AbsoluteFill, null, h('div', { ref, style: { position: 'absolute', inset: 0 } }), h('div', { style: { ...pill, color: label === 'Angkat' ? '#c2410c' : '#18202f' } }, label));
   };
   host.textContent = '';
   const root = RD.createRoot(host);

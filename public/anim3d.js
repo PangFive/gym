@@ -16,7 +16,8 @@ const RAD = Math.PI / 180, V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, 
 const lerp = (p, q, t) => p + (q - p) * t, ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 const lerpAng = (p, q, t) => { let d = ((q - p + 540) % 360) - 180; return p + d * t };
 // the app's colours: the main muscle in the accent blue, the helping ones in the light blue of the body map
-const C_MAIN = 0x2f7cf6, C_HELP = 0x8fb6f8, C_BODY = 0xe9edf2, C_JOINT = 0xaeb8c4, C_HAIR = 0x2b3442, C_EYE = 0x18202f;
+// a grey body on a dark stage; the working muscle glows orange, the helping one a paler orange
+const C_MAIN = 0xff7a1a, C_HELP = 0xffb680, C_BODY = 0xb9bdc3, C_JOINT = 0x9aa0a8, C_HAIR = 0xb9bdc3, C_EYE = 0xa9aeb5;
 const HOLD = new Set(['barbell', 'dumbbell', 'cable', 'rope', 'bar', 'lever', 'kb', 'dipbar']);
 
 let modelP = null;
@@ -38,10 +39,13 @@ function bodyMaterial(color, U) {
   const m = new THREE.MeshStandardMaterial({ color, roughness: .5, metalness: 0 });
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, U);
-    sh.vertexShader = 'attribute float hlA;\nattribute float hlB;\nvarying float vHlA;\nvarying float vHlB;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vHlA = hlA; vHlB = hlB;');
-    sh.fragmentShader = 'uniform float uA, uB;\nuniform vec3 cA, cB;\nvarying float vHlA;\nvarying float vHlB;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+    sh.vertexShader = 'attribute float hlA;\nattribute float hlB;\nattribute float hlC;\nvarying float vHlA;\nvarying float vHlB;\nvarying float vHlC;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vHlA = hlA; vHlB = hlB; vHlC = hlC;');
+    sh.fragmentShader = 'uniform float uA, uB;\nuniform vec3 cA, cB;\nvarying float vHlA;\nvarying float vHlB;\nvarying float vHlC;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
       diffuseColor.rgb = mix(diffuseColor.rgb, cA, clamp(vHlA, 0.0, 1.0) * uA);
-      diffuseColor.rgb = mix(diffuseColor.rgb, cB, clamp(vHlB, 0.0, 1.0) * uB);`);
+      diffuseColor.rgb = mix(diffuseColor.rgb, cB, clamp(vHlB, 0.0, 1.0) * uB);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.035, 0.038, 0.045), clamp(vHlC, 0.0, 1.0));`)
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      totalEmissiveRadiance += cA * clamp(vHlA, 0.0, 1.0) * uA * 0.5 * (1.0 - clamp(vHlC, 0.0, 1.0));`);
   };
   return m;
 }
@@ -79,7 +83,7 @@ async function build(item) {
     const grp = { chest: [ix('Spine2')], core: [ix('Spine'), ix('Spine1')], back: [ix('Spine1'), ix('Spine2')], traps: [...both('Shoulder'), ix('Neck')],
       arm: both('Arm'), fore: both('ForeArm'), thigh: both('UpLeg'), shin: both('Leg'), hips: [ix('Hips')] };
     const shL = wp(B('LeftArm')), shR = wp(B('RightArm')), hipL = wp(B('LeftUpLeg')), hipR = wp(B('RightUpLeg'));
-    const nm = new THREE.Matrix3().getNormalMatrix(o.matrixWorld), n = V(), p = V(), A = new Float32Array(si.count), Bv = new Float32Array(si.count);
+    const nm = new THREE.Matrix3().getNormalMatrix(o.matrixWorld), n = V(), p = V(), A = new Float32Array(si.count), Bv = new Float32Array(si.count), Cv = new Float32Array(si.count), waist = wp(B('Hips')).y + .09, hem = hipL.y - .2;
     for (let i = 0; i < si.count; i++) {
       const w = {}; for (const g2 in grp) w[g2] = 0;
       for (let c = 0; c < 4; c++) { const bi = si.getComponent(i, c), ww = sw.getComponent(i, c); for (const g2 in grp) if (grp[g2].includes(bi)) w[g2] += ww }
@@ -92,8 +96,10 @@ async function build(item) {
       let a = 0, b = 0;
       hl.forEach(key => { const v = Math.min(1, (m[key] || 0) * 1.5); if (hp.has(key)) a = Math.max(a, v); else b = Math.max(b, v) });
       A[i] = a; Bv[i] = b;
+      // the shorts: from the waist to a hand below the hip, on the trunk and thighs only
+      Cv[i] = kind === 'body' && w.hips + w.thigh + w.core > .5 ? THREE.MathUtils.smoothstep(p.y, hem - .012, hem + .012) * (1 - THREE.MathUtils.smoothstep(p.y, waist - .012, waist + .012)) : 0;
     }
-    g.setAttribute('hlA', new THREE.BufferAttribute(A, 1)); g.setAttribute('hlB', new THREE.BufferAttribute(Bv, 1));
+    g.setAttribute('hlA', new THREE.BufferAttribute(A, 1)); g.setAttribute('hlB', new THREE.BufferAttribute(Bv, 1)); g.setAttribute('hlC', new THREE.BufferAttribute(Cv, 1));
   });
 
   const hold = (an.eq || []).some(e => HOLD.has(e.t) || (e.t === 'pad' && e.at === 'wri'));
@@ -146,12 +152,12 @@ async function build(item) {
   // equipment, rebuilt each frame where it follows the hands
   const M = {
     metal: new THREE.MeshStandardMaterial({ color: 0x8a94a1, roughness: .3, metalness: .85 }),
-    plate: new THREE.MeshStandardMaterial({ color: 0x1f2a3d, roughness: .55, metalness: .2 }),
-    pad: new THREE.MeshStandardMaterial({ color: 0x23324b, roughness: .7 }),
-    frame: new THREE.MeshStandardMaterial({ color: 0x5b6676, roughness: .45, metalness: .5 }),
-    cable: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: .5 }),
+    plate: new THREE.MeshStandardMaterial({ color: 0x15171b, roughness: .5, metalness: .25 }),
+    pad: new THREE.MeshStandardMaterial({ color: 0x3a4049, roughness: .7 }),
+    frame: new THREE.MeshStandardMaterial({ color: 0x6b7480, roughness: .45, metalness: .5 }),
+    cable: new THREE.MeshStandardMaterial({ color: 0x8b939e, roughness: .5 }),
     band: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: .6 }),
-    bell: new THREE.MeshStandardMaterial({ color: 0x2a3446, roughness: .5, metalness: .3 })
+    bell: new THREE.MeshStandardMaterial({ color: 0x15171b, roughness: .5, metalness: .3 })
   };
   const fixed = new THREE.Group(), moving = new THREE.Group(); scene.add(fixed, moving);
   const box = (g, mat, c, ax, ay, w, h, d) => {   // a box from its centre and its two in-picture axes
@@ -290,19 +296,19 @@ async function build(item) {
 }
 
 function lights(scene) {
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d6ea, 1.25));
+  scene.add(new THREE.HemisphereLight(0xf2f5fa, 0x2a2f38, 1.05));
   const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(2.2, 4.2, 3.2); key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
   Object.assign(key.shadow.camera, { left: -2.5, right: 2.5, top: 3, bottom: -1, near: .5, far: 14 }); key.shadow.bias = -.0003; key.shadow.normalBias = .02; scene.add(key);
-  const back = new THREE.DirectionalLight(0xdfe9fb, .9); back.position.set(-3, 2.6, -3); scene.add(back);
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .18 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .002; floor.receiveShadow = true; scene.add(floor);
+  const back = new THREE.DirectionalLight(0xcfdcff, 1.7); back.position.set(-3, 2.6, -3); scene.add(back);
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: .4 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .002; floor.receiveShadow = true; scene.add(floor);
 }
 // a stage under the feet: a soft blue spot and two rings in the accent colour
 let stageTex = null;
 function stage(scene) {
   if (!stageTex) {
     const c = document.createElement('canvas'); c.width = c.height = 1024; const x = c.getContext('2d'), m = 512;
-    const d = x.createRadialGradient(m, m, 0, m, m, 150); d.addColorStop(0, 'rgba(47,124,246,.28)'); d.addColorStop(1, 'rgba(47,124,246,0)'); x.fillStyle = d; x.beginPath(); x.arc(m, m, 150, 0, Math.PI * 2); x.fill();
-    [[150, 4, .7], [196, 2, .35]].forEach(([r, w, o]) => { x.strokeStyle = `rgba(47,124,246,${o})`; x.lineWidth = w; x.beginPath(); x.arc(m, m, r, 0, Math.PI * 2); x.stroke() });
+    const d = x.createRadialGradient(m, m, 0, m, m, 150); d.addColorStop(0, 'rgba(255,255,255,.09)'); d.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = d; x.beginPath(); x.arc(m, m, 150, 0, Math.PI * 2); x.fill();
+    [[150, 4, .7], [196, 2, .35]].forEach(([r, w, o]) => { x.strokeStyle = `rgba(255,255,255,${o * .22})`; x.lineWidth = w; x.beginPath(); x.arc(m, m, r, 0, Math.PI * 2); x.stroke() });
     stageTex = new THREE.CanvasTexture(c); stageTex.colorSpace = THREE.SRGBColorSpace; stageTex.anisotropy = 4;
   }
   const s = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.MeshBasicMaterial({ map: stageTex, transparent: true, depthWrite: false, toneMapped: false }));
