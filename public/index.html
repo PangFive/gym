@@ -2585,16 +2585,18 @@ function openAnim(id) {
   $('#sheet .sheet-body').scrollTop = 0;
   stopAnim3d();
   const host = $('#a3d');
-  import('./anim3d.js').then(m => m.mount(host, a)).then(stop => { if (host.isConnected) { a3stop = stop; host.querySelector('.a3s')?.remove() } else stop() })
+  import(A3_SRC).then(m => m.mount(host, a)).then(stop => { if (host.isConnected) { a3stop = stop; host.querySelector('.a3s')?.remove() } else stop() })
     .catch(e => { console.warn('WHY 3d', e); const l = $('#a3l'); if (l) l.textContent = 'Animasi tidak termuat. Periksa koneksi internet.' });
 }
 // ---- An animation the AI wrote in Tanya AI (a why-anim card) plays in a Remotion player. Remotion owns the clock
 // and the controls; on every frame the composition asks anim3d.js (three.js) to draw that moment of the move.
 // React and Remotion come from esm.sh the first time such a card is played, pinned to one React.
+// anim3d.js is kept on the device and refreshed in the background, so a page that needs a newer one asks for it by a new address
+const A3_SRC = './anim3d.js?v=2';
 const RM_V = '4.0.538', RM_D = '?deps=react@18.3.1,react-dom@18.3.1';
 let rmP = null;
 const loadRemotion = () => rmP || (rmP = Promise.all([import('https://esm.sh/react@18.3.1'), import('https://esm.sh/react-dom@18.3.1/client'),
-  import(`https://esm.sh/remotion@${RM_V}${RM_D}`), import(`https://esm.sh/@remotion/player@${RM_V}${RM_D}`), import('./anim3d.js')])
+  import(`https://esm.sh/remotion@${RM_V}${RM_D}`), import(`https://esm.sh/@remotion/player@${RM_V}${RM_D}`), import(A3_SRC)])
   .then(([R, RD, rem, pl, a3]) => ({ React: R.default || R, RD, rem, Player: pl.Player, a3 })).catch(e => { rmP = null; throw e }));
 async function mountRemotion(host, item) {
   const { React, RD, rem, Player, a3 } = await loadRemotion(), h = React.createElement, FPS = 30, W = 720, H = 900;
