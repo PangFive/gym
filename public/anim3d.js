@@ -9,12 +9,14 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
-const MODEL = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/models/gltf/Xbot.glb';
+// The body: Superhero Male of Universal Base Characters by Quaternius (CC0), repacked by hand: bones carry the Mixamo
+// names used below, the colour textures are gone (the body is painted here), the normal map stays so the muscles show.
+const MODEL = new URL('./model/muscle.glb', import.meta.url).href;
 const RAD = Math.PI / 180, V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z), UP = V(0, 1, 0);
 const lerp = (p, q, t) => p + (q - p) * t, ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 const lerpAng = (p, q, t) => { let d = ((q - p + 540) % 360) - 180; return p + d * t };
 // the app's colours: the main muscle in the accent blue, the helping ones in the light blue of the body map
-const C_MAIN = 0x2f7cf6, C_HELP = 0x8fb6f8, C_BODY = 0xe9edf2, C_JOINT = 0xaeb8c4;
+const C_MAIN = 0x2f7cf6, C_HELP = 0x8fb6f8, C_BODY = 0xe9edf2, C_JOINT = 0xaeb8c4, C_HAIR = 0x2b3442, C_EYE = 0x18202f;
 const HOLD = new Set(['barbell', 'dumbbell', 'cable', 'rope', 'bar', 'lever', 'kb', 'dipbar']);
 
 let modelP = null;
@@ -69,7 +71,9 @@ async function build(item) {
     if (!o.isSkinnedMesh) return;
     o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false;
     o.geometry = o.geometry.clone();
-    o.material = bodyMaterial(/joint/i.test(o.name) || /joint/i.test(o.material?.name || '') ? C_JOINT : C_BODY, U);
+    const was = o.material, kind = was?.name || '';
+    o.material = bodyMaterial(kind === 'hair' ? C_HAIR : kind === 'eyes' ? C_EYE : /joint/i.test(o.name) || /joint/i.test(kind) ? C_JOINT : C_BODY, U);
+    if (was?.normalMap) { o.material.normalMap = was.normalMap; o.material.normalScale.copy(was.normalScale) }
     const g = o.geometry, si = g.attributes.skinIndex, sw = g.attributes.skinWeight, nrm = g.attributes.normal, pos = g.attributes.position;
     const ix = n => o.skeleton.bones.indexOf(B(n)), both = n => [ix('Left' + n), ix('Right' + n)];
     const grp = { chest: [ix('Spine2')], core: [ix('Spine'), ix('Spine1')], back: [ix('Spine1'), ix('Spine2')], traps: [...both('Shoulder'), ix('Neck')],

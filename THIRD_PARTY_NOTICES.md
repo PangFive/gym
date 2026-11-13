@@ -29,3 +29,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Universal Base Characters (model animasi)
+
+`public/model/muscle.glb` dibuat dari "Superhero Male" di paket Universal Base Characters oleh Quaternius
+(https://quaternius.com), lisensi CC0 1.0 (domain publik). Nama tulang diganti dan tekstur warna dibuang.

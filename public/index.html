@@ -2553,7 +2553,7 @@ function animList() {
   const xs = animHits();
   if (!xs.length) return `<div class="empty glass">${ANIM.length ? 'Tidak ada animasi yang cocok.' : 'Belum ada animasi gerakan.'}</div>`;
   return `<div class="fgrid">${xs.map(a => `<button class="fcard glass" data-a="anim" data-id="${a.id}">
-      <span class="fv av"><img src="anim/${a.id}.webp" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="a3t">3D</span></span>
+      <span class="fv av"><img src="anim/${a.id}.webp?v=3" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="a3t">3D</span></span>
       <b>${esc(a.t)}</b><small>${MI[a.p[0]].n} · ${eqName(a.e)}</small></button>`).join('')}</div>`;
 }
 const refreshAnim = () => { const row = $('#aChips'), x = row.scrollLeft; row.innerHTML = animChips(); row.scrollLeft = x; $('#aHead').innerHTML = `<span>${ui.acat === 'all' && !ui.aq ? 'Semua animasi' : 'Hasil'} · <b>${animHits().length}</b></span>`; $('#aList').innerHTML = animList() };
@@ -2572,7 +2572,7 @@ function openAnim(id) {
   const a = ANIM.find(x => x.id === id); if (!a) return;
   const cue = (cls, ic, title, xs) => xs.length ? `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : '';
   const tempo = a.tempo.replace(/Angkat (\d+) dtk, turun (\d+) dtk/i, '↑$1 · ↓$2 dtk');
-  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp" alt="" onerror="this.remove()"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
+  sheet(`<div class="a3d" id="a3d"><img class="a3s" src="anim/${a.id}.webp?v=3" alt="" onerror="this.remove()"><div class="a3l" id="a3l">Memuat animasi 3D…</div>
       <div class="a3p">Siap</div>
       <div class="a3c"><button data-sp="0.5">Pelan</button><button data-sp="1" class="on">Normal</button><button data-rot>Putar</button></div>
       <div class="a3h">Geser untuk memutar</div></div>
@@ -2592,7 +2592,7 @@ function openAnim(id) {
 // and the controls; on every frame the composition asks anim3d.js (three.js) to draw that moment of the move.
 // React and Remotion come from esm.sh the first time such a card is played, pinned to one React.
 // anim3d.js is kept on the device and refreshed in the background, so a page that needs a newer one asks for it by a new address
-const A3_SRC = './anim3d.js?v=2';
+const A3_SRC = './anim3d.js?v=3';
 const RM_V = '4.0.538', RM_D = '?deps=react@18.3.1,react-dom@18.3.1';
 let rmP = null;
 const loadRemotion = () => rmP || (rmP = Promise.all([import('https://esm.sh/react@18.3.1'), import('https://esm.sh/react-dom@18.3.1/client'),
