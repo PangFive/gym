@@ -4864,7 +4864,17 @@ async function routerAsk(parts, { key, url = ROUTER_URL, model, rec }, json = tr
   return text;
 }
 // the AI saved in Pengaturan, or the one being tested there
-const askAi = (parts, conf = aiConf(), json = true, timeoutMs = 90000) => (conf.prov === 'router' ? routerAsk : gemini)(parts, conf, json, timeoutMs);
+// Some models write their reasoning into the answer, between thinking tags. It is not part of the answer:
+// a closed block is cut out, and while one is still open (the answer is streaming in) everything after it waits.
+// A finished answer that would come out empty keeps its text, without the tags.
+const THINK_TAG = '<\\s*/?\\s*(?:antml[\\s:_-]*)?(?:thinking|think|reasoning)\\s*>';
+const THINK_BLOCK = new RegExp(THINK_TAG.replace('/?', '') + '[\\s\\S]*?' + THINK_TAG.replace('/?', '/') + '\\s*', 'gi');
+const THINK_OPEN = new RegExp(THINK_TAG.replace('/?', '') + '[\\s\\S]*$', 'i');
+function noThink(t, done) {
+  const raw = String(t ?? ''), out = raw.replace(THINK_BLOCK, '').replace(THINK_OPEN, '').replace(/^\s+/, '');
+  return out || !done ? out : raw.replace(new RegExp(THINK_TAG, 'gi'), '').trim();
+}
+const askAi = (parts, conf = aiConf(), json = true, timeoutMs = 90000) => (conf.prov === 'router' ? routerAsk : gemini)(parts, conf, json, timeoutMs).then(t => typeof t === 'string' ? noThink(t, true) : t);
 const MEAL_PROMPT = `Kamu ahli gizi. Perkirakan makanan dan minuman pada foto atau deskripsi untuk porsi yang terlihat/disebut.
 Balas HANYA dengan JSON berbentuk:
 {"name": "nama hidangan singkat dalam bahasa Indonesia",
@@ -4960,6 +4970,7 @@ function chatLoad() {
   const k = chatKey(); if (chatS.key === k) return;
   chatS.key = k; chatS.full = {}; chatS.pics = [];
   try { chatS.msgs = asList(JSON.parse(localStorage.getItem(k))?.msgs).filter(m => m.id && (m.r === 'u' || m.r === 'a')) } catch { chatS.msgs = [] }
+  chatS.msgs.forEach(m => { if (m.r === 'a' && m.t) m.t = noThink(m.t, true) });
 }
 // When the device runs out of room, older photos go first (the message then says how many there were).
 function chatSave() {
@@ -5279,7 +5290,7 @@ async function chatReply() {
   const show = () => { raf = 0; const el = $('#cm' + a.id + ' .cb'); if (!el) return; const near = chatNear(); el.innerHTML = chatAiBody(a); if (near) chatBottom() };
   poke();
   try {
-    a.t = await chatAi({ system: chatSystem(), turns }, t => { a.t = t; poke(); raf ||= requestAnimationFrame(show) }, ctl.signal);
+    a.t = noThink(await chatAi({ system: chatSystem(), turns }, t => { a.t = noThink(t); poke(); raf ||= requestAnimationFrame(show) }, ctl.signal), true);
     if (!a.t.trim()) throw new Error('AI tidak memberi jawaban. Coba lagi.');
   } catch (e) {
     if (chatS.busy?.stop) a.stopped = true;
