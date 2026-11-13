@@ -85,7 +85,7 @@
   {
    "id": 275,
    "title": "Back Extension",
-   "type": "koreksi",
+   "type": "variasi",
    "category": "back",
    "equipment": "body",
    "youtube": "y6ZOgFL-3eQ",
@@ -392,11 +392,10 @@
    ],
    "no": [],
    "primary": [
-    "abs"
-   ],
-   "secondary": [
+    "abs",
     "obliques"
    ],
+   "secondary": [],
    "narration": "Want to train your core without leaving your room? Start here. This is the best way to start your morning. Save this and come back stronger.",
    "confidence": "sedang"
   },
@@ -648,12 +647,11 @@
    ],
    "no": [],
    "primary": [
-    "gluteal"
-   ],
-   "secondary": [
+    "gluteal",
     "quadriceps",
     "hamstring"
    ],
+   "secondary": [],
    "narration": "Most people do hip thrusts wrong. Fix your foot position. Quads. your foot position. Quads. Hamstrings. Glutes. Save this and come back stronger.",
    "confidence": "tinggi"
   },
@@ -2111,11 +2109,10 @@
    ],
    "no": [],
    "primary": [
-    "chest"
-   ],
-   "secondary": [
+    "chest",
     "triceps"
    ],
+   "secondary": [],
    "narration": "You're doing Smith bench press the same way every time. Watch this. Inner way every time. Watch this. Inner chest. Entire chest. Triceps. Upper chest. lower chest. Save this and come back stronger.",
    "confidence": "tinggi"
   },
@@ -2472,11 +2469,10 @@
    ],
    "no": [],
    "primary": [
-    "biceps"
-   ],
-   "secondary": [
+    "biceps",
     "forearm"
    ],
+   "secondary": [],
    "narration": "Every grip changes your bicep shape. Let me show you how. Close grip. Neutral grip. Reverse grip. Save this and come back stronger. Yes, you can.",
    "confidence": "tinggi"
   },
@@ -2673,11 +2669,10 @@
    ],
    "no": [],
    "primary": [
-    "biceps"
-   ],
-   "secondary": [
+    "biceps",
     "forearm"
    ],
+   "secondary": [],
    "narration": "",
    "confidence": "sedang"
   },
@@ -2720,10 +2715,10 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
+    "upper-back",
+    "deltoids"
    ],
    "secondary": [
-    "deltoids",
     "trapezius"
    ],
    "narration": "",
@@ -2731,7 +2726,7 @@
   },
   {
    "id": 423,
-   "title": "Cable Shoulder and Chest Moves",
+   "title": "Cable Fly Low, Mid, High",
    "type": "variasi",
    "category": "shoulders",
    "equipment": "cable",
@@ -2746,10 +2741,10 @@
    ],
    "no": [],
    "primary": [
-    "deltoids"
+    "chest"
    ],
    "secondary": [
-    "chest"
+    "deltoids"
    ],
    "narration": "",
    "confidence": "rendah"
@@ -3269,11 +3264,10 @@
    "no": [],
    "primary": [
     "chest",
-    "triceps"
-   ],
-   "secondary": [
+    "triceps",
     "deltoids"
    ],
+   "secondary": [],
    "narration": "",
    "confidence": "tinggi"
   },
@@ -3779,10 +3773,10 @@
    ],
    "no": [],
    "primary": [
-    "trapezius"
+    "trapezius",
+    "upper-back"
    ],
    "secondary": [
-    "upper-back",
     "deltoids"
    ],
    "narration": "",
@@ -3877,10 +3871,10 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
+    "upper-back",
+    "trapezius"
    ],
    "secondary": [
-    "trapezius",
     "biceps"
    ],
    "narration": "",
@@ -3967,11 +3961,10 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
-   ],
-   "secondary": [
+    "upper-back",
     "deltoids"
    ],
+   "secondary": [],
    "narration": "",
    "confidence": "sedang"
   },
@@ -4165,10 +4158,10 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
+    "upper-back",
+    "deltoids"
    ],
    "secondary": [
-    "deltoids",
     "trapezius"
    ],
    "narration": "",
@@ -4233,12 +4226,11 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
-   ],
-   "secondary": [
+    "upper-back",
     "trapezius",
     "deltoids"
    ],
+   "secondary": [],
    "narration": "",
    "confidence": "sedang"
   },
@@ -4586,11 +4578,11 @@
    "no": [],
    "primary": [
     "quadriceps",
-    "gluteal"
+    "gluteal",
+    "adductors"
    ],
    "secondary": [
-    "hamstring",
-    "adductors"
+    "hamstring"
    ],
    "narration": "",
    "confidence": "tinggi"
@@ -4737,11 +4729,11 @@
    ],
    "no": [],
    "primary": [
-    "upper-back"
+    "upper-back",
+    "deltoids",
+    "trapezius"
    ],
    "secondary": [
-    "trapezius",
-    "deltoids",
     "biceps"
    ],
    "narration": "",

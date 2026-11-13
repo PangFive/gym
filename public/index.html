@@ -1831,6 +1831,8 @@ const edTags = (it, t, i) => {
 const itMain = (it, t) => { const f = focusOf(it, t); return f.length ? f : t.p.filter(k => MI[k]) };
 const focusIn = (v, t) => { const o = focusOpts(t), f = muscleList(Array.isArray(v) ? v : v ? [v] : []).filter(k => o.includes(k)); return f.length && !sameMain(f, t) ? { f } : {} };
 const focusFrom = (x, t) => focusIn(x?.for ?? x?.untuk ?? x?.f, t);
+// in the picker the muscles the user asked for win: a multi-purpose exercise the AI left open, or aimed elsewhere, is set to them
+const aiFocus = (x, t, aim) => { const f = focusFrom(x, t), want = focusIn([...aim], t); return want.f && !(f.f || []).some(k => aim.has(k)) ? want : f };
 const addFocus = id => { const t = T[id], f = ui.addF?.id === id ? [...ui.addF.set] : []; return f.length && !sameMain(f, t) ? { f } : {} };
 const alsoLine = t => t.s.length ? `<small class="also">Juga melatih ${t.s.map(k => MI[k].n).join(' · ')}</small>` : '';
 
@@ -3234,14 +3236,14 @@ ${src} (id|nama|otot):
 ${aiMachines(undefined, pool)}
 ${aiMuscleCodes()}
 Balas HANYA JSON: {"summary": "1 kalimat bahasa Indonesia", "muscles": ["kode otot yang diminta pengguna, [] kalau tidak menyebut otot"], "items": [{"id": angka id dari daftar, "sets": angka, "reps": "mis. 10-12", "for": ["hanya untuk latihan bertanda MULTI: kode otot yang dituju"], "reason": "alasan maksimal 8 kata"}]}
-Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".`;
+Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Bila pengguna meminta otot tertentu, latihan MULTI yang punya otot itu dipakai dengan "for" otot tersebut, jangan dengan otot lainnya. Latihan lain tanpa "for".`;
   p.ai = { busy: true }; $('#pkAi').innerHTML = pickAiHtml();
   try {
     const t = await askAi([{ text: prompt }]), a = t.indexOf('{'), b = t.lastIndexOf('}'), j = JSON.parse(t.slice(a, b + 1));
     // the muscles asked for, from the map and as the AI read the request; a machine for none of them is dropped
     const aim = new Set([...want, ...(q ? muscleList(j.muscles) : [])]), hits = id => trainsAny(T[id], aim);
     const seen = new Set(have), off = asList(j.items).some(x => T[+x.id] && !hits(+x.id));
-    const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80), ...focusFrom(x, T[+x.id]) }))
+    const items = asList(j.items).map(x => ({ id: +x.id, sets: clamp(+x.sets || 3, 1, 10), reps: String(x.reps || '10').slice(0, 7), reason: String(x.reason || '').slice(0, 80), ...aiFocus(x, T[+x.id], aim) }))
       .filter(x => T[x.id] && pool.some(t => t.id === x.id) && hits(x.id) && !seen.has(x.id) && seen.add(x.id)).slice(0, 8);
     const ms = aim.size && mNames([...aim]);
     if (!items.length) {
@@ -4108,7 +4110,7 @@ function claudeText() {
     'Halo Claude, ini data latihan saya dari aplikasi Wegym. Tolong buatkan program latihan untuk saya.',
     'Balas dengan JSON persis format ini supaya bisa saya import:',
     '{"why_plan":1,"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10"}]}],"week":{"senin":["Push Day"],"rabu":["Pull Day"]}}',
-    'Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".',
+    'Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Bila pengguna meminta otot tertentu, latihan MULTI yang punya otot itu dipakai dengan "for" otot tersebut, jangan dengan otot lainnya. Latihan lain tanpa "for".',
     'Gunakan hanya id dari daftar alat di bawah. Bagian "week" opsional: nama hari (senin sampai minggu) berisi nama program dari "routines"; hari yang tidak disebut jadi hari istirahat.',
     '',
     `Target: ${S.settings.goal}× workout per minggu, istirahat antar set ${S.settings.rest} detik.`,
@@ -4997,7 +4999,7 @@ function chatSystem() {
     '```why-plan',
     '{"routines":[{"name":"Push Day","items":[{"id":38,"sets":3,"reps":"10-12"}]}],"week":{"senin":["Push Day"],"kamis":["Push Day"]}}',
     '```',
-    '   "week" opsional: senin … minggu berisi nama program dari "routines"; hari lain istirahat. "reps" angka atau rentang pendek tanpa satuan (mis. "10-12", paling banyak 7 karakter). Alat kardio: sets 1, reps = jumlah menit. Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Latihan lain tanpa "for".',
+    '   "week" opsional: senin … minggu berisi nama program dari "routines"; hari lain istirahat. "reps" angka atau rentang pendek tanpa satuan (mis. "10-12", paling banyak 7 karakter). Alat kardio: sets 1, reps = jumlah menit. Latihan bertanda MULTI bisa dipakai untuk salah satu otot utamanya: isi "for" dengan kode otot yang dituju (dari pilihan di barisnya) sesuai tujuan program, mis. {"id":67,"sets":3,"reps":"12-15","for":["deltoids"]}. Bila pengguna meminta otot tertentu, latihan MULTI yang punya otot itu dipakai dengan "for" otot tersebut, jangan dengan otot lainnya. Latihan lain tanpa "for".',
     '3. Bila kamu menyarankan menu atau menghitung kalori makanan/minuman (termasuk dari foto), tambahkan satu blok per kali makan agar bisa dicatat: semua yang dimakan dan diminum bersamaan jadi item di blok yang sama (paling banyak 4 blok):',
     '```why-meal',
     '{"name":"Nasi ayam bakar","slot":"lunch","items":[{"name":"Nasi putih","grams":150,"kcal":195,"protein":4,"carbs":43,"fat":0.4}]}',
