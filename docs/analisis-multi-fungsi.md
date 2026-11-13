@@ -90,6 +90,6 @@ Back (tiga area berbeda, tetap multi).
 
 ## Yang belum
 
-- Data teknik di Firebase belum diimpor untuk 16 perubahan di atas (lihat catatan sesi); katalog
-  `docs/teknik-katalog.json` sudah memuatnya.
+- (Selesai 13 November 2026) 16 perubahan teknik sudah diimpor ke Firebase lewat akun admin; hasilnya
+  205 video, 41 di antaranya multi fungsi. Katalog `docs/teknik-katalog.json` memuat hal yang sama.
 - Teks belum diperiksa pelatih. Keputusan 67 dan 63 tidak murni dari video.
