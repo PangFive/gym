@@ -5195,7 +5195,7 @@ function chatAnimOf(o) {
   return { ...x, t: String(o.title || o.t || x.t).slice(0, 80), ok: ok.length ? ok : x.ok, no: no.length ? no : x.no, why: String(o.why || x.why || '').slice(0, 300) };
 }
 const chatCardOf = (kind, o) => kind === 'plan' ? chatPlanOf(o) : kind === 'meal' ? chatMealOf(o) : chatAnimOf(o);
-function animCard(a, mid, k) {
+function chatAnimCard(a, mid, k) {
   return `<div class="ccard canim"><div class="cc-h">${I('playf')}<b>${esc(a.t)}</b></div>
     <div class="cc-r"><small>${MI[a.p[0]].n} · ${eqName(a.e)} · animasi 3D</small>${a.ok.length ? `<ul>${a.ok.slice(0, 3).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
     <div class="cc-b"><button class="btn pri sm" data-a="chatAnim" data-m="${mid}" data-b="${k}">${I('playf')} Putar animasi</button></div></div>`;
@@ -5244,7 +5244,7 @@ function mdHtml(src, mid = '', live = false) {
     else if (kind) {
       let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {}
       const v = o && chatCardOf(kind, o);
-      h = v ? (kind === 'plan' ? planCard : kind === 'meal' ? mealCard : animCard)(v, mid, k) : '<p class="cnote">Kartu ini tidak bisa dibaca.</p>';
+      h = v ? (kind === 'plan' ? planCard : kind === 'meal' ? mealCard : chatAnimCard)(v, mid, k) : '<p class="cnote">Kartu ini tidak bisa dibaca.</p>';
       if (v) k++;
     } else if (body.trim()) h = `<pre><code>${esc(body.replace(/\n$/, ''))}</code></pre>`;
     keep.push(h); return `\n\u0001${keep.length - 1}\u0001\n`;
