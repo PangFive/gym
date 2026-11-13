@@ -64,6 +64,10 @@ async function build(item) {
   const L = wp(B('LeftArm')).sub(wp(B('RightArm'))).setY(0).normalize(), F = wp(B('LeftToeBase')).sub(wp(B('LeftFoot'))).setY(0).normalize();
   const front = an.view === 'front', sig = !front && prone(an) ? -1 : 1, H = front ? L.clone() : F.clone().multiplyScalar(sig);
   const k = wp(B('LeftUpLeg')).distanceTo(wp(B('LeftLeg'))) / 70, ankY = wp(B('LeftFoot')).y, GY = 320 + ankY / k;
+  // The foot bone runs from the ankle down to the ball of the foot. An angle of the picture says where the sole points,
+  // so the bone is aimed that much below it (towards the sole); otherwise a flat foot would hold its toes in the air.
+  const fa0 = wp(B('LeftFoot')), ft0 = wp(B('LeftToeBase')), footPitch = Math.atan2(fa0.y - ft0.y, Math.hypot(ft0.x - fa0.x, ft0.z - fa0.z));
+  const footDir = d => d.clone().normalize().multiplyScalar(Math.cos(footPitch)).addScaledVector(V().crossVectors(L, d).normalize(), Math.sin(footPitch));
   // a point of the 2D picture in the world (lateral offset z in metres, + = the body's left)
   const map = (x, y, z = 0) => H.clone().multiplyScalar((x - 200) * k).addScaledVector(UP, (GY - y) * k).addScaledVector(L, z);
   const vec2 = (dx, dy) => H.clone().multiplyScalar(dx * k).addScaledVector(UP, -dy * k);
@@ -128,7 +132,7 @@ async function build(item) {
       const lh = front ? (i ? L.clone().negate() : L) : H;
       aim(B(S + 'UpLeg'), B(S + 'Leg'), dirOf(P['th' + two] ?? P.th ?? -90, P.thS, out, lh));
       aim(B(S + 'Leg'), B(S + 'Foot'), dirOf(P['sh' + two] ?? P.sh ?? -90, P.shS, out, lh));
-      aim(B(S + 'Foot'), B(S + 'ToeBase'), front ? F.clone().addScaledVector(UP, -.15).normalize() : dirOf(P['ft' + two] ?? P.ft ?? 0, null, out, H));
+      aim(B(S + 'Foot'), B(S + 'ToeBase'), footDir(front ? F : dirOf(P['ft' + two] ?? P.ft ?? 0, null, out, H)));
       if (hold) {   // fingers wrap whatever the hand holds
         const i1 = B(S + 'HandIndex1'), p1 = B(S + 'HandPinky1'), m1 = B(S + 'HandMiddle1');
         if (i1 && p1 && m1) {
