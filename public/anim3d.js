@@ -359,3 +359,25 @@ export async function still(item, w = 360, h = 560, t = .7, q = .86) {
   s.scene.traverse(o => { o.geometry?.dispose?.(); if (o.material && !o.material.map) o.material.dispose?.() });
   return url;
 }
+
+// The same move for a player that owns the clock (the Remotion player in the app): nothing runs by itself,
+// draw(sec) renders the moment sec seconds into the loop and returns the name of its phase.
+export async function frames(item, w = 720, h = 900) {
+  const r = renderer({ preserveDrawingBuffer: true }); r.setPixelRatio(1); r.setSize(w, h, false);
+  const s = await build(item); lights(s.scene); stage(s.scene);
+  const camera = new THREE.PerspectiveCamera(32, w / h, .05, 60);
+  const P = PHASES(item.an), total = P.reduce((a, p) => a + p[1], 0), ba = item.an.conc === 'BA';
+  const view = s.view.clone().normalize(), side = V().crossVectors(UP, view).normalize();
+  return { canvas: r.domElement, total,
+    draw(sec) {
+      let t = ((sec % total) + total) % total, p = P[P.length - 1], u = p[3];
+      for (const q of P) { if (t < q[1]) { p = q; u = lerp(q[2], q[3], ease(t / q[1])); break } t -= q[1] }
+      s.set(ba ? 1 - u : u, p[4]);
+      // the camera sways a little around the move, and is back where it started when the loop ends
+      const a = Math.sin(sec / total * Math.PI * 2) * .3, d = s.radius / Math.sin(camera.fov * RAD / 2) * 1.12;
+      camera.position.copy(s.target).addScaledVector(view, Math.cos(a) * d).addScaledVector(side, Math.sin(a) * d);
+      camera.lookAt(s.target); r.render(s.scene, camera);
+      return p[0];
+    },
+    dispose() { r.dispose(); r.forceContextLoss() } };
+}

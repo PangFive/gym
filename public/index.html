@@ -1580,6 +1580,9 @@ body.fabbed #app{padding-bottom:180px}
 .ctools svg.i{width:15px;height:15px}
 .ccard{margin:10px 0;padding:12px 13px;border-radius:18px;background:linear-gradient(160deg,#f3f7ff,#fff);border:1px solid rgba(47,124,246,.18)}
 .ccard.cmeal{background:linear-gradient(160deg,#fff4ee,#fff);border-color:rgba(242,120,92,.25)}
+.ccard.canim{background:linear-gradient(160deg,#f4f0ff,#fff);border-color:rgba(124,58,237,.22)}.canim .cc-h svg.i{color:#7c3aed}
+.ccard.canim ul{margin:6px 0 8px;font-size:13.5px}.ccard.canim li::before{content:'✓ ';color:var(--green,#16a34a);font-weight:800}
+.a3d.rm canvas{touch-action:auto}
 .ccard.wait{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;font-weight:600}
 .ccard.wait .spin{width:18px;height:18px;border-width:2px}
 .cc-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -2584,6 +2587,46 @@ function openAnim(id) {
   const host = $('#a3d');
   import('./anim3d.js').then(m => m.mount(host, a)).then(stop => { if (host.isConnected) { a3stop = stop; host.querySelector('.a3s')?.remove() } else stop() })
     .catch(e => { console.warn('WHY 3d', e); const l = $('#a3l'); if (l) l.textContent = 'Animasi tidak termuat. Periksa koneksi internet.' });
+}
+// ---- An animation the AI wrote in Tanya AI (a why-anim card) plays in a Remotion player. Remotion owns the clock
+// and the controls; on every frame the composition asks anim3d.js (three.js) to draw that moment of the move.
+// React and Remotion come from esm.sh the first time such a card is played, pinned to one React.
+const RM_V = '4.0.538', RM_D = '?deps=react@18.3.1,react-dom@18.3.1';
+let rmP = null;
+const loadRemotion = () => rmP || (rmP = Promise.all([import('https://esm.sh/react@18.3.1'), import('https://esm.sh/react-dom@18.3.1/client'),
+  import(`https://esm.sh/remotion@${RM_V}${RM_D}`), import(`https://esm.sh/@remotion/player@${RM_V}${RM_D}`), import('./anim3d.js')])
+  .then(([R, RD, rem, pl, a3]) => ({ React: R.default || R, RD, rem, Player: pl.Player, a3 })).catch(e => { rmP = null; throw e }));
+async function mountRemotion(host, item) {
+  const { React, RD, rem, Player, a3 } = await loadRemotion(), h = React.createElement, FPS = 30, W = 720, H = 900;
+  const sc = await a3.frames(item, W, H);
+  if (!host.isConnected) { sc.dispose(); return () => {} }
+  Object.assign(sc.canvas.style, { width: '100%', height: '100%', display: 'block' });
+  const pill = { position: 'absolute', left: 24, top: 24, padding: '12px 26px', borderRadius: 999, background: 'rgba(255,255,255,.9)', fontFamily: 'inherit', fontSize: 28, fontWeight: 800 };
+  const Move = () => {
+    const f = rem.useCurrentFrame(), ref = React.useRef(null), label = sc.draw(f / FPS);
+    React.useEffect(() => { if (ref.current) ref.current.appendChild(sc.canvas) }, []);
+    return h(rem.AbsoluteFill, null, h('div', { ref, style: { position: 'absolute', inset: 0 } }), h('div', { style: { ...pill, color: label === 'Angkat' ? '#1d4ed8' : '#18202f' } }, label));
+  };
+  host.textContent = '';
+  const root = RD.createRoot(host);
+  root.render(h(Player, { component: Move, durationInFrames: Math.max(1, Math.round(sc.total * FPS)), fps: FPS, compositionWidth: W, compositionHeight: H,
+    controls: true, showVolumeControls: false, loop: true, autoPlay: true, clickToPlay: true, acknowledgeRemotionLicense: true, style: { width: '100%', height: '100%' } }));
+  return () => { try { root.unmount() } catch {} sc.dispose() };
+}
+function openAnimAi(a) {
+  const cue = (cls, ic, title, xs) => xs.length ? `<section class="${cls}"><h3>${I(ic)} ${title}</h3><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : '';
+  sheet(`<div class="a3d rm" id="a3d"><div class="a3l" id="a3l">Memuat animasi…</div></div>
+    <h2 class="dt">${esc(a.t)}</h2>
+    <div class="tags ftags">${mTag(a.p[0])}<span class="tag" style="--c:#64748b">${eqName(a.e)}</span><span class="tag" style="--c:#7c3aed">Dari AI</span></div>
+    <p class="hint">Poin gerakan di bawah disusun AI. Periksa lagi sebelum dijadikan patokan.</p>
+    ${a.why ? `<p class="desc">${esc(a.why)}</p>` : ''}
+    ${a.ok.length || a.no.length ? `<div class="fcmp">${cue('fok', 'check', 'Cara melakukan', a.ok)}${cue('fno', 'x', 'Yang salah', a.no)}</div>` : ''}
+    ${muscleMap(a)}`);
+  $('#sheet .sheet-body').scrollTop = 0;
+  stopAnim3d();
+  const host = $('#a3d');
+  mountRemotion(host, a).then(stop => { if (host.isConnected) a3stop = stop; else stop() })
+    .catch(e => { console.warn('WHY remotion', e); const l = $('#a3l'); if (l) l.textContent = 'Animasi tidak termuat. Periksa koneksi internet.'; else if (host.isConnected) host.innerHTML = '<div class="a3l">Animasi tidak termuat. Periksa koneksi internet.</div>' });
 }
 function parseAnim(txt) {
   txt = String(txt || '');
@@ -5017,6 +5060,11 @@ function chatSystem() {
     '```',
     '   slot: breakfast, lunch, dinner, atau snack. Buat blok hanya bila relevan, dan jangan membahas isi bloknya; ringkas dengan kata-kata biasa di jawabanmu.',
     '4. Kamu tidak bisa menyimpan, mencatat, atau mengubah apa pun sendiri. Blok tampil sebagai kartu, lalu pengguna yang mengetuk "Simpan ke program" atau "Catat makanan". Jadi jangan bilang sudah disimpan atau sudah dicatat; ajak pengguna mengetuk tombol di kartu.',
+    ...(ANIM.length ? ['5. Bila pengguna minta animasi atau peragaan sebuah gerakan (cara yang benar), tambahkan SATU blok ini; aplikasi memutarnya sebagai animasi 3D:',
+      '```why-anim',
+      '{"base":"squat","title":"Back Squat yang benar","ok":["Dada tegak, punggung netral","Lutut searah ujung kaki"],"no":["Lutut masuk ke dalam","Tumit terangkat"]}',
+      '```',
+      '   "base" = id dari DAFTAR ANIMASI di bawah: pilih gerakan yang paling sama, jangan mengarang id. "ok" 2 sampai 4 poin cara yang benar, "no" 1 sampai 3 kesalahan umum, semuanya singkat. Bila tidak ada gerakan yang cocok di daftar, katakan saja dan jangan buat bloknya.'] : []),
     '',
     `DATA PENGGUNA (sekarang ${DAYN[now.getDay()]} ${today}, jam ${hm}):`,
     `- Nama: ${st.name || '-'}. ${aiWho()}${st.height ? ` Tinggi ${st.height} cm.` : ''}${st.goalW ? ` Target berat ${fmtW(st.goalW)} kg.` : ''}`,
@@ -5033,7 +5081,8 @@ function chatSystem() {
     'DAFTAR ALAT DI GYM (id|nama|otot):', aiMachines(),
     ...CARDIO.map(t => `${t.id}|${t.t}|kardio`),
     ...(FORM.length ? ['', 'LATIHAN BEBAN BEBAS / BEBAN TUBUH, ADA VIDEO TEKNIKNYA (id|nama|alat|otot utama; pendukung):',
-      ...FORM.map(f => `${FORM_BASE + f.id}|${f.t}|${eqName(f.e)}|${mNames(f.p)}${f.s.length ? '; ' + mNames(f.s) : ''}${focusOpts(T[FORM_BASE + f.id]).length ? `|MULTI, pilih "for": ${focusOpts(T[FORM_BASE + f.id]).join(' / ')}` : ''}`)] : [])
+      ...FORM.map(f => `${FORM_BASE + f.id}|${f.t}|${eqName(f.e)}|${mNames(f.p)}${f.s.length ? '; ' + mNames(f.s) : ''}${focusOpts(T[FORM_BASE + f.id]).length ? `|MULTI, pilih "for": ${focusOpts(T[FORM_BASE + f.id]).join(' / ')}` : ''}`)] : []),
+    ...(ANIM.length ? ['', 'DAFTAR ANIMASI (id|nama|alat), untuk blok why-anim:', ...ANIM.map(a => `${a.id}|${a.t}|${eqName(a.e)}`)] : [])
   ].filter(x => x !== false).join('\n');
 }
 // The conversation as the AI reads it: the last 24 messages, photos only on the last 6 so the request
@@ -5126,7 +5175,7 @@ async function chatAi(chat, onText, signal, c = aiConf()) {
 // A fenced block is a card when it says so (why-plan / why-meal) or, as plain JSON, holds a program
 // or a meal. Cards are numbered in order, so a button finds its block again in the message.
 const CH_FENCE = /```[ \t]*([\w-]*)[^\n]*\n?([\s\S]*?)(```|$)/g;
-const blockKind = (lang, body) => lang === 'why-plan' ? 'plan' : lang === 'why-meal' ? 'meal' : !/^(json)?$/i.test(lang) ? null
+const blockKind = (lang, body) => lang === 'why-plan' ? 'plan' : lang === 'why-meal' ? 'meal' : lang === 'why-anim' ? 'anim' : !/^(json)?$/i.test(lang) ? null
   : /"(routines|why_plan)"\s*:/.test(body) ? 'plan' : /"items"\s*:/.test(body) && /"kcal"\s*:/.test(body) ? 'meal' : null;
 function chatPlanOf(o) {
   const rs = asList(o?.routines ?? (o?.items ? [o] : [])).map(r => ({ name: String(r?.name || 'Program').slice(0, 40),
@@ -5134,13 +5183,28 @@ function chatPlanOf(o) {
       .filter(x => T[x.id]).map(x => ({ id: x.id, sets: clamp(parseInt(x.sets) || 3, 1, 10), reps: String(x.reps ?? '10').slice(0, 7), ...focusIn(x.f, T[x.id]) })) })).filter(r => r.items.length);
   return rs.length ? { routines: rs, week: o.week && typeof o.week === 'object' && !Array.isArray(o.week) ? o.week : null } : null;
 }
+// A why-anim block names a move of the Animasi library ("base") and gives it the AI's own title and cues;
+// a rig of its own ("an", the format of /app/animasi) also plays, when it is a valid one.
+function chatAnimOf(o) {
+  const base = ANIM.find(a => a.id === String(o?.base ?? o?.id ?? '').trim());
+  const x = base || (o?.an ? animItem({ ...o, id: 'ai', t: o.title ?? o.t ?? 'Animasi', p: o.primary ?? o.p, s: o.secondary ?? o.s }) : null);
+  if (!x) return null;
+  const ok = cueList(o.ok), no = cueList(o.no);
+  return { ...x, t: String(o.title || o.t || x.t).slice(0, 80), ok: ok.length ? ok : x.ok, no: no.length ? no : x.no, why: String(o.why || x.why || '').slice(0, 300) };
+}
+const chatCardOf = (kind, o) => kind === 'plan' ? chatPlanOf(o) : kind === 'meal' ? chatMealOf(o) : chatAnimOf(o);
+function animCard(a, mid, k) {
+  return `<div class="ccard canim"><div class="cc-h">${I('playf')}<b>${esc(a.t)}</b></div>
+    <div class="cc-r"><small>${MI[a.p[0]].n} · ${eqName(a.e)} · animasi 3D</small>${a.ok.length ? `<ul>${a.ok.slice(0, 3).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+    <div class="cc-b"><button class="btn pri sm" data-a="chatAnim" data-m="${mid}" data-b="${k}">${I('playf')} Putar animasi</button></div></div>`;
+}
 function chatMealOf(o) { try { const m = parseMeal(JSON.stringify(o)); return m.items.length ? { ...m, slot: MEAL_SLOTS.some(x => x[0] === o.slot) ? o.slot : '' } : null } catch { return null } }
 // the cards of a finished message, in order
 function chatBlocks(text) {
   const out = [];
   String(text || '').replace(CH_FENCE, (m, lang, body, end) => {
     const kind = end && blockKind(lang.toLowerCase(), body);
-    if (kind) { let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {} const v = o && (kind === 'plan' ? chatPlanOf(o) : chatMealOf(o)); if (v) out.push({ kind, v }) }
+    if (kind) { let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {} const v = o && chatCardOf(kind, o); if (v) out.push({ kind, v }) }
     return '';
   });
   return out;
@@ -5177,8 +5241,8 @@ function mdHtml(src, mid = '', live = false) {
     if (kind && !end) h = live ? '<div class="ccard wait"><span class="spin" aria-hidden="true"></span>Menyiapkan kartu…</div>' : '';
     else if (kind) {
       let o = null; try { o = JSON.parse(body.slice(body.indexOf('{'), body.lastIndexOf('}') + 1)) } catch {}
-      const v = o && (kind === 'plan' ? chatPlanOf(o) : chatMealOf(o));
-      h = v ? (kind === 'plan' ? planCard(v, mid, k) : mealCard(v, mid, k)) : '<p class="cnote">Kartu ini tidak bisa dibaca.</p>';
+      const v = o && chatCardOf(kind, o);
+      h = v ? (kind === 'plan' ? planCard : kind === 'meal' ? mealCard : animCard)(v, mid, k) : '<p class="cnote">Kartu ini tidak bisa dibaca.</p>';
       if (v) k++;
     } else if (body.trim()) h = `<pre><code>${esc(body.replace(/\n$/, ''))}</code></pre>`;
     keep.push(h); return `\n\u0001${keep.length - 1}\u0001\n`;
@@ -6653,6 +6717,7 @@ const A = {
     const b = chatBlock(el); if (!b) return toast('Kartu ini tidak bisa dibaca lagi', 'err');
     importText(JSON.stringify({ why_plan: 1, routines: b.v.routines, ...(b.v.week ? { week: b.v.week } : {}) }));
   },
+  chatAnim: el => { const b = chatBlock(el); if (!b) return toast('Kartu ini tidak bisa dibaca lagi', 'err'); openAnimAi(b.v) },
   chatGo: el => { const b = chatBlock(el); if (b) startWorkout(b.v.routines[0].items, b.v.routines[0].name) },
   // a card's meal is checked (and can be edited) before it is logged, as after a meal photo
   chatMeal: el => {
